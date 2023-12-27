@@ -27,7 +27,7 @@ const Game = () => {
                 <div>
                     {area} {level}
                 </div>
-                <button id="play-pause-btn">pause</button>
+                <button id="play-pause-btn">Start</button>
             </div>
 
             <div id="game-canvas"></div>

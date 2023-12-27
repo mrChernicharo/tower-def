@@ -4,7 +4,7 @@ import { Routes } from "./router.tsx";
 import "./index.css";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
-  <React.StrictMode>
+    // <React.StrictMode>
     <Routes />
-  </React.StrictMode>
+    // </React.StrictMode>
 );
