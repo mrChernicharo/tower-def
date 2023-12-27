@@ -1,11 +1,13 @@
-const Achievements = () => {
-  console.log(`react snippet works!`);
+import { Link } from "react-router-dom";
 
-  return (
-    <>
-      <p>Achievements</p>
-    </>
-  );
+const Achievements = () => {
+    return (
+        <>
+            <Link to="/">←</Link>
+
+            <p>Achievements</p>
+        </>
+    );
 };
 
 export default Achievements;

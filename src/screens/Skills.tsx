@@ -1,9 +1,12 @@
+import { Link } from "react-router-dom";
+
 const Skills = () => {
-  return (
-    <>
-      <p>Skills</p>
-    </>
-  );
+    return (
+        <>
+            <Link to="/">←</Link>
+            <p>Skills</p>
+        </>
+    );
 };
 
 export default Skills;

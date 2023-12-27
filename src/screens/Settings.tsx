@@ -1,11 +1,12 @@
-const Settings = () => {
-  console.log(`react snippet works!`);
+import { Link } from "react-router-dom";
 
-  return (
-    <>
-      <p>Settings</p>
-    </>
-  );
+const Settings = () => {
+    return (
+        <>
+            <Link to="/">←</Link>
+            <p>Settings</p>
+        </>
+    );
 };
 
 export default Settings;

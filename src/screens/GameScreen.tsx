@@ -1,6 +1,12 @@
 import { useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { destroyGame, initGame } from "../game";
+import { Link } from "react-router-dom";
+
+const topBarStyles = {
+    display: "flex",
+    justifyContent: "space-between",
+};
 
 const Game = () => {
     const { area, level } = useParams();
@@ -15,9 +21,13 @@ const Game = () => {
 
     return (
         <>
-            <div>Game Screen</div>
-            <div>
-                {area} {level}
+            <div style={topBarStyles}>
+                <Link to={`/area/${area}`}>←</Link>
+                <div>Game Screen</div>
+                <div>
+                    {area} {level}
+                </div>
+                <button id="play-pause-btn">pause</button>
             </div>
 
             <div id="game-canvas"></div>
