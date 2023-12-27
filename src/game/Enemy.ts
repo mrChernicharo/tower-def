@@ -4,9 +4,7 @@ import { THREE } from "../three";
 import * as SkeletonUtils from "three/examples/jsm/utils/SkeletonUtils.js";
 import { EnemyType } from "./enums";
 import { EnemyBluePrint } from "./types";
-import { enemyBlueprints } from "./helpers";
-
-const DRAW_FUTURE_GIZMO = true;
+import { DRAW_FUTURE_GIZMO, enemyBlueprints } from "./constants";
 
 export class Enemy {
     #ready = false;
@@ -37,10 +35,11 @@ export class Enemy {
         const walkAction = this.mixer.clipAction(walkClip);
         walkAction.play();
 
-        this.futureGizmo = new THREE.Mesh(
-            new THREE.SphereGeometry(0.2),
-            new THREE.MeshToonMaterial({ color: 0x00ff00 })
-        );
+        if (DRAW_FUTURE_GIZMO)
+            this.futureGizmo = new THREE.Mesh(
+                new THREE.SphereGeometry(0.2),
+                new THREE.MeshToonMaterial({ color: 0x00ff00 })
+            );
 
         this.#ready = true;
 
@@ -63,7 +62,7 @@ export class Enemy {
 
         this.mixer.update(delta);
 
-        moveEnemy(this.enemyType, this.model, this.timestamp, this.bluePrint.speed);
+        handleEnemyMovement(this.enemyType, this.model, this.timestamp, this.bluePrint.speed);
 
         if (DRAW_FUTURE_GIZMO) this._drawFuturePosition(1000);
     }
@@ -84,7 +83,7 @@ export class Enemy {
     }
 }
 
-function moveEnemy(enemyType: EnemyType, model: THREE.Object3D, timestamp: number, speed: number) {
+function handleEnemyMovement(enemyType: EnemyType, model: THREE.Object3D, timestamp: number, speed: number) {
     const t = (((Date.now() - timestamp) * speed * 0.001) % 100) / 100;
 
     const position = pathCurve.getPointAt(t);
@@ -105,6 +104,8 @@ function moveEnemy(enemyType: EnemyType, model: THREE.Object3D, timestamp: numbe
             model.position.y += 0.1;
             break;
         case "soldier":
+        case "brigand":
+        case "warrior":
             model.lookAt(position.clone().add(tangent));
             model.position.y += 0.175;
             break;

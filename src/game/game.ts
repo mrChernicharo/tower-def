@@ -3,7 +3,8 @@ import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import jsonCurve from "../desert-level-path.0.json";
 import { THREE } from "../three";
 import { Enemy } from "./Enemy";
-import { enemyBlueprints, equipGun, getEnemyTypeFromChar, STAGE_WAVES_DATA } from "./helpers";
+import { getEnemyTypeFromChar, handleModelGun } from "./helpers";
+import { COLORS, enemyBlueprints, STAGE_WAVES_DATA } from "./constants";
 import { EnemyChar, EnemyType } from "./enums";
 import { EnemyBluePrint } from "./types";
 
@@ -71,7 +72,7 @@ async function gameSetup() {
 
     renderer = new THREE.WebGLRenderer({ antialias: true });
     renderer.setSize(window.innerWidth, window.innerHeight - 120);
-    renderer.setClearColor(0x000066); // Sets the color of the background
+    renderer.setClearColor(COLORS.bg); // Sets the color of the background
     // renderer.setClearColor(0xcbcbcb); // Sets the color of the background
     canvas.appendChild(renderer.domElement);
 
@@ -89,7 +90,7 @@ async function gameSetup() {
     orbit = new OrbitControls(camera, renderer.domElement);
     // orbit.maxPolarAngle = Math.PI * 0.4;
 
-    ambientLight = new THREE.AmbientLight(0xefefef, 0.9);
+    ambientLight = new THREE.AmbientLight(0xefefef, 1.5);
     scene = new THREE.Scene();
     scene.add(ambientLight);
 
@@ -106,11 +107,7 @@ async function initGlbModels() {
     const models = await Promise.all(promises);
 
     for (const model of models) {
-        if (model.userData.enemyType === "soldier") {
-            console.log(model);
-            equipGun(model.scene, "Knife_2");
-        }
-
+        handleModelGun(model);
         glbModels[model.userData.enemyType as EnemyType] = model;
     }
 }
@@ -126,11 +123,11 @@ async function drawMap() {
             const mesh = obj as THREE.Mesh;
 
             if (mesh.name.includes("TowerBase")) {
-                mesh.material = new THREE.MeshMatcapMaterial({ color: 0x5588ff });
+                mesh.material = new THREE.MeshMatcapMaterial({ color: COLORS.concrete });
             }
 
             if (/desert|Plane/g.test(mesh.name)) {
-                mesh.material = new THREE.MeshMatcapMaterial({ color: 0xaa8800 });
+                mesh.material = new THREE.MeshMatcapMaterial({ color: COLORS.desert });
             }
         }
     });
@@ -162,12 +159,13 @@ function drawPath() {
         steps: 100,
         extrudePath: pathCurve,
     });
-    const material = new THREE.MeshLambertMaterial({ color: 0xcccccc, wireframe: false });
+    // const material = new THREE.MeshLambertMaterial({ color: 0xcccccc, wireframe: false });
+    const material = new THREE.MeshMatcapMaterial({ color: COLORS.concrete });
 
     const pathMesh = new THREE.Mesh(geometry, material);
     pathMesh.position.y = shapeH;
 
-    // console.log({ pathCurve, pathMesh, pathPoints });
+    console.log({ pathCurve, pathMesh, pathPoints });
 
     scene.add(pathMesh);
 }

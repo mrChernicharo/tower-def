@@ -3,6 +3,8 @@ export enum EnemyType {
     Orc = "orc",
     Raptor = "raptor",
     Soldier = "soldier",
+    Brigand = "brigand",
+    Warrior = "warrior",
 }
 
 export enum EnemyChar {
@@ -10,4 +12,6 @@ export enum EnemyChar {
     Raptor = "r",
     Orc = "o",
     Soldier = "z",
+    Brigand = "b",
+    Warrior = "w",
 }
