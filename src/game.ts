@@ -51,13 +51,9 @@ export async function initGame() {
 
     playPauseBtn.addEventListener("click", onPlayPause);
 
-    setTimeout(spawnEnemy, 1000);
-    setTimeout(spawnEnemy, 2000);
-    setTimeout(spawnEnemy, 2000);
-    setTimeout(spawnEnemy, 3000);
     setTimeout(spawnEnemy, 4000);
-    setTimeout(spawnEnemy, 5000);
-    setTimeout(spawnEnemy, 6000);
+    setTimeout(spawnEnemy, 8000);
+    setTimeout(spawnEnemy, 12000);
 }
 
 function gameSetup() {
@@ -76,9 +72,11 @@ function gameSetup() {
 
     camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
     // camera.position.set(5, 2, 46);
-    camera.position.set(-10, 100, 40);
-    // camera.position.set(10, 10, 70); // Camera positioning
+    // camera.position.set(-10, 100, 40);
+    // camera.position.set(-20, -10, -80);
+    camera.position.set(10, 10, 70); // Camera positioning
     orbit = new OrbitControls(camera, renderer.domElement); // Sets orbit control to move the camera around
+    orbit.maxPolarAngle = Math.PI * 0.4;
 
     ambientLight = new THREE.AmbientLight(0xefefef, 0.9);
     scene = new THREE.Scene();
@@ -143,19 +141,19 @@ function drawPath() {
 function spawnEnemy() {
     const enemy = new Enemy("spider");
 
-    setTimeout(() => {
-        console.log("::spawnEnemy", enemy, enemy.ready());
-    }, 100);
+    // setTimeout(() => {
+    //     console.log("::spawnEnemy", enemy, enemy.ready());
+    // }, 100);
 }
 
 function animate() {
     const delta = clock.getDelta();
-    const elapsed = clock.getElapsedTime();
+    // const elapsed = clock.getElapsedTime();
     renderer.render(scene, camera);
     orbit.update();
 
     for (const enemy of enemies) {
-        enemy.tick(elapsed, delta);
+        enemy.tick(delta);
     }
 
     frameId = requestAnimationFrame(animate);
