@@ -1,26 +1,49 @@
-import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
+import { GLTF, GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import jsonCurve from "./desert-level-path.0.json";
-// import * as SkeletonUtils from "three/examples/jsm/utils/SkeletonUtils.js";
 import { THREE } from "./three";
 import { Enemy } from "./Enemy";
 
 let pathPoints: THREE.Vector3[] = [];
 
+export const enemyBlueprints = {
+    spider: {
+        name: "spider",
+        modelURL: "/assets/glb/spider.glb",
+        speed: 3.5,
+        maxHp: 40,
+    },
+    orc: {
+        name: "orc",
+        // modelURL: "/assets/glb/hand-painted_orc.glb",
+        modelURL: "/assets/glb/low-poly_orc.glb",
+        speed: 2,
+        maxHp: 200,
+    },
+    raptor: {
+        name: "raptor",
+        modelURL: "/assets/glb/raptoid.glb",
+        speed: 4,
+        maxHp: 100,
+    },
+} as const;
+
+export type EnemyType = keyof typeof enemyBlueprints;
+export type EnemyBluePrint = (typeof enemyBlueprints)[keyof typeof enemyBlueprints];
+
 export let scene: THREE.Scene;
-let renderer: THREE.WebGLRenderer;
-let camera: THREE.PerspectiveCamera;
-let orbit: OrbitControls;
-let ambientLight: THREE.AmbientLight;
 export let gltfLoader: GLTFLoader;
-let clock: THREE.Clock;
 export let pathCurve: THREE.CatmullRomCurve3;
+export let renderer: THREE.WebGLRenderer;
+export let camera: THREE.PerspectiveCamera;
+export let orbit: OrbitControls;
+export let ambientLight: THREE.AmbientLight;
+export let enemies: Enemy[] = [];
+export let glbModels: { [k in EnemyType]: GLTF };
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 let frameId = 0;
-export let enemies: Enemy[] = [];
-// let mixer: THREE.AnimationMixer;
-
+let clock: THREE.Clock;
 let canvas: HTMLCanvasElement;
 let playPauseBtn: HTMLButtonElement;
 
@@ -43,17 +66,19 @@ export async function initGame() {
 
     drawPath();
 
-    spawnEnemy();
-
     frameId = requestAnimationFrame(animate);
 
     window.addEventListener("resize", onResize);
 
     playPauseBtn.addEventListener("click", onPlayPause);
 
-    setTimeout(spawnEnemy, 4000);
-    setTimeout(spawnEnemy, 8000);
-    setTimeout(spawnEnemy, 12000);
+    setTimeout(() => spawnEnemy("raptor"), 0);
+    setTimeout(() => spawnEnemy("spider"), 2000);
+    setTimeout(() => spawnEnemy("spider"), 3000);
+    setTimeout(() => spawnEnemy("raptor"), 6000);
+    setTimeout(() => spawnEnemy("spider"), 9000);
+    setTimeout(() => spawnEnemy("spider"), 11000);
+    setTimeout(() => spawnEnemy("raptor"), 12000);
 }
 
 function gameSetup() {
@@ -75,12 +100,26 @@ function gameSetup() {
     // camera.position.set(-10, 100, 40);
     // camera.position.set(-20, -10, -80);
     camera.position.set(10, 10, 70); // Camera positioning
+
     orbit = new OrbitControls(camera, renderer.domElement); // Sets orbit control to move the camera around
     orbit.maxPolarAngle = Math.PI * 0.4;
 
     ambientLight = new THREE.AmbientLight(0xefefef, 0.9);
     scene = new THREE.Scene();
     scene.add(ambientLight);
+
+    initGlbModels();
+}
+
+async function initGlbModels() {
+    const promises: Promise<GLTF>[] = [];
+    for (const enemyType of Object.keys(enemyBlueprints)) {
+        const bluePrint: EnemyBluePrint = enemyBlueprints[enemyType as EnemyType];
+        promises.push(gltfLoader.loadAsync(bluePrint.modelURL));
+    }
+
+    const models = await Promise.all(promises);
+    console.log(":::::", models);
 }
 
 async function drawMap() {
@@ -138,12 +177,9 @@ function drawPath() {
     scene.add(pathMesh);
 }
 
-function spawnEnemy() {
-    const enemy = new Enemy("spider");
-
-    // setTimeout(() => {
-    //     console.log("::spawnEnemy", enemy, enemy.ready());
-    // }, 100);
+function spawnEnemy(enemyType: EnemyType) {
+    const enemy = new Enemy(enemyType);
+    setTimeout(() => console.log(enemy), 100);
 }
 
 function animate() {
