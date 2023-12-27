@@ -1,38 +1,37 @@
-import * as THREE from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import jsonCurve from "./desert-level-path.0.json";
-import * as SkeletonUtils from "three/examples/jsm/utils/SkeletonUtils.js";
+// import * as SkeletonUtils from "three/examples/jsm/utils/SkeletonUtils.js";
+import { THREE } from "./three";
+import { Enemy } from "./Enemy";
 
 let pathPoints: THREE.Vector3[] = [];
 
-let scene: THREE.Scene;
+export let scene: THREE.Scene;
 let renderer: THREE.WebGLRenderer;
 let camera: THREE.PerspectiveCamera;
 let orbit: OrbitControls;
 let ambientLight: THREE.AmbientLight;
-let gltfLoader: GLTFLoader;
+export let gltfLoader: GLTFLoader;
 let clock: THREE.Clock;
-let pathCurve: THREE.CatmullRomCurve3;
+export let pathCurve: THREE.CatmullRomCurve3;
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 let frameId = 0;
-let enemies: THREE.Object3D[] = [];
-let mixer: THREE.AnimationMixer;
+export let enemies: Enemy[] = [];
+// let mixer: THREE.AnimationMixer;
 
 let canvas: HTMLCanvasElement;
 let playPauseBtn: HTMLButtonElement;
 
 export async function destroyGame() {
+    cancelAnimationFrame(frameId);
+    clock.stop();
     scene.clear();
     camera.clear();
     orbit.dispose();
     ambientLight.dispose();
     renderer.dispose();
-    clock.stop();
-    cancelAnimationFrame(frameId);
-
-    enemies.forEach((mesh) => mesh.clear());
     enemies = [];
     window.removeEventListener("resize", onResize);
 }
@@ -40,19 +39,25 @@ export async function destroyGame() {
 export async function initGame() {
     gameSetup();
 
-    // drawGrid();
-
     await drawMap();
 
     drawPath();
 
-    await spawnEnemy();
+    spawnEnemy();
 
     frameId = requestAnimationFrame(animate);
 
     window.addEventListener("resize", onResize);
 
     playPauseBtn.addEventListener("click", onPlayPause);
+
+    setTimeout(spawnEnemy, 1000);
+    setTimeout(spawnEnemy, 2000);
+    setTimeout(spawnEnemy, 2000);
+    setTimeout(spawnEnemy, 3000);
+    setTimeout(spawnEnemy, 4000);
+    setTimeout(spawnEnemy, 5000);
+    setTimeout(spawnEnemy, 6000);
 }
 
 function gameSetup() {
@@ -135,52 +140,23 @@ function drawPath() {
     scene.add(pathMesh);
 }
 
-async function spawnEnemy() {
-    // const wereWolfGlb = await gltfLoader.loadAsync("/assets/glb/werewolf.glb");
-    const glb = await gltfLoader.loadAsync("/assets/glb/spider.glb");
+function spawnEnemy() {
+    const enemy = new Enemy("spider");
 
-    // const model = wereWolfGlb.scene;
-    // const model = glb.scene;
-    const model = SkeletonUtils.clone(glb.scene);
-    // console.log({ glb, model });
-
-    model.scale.set(50, 50, 50);
-
-    enemies.push(model);
-    scene.add(model);
-
-    mixer = new THREE.AnimationMixer(model);
-
-    const walkAnimation = glb.animations.find((clip) => clip.name === "Wolf Spider Armature|Spider running")!;
-
-    const walkAction = mixer.clipAction(walkAnimation);
-    walkAction.loop = THREE.LoopRepeat;
-
-    console.log({
-        animations: glb.animations,
-        mixer,
-        walkAnimation,
-        walkAction,
-    });
-    walkAction.play();
+    setTimeout(() => {
+        console.log("::spawnEnemy", enemy, enemy.ready());
+    }, 100);
 }
 
 function animate() {
     const delta = clock.getDelta();
+    const elapsed = clock.getElapsedTime();
     renderer.render(scene, camera);
     orbit.update();
 
-    mixer.update(delta);
-
-    const time = Date.now();
-    const speed = 40000;
-    const t = ((time / speed) % 2) / 2;
-
-    const position = pathCurve.getPointAt(t);
-    const tangent = pathCurve.getTangentAt(t).normalize();
-
-    enemies[0].position.copy(position);
-    enemies[0].lookAt(position.clone().sub(tangent));
+    for (const enemy of enemies) {
+        enemy.tick(elapsed, delta);
+    }
 
     frameId = requestAnimationFrame(animate);
 }
