@@ -1,35 +1,16 @@
 import { GLTF, GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
-import jsonCurve from "./desert-level-path.0.json";
-import { THREE } from "./three";
+import jsonCurve from "../desert-level-path.0.json";
+import { THREE } from "../three";
 import { Enemy } from "./Enemy";
+import { enemyBlueprints, equipGun, getEnemyTypeFromChar, STAGE_WAVES_DATA } from "./helpers";
+import { EnemyChar, EnemyType } from "./enums";
+import { EnemyBluePrint } from "./types";
 
 let pathPoints: THREE.Vector3[] = [];
 
-export const enemyBlueprints = {
-    spider: {
-        name: "spider",
-        modelURL: "/assets/glb/spider.glb",
-        speed: 3.5,
-        maxHp: 40,
-    },
-    orc: {
-        name: "orc",
-        // modelURL: "/assets/glb/hand-painted_orc.glb",
-        modelURL: "/assets/glb/low-poly_orc.glb",
-        speed: 2,
-        maxHp: 200,
-    },
-    raptor: {
-        name: "raptor",
-        modelURL: "/assets/glb/raptoid.glb",
-        speed: 4,
-        maxHp: 100,
-    },
-} as const;
-
-export type EnemyType = keyof typeof enemyBlueprints;
-export type EnemyBluePrint = (typeof enemyBlueprints)[keyof typeof enemyBlueprints];
+// export type EnemyType = keyof typeof enemyBlueprints;
+// export type EnemyBluePrint = (typeof enemyBlueprints)[keyof typeof enemyBlueprints];
 
 export let scene: THREE.Scene;
 export let gltfLoader: GLTFLoader;
@@ -39,7 +20,10 @@ export let camera: THREE.PerspectiveCamera;
 export let orbit: OrbitControls;
 export let ambientLight: THREE.AmbientLight;
 export let enemies: Enemy[] = [];
-export let glbModels: { [k in EnemyType]: GLTF };
+
+export const glbModels = {} as { [k in EnemyType]: GLTF };
+// enable canceling waveScheduling timeouts when game is destroy
+const spawnTimeouts: number[] = [];
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 let frameId = 0;
@@ -56,32 +40,30 @@ export async function destroyGame() {
     ambientLight.dispose();
     renderer.dispose();
     enemies = [];
+    spawnTimeouts.forEach((timeoutId) => {
+        clearTimeout(timeoutId);
+    });
+
     window.removeEventListener("resize", onResize);
 }
 
-export async function initGame() {
-    gameSetup();
+export async function initGame(levelIdx: number) {
+    await gameSetup();
 
     await drawMap();
 
     drawPath();
+
+    scheduleWaveEnemies(levelIdx, 0);
 
     frameId = requestAnimationFrame(animate);
 
     window.addEventListener("resize", onResize);
 
     playPauseBtn.addEventListener("click", onPlayPause);
-
-    setTimeout(() => spawnEnemy("raptor"), 0);
-    setTimeout(() => spawnEnemy("spider"), 2000);
-    setTimeout(() => spawnEnemy("spider"), 3000);
-    setTimeout(() => spawnEnemy("raptor"), 6000);
-    setTimeout(() => spawnEnemy("spider"), 9000);
-    setTimeout(() => spawnEnemy("spider"), 11000);
-    setTimeout(() => spawnEnemy("raptor"), 12000);
 }
 
-function gameSetup() {
+async function gameSetup() {
     canvas = document.querySelector("#game-canvas") as HTMLCanvasElement;
     playPauseBtn = document.querySelector("#play-pause-btn") as HTMLButtonElement;
 
@@ -89,37 +71,48 @@ function gameSetup() {
 
     renderer = new THREE.WebGLRenderer({ antialias: true });
     renderer.setSize(window.innerWidth, window.innerHeight - 120);
-    renderer.setClearColor(0xcbcbcb); // Sets the color of the background
+    renderer.setClearColor(0x000066); // Sets the color of the background
+    // renderer.setClearColor(0xcbcbcb); // Sets the color of the background
     canvas.appendChild(renderer.domElement);
 
     gltfLoader = new GLTFLoader();
     clock = new THREE.Clock();
 
     camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
+    camera.position.set(-10, 100, 40);
     // camera.position.set(5, 2, 46);
-    // camera.position.set(-10, 100, 40);
     // camera.position.set(-20, -10, -80);
-    camera.position.set(10, 10, 70); // Camera positioning
+    // camera.position.set(10, 10, 70); // Camera positioning
+    // camera.position.set(0, 0, 100);
+    // camera.position.set(5, 4, 50); // Camera positioning
 
-    orbit = new OrbitControls(camera, renderer.domElement); // Sets orbit control to move the camera around
-    orbit.maxPolarAngle = Math.PI * 0.4;
+    orbit = new OrbitControls(camera, renderer.domElement);
+    // orbit.maxPolarAngle = Math.PI * 0.4;
 
     ambientLight = new THREE.AmbientLight(0xefefef, 0.9);
     scene = new THREE.Scene();
     scene.add(ambientLight);
 
-    initGlbModels();
+    await initGlbModels();
 }
 
 async function initGlbModels() {
     const promises: Promise<GLTF>[] = [];
     for (const enemyType of Object.keys(enemyBlueprints)) {
         const bluePrint: EnemyBluePrint = enemyBlueprints[enemyType as EnemyType];
-        promises.push(gltfLoader.loadAsync(bluePrint.modelURL));
+        promises.push(gltfLoader.loadAsync(bluePrint.modelURL).then((glb) => ({ ...glb, userData: { enemyType } })));
     }
 
     const models = await Promise.all(promises);
-    console.log(":::::", models);
+
+    for (const model of models) {
+        if (model.userData.enemyType === "soldier") {
+            console.log(model);
+            equipGun(model.scene, "Knife_2");
+        }
+
+        glbModels[model.userData.enemyType as EnemyType] = model;
+    }
 }
 
 async function drawMap() {
@@ -154,7 +147,9 @@ function drawPath() {
 
     pathCurve = new THREE.CatmullRomCurve3(pathPoints, false, "catmullrom", 0.3);
 
-    const [shapeW, shapeH] = [0.2, 0.05];
+    const [shapeW, shapeH] = [1, 0.05];
+    // const [shapeW, shapeH] = [0.5, 0.05];
+    // const [shapeW, shapeH] = [0.2, 0.05];
     const shapePts = [
         new THREE.Vector2(-shapeH, -shapeW),
         new THREE.Vector2(shapeH, -shapeW),
@@ -172,14 +167,33 @@ function drawPath() {
     const pathMesh = new THREE.Mesh(geometry, material);
     pathMesh.position.y = shapeH;
 
-    console.log({ pathCurve, pathMesh, pathPoints });
+    // console.log({ pathCurve, pathMesh, pathPoints });
 
     scene.add(pathMesh);
 }
 
+function scheduleWaveEnemies(levelIdx: number, waveIdx: number) {
+    try {
+        const wave = STAGE_WAVES_DATA[levelIdx][waveIdx].map((wEnemy) => ({
+            enemyType: getEnemyTypeFromChar(wEnemy[0] as EnemyChar),
+            spawnAt: (wEnemy[1] as number) * 1000,
+        }));
+
+        for (const waveEnemy of wave) {
+            const spawnFn = setTimeout(() => spawnEnemy(waveEnemy.enemyType), waveEnemy.spawnAt);
+            spawnTimeouts.push(spawnFn);
+        }
+    } catch (err) {
+        console.error({ err, STAGE_WAVES_DATA });
+        throw Error(`couldn't find wave ${waveIdx} of level ${levelIdx} at the STAGE_WAVES_DATA object`);
+    }
+}
+
 function spawnEnemy(enemyType: EnemyType) {
     const enemy = new Enemy(enemyType);
-    setTimeout(() => console.log(enemy), 100);
+    enemies.push(enemy);
+    scene.add(enemy.model);
+    scene.add(enemy.futureGizmo);
 }
 
 function animate() {

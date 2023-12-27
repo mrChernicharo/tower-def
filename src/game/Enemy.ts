@@ -1,7 +1,10 @@
 import { GLTF } from "three/examples/jsm/Addons.js";
-import { EnemyBluePrint, EnemyType, enemies, enemyBlueprints, gltfLoader, pathCurve, scene } from "./game";
-import { THREE } from "./three";
+import { glbModels, pathCurve } from "./game";
+import { THREE } from "../three";
 import * as SkeletonUtils from "three/examples/jsm/utils/SkeletonUtils.js";
+import { EnemyType } from "./enums";
+import { EnemyBluePrint } from "./types";
+import { enemyBlueprints } from "./helpers";
 
 const DRAW_FUTURE_GIZMO = true;
 
@@ -25,40 +28,34 @@ export class Enemy {
         this._init();
     }
 
-    async _init() {
-        await this._setupModel();
+    _init() {
+        this.model = this._setupModel();
 
         this.mixer = new THREE.AnimationMixer(this.model);
 
-        console.log("::Enemy _init", { glb: this.glb, enemyType: this.enemyType, t: this });
-
-        const walkClipName = getWalkClipName(this.enemyType);
-        const walkClip = this.glb.animations.find((anim) => anim.name === walkClipName)!;
+        const walkClip = this.glb.animations.find((anim) => anim.name === this.bluePrint.walkAnimationName)!;
         const walkAction = this.mixer.clipAction(walkClip);
-
-        console.log("::Enemy _init", { glb: this.glb, walkClip, walkClipName, enemyType: this.enemyType, t: this });
-
         walkAction.play();
 
         this.futureGizmo = new THREE.Mesh(
             new THREE.SphereGeometry(0.2),
             new THREE.MeshToonMaterial({ color: 0x00ff00 })
         );
-        scene.add(this.futureGizmo);
 
-        scene.add(this.model);
-        enemies.push(this);
         this.#ready = true;
+
+        return this;
     }
 
-    async _setupModel() {
-        this.glb = await gltfLoader.loadAsync(this.bluePrint.modelURL);
-        console.log("::Enemy _init", { glb: this.glb });
+    _setupModel() {
+        this.glb = glbModels[this.enemyType];
 
-        this.model = SkeletonUtils.clone(this.glb.scene);
+        const model = SkeletonUtils.clone(this.glb.scene);
 
-        const s = getModelScale(this.enemyType);
-        this.model.scale.set(s, s, s);
+        const s = this.bluePrint.modelScale;
+        model.scale.set(s, s, s);
+
+        return model;
     }
 
     tick(delta: number) {
@@ -68,7 +65,7 @@ export class Enemy {
 
         moveEnemy(this.enemyType, this.model, this.timestamp, this.bluePrint.speed);
 
-        if (DRAW_FUTURE_GIZMO) this.drawFuturePosition(1000);
+        if (DRAW_FUTURE_GIZMO) this._drawFuturePosition(1000);
     }
 
     getFuturePoint(time: number) {
@@ -77,39 +74,13 @@ export class Enemy {
         return position;
     }
 
-    drawFuturePosition(time: number) {
+    _drawFuturePosition(time: number) {
         const position = this.getFuturePoint(time);
         this.futureGizmo.position.copy(position);
     }
 
     ready() {
         return this.#ready;
-    }
-}
-
-function getModelScale(enemyType: EnemyType) {
-    switch (enemyType) {
-        case "spider":
-            return 50;
-        case "orc":
-            return 0.75;
-        case "raptor":
-            return 0.01;
-        default:
-            return 1;
-    }
-}
-
-function getWalkClipName(enemyType: EnemyType) {
-    switch (enemyType) {
-        case "spider":
-            return "Wolf Spider Armature|Spider running";
-        case "orc":
-            return "ANM_WALK";
-        case "raptor":
-            return "Running";
-        default:
-            return "Walk";
     }
 }
 
@@ -131,6 +102,11 @@ function moveEnemy(enemyType: EnemyType, model: THREE.Object3D, timestamp: numbe
             break;
         case "raptor":
             model.lookAt(position.clone().add(tangent.applyAxisAngle(model.up, -Math.PI * 0.5).add(tangent)));
+            model.position.y += 0.1;
+            break;
+        case "soldier":
+            model.lookAt(position.clone().add(tangent));
+            model.position.y += 0.175;
             break;
         default:
             model.lookAt(position.clone().sub(tangent));

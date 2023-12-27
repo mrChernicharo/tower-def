@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useParams } from "react-router-dom";
-import { destroyGame, initGame } from "../game";
+import { destroyGame, initGame } from "../game/game";
 import { Link } from "react-router-dom";
 
 const topBarStyles = {
@@ -12,12 +12,12 @@ const Game = () => {
     const { area, level } = useParams();
 
     useEffect(() => {
-        initGame();
+        initGame(+level!);
 
         return () => {
             destroyGame();
         };
-    }, []);
+    }, [area, level]);
 
     return (
         <>
