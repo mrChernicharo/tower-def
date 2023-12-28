@@ -17,6 +17,7 @@ export class Enemy {
     futureGizmo!: THREE.Mesh;
     timestamp = Date.now();
     hp: number;
+    timeSinceSpawn!: number;
 
     constructor(enemyType: EnemyType) {
         this.enemyType = enemyType;
@@ -41,6 +42,7 @@ export class Enemy {
                 new THREE.MeshToonMaterial({ color: 0x00ff00 })
             );
 
+        this.timeSinceSpawn = 0;
         this.#ready = true;
 
         return this;
@@ -60,9 +62,12 @@ export class Enemy {
     tick(delta: number) {
         if (!this.ready()) return;
 
+        this.timeSinceSpawn += delta;
+        console.log({ timeSinceSpawn: this.timeSinceSpawn });
+
         this.mixer.update(delta);
 
-        handleEnemyMovement(this.enemyType, this.model, this.timestamp, this.bluePrint.speed);
+        handleEnemyMovement(this.enemyType, this.model, this.bluePrint.speed);
 
         if (DRAW_FUTURE_GIZMO) this._drawFuturePosition(1000);
     }
@@ -83,8 +88,8 @@ export class Enemy {
     }
 }
 
-function handleEnemyMovement(enemyType: EnemyType, model: THREE.Object3D, timestamp: number, speed: number) {
-    const t = (((Date.now() - timestamp) * speed * 0.001) % 100) / 100;
+function handleEnemyMovement(enemyType: EnemyType, model: THREE.Object3D, speed: number) {
+    const t = ((Date.now() * speed * 0.001) % 100) / 100;
 
     const position = pathCurve.getPointAt(t);
     const tangent = pathCurve.getTangentAt(t);

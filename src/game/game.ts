@@ -4,8 +4,8 @@ import jsonCurve from "../desert-level-path.0.json";
 import { THREE } from "../three";
 import { Enemy } from "./Enemy";
 import { getEnemyTypeFromChar, handleModelGun } from "./helpers";
-import { COLORS, enemyBlueprints, STAGE_WAVES_DATA } from "./constants";
-import { EnemyChar, EnemyType } from "./enums";
+import { COLORS, DRAW_FUTURE_GIZMO, enemyBlueprints, STAGE_WAVES_DATA } from "./constants";
+import { EnemyChar, EnemyType, GameState } from "./enums";
 import { EnemyBluePrint } from "./types";
 
 let pathPoints: THREE.Vector3[] = [];
@@ -21,6 +21,7 @@ export let camera: THREE.PerspectiveCamera;
 export let orbit: OrbitControls;
 export let ambientLight: THREE.AmbientLight;
 export let enemies: Enemy[] = [];
+export let gameState = GameState.Loading;
 
 export const glbModels = {} as { [k in EnemyType]: GLTF };
 // enable canceling waveScheduling timeouts when game is destroy
@@ -28,13 +29,13 @@ const spawnTimeouts: number[] = [];
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 let frameId = 0;
-let clock: THREE.Clock;
+export let gameClock: THREE.Clock;
 let canvas: HTMLCanvasElement;
 let playPauseBtn: HTMLButtonElement;
 
 export async function destroyGame() {
     cancelAnimationFrame(frameId);
-    clock.stop();
+    gameClock.stop();
     scene.clear();
     camera.clear();
     orbit.dispose();
@@ -46,6 +47,7 @@ export async function destroyGame() {
     });
 
     window.removeEventListener("resize", onResize);
+    playPauseBtn.removeEventListener("click", onPlayPause);
 }
 
 export async function initGame(levelIdx: number) {
@@ -60,7 +62,6 @@ export async function initGame(levelIdx: number) {
     frameId = requestAnimationFrame(animate);
 
     window.addEventListener("resize", onResize);
-
     playPauseBtn.addEventListener("click", onPlayPause);
 }
 
@@ -77,7 +78,7 @@ async function gameSetup() {
     canvas.appendChild(renderer.domElement);
 
     gltfLoader = new GLTFLoader();
-    clock = new THREE.Clock();
+    gameClock = new THREE.Clock();
 
     camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
     camera.position.set(-10, 100, 40);
@@ -191,17 +192,20 @@ function spawnEnemy(enemyType: EnemyType) {
     const enemy = new Enemy(enemyType);
     enemies.push(enemy);
     scene.add(enemy.model);
-    scene.add(enemy.futureGizmo);
+    if (DRAW_FUTURE_GIZMO) scene.add(enemy.futureGizmo);
 }
 
 function animate() {
-    const delta = clock.getDelta();
-    // const elapsed = clock.getElapsedTime();
+    const delta = gameClock.getDelta();
+    // const elapsed = gameClock.getElapsedTime();
+
     renderer.render(scene, camera);
     orbit.update();
 
-    for (const enemy of enemies) {
-        enemy.tick(delta);
+    if (gameState === GameState.Active) {
+        for (const enemy of enemies) {
+            enemy.tick(delta);
+        }
     }
 
     frameId = requestAnimationFrame(animate);
@@ -214,7 +218,12 @@ function onResize() {
 }
 
 function onPlayPause() {
-    console.log("playpause click");
+    if (gameState === GameState.Active) {
+        gameState = GameState.Paused;
+    } else if (gameState === GameState.Paused || gameState === GameState.Loading) {
+        gameState = GameState.Active;
+    }
+    console.log("playpause click", gameState);
 }
 
 // function drawGrid() {

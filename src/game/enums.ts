@@ -15,3 +15,12 @@ export enum EnemyChar {
     Brigand = "b",
     Warrior = "w",
 }
+
+export enum GameState {
+    // Dormant = "dormant",
+    Loading = "loading",
+    Active = "active",
+    Paused = "paused",
+    // Win = "win",
+    // Lose = "lose",
+}
