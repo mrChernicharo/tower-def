@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { GLTF, GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import { CSS2DRenderer, CSS2DObject } from "three/examples/jsm/renderers/CSS2DRenderer.js";
@@ -24,8 +25,8 @@ export let orbit: OrbitControls;
 export let ambientLight: THREE.AmbientLight;
 export let enemies: Enemy[] = [];
 export let gameState = GameState.Loading;
-export let towerBaseMouseRay: THREE.Raycaster;
 export let cssRenderer: CSS2DRenderer;
+export let towerBaseMouseRay: THREE.Raycaster;
 
 export const glbModels = {} as { [k in EnemyType]: GLTF };
 // enable canceling waveScheduling timeouts when game is destroy
@@ -36,6 +37,8 @@ let frameId = 0;
 export let gameClock: THREE.Clock;
 let canvas: HTMLCanvasElement;
 let playPauseBtn: HTMLButtonElement;
+
+export let clickTimestamp = 0;
 
 export async function destroyGame() {
     cancelAnimationFrame(frameId);
@@ -53,6 +56,9 @@ export async function destroyGame() {
 
     window.removeEventListener("resize", onResize);
     playPauseBtn.removeEventListener("click", onPlayPause);
+    canvas.removeEventListener("mousemove", onMouseMove);
+    canvas.removeEventListener("click", onCanvasClick);
+    canvas.removeEventListener("mousedown", onMouseDown);
 }
 
 export async function initGame(levelIdx: number) {
@@ -71,26 +77,8 @@ export async function initGame(levelIdx: number) {
     window.addEventListener("resize", onResize);
     playPauseBtn.addEventListener("click", onPlayPause);
     canvas.addEventListener("mousemove", onMouseMove);
-}
-
-function init2DModals() {
-    scene.traverse((el) => {
-        if (el.name.includes("TowerBase")) {
-            const modal = document.createElement("div");
-            modal.innerHTML = `
-                <div id="modal2D-${hoveredTowerBaseName}" style="background: #444; padding: 1rem; border-radius: 12px;">
-                    <h3>Hello</h3>
-                    <button>Click</button>
-                </div>
-            `;
-
-            const modal2D = new CSS2DObject(modal);
-            modal2D.name = `modal2D-${hoveredTowerBaseName}`;
-            modal2D.position.set(el.position.x, el.position.y + 10, el.position.z);
-            // modal2D.visible = false;
-            scene.add(modal2D);
-        }
-    });
+    canvas.addEventListener("click", onCanvasClick);
+    canvas.addEventListener("mousedown", onMouseDown);
 }
 
 async function gameSetup() {
@@ -107,6 +95,7 @@ async function gameSetup() {
 
     cssRenderer = new CSS2DRenderer();
     cssRenderer.setSize(window.innerWidth, window.innerHeight - 120);
+    cssRenderer.domElement.id = "css2d-overlay";
     cssRenderer.domElement.style.position = "absolute";
     cssRenderer.domElement.style.top = "64px";
     cssRenderer.domElement.style.pointerEvents = "none";
@@ -135,6 +124,7 @@ async function gameSetup() {
     towerBaseMouseRay = new THREE.Raycaster();
     towerBaseMouseRay.layers.disableAll();
     towerBaseMouseRay.layers.enable(AppLayers.TowerBase);
+    towerBaseMouseRay.layers.enable(AppLayers.Modals);
 
     await initGlbModels();
 }
@@ -266,6 +256,114 @@ function onMouseMove(e: MouseEvent) {
     handleTowerBaseHoverOpacityEfx();
 }
 
+function onMouseDown() {
+    clickTimestamp = Date.now();
+}
+
+function init2DModals() {
+    scene.traverse((el) => {
+        if (el.name.includes("TowerBase")) {
+            const modalContainer = document.createElement("div");
+            modalContainer.className = "modal-container";
+
+            const modal = document.createElement("div");
+            modal.id = `modal2D-${el.name}`;
+            modal.className = "modal2D";
+            modal.style.pointerEvents = "all";
+            modal.innerHTML = `
+                <h3>Hello</h3>
+                <button>Click</button>
+            `;
+            modal.onclick = () => {
+                console.log("onclick", modal);
+            };
+
+            modalContainer.append(modal);
+
+            const modal2D = new CSS2DObject(modalContainer);
+            modal2D.position.set(el.position.x, el.position.y + 8, el.position.z);
+            modal2D.name = `${el.name}-modal`;
+            modal2D.layers.set(AppLayers.Modals);
+            modal2D.visible = false;
+            scene.add(modal2D);
+        }
+    });
+}
+
+function onCanvasClick(e: MouseEvent) {
+    if (Date.now() - clickTimestamp > 300) {
+        console.log("CLICK CANCELED");
+        return;
+    }
+
+    const mousePos = new THREE.Vector2();
+    mousePos.x = (e.offsetX / window.innerWidth) * 2 - 1;
+    mousePos.y = -(e.offsetY / (window.innerHeight - 120)) * 2 + 1;
+
+    const clickedTowerBase = towerBaseMouseRay.intersectObjects(scene.children)[0];
+
+    if (clickedTowerBase) {
+        console.log("CLICKED TOWER BASE");
+
+        const modal2D = scene.getObjectByName(`${clickedTowerBase.object.name}-modal`)!;
+        // close open modal
+        scene.traverse((obj) => {
+            if ((obj as any).isCSS2DObject && obj.visible) {
+                obj.visible = false;
+            }
+        });
+        // open new modal
+        modal2D.visible = true;
+        console.log({ clickedTowerBase, modal2D });
+    } else {
+        if ([...e.composedPath()].some((el) => (el as HTMLElement)?.classList?.contains("modal2D"))) {
+            console.log("CLICKED MODAL");
+        } else {
+            console.log("CLICKED OUTSIDE");
+            // close open modal
+            scene.traverse((obj) => {
+                if ((obj as any).isCSS2DObject && obj.visible) {
+                    obj.visible = false;
+                }
+            });
+        }
+    }
+}
+
+function handleTowerBaseHoverOpacityEfx() {
+    const hoveredTowerBase = towerBaseMouseRay.intersectObjects(scene.children)[0];
+
+    if (hoveredTowerBase) {
+        console.log({ hoveredTowerBase });
+
+        const towerBaseMesh = hoveredTowerBase.object;
+        // keep track of current towerBase
+        hoveredTowerBaseName = towerBaseMesh.name;
+
+        // add opacity EFX
+        (towerBaseMesh as THREE.Mesh).material = new THREE.MeshMatcapMaterial({
+            color: COLORS.concrete,
+            transparent: true,
+            opacity: 0.5,
+        });
+    } else {
+        if (hoveredTowerBaseName) {
+            const hoveredTowerBase = scene.getObjectByName(hoveredTowerBaseName);
+            // const modal2D = scene.getObjectByName(`modal2D-${hoveredTowerBaseName}`)!;
+
+            // remove opacity EFX
+            (hoveredTowerBase as THREE.Mesh).material = new THREE.MeshMatcapMaterial({
+                color: COLORS.concrete,
+                transparent: true,
+                opacity: 1,
+            });
+
+            // remove memory of hovered towerBase
+            hoveredTowerBaseName = null;
+        }
+    }
+}
+
 function onResize() {
     camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
@@ -282,42 +380,6 @@ function onPlayPause() {
         playPauseBtn.textContent = "Pause";
     }
     console.log("playpause click", gameState);
-}
-
-function handleTowerBaseHoverOpacityEfx() {
-    const hoveredTowerBase = towerBaseMouseRay.intersectObjects(scene.children)[0];
-
-    if (hoveredTowerBase) {
-        const towerBaseMesh = hoveredTowerBase.object;
-        // keep track of current towerBase
-        hoveredTowerBaseName = towerBaseMesh.name;
-
-        // add opacity EFX
-        (towerBaseMesh as THREE.Mesh).material = new THREE.MeshMatcapMaterial({
-            color: COLORS.concrete,
-            transparent: true,
-            opacity: 0.5,
-        });
-
-        // show tileMenu
-    } else {
-        if (hoveredTowerBaseName) {
-            const hoveredTowerBase = scene.getObjectByName(hoveredTowerBaseName);
-            // const modal2D = scene.getObjectByName(`modal2D-${hoveredTowerBaseName}`)!;
-
-            // remove opacity EFX
-            (hoveredTowerBase as THREE.Mesh).material = new THREE.MeshMatcapMaterial({
-                color: COLORS.concrete,
-                transparent: true,
-                opacity: 1,
-            });
-
-            // hide tileMenu
-
-            // remove memory of hovered towerBase
-            hoveredTowerBaseName = null;
-        }
-    }
 }
 
 // function drawGrid() {
