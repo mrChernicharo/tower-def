@@ -4,14 +4,14 @@ import jsonCurve from "../desert-level-path.0.json";
 import { THREE } from "../three";
 import { Enemy } from "./Enemy";
 import { getEnemyTypeFromChar, handleModelGun } from "./helpers";
-import { COLORS, DRAW_FUTURE_GIZMO, enemyBlueprints, STAGE_WAVES_DATA } from "./constants";
+import { COLORS, DRAW_FUTURE_GIZMO, ENEMY_BLUEPRINTS, STAGE_WAVES_DATA } from "./constants";
 import { EnemyChar, EnemyType, GameState } from "./enums";
 import { EnemyBluePrint } from "./types";
 
 let pathPoints: THREE.Vector3[] = [];
 
-// export type EnemyType = keyof typeof enemyBlueprints;
-// export type EnemyBluePrint = (typeof enemyBlueprints)[keyof typeof enemyBlueprints];
+// export type EnemyType = keyof typeof ENEMY_BLUEPRINTS;
+// export type EnemyBluePrint = (typeof ENEMY_BLUEPRINTS)[keyof typeof ENEMY_BLUEPRINTS];
 
 export let scene: THREE.Scene;
 export let gltfLoader: GLTFLoader;
@@ -42,6 +42,7 @@ export async function destroyGame() {
     ambientLight.dispose();
     renderer.dispose();
     enemies = [];
+    gameState = GameState.Paused;
     spawnTimeouts.forEach((timeoutId) => {
         clearTimeout(timeoutId);
     });
@@ -100,8 +101,8 @@ async function gameSetup() {
 
 async function initGlbModels() {
     const promises: Promise<GLTF>[] = [];
-    for (const enemyType of Object.keys(enemyBlueprints)) {
-        const bluePrint: EnemyBluePrint = enemyBlueprints[enemyType as EnemyType];
+    for (const enemyType of Object.keys(ENEMY_BLUEPRINTS)) {
+        const bluePrint: EnemyBluePrint = ENEMY_BLUEPRINTS[enemyType as EnemyType];
         promises.push(gltfLoader.loadAsync(bluePrint.modelURL).then((glb) => ({ ...glb, userData: { enemyType } })));
     }
 
@@ -220,8 +221,10 @@ function onResize() {
 function onPlayPause() {
     if (gameState === GameState.Active) {
         gameState = GameState.Paused;
+        playPauseBtn.textContent = "Resume";
     } else if (gameState === GameState.Paused || gameState === GameState.Loading) {
         gameState = GameState.Active;
+        playPauseBtn.textContent = "Pause";
     }
     console.log("playpause click", gameState);
 }

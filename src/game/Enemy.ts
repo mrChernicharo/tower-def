@@ -4,7 +4,7 @@ import { THREE } from "../three";
 import * as SkeletonUtils from "three/examples/jsm/utils/SkeletonUtils.js";
 import { EnemyType } from "./enums";
 import { EnemyBluePrint } from "./types";
-import { DRAW_FUTURE_GIZMO, enemyBlueprints } from "./constants";
+import { DRAW_FUTURE_GIZMO, ENEMY_BLUEPRINTS } from "./constants";
 
 export class Enemy {
     #ready = false;
@@ -21,7 +21,7 @@ export class Enemy {
 
     constructor(enemyType: EnemyType) {
         this.enemyType = enemyType;
-        this.bluePrint = enemyBlueprints[this.enemyType];
+        this.bluePrint = ENEMY_BLUEPRINTS[this.enemyType];
         this.hp = this.bluePrint.maxHp;
 
         this._init();
@@ -29,6 +29,7 @@ export class Enemy {
 
     _init() {
         this.model = this._setupModel();
+        this.model.visible = false;
 
         this.mixer = new THREE.AnimationMixer(this.model);
 
@@ -36,12 +37,13 @@ export class Enemy {
         const walkAction = this.mixer.clipAction(walkClip);
         walkAction.play();
 
-        if (DRAW_FUTURE_GIZMO)
+        if (DRAW_FUTURE_GIZMO) {
             this.futureGizmo = new THREE.Mesh(
-                new THREE.SphereGeometry(0.2),
-                new THREE.MeshToonMaterial({ color: 0x00ff00 })
+                new THREE.SphereGeometry(0.5),
+                new THREE.MeshToonMaterial({ color: 0xff0000 })
             );
-
+            this.futureGizmo.visible = false;
+        }
         this.timeSinceSpawn = 0;
         this.#ready = true;
 
@@ -62,24 +64,24 @@ export class Enemy {
     tick(delta: number) {
         if (!this.ready()) return;
 
-        this.timeSinceSpawn += delta;
-        console.log({ timeSinceSpawn: this.timeSinceSpawn });
+        if (!this.model.visible) {
+            this.model.visible = true;
+        }
 
+        this.timeSinceSpawn += delta;
         this.mixer.update(delta);
 
-        handleEnemyMovement(this.enemyType, this.model, this.bluePrint.speed);
+        handleEnemyMovement(this.enemyType, this.model, this.bluePrint.speed, this.timeSinceSpawn);
 
-        if (DRAW_FUTURE_GIZMO) this._drawFuturePosition(1000);
+        if (DRAW_FUTURE_GIZMO) {
+            if (!this.futureGizmo.visible) this.futureGizmo.visible = true;
+            this._drawFuturePosition(1);
+        }
     }
 
-    getFuturePoint(time: number) {
-        const t = (((Date.now() + time - this.timestamp) * this.bluePrint.speed * 0.001) % 100) / 100;
+    _drawFuturePosition(timeInSecs: number) {
+        const t = getPercDist(this.bluePrint.speed, this.timeSinceSpawn + timeInSecs);
         const position = pathCurve.getPointAt(t);
-        return position;
-    }
-
-    _drawFuturePosition(time: number) {
-        const position = this.getFuturePoint(time);
         this.futureGizmo.position.copy(position);
     }
 
@@ -88,8 +90,8 @@ export class Enemy {
     }
 }
 
-function handleEnemyMovement(enemyType: EnemyType, model: THREE.Object3D, speed: number) {
-    const t = ((Date.now() * speed * 0.001) % 100) / 100;
+function handleEnemyMovement(enemyType: EnemyType, model: THREE.Object3D, speed: number, timeSinceSpawn: number) {
+    const t = getPercDist(speed, timeSinceSpawn);
 
     const position = pathCurve.getPointAt(t);
     const tangent = pathCurve.getTangentAt(t);
@@ -102,7 +104,7 @@ function handleEnemyMovement(enemyType: EnemyType, model: THREE.Object3D, speed:
             break;
         case "orc":
             model.lookAt(position.clone().add(tangent));
-            model.position.y += 1.5;
+            model.position.y += 3;
             break;
         case "raptor":
             model.lookAt(position.clone().add(tangent.applyAxisAngle(model.up, -Math.PI * 0.5).add(tangent)));
@@ -118,4 +120,13 @@ function handleEnemyMovement(enemyType: EnemyType, model: THREE.Object3D, speed:
             model.lookAt(position.clone().sub(tangent));
             break;
     }
+}
+
+function getPercDist(speed: number, timeSinceSpawn: number) {
+    const pathLen = pathCurve.getLength();
+    const distCovered = speed * timeSinceSpawn;
+    const distPerc = distCovered / pathLen;
+
+    // console.log({ pathLen, distCovered, distPerc });
+    return distPerc % 1;
 }

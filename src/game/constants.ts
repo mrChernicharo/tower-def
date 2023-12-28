@@ -1,8 +1,8 @@
 import { EnemyType } from "./enums";
 import { EnemyBluePrint } from "./types";
 
-export const DRAW_FUTURE_GIZMO = false;
-// export const DRAW_FUTURE_GIZMO = true;
+// export const DRAW_FUTURE_GIZMO = false;
+export const DRAW_FUTURE_GIZMO = true;
 
 export const COLORS = {
     bg: 0x333355,
@@ -10,7 +10,7 @@ export const COLORS = {
     concrete: 0xacacac,
 };
 
-export const enemyBlueprints: { [k in EnemyType]: EnemyBluePrint } = {
+export const ENEMY_BLUEPRINTS: { [k in EnemyType]: EnemyBluePrint } = {
     spider: {
         name: EnemyType.Spider,
         modelURL: "/assets/glb/spider.glb",
@@ -31,7 +31,7 @@ export const enemyBlueprints: { [k in EnemyType]: EnemyBluePrint } = {
     raptor: {
         name: EnemyType.Raptor,
         modelURL: "/assets/glb/raptoid.glb",
-        speed: 4,
+        speed: 6,
         maxHp: 100,
         modelScale: 0.02,
         walkAnimationName: "Running",
@@ -70,6 +70,7 @@ export const STAGE_WAVES_DATA: [string, number, number][][][] = [
             ["s", 0, 0],
             // ["s", 2, 1],
             // ["s", 2, -1],
+            ["r", 3, -1],
             // ["s", 6, 0],
             // ["s", 8, 1],
             // ["s", 8, -1],
