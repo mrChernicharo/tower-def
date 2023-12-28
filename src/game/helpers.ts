@@ -47,3 +47,7 @@ export function equipGun(model: THREE.Group, gunName: string) {
         }
     });
 }
+
+export function capitalize(str: string) {
+    return str[0].toUpperCase() + str.slice(1);
+}
