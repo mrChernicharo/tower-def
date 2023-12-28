@@ -1,5 +1,6 @@
 import { GLTF, GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
+import { CSS2DRenderer, CSS2DObject } from "three/examples/jsm/renderers/CSS2DRenderer.js";
 import jsonCurve from "../desert-level-path.0.json";
 import { THREE } from "../three";
 
@@ -8,7 +9,6 @@ import { getEnemyTypeFromChar, handleModelGun } from "./helpers";
 import { COLORS, DRAW_FUTURE_GIZMO, ENEMY_BLUEPRINTS, STAGE_WAVES_DATA } from "./constants";
 import { AppLayers, EnemyChar, EnemyType, GameState } from "./enums";
 import { EnemyBluePrint } from "./types";
-import { Layers, Vector2 } from "three";
 
 let pathPoints: THREE.Vector3[] = [];
 
@@ -24,7 +24,8 @@ export let orbit: OrbitControls;
 export let ambientLight: THREE.AmbientLight;
 export let enemies: Enemy[] = [];
 export let gameState = GameState.Loading;
-export let mouseRay: THREE.Raycaster;
+export let towerBaseMouseRay: THREE.Raycaster;
+export let cssRenderer: CSS2DRenderer;
 
 export const glbModels = {} as { [k in EnemyType]: GLTF };
 // enable canceling waveScheduling timeouts when game is destroy
@@ -61,6 +62,8 @@ export async function initGame(levelIdx: number) {
 
     drawPath();
 
+    init2DModals();
+
     scheduleWaveEnemies(levelIdx, 0);
 
     frameId = requestAnimationFrame(animate);
@@ -68,6 +71,26 @@ export async function initGame(levelIdx: number) {
     window.addEventListener("resize", onResize);
     playPauseBtn.addEventListener("click", onPlayPause);
     canvas.addEventListener("mousemove", onMouseMove);
+}
+
+function init2DModals() {
+    scene.traverse((el) => {
+        if (el.name.includes("TowerBase")) {
+            const modal = document.createElement("div");
+            modal.innerHTML = `
+                <div id="modal2D-${hoveredTowerBaseName}" style="background: #444; padding: 1rem; border-radius: 12px;">
+                    <h3>Hello</h3>
+                    <button>Click</button>
+                </div>
+            `;
+
+            const modal2D = new CSS2DObject(modal);
+            modal2D.name = `modal2D-${hoveredTowerBaseName}`;
+            modal2D.position.set(el.position.x, el.position.y + 10, el.position.z);
+            // modal2D.visible = false;
+            scene.add(modal2D);
+        }
+    });
 }
 
 async function gameSetup() {
@@ -82,10 +105,19 @@ async function gameSetup() {
     // renderer.setClearColor(0xcbcbcb); // Sets the color of the background
     canvas.appendChild(renderer.domElement);
 
+    cssRenderer = new CSS2DRenderer();
+    cssRenderer.setSize(window.innerWidth, window.innerHeight - 120);
+    cssRenderer.domElement.style.position = "absolute";
+    cssRenderer.domElement.style.top = "64px";
+    cssRenderer.domElement.style.pointerEvents = "none";
+
+    canvas.appendChild(cssRenderer.domElement);
+
     gltfLoader = new GLTFLoader();
     gameClock = new THREE.Clock();
 
     camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
+    camera.layers.enableAll();
     camera.position.set(-10, 100, 40);
     // camera.position.set(5, 2, 46);
     // camera.position.set(-20, -10, -80);
@@ -100,7 +132,9 @@ async function gameSetup() {
     scene = new THREE.Scene();
     scene.add(ambientLight);
 
-    mouseRay = new THREE.Raycaster();
+    towerBaseMouseRay = new THREE.Raycaster();
+    towerBaseMouseRay.layers.disableAll();
+    towerBaseMouseRay.layers.enable(AppLayers.TowerBase);
 
     await initGlbModels();
 }
@@ -132,7 +166,7 @@ async function drawMap() {
 
             if (mesh.name.includes("TowerBase")) {
                 mesh.material = new THREE.MeshMatcapMaterial({ color: COLORS.concrete });
-                // obj.layers.enable(AppLayers.TowerBase);
+                obj.layers.set(AppLayers.TowerBase);
             }
 
             if (/desert|Plane/g.test(mesh.name)) {
@@ -208,7 +242,9 @@ function animate() {
     const delta = gameClock.getDelta();
     // const elapsed = gameClock.getElapsedTime();
 
+    cssRenderer.render(scene, camera);
     renderer.render(scene, camera);
+
     orbit.update();
 
     if (gameState === GameState.Active) {
@@ -220,30 +256,21 @@ function animate() {
     frameId = requestAnimationFrame(animate);
 }
 
+let hoveredTowerBaseName: string | null = null;
+function onMouseMove(e: MouseEvent) {
+    const mousePos = new THREE.Vector2();
+    mousePos.x = (e.offsetX / window.innerWidth) * 2 - 1;
+    mousePos.y = -(e.offsetY / (window.innerHeight - 120)) * 2 + 1;
+
+    towerBaseMouseRay.setFromCamera(mousePos, camera);
+    handleTowerBaseHoverOpacityEfx();
+}
+
 function onResize() {
     camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
     renderer.setSize(window.innerWidth, window.innerHeight - 120);
-}
-
-function onMouseMove(e: MouseEvent) {
-    console.log(e.offsetX, e.offsetY, canvas.width, canvas.height);
-
-    const mousePos = new Vector2();
-    mousePos.x = (e.offsetX / window.innerWidth) * 2 - 1;
-    mousePos.y = -(e.offsetY / (window.innerHeight - 120)) * 2 + 1;
-
-    mouseRay.setFromCamera(mousePos, camera);
-
-    const found = mouseRay.intersectObjects(scene.children);
-
-    if (found.some((el) => el.object.name.includes("TowerBase"))) {
-        console.log(
-            "hovering towerBase",
-            mousePos,
-            found.map((o) => o.object.name)
-        );
-    }
+    cssRenderer.setSize(window.innerWidth, window.innerHeight - 120);
 }
 
 function onPlayPause() {
@@ -255,6 +282,42 @@ function onPlayPause() {
         playPauseBtn.textContent = "Pause";
     }
     console.log("playpause click", gameState);
+}
+
+function handleTowerBaseHoverOpacityEfx() {
+    const hoveredTowerBase = towerBaseMouseRay.intersectObjects(scene.children)[0];
+
+    if (hoveredTowerBase) {
+        const towerBaseMesh = hoveredTowerBase.object;
+        // keep track of current towerBase
+        hoveredTowerBaseName = towerBaseMesh.name;
+
+        // add opacity EFX
+        (towerBaseMesh as THREE.Mesh).material = new THREE.MeshMatcapMaterial({
+            color: COLORS.concrete,
+            transparent: true,
+            opacity: 0.5,
+        });
+
+        // show tileMenu
+    } else {
+        if (hoveredTowerBaseName) {
+            const hoveredTowerBase = scene.getObjectByName(hoveredTowerBaseName);
+            // const modal2D = scene.getObjectByName(`modal2D-${hoveredTowerBaseName}`)!;
+
+            // remove opacity EFX
+            (hoveredTowerBase as THREE.Mesh).material = new THREE.MeshMatcapMaterial({
+                color: COLORS.concrete,
+                transparent: true,
+                opacity: 1,
+            });
+
+            // hide tileMenu
+
+            // remove memory of hovered towerBase
+            hoveredTowerBaseName = null;
+        }
+    }
 }
 
 // function drawGrid() {

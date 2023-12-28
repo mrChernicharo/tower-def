@@ -24,3 +24,8 @@ export enum GameState {
     // Win = "win",
     // Lose = "lose",
 }
+
+export enum AppLayers {
+    Default = 0,
+    TowerBase = 1,
+}
