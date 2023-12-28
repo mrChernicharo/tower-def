@@ -30,3 +30,10 @@ export enum AppLayers {
     TowerBase = 1,
     Modals = 2,
 }
+
+export enum TowerNames {
+    Archer = "archer",
+    Electric = "electric",
+    Slow = "slow",
+    Bomb = "bomb",
+}

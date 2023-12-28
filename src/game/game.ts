@@ -270,15 +270,39 @@ function init2DModals() {
             modal.id = `modal2D-${el.name}`;
             modal.className = "modal2D";
             modal.style.pointerEvents = "all";
+            modal.style.opacity = "0.9";
             modal.innerHTML = `
-                <h3>Hello</h3>
-                <button>Click</button>
+                <h3>Build Tower</h3>
+                <div>
+                    <button id="archer-tower-build-btn" class="tower-build-btn">Archer</button>
+                    <button id="bomb-tower-build-btn" class="tower-build-btn">Bomb</button>
+                </div>
+                <div>
+                    <button id="ice-tower-build-btn" class="tower-build-btn">Ice</button>
+                    <button id="electric-tower-build-btn" class="tower-build-btn">Electric</button>
+                </div>
             `;
-            modal.onclick = () => {
-                console.log("onclick", modal);
+
+            modal.onclick = (e: MouseEvent) => {
+                console.log("onclick", { e, modal, composedPath: e.composedPath(), target: e.target });
+                const evTarget = e.target as HTMLElement;
+
+                if (evTarget.classList.contains("tower-build-btn")) {
+                    const towerName = evTarget.id.split("-")[0];
+
+                    console.log({ towerName });
+                }
             };
 
             modalContainer.append(modal);
+
+            // const towerBuildBtns = [...document.querySelectorAll(".tower-build-btn")] as HTMLButtonElement[];
+            // towerBuildBtns.forEach((btn) => {
+            //     console.log(btn);
+            //     btn.onclick = () => {
+            //         console.log("clicked build button", btn.id);
+            //     };
+            // });
 
             const modal2D = new CSS2DObject(modalContainer);
             modal2D.position.set(el.position.x, el.position.y + 8, el.position.z);
