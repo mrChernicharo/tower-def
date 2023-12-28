@@ -166,6 +166,7 @@ async function _initTowerModels() {
             towerModels[towerName] = {};
         }
 
+        model.name = `${towerName}-Tower`;
         towerModels[towerName][`level-${towerLevel}`] = model as THREE.Mesh;
     }
 
@@ -360,12 +361,14 @@ function init2DModals() {
                     delete modal2D.userData.tower;
                     delete modal2D.userData.tower_id;
 
-                    towers = towers.filter((t) => t.id !== tower_id);
-
                     modal.innerHTML = modalTemplates.towerBuild();
                     modal2D.visible = false;
 
-                    console.log({ towers });
+                    // towers = towers.filter((t) => t.id !== tower_id);
+                    const towerIdx = towers.findIndex((t) => t.id === tower_id);
+                    const [tower] = towers.splice(towerIdx, 1);
+                    scene.remove(tower.model);
+                    // console.log({ towers, tower, scene });
                 }
 
                 // TOWER INFO

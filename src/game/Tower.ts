@@ -27,10 +27,10 @@ export class Tower {
     }
 
     async _setupModel() {
-        this.model = towerModels[this.towerName]["level-1"];
-        console.log({ model: this.model });
+        this.model = towerModels[this.towerName]["level-1"].clone();
         this.model.scale.set(0.005, 0.005, 0.005);
         this.model.position.set(this.position.x, this.position.y, this.position.z);
+        this.model.userData["tower_id"] = this.id;
         const texture = await new THREE.TextureLoader().loadAsync("/assets/fbx/towers-texture.png");
         this.model.material = new THREE.MeshBasicMaterial({
             // color: COLORS[this.blueprint.color as keyof typeof COLORS],
