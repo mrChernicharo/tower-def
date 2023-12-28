@@ -2,11 +2,13 @@ import { GLTF, GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import jsonCurve from "../desert-level-path.0.json";
 import { THREE } from "../three";
+
 import { Enemy } from "./Enemy";
 import { getEnemyTypeFromChar, handleModelGun } from "./helpers";
 import { COLORS, DRAW_FUTURE_GIZMO, ENEMY_BLUEPRINTS, STAGE_WAVES_DATA } from "./constants";
-import { EnemyChar, EnemyType, GameState } from "./enums";
+import { AppLayers, EnemyChar, EnemyType, GameState } from "./enums";
 import { EnemyBluePrint } from "./types";
+import { Layers, Vector2 } from "three";
 
 let pathPoints: THREE.Vector3[] = [];
 
@@ -22,6 +24,7 @@ export let orbit: OrbitControls;
 export let ambientLight: THREE.AmbientLight;
 export let enemies: Enemy[] = [];
 export let gameState = GameState.Loading;
+export let mouseRay: THREE.Raycaster;
 
 export const glbModels = {} as { [k in EnemyType]: GLTF };
 // enable canceling waveScheduling timeouts when game is destroy
@@ -64,6 +67,7 @@ export async function initGame(levelIdx: number) {
 
     window.addEventListener("resize", onResize);
     playPauseBtn.addEventListener("click", onPlayPause);
+    canvas.addEventListener("mousemove", onMouseMove);
 }
 
 async function gameSetup() {
@@ -96,6 +100,8 @@ async function gameSetup() {
     scene = new THREE.Scene();
     scene.add(ambientLight);
 
+    mouseRay = new THREE.Raycaster();
+
     await initGlbModels();
 }
 
@@ -126,6 +132,7 @@ async function drawMap() {
 
             if (mesh.name.includes("TowerBase")) {
                 mesh.material = new THREE.MeshMatcapMaterial({ color: COLORS.concrete });
+                // obj.layers.enable(AppLayers.TowerBase);
             }
 
             if (/desert|Plane/g.test(mesh.name)) {
@@ -165,6 +172,7 @@ function drawPath() {
     const material = new THREE.MeshMatcapMaterial({ color: COLORS.concrete });
 
     const pathMesh = new THREE.Mesh(geometry, material);
+    pathMesh.name = "Road";
     pathMesh.position.y = shapeH;
 
     console.log({ pathCurve, pathMesh, pathPoints });
@@ -216,6 +224,26 @@ function onResize() {
     camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
     renderer.setSize(window.innerWidth, window.innerHeight - 120);
+}
+
+function onMouseMove(e: MouseEvent) {
+    console.log(e.offsetX, e.offsetY, canvas.width, canvas.height);
+
+    const mousePos = new Vector2();
+    mousePos.x = (e.offsetX / window.innerWidth) * 2 - 1;
+    mousePos.y = -(e.offsetY / (window.innerHeight - 120)) * 2 + 1;
+
+    mouseRay.setFromCamera(mousePos, camera);
+
+    const found = mouseRay.intersectObjects(scene.children);
+
+    if (found.some((el) => el.object.name.includes("TowerBase"))) {
+        console.log(
+            "hovering towerBase",
+            mousePos,
+            found.map((o) => o.object.name)
+        );
+    }
 }
 
 function onPlayPause() {
