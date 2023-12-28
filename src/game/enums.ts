@@ -32,8 +32,9 @@ export enum AppLayers {
 }
 
 export enum TowerName {
-    Archer = "archer",
-    Electric = "electric",
-    Slow = "slow",
-    Bomb = "bomb",
+    Archer = "Archer",
+    Ballista = "Ballista",
+    Cannon = "Cannon",
+    Poison = "Poison",
+    Wizard = "Wizard",
 }

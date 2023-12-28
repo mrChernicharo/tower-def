@@ -1,12 +1,13 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { GLTF, GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
+import { FBXLoader } from "three/examples/jsm/loaders/FBXLoader.js";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import { CSS2DRenderer, CSS2DObject } from "three/examples/jsm/renderers/CSS2DRenderer.js";
 import jsonCurve from "../desert-level-path.0.json";
 import { THREE } from "../three";
 
 import { Enemy } from "./Enemy";
-import { getEnemyTypeFromChar, handleModelGun } from "./helpers";
+import { capitalize, getEnemyTypeFromChar, handleModelGun } from "./helpers";
 import { COLORS, DRAW_FUTURE_GIZMO, ENEMY_BLUEPRINTS, STAGE_WAVES_DATA } from "./constants";
 import { AppLayers, EnemyChar, EnemyType, GameState, TowerName } from "./enums";
 import { EnemyBluePrint } from "./types";
@@ -20,6 +21,7 @@ let pathPoints: THREE.Vector3[] = [];
 
 export let scene: THREE.Scene;
 export let gltfLoader: GLTFLoader;
+export let fbxLoader: FBXLoader;
 export let renderer: THREE.WebGLRenderer;
 export let cssRenderer: CSS2DRenderer;
 export let gameClock: THREE.Clock;
@@ -35,7 +37,7 @@ let frameId = 0;
 
 const spawnTimeouts: number[] = []; // enable canceling waveScheduling timeouts when game is destroy
 export const glbEnemyModels = {} as { [k in EnemyType]: GLTF };
-export const glbTowerModels = {} as { [k in TowerName]: GLTF };
+export const towerModels = {} as { [k in TowerName]: { [k: `level-${number}`]: THREE.Mesh } };
 
 let canvas: HTMLCanvasElement;
 let playPauseBtn: HTMLButtonElement;
@@ -108,6 +110,7 @@ async function gameSetup() {
     canvas.appendChild(cssRenderer.domElement);
 
     gltfLoader = new GLTFLoader();
+    fbxLoader = new FBXLoader();
     gameClock = new THREE.Clock();
 
     camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
@@ -131,10 +134,11 @@ async function gameSetup() {
     towerBaseMouseRay.layers.enable(AppLayers.TowerBase);
     towerBaseMouseRay.layers.enable(AppLayers.Modals);
 
-    await initGlbModels();
+    await _initEnemyModels();
+    await _initTowerModels();
 }
 
-async function initGlbModels() {
+async function _initEnemyModels() {
     const promises: Promise<GLTF>[] = [];
     for (const enemyType of Object.keys(ENEMY_BLUEPRINTS)) {
         const bluePrint: EnemyBluePrint = ENEMY_BLUEPRINTS[enemyType as EnemyType];
@@ -147,6 +151,25 @@ async function initGlbModels() {
         handleModelGun(model);
         glbEnemyModels[model.userData.enemyType as EnemyType] = model;
     }
+}
+
+async function _initTowerModels() {
+    const fbx = await fbxLoader.loadAsync("/assets/fbx/tower-collection.fbx");
+    console.log({ fbx, towers: fbx.children.map((c) => c.name).sort((a, b) => a.localeCompare(b)) });
+
+    const models = fbx.children;
+    for (const model of models) {
+        const towerLevel = +model.name.split("_")[3];
+        const towerName = capitalize(model.name.split("_")[0]) as TowerName;
+
+        if (!towerModels[towerName]) {
+            towerModels[towerName] = {};
+        }
+
+        towerModels[towerName][`level-${towerLevel}`] = model as THREE.Mesh;
+    }
+
+    console.log({ towerModels });
 }
 
 async function drawMap() {
@@ -315,6 +338,7 @@ function init2DModals() {
                     modal2D.userData["tower_id"] = tower.id;
 
                     towers.push(tower);
+                    scene.add(tower.model);
                     console.log(":::", { tower, towers });
 
                     towerToBuild = null;
@@ -389,9 +413,10 @@ function onCanvasClick(e: MouseEvent) {
         } else {
             console.log("CLICKED OUTSIDE");
 
-            const openModal = document.querySelector(".modal2D") as HTMLDivElement;
+            const openModal = document.querySelector<HTMLDivElement>(".modal2D");
+            if (!openModal) return;
+
             const modal3D = scene.getObjectByName(`${openModal.id.replace("modal2D-", "")}-modal`);
-            // console.log({ openModal, scene, modal3D });
 
             // Revert confirmation modals (DOM)
             if (modal3D?.userData.tower) {

@@ -9,8 +9,8 @@ import { DRAW_FUTURE_GIZMO, ENEMY_BLUEPRINTS } from "./constants";
 export class Enemy {
     #ready = false;
     glb!: GLTF;
-    enemyType!: EnemyType;
-    bluePrint!: EnemyBluePrint;
+    enemyType: EnemyType;
+    bluePrint: EnemyBluePrint;
     mixer!: THREE.AnimationMixer;
     model!: THREE.Object3D;
     walkAnimation!: THREE.AnimationClip;

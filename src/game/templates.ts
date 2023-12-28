@@ -8,16 +8,19 @@ export const modalTemplates = {
             <button id="${TowerName.Archer}-tower-build-btn" class="tower-build-btn">
                 ${capitalize(TowerName.Archer)}
             </button>
-            <button id="${TowerName.Bomb}-tower-build-btn" class="tower-build-btn">
-                ${capitalize(TowerName.Bomb)}
+            <button id="${TowerName.Ballista}-tower-build-btn" class="tower-build-btn">
+                ${capitalize(TowerName.Ballista)}
             </button>
         </div>
         <div>
-            <button id="${TowerName.Slow}-tower-build-btn" class="tower-build-btn">
-                ${capitalize(TowerName.Slow)}
+            <button id="${TowerName.Cannon}-tower-build-btn" class="tower-build-btn">
+                ${capitalize(TowerName.Cannon)}
             </button>
-            <button id="${TowerName.Electric}-tower-build-btn" class="tower-build-btn">
-                ${capitalize(TowerName.Electric)}
+            <button id="${TowerName.Poison}-tower-build-btn" class="tower-build-btn">
+                ${capitalize(TowerName.Poison)}
+            </button>
+            <button id="${TowerName.Wizard}-tower-build-btn" class="tower-build-btn">
+                ${capitalize(TowerName.Wizard)}
             </button>
         </div>
     `,
@@ -37,7 +40,7 @@ export const modalTemplates = {
         </div>
     `,
     confirmTowerSell: (towerName: TowerName) => `
-        <h3>Sell ${capitalize(towerName)}</h3>
+        <h3>Sell ${capitalize(towerName)} Tower</h3>
         <button class="cancel-tower-sell-btn">←</button>
         <div>
             <button id="confirm-tower-sell-btn" class="confirm-tower-sell-btn">Confirm</button>
