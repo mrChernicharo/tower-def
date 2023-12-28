@@ -11,6 +11,7 @@ import { COLORS, DRAW_FUTURE_GIZMO, ENEMY_BLUEPRINTS, STAGE_WAVES_DATA } from ".
 import { AppLayers, EnemyChar, EnemyType, GameState, TowerName } from "./enums";
 import { EnemyBluePrint } from "./types";
 import { modalTemplates } from "./templates";
+import { Tower } from "./Tower";
 
 let pathPoints: THREE.Vector3[] = [];
 
@@ -26,18 +27,20 @@ export let orbit: OrbitControls;
 export let camera: THREE.PerspectiveCamera;
 export let ambientLight: THREE.AmbientLight;
 export let enemies: Enemy[] = [];
+export let towers: Tower[] = [];
 export let gameState = GameState.Loading;
 export let pathCurve: THREE.CatmullRomCurve3;
 export let towerBaseMouseRay: THREE.Raycaster;
 let frameId = 0;
 
-export const glbModels = {} as { [k in EnemyType]: GLTF };
 const spawnTimeouts: number[] = []; // enable canceling waveScheduling timeouts when game is destroy
+export const glbEnemyModels = {} as { [k in EnemyType]: GLTF };
+export const glbTowerModels = {} as { [k in TowerName]: GLTF };
 
 let canvas: HTMLCanvasElement;
 let playPauseBtn: HTMLButtonElement;
 
-export let clickTimestamp = 0;
+let clickTimestamp = 0;
 let hoveredTowerBaseName: string | null = null;
 let towerToBuild: TowerName | null = null;
 
@@ -50,6 +53,7 @@ export async function destroyGame() {
     ambientLight.dispose();
     renderer.dispose();
     enemies = [];
+    towers = [];
     gameState = GameState.Paused;
     spawnTimeouts.forEach((timeoutId) => {
         clearTimeout(timeoutId);
@@ -116,7 +120,7 @@ async function gameSetup() {
     // camera.position.set(5, 4, 50); // Camera positioning
 
     orbit = new OrbitControls(camera, renderer.domElement);
-    // orbit.maxPolarAngle = Math.PI * 0.4;
+    orbit.maxPolarAngle = Math.PI * 0.4;
 
     ambientLight = new THREE.AmbientLight(0xefefef, 1.5);
     scene = new THREE.Scene();
@@ -141,7 +145,7 @@ async function initGlbModels() {
 
     for (const model of models) {
         handleModelGun(model);
-        glbModels[model.userData.enemyType as EnemyType] = model;
+        glbEnemyModels[model.userData.enemyType as EnemyType] = model;
     }
 }
 
@@ -301,10 +305,18 @@ function init2DModals() {
                 }
                 if (evTarget.classList.contains("confirm-tower-build-btn")) {
                     console.log(`BUILD THIS GODAMN ${towerToBuild} TOWER`, { el });
-                    el.userData["tower"] = towerToBuild;
-                    modal2D.userData["tower"] = towerToBuild;
                     modal.innerHTML = modalTemplates.towerDetails(towerToBuild!);
                     modal2D.visible = false;
+
+                    const tower = new Tower(towerToBuild!, el.position);
+                    el.userData["tower"] = towerToBuild;
+                    el.userData["tower_id"] = tower.id;
+                    modal2D.userData["tower"] = towerToBuild;
+                    modal2D.userData["tower_id"] = tower.id;
+
+                    towers.push(tower);
+                    console.log(":::", { tower, towers });
+
                     towerToBuild = null;
                 }
 
@@ -317,10 +329,19 @@ function init2DModals() {
                 }
                 if (evTarget.id === "confirm-tower-sell-btn") {
                     console.log("SELL THIS GODAMN TOWER", { el });
+                    const tower_id = el.userData.tower_id;
+
                     delete el.userData.tower;
+                    delete el.userData.tower_id;
                     delete modal2D.userData.tower;
+                    delete modal2D.userData.tower_id;
+
+                    towers = towers.filter((t) => t.id !== tower_id);
+
                     modal.innerHTML = modalTemplates.towerBuild();
                     modal2D.visible = false;
+
+                    console.log({ towers });
                 }
 
                 // TOWER INFO
@@ -352,7 +373,8 @@ function onCanvasClick(e: MouseEvent) {
     if (clickedTowerBase) {
         console.log("CLICKED TOWER BASE");
 
-        const modal2D = scene.getObjectByName(`${clickedTowerBase.object.name}-modal`)!;
+        const modal3D = scene.getObjectByName(`${clickedTowerBase.object.name}-modal`)!;
+
         // HIDE previously open modal
         scene.traverse((obj) => {
             if ((obj as any).isCSS2DObject && obj.visible) {
@@ -360,8 +382,7 @@ function onCanvasClick(e: MouseEvent) {
             }
         });
         // SHOW modal
-        modal2D.visible = true;
-        console.log({ clickedTowerBase, modal2D });
+        modal3D.visible = true;
     } else {
         if ([...e.composedPath()].some((el) => (el as HTMLElement)?.classList?.contains("modal2D"))) {
             console.log("CLICKED MODAL");
@@ -369,13 +390,13 @@ function onCanvasClick(e: MouseEvent) {
             console.log("CLICKED OUTSIDE");
 
             const openModal = document.querySelector(".modal2D") as HTMLDivElement;
-            const modal3d = scene.getObjectByName(`${openModal.id.replace("modal2D-", "")}-modal`);
-            // console.log({ openModal, scene, modal3d });
+            const modal3D = scene.getObjectByName(`${openModal.id.replace("modal2D-", "")}-modal`);
+            // console.log({ openModal, scene, modal3D });
 
             // Revert confirmation modals (DOM)
-            if (modal3d?.userData.tower) {
+            if (modal3D?.userData.tower) {
                 console.log("PREV SELECTED TILE HAS A TOWER");
-                openModal.innerHTML = modalTemplates.towerDetails(modal3d.userData.tower);
+                openModal.innerHTML = modalTemplates.towerDetails(modal3D.userData.tower);
             } else {
                 console.log("PREV SELECTED TILE DOES NOT HAVE A TOWER");
                 openModal.innerHTML = modalTemplates.towerBuild();

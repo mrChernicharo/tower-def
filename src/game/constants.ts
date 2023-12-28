@@ -1,5 +1,5 @@
-import { EnemyType } from "./enums";
-import { EnemyBluePrint } from "./types";
+import { EnemyType, TowerName } from "./enums";
+import { EnemyBluePrint, TowerBluePrint } from "./types";
 
 // export const DRAW_FUTURE_GIZMO = false;
 export const DRAW_FUTURE_GIZMO = true;
@@ -61,6 +61,150 @@ export const ENEMY_BLUEPRINTS: { [k in EnemyType]: EnemyBluePrint } = {
         walkAnimationName: "Walk",
     },
 } as const;
+
+export const TOWER_BLUEPRINTS: { [k in TowerName]: TowerBluePrint[] } = {
+    archer: [
+        {
+            name: TowerName.Archer,
+            level: 1,
+            damage: [4, 7],
+            fireRate: 6,
+            modelScale: 1,
+            modelURL: "",
+            color: "green",
+            price: 100,
+            range: 8,
+        },
+        {
+            name: TowerName.Archer,
+            level: 2,
+            damage: [8, 13],
+            fireRate: 6,
+            modelScale: 1,
+            modelURL: "",
+            color: "green",
+            price: 160,
+            range: 9,
+        },
+        {
+            name: TowerName.Archer,
+            level: 3,
+            damage: [14, 22],
+            fireRate: 6,
+            modelScale: 1,
+            modelURL: "",
+            color: "green",
+            price: 220,
+            range: 10,
+            skills: [],
+        },
+    ],
+    bomb: [
+        {
+            name: TowerName.Bomb,
+            level: 1,
+            damage: [18, 36],
+            fireRate: 0.8,
+            modelScale: 1,
+            modelURL: "",
+            color: "orange",
+            price: 100,
+            range: 9,
+        },
+        {
+            name: TowerName.Bomb,
+            level: 2,
+            damage: [29, 54],
+            fireRate: 0.8,
+            modelScale: 1,
+            modelURL: "",
+            color: "orange",
+            price: 160,
+            range: 10,
+        },
+        {
+            name: TowerName.Bomb,
+            level: 2,
+            damage: [48, 86],
+            fireRate: 0.8,
+            modelScale: 1,
+            modelURL: "",
+            color: "orange",
+            price: 220,
+            range: 12,
+        },
+    ],
+    electric: [
+        {
+            name: TowerName.Electric,
+            level: 1,
+            damage: [10, 21],
+            fireRate: 2,
+            modelScale: 1,
+            modelURL: "",
+            color: "yellow",
+            price: 100,
+            range: 12,
+        },
+        {
+            name: TowerName.Electric,
+            level: 1,
+            damage: [18, 36],
+            fireRate: 1.8,
+            modelScale: 1,
+            modelURL: "",
+            color: "yellow",
+            price: 160,
+            range: 13,
+        },
+        {
+            name: TowerName.Electric,
+            level: 1,
+            damage: [33, 57],
+            fireRate: 1.6,
+            modelScale: 1,
+            modelURL: "",
+            color: "yellow",
+            price: 220,
+            range: 14,
+        },
+    ],
+    slow: [
+        {
+            name: TowerName.Slow,
+            level: 1,
+            damage: [4, 7],
+            fireRate: 3,
+            modelScale: 1,
+            modelURL: "",
+            color: "blue",
+            price: 100,
+            range: 10,
+        },
+        {
+            name: TowerName.Slow,
+            level: 1,
+            damage: [11, 22],
+            fireRate: 2.5,
+            modelScale: 1,
+            modelURL: "",
+            color: "blue",
+            price: 160,
+            range: 12,
+        },
+        {
+            name: TowerName.Slow,
+            level: 1,
+            damage: [21, 37],
+            fireRate: 2,
+            modelScale: 1,
+            modelURL: "",
+            color: "blue",
+            price: 220,
+            range: 13,
+        },
+    ],
+};
 
 export const STAGE_WAVES_DATA: [string, number, number][][][] = [
     // stage 00

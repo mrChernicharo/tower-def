@@ -51,3 +51,12 @@ export function equipGun(model: THREE.Group, gunName: string) {
 export function capitalize(str: string) {
     return str[0].toUpperCase() + str.slice(1);
 }
+
+// idMaker
+const ID_CHARS = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_-";
+
+export const idMaker = (length = 12) =>
+    Array(length)
+        .fill(0)
+        .map(() => ID_CHARS.split("")[Math.round(Math.random() * ID_CHARS.length)])
+        .join("");
