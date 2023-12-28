@@ -302,6 +302,7 @@ function init2DModals() {
                 if (evTarget.classList.contains("confirm-tower-build-btn")) {
                     console.log(`BUILD THIS GODAMN ${towerToBuild} TOWER`, { el });
                     el.userData["tower"] = towerToBuild;
+                    modal2D.userData["tower"] = towerToBuild;
                     modal.innerHTML = modalTemplates.towerDetails(towerToBuild!);
                     modal2D.visible = false;
                     towerToBuild = null;
@@ -317,6 +318,7 @@ function init2DModals() {
                 if (evTarget.id === "confirm-tower-sell-btn") {
                     console.log("SELL THIS GODAMN TOWER", { el });
                     delete el.userData.tower;
+                    delete modal2D.userData.tower;
                     modal.innerHTML = modalTemplates.towerBuild();
                     modal2D.visible = false;
                 }
@@ -351,13 +353,13 @@ function onCanvasClick(e: MouseEvent) {
         console.log("CLICKED TOWER BASE");
 
         const modal2D = scene.getObjectByName(`${clickedTowerBase.object.name}-modal`)!;
-        // close open modal
+        // HIDE previously open modal
         scene.traverse((obj) => {
             if ((obj as any).isCSS2DObject && obj.visible) {
                 obj.visible = false;
             }
         });
-        // open new modal
+        // SHOW modal
         modal2D.visible = true;
         console.log({ clickedTowerBase, modal2D });
     } else {
@@ -366,7 +368,20 @@ function onCanvasClick(e: MouseEvent) {
         } else {
             console.log("CLICKED OUTSIDE");
 
-            // close open modal
+            const openModal = document.querySelector(".modal2D") as HTMLDivElement;
+            const modal3d = scene.getObjectByName(`${openModal.id.replace("modal2D-", "")}-modal`);
+            // console.log({ openModal, scene, modal3d });
+
+            // Revert confirmation modals (DOM)
+            if (modal3d?.userData.tower) {
+                console.log("PREV SELECTED TILE HAS A TOWER");
+                openModal.innerHTML = modalTemplates.towerDetails(modal3d.userData.tower);
+            } else {
+                console.log("PREV SELECTED TILE DOES NOT HAVE A TOWER");
+                openModal.innerHTML = modalTemplates.towerBuild();
+            }
+
+            // HIDE modal (3D)
             scene.traverse((obj) => {
                 if ((obj as any).isCSS2DObject) {
                     if (obj.visible) {
