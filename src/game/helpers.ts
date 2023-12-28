@@ -2,9 +2,10 @@
 //     const enemy = new Enemy(enemyType);
 // }
 
-import { EnemyChar, EnemyType } from "./enums";
+import { EnemyChar, EnemyType, ModalType, TowerName } from "./enums";
 import { THREE } from "../three";
 import { GLTF } from "three/examples/jsm/Addons.js";
+import { cancelableModalNames, modalTemplates } from "./templates";
 
 export function getEnemyTypeFromChar(char: EnemyChar): EnemyType {
     switch (char) {
@@ -60,3 +61,31 @@ export const idMaker = (length = 12) =>
         .fill(0)
         .map(() => ID_CHARS.split("")[Math.round(Math.random() * ID_CHARS.length)])
         .join("");
+
+export function revertCancelableModals(clickedModal: HTMLDivElement | undefined) {
+    const allModals = Array.from(document.querySelectorAll<HTMLDivElement>(".modal2D"));
+    // console.log("REVERT CANCELABLE MODALS");
+    // console.log(":::", { allModals, e, clickedTowerBase, clickedModal });
+    allModals.forEach((modalEl) => {
+        if (modalEl === clickedModal) return;
+        // console.log(":::", { modalEl });
+
+        for (const cancelableModalName of cancelableModalNames) {
+            if (modalEl.children[0].classList.contains(cancelableModalName)) {
+                // console.log(":::: cancel this one!", { cancelableModalName, modalEl });
+
+                if (cancelableModalName === ModalType.ConfirmTowerBuild) {
+                    modalEl.innerHTML = modalTemplates.towerBuild();
+                } else {
+                    for (const className of modalEl.children[0].classList.entries()) {
+                        if (className[1] in TowerName) {
+                            const towerName = className[1] as TowerName;
+                            modalEl.innerHTML = modalTemplates.towerDetails(towerName);
+                        }
+                    }
+                }
+                break;
+            }
+        }
+    });
+}

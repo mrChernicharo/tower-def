@@ -38,3 +38,12 @@ export enum TowerName {
     Poison = "Poison",
     Wizard = "Wizard",
 }
+
+export enum ModalType {
+    TowerBuild = "tower-build",
+    ConfirmTowerBuild = "confirm-tower-build",
+    TowerDetails = "tower-details",
+    ConfirmTowerSell = "confirm-tower-sell",
+    TowerInfo = "tower-info",
+    ConfirmTowerUpgrade = "confirm-tower-upgrade",
+}

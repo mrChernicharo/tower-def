@@ -7,7 +7,7 @@ import jsonCurve from "../desert-level-path.0.json";
 import { THREE } from "../three";
 
 import { Enemy } from "./Enemy";
-import { capitalize, getEnemyTypeFromChar, handleModelGun } from "./helpers";
+import { capitalize, getEnemyTypeFromChar, handleModelGun, revertCancelableModals } from "./helpers";
 import { COLORS, DRAW_FUTURE_GIZMO, ENEMY_BLUEPRINTS, STAGE_WAVES_DATA } from "./constants";
 import { AppLayers, EnemyChar, EnemyType, GameState, TowerName } from "./enums";
 import { EnemyBluePrint } from "./types";
@@ -294,95 +294,101 @@ function init2DModals() {
             const modalContainer = document.createElement("div");
             modalContainer.className = "modal-container";
 
-            const modal = document.createElement("div");
-            modal.id = `modal2D-${el.name}`;
-            modal.className = "modal2D";
-            modal.style.pointerEvents = "all";
-            modal.style.opacity = "0.9";
+            const modalEl = document.createElement("div");
+            modalEl.id = `modal2D-${el.name}`;
+            modalEl.className = "modal2D";
+            modalEl.style.pointerEvents = "all";
+            modalEl.style.opacity = "0.9";
 
-            const modal2D = new CSS2DObject(modalContainer);
-            modal2D.position.set(el.position.x, el.position.y + 8, el.position.z);
-            modal2D.name = `${el.name}-modal`;
-            modal2D.layers.set(AppLayers.Modals);
-            modal2D.visible = false;
+            const modal3D = new CSS2DObject(modalContainer);
+            modal3D.position.set(el.position.x, el.position.y + 8, el.position.z);
+            modal3D.name = `${el.name}-modal`;
+            modal3D.layers.set(AppLayers.Modals);
+            modal3D.visible = false;
 
-            modalContainer.append(modal);
+            scene.add(modal3D);
 
-            scene.add(modal2D);
+            modalContainer.append(modalEl);
+            modalEl.innerHTML = modalTemplates.towerBuild();
 
-            // BUILD TOWER MODAL
-            modal.innerHTML = modalTemplates.towerBuild();
-
-            modal.onclick = (e: MouseEvent) => {
-                // setTimeout(() => console.log("::: towerToBuild", towerToBuild), 0);
-                // console.log("onclick", { e, modal, composedPath: e.composedPath(), target: e.target });
-                const evTarget = e.target as HTMLElement;
-
-                // TOWER BUILD
-                if (evTarget.classList.contains("tower-build-btn")) {
-                    towerToBuild = evTarget.id.split("-")[0] as TowerName;
-                    modal.innerHTML = modalTemplates.confirmTowerBuild(towerToBuild);
-                }
-                if (evTarget.classList.contains("cancel-tower-build-btn")) {
-                    modal.innerHTML = modalTemplates.towerBuild();
-                    towerToBuild = null;
-                }
-                if (evTarget.classList.contains("confirm-tower-build-btn")) {
-                    console.log(`BUILD THIS GODAMN ${towerToBuild} TOWER`, { el });
-                    modal.innerHTML = modalTemplates.towerDetails(towerToBuild!);
-                    modal2D.visible = false;
-
-                    const tower = new Tower(towerToBuild!, el.position);
-                    el.userData["tower"] = towerToBuild;
-                    el.userData["tower_id"] = tower.id;
-                    modal2D.userData["tower"] = towerToBuild;
-                    modal2D.userData["tower_id"] = tower.id;
-
-                    towers.push(tower);
-                    scene.add(tower.model);
-                    console.log(":::", { tower, towers });
-
-                    towerToBuild = null;
-                }
-
-                // TOWER SELL
-                if (evTarget.id === "tower-sell-btn") {
-                    modal.innerHTML = modalTemplates.confirmTowerSell(el.userData.tower);
-                }
-                if (evTarget.classList.contains("cancel-tower-sell-btn")) {
-                    modal.innerHTML = modalTemplates.towerDetails(el.userData.tower);
-                }
-                if (evTarget.id === "confirm-tower-sell-btn") {
-                    console.log("SELL THIS GODAMN TOWER", { el });
-                    const tower_id = el.userData.tower_id;
-
-                    delete el.userData.tower;
-                    delete el.userData.tower_id;
-                    delete modal2D.userData.tower;
-                    delete modal2D.userData.tower_id;
-
-                    modal.innerHTML = modalTemplates.towerBuild();
-                    modal2D.visible = false;
-
-                    // towers = towers.filter((t) => t.id !== tower_id);
-                    const towerIdx = towers.findIndex((t) => t.id === tower_id);
-                    const [tower] = towers.splice(towerIdx, 1);
-                    scene.remove(tower.model);
-                    // console.log({ towers, tower, scene });
-                }
-
-                // TOWER INFO
-                if (evTarget.id === "tower-info-btn") {
-                    console.log("INFO", { el });
-                }
-
-                // TOWER UPGRADE
-                if (evTarget.id === "tower-upgrade-btn") {
-                    console.log("UPGRADE", { el });
-                }
-            };
+            modalEl.addEventListener("click", (e) => onModalClick(e, el, modal3D, modalEl));
         }
     });
+}
+
+function onModalClick(e: MouseEvent, el: THREE.Object3D, modal3D: CSS2DObject, modalEl: HTMLDivElement) {
+    const evTarget = e.target as HTMLElement;
+
+    // TOWER BUILD
+    if (evTarget.classList.contains("tower-build-btn")) {
+        towerToBuild = evTarget.id.split("-")[0] as TowerName;
+        modalEl.innerHTML = modalTemplates.confirmTowerBuild(towerToBuild);
+    }
+    if (evTarget.classList.contains("cancel-tower-build-btn")) {
+        modalEl.innerHTML = modalTemplates.towerBuild();
+        towerToBuild = null;
+    }
+    if (evTarget.classList.contains("confirm-tower-build-btn")) {
+        console.log(`BUILD THIS GODAMN ${towerToBuild} TOWER`, { el });
+        modalEl.innerHTML = modalTemplates.towerDetails(towerToBuild!);
+        modal3D.visible = false;
+
+        const tower = new Tower(towerToBuild!, el.position);
+        el.userData["tower"] = towerToBuild;
+        el.userData["tower_id"] = tower.id;
+        modal3D.userData["tower"] = towerToBuild;
+        modal3D.userData["tower_id"] = tower.id;
+
+        towers.push(tower);
+        scene.add(tower.model);
+        console.log(":::", { tower, towers });
+
+        towerToBuild = null;
+    }
+
+    // TOWER SELL
+    if (evTarget.id === "tower-sell-btn") {
+        modalEl.innerHTML = modalTemplates.confirmTowerSell(el.userData.tower);
+    }
+    if (evTarget.classList.contains("cancel-tower-sell-btn")) {
+        modalEl.innerHTML = modalTemplates.towerDetails(el.userData.tower);
+    }
+    if (evTarget.id === "confirm-tower-sell-btn") {
+        console.log("SELL THIS GODAMN TOWER", { el });
+        const tower_id = el.userData.tower_id;
+
+        delete el.userData.tower;
+        delete el.userData.tower_id;
+        delete modal3D.userData.tower;
+        delete modal3D.userData.tower_id;
+
+        modalEl.innerHTML = modalTemplates.towerBuild();
+        modal3D.visible = false;
+
+        // towers = towers.filter((t) => t.id !== tower_id);
+        const towerIdx = towers.findIndex((t) => t.id === tower_id);
+        const [tower] = towers.splice(towerIdx, 1);
+        scene.remove(tower.model);
+        // console.log({ towers, tower, scene });
+    }
+
+    // TOWER INFO
+    if (evTarget.id === "tower-info-btn") {
+        console.log("INFO", { el });
+        modalEl.innerHTML = modalTemplates.towerInfo(el.userData.tower);
+    }
+    if (evTarget.classList.contains("cancel-tower-info-btn")) {
+        modalEl.innerHTML = modalTemplates.towerDetails(el.userData.tower);
+    }
+
+    // TOWER UPGRADE
+    if (evTarget.id === "tower-upgrade-btn") {
+        console.log("UPGRADE", { el });
+        modalEl.innerHTML = modalTemplates.confirmTowerUpgrade(el.userData.tower);
+    }
+    if (evTarget.classList.contains("cancel-tower-upgrade-btn")) {
+        modalEl.innerHTML = modalTemplates.towerDetails(el.userData.tower);
+    }
 }
 
 function onCanvasClick(e: MouseEvent) {
@@ -395,13 +401,14 @@ function onCanvasClick(e: MouseEvent) {
     mousePos.x = (e.offsetX / window.innerWidth) * 2 - 1;
     mousePos.y = -(e.offsetY / (window.innerHeight - 120)) * 2 + 1;
 
+    const clickedModal = [...e.composedPath()].find((el) => (el as HTMLElement)?.classList?.contains("modal2D"));
     const clickedTowerBase = towerBaseMouseRay.intersectObjects(scene.children)[0];
+
+    revertCancelableModals(clickedModal as HTMLDivElement | undefined);
 
     if (clickedTowerBase) {
         console.log("CLICKED TOWER BASE");
-
         const modal3D = scene.getObjectByName(`${clickedTowerBase.object.name}-modal`)!;
-
         // HIDE previously open modal
         scene.traverse((obj) => {
             if ((obj as any).isCSS2DObject && obj.visible) {
@@ -410,36 +417,20 @@ function onCanvasClick(e: MouseEvent) {
         });
         // SHOW modal
         modal3D.visible = true;
+    } else if (clickedModal) {
+        console.log("CLICKED MODAL");
     } else {
-        if ([...e.composedPath()].some((el) => (el as HTMLElement)?.classList?.contains("modal2D"))) {
-            console.log("CLICKED MODAL");
-        } else {
-            console.log("CLICKED OUTSIDE");
+        console.log("CLICKED OUTSIDE: Neither modal nor towerBase");
 
-            const openModal = document.querySelector<HTMLDivElement>(".modal2D");
-            if (!openModal) return;
-
-            const modal3D = scene.getObjectByName(`${openModal.id.replace("modal2D-", "")}-modal`);
-
-            // Revert confirmation modals (DOM)
-            if (modal3D?.userData.tower) {
-                console.log("PREV SELECTED TILE HAS A TOWER");
-                openModal.innerHTML = modalTemplates.towerDetails(modal3D.userData.tower);
-            } else {
-                console.log("PREV SELECTED TILE DOES NOT HAVE A TOWER");
-                openModal.innerHTML = modalTemplates.towerBuild();
-            }
-
-            // HIDE modal (3D)
-            scene.traverse((obj) => {
-                if ((obj as any).isCSS2DObject) {
-                    if (obj.visible) {
-                        console.log(obj);
-                        obj.visible = false;
-                    }
+        // HIDE modal (3D)
+        scene.traverse((obj) => {
+            if ((obj as any).isCSS2DObject) {
+                if (obj.visible) {
+                    console.log(obj);
+                    obj.visible = false;
                 }
-            });
-        }
+            }
+        });
     }
 }
 
