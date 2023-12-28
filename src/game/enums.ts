@@ -28,7 +28,8 @@ export enum GameState {
 export enum AppLayers {
     Default = 0,
     TowerBase = 1,
-    Modals = 2,
+    Tower = 2,
+    Modals = 3,
 }
 
 export enum TowerName {

@@ -32,8 +32,8 @@ export let enemies: Enemy[] = [];
 export let towers: Tower[] = [];
 export let gameState = GameState.Loading;
 export let pathCurve: THREE.CatmullRomCurve3;
-export let towerBaseMouseRay: THREE.Raycaster;
-let frameId = 0;
+export let mouseRay: THREE.Raycaster;
+export let towerTexture: THREE.Texture;
 
 const spawnTimeouts: number[] = []; // enable canceling waveScheduling timeouts when game is destroy
 export const glbEnemyModels = {} as { [k in EnemyType]: GLTF };
@@ -42,9 +42,11 @@ export const towerModels = {} as { [k in TowerName]: { [k: `level-${number}`]: T
 let canvas: HTMLCanvasElement;
 let playPauseBtn: HTMLButtonElement;
 
+let frameId = 0;
 let clickTimestamp = 0;
-let hoveredTowerBaseName: string | null = null;
 let towerToBuild: TowerName | null = null;
+let hoveredTowerBaseName: string | null = null;
+let hoveredTowerName: string | null = null;
 
 export async function destroyGame() {
     cancelAnimationFrame(frameId);
@@ -129,10 +131,13 @@ async function gameSetup() {
     scene = new THREE.Scene();
     scene.add(ambientLight);
 
-    towerBaseMouseRay = new THREE.Raycaster();
-    towerBaseMouseRay.layers.disableAll();
-    towerBaseMouseRay.layers.enable(AppLayers.TowerBase);
-    towerBaseMouseRay.layers.enable(AppLayers.Modals);
+    mouseRay = new THREE.Raycaster();
+    mouseRay.layers.disableAll();
+    mouseRay.layers.enable(AppLayers.TowerBase);
+    mouseRay.layers.enable(AppLayers.Tower);
+    mouseRay.layers.enable(AppLayers.Modals);
+
+    //
 
     await _initEnemyModels();
     await _initTowerModels();
@@ -155,6 +160,8 @@ async function _initEnemyModels() {
 
 async function _initTowerModels() {
     const fbx = await fbxLoader.loadAsync("/assets/fbx/tower-collection.fbx");
+    towerTexture = await new THREE.TextureLoader().loadAsync("/assets/fbx/towers-texture.png");
+
     console.log({ fbx, towers: fbx.children.map((c) => c.name).sort((a, b) => a.localeCompare(b)) });
 
     const models = fbx.children;
@@ -171,6 +178,38 @@ async function _initTowerModels() {
     }
 
     console.log({ towerModels });
+}
+
+function init2DModals() {
+    scene.traverse((el) => {
+        if (el.name.includes("TowerBase")) {
+            const tileIdx = el.userData.name.split(".")[1];
+            el.userData["tile_idx"] = tileIdx;
+
+            const modalContainer = document.createElement("div");
+            modalContainer.className = "modal-container";
+
+            const modalEl = document.createElement("div");
+            modalEl.id = `modal2D-${el.name}`;
+            modalEl.className = `modal2D tile_${tileIdx}`;
+            modalEl.style.pointerEvents = "all";
+            modalEl.style.opacity = "0.9";
+
+            const modal3D = new CSS2DObject(modalContainer);
+            modal3D.position.set(el.position.x, el.position.y + 8, el.position.z);
+            modal3D.name = `${el.name}-modal`;
+            modal3D.userData["tile_idx"] = tileIdx;
+            modal3D.layers.set(AppLayers.Modals);
+            modal3D.visible = false;
+
+            scene.add(modal3D);
+
+            modalContainer.append(modalEl);
+            modalEl.innerHTML = modalTemplates.towerBuild();
+
+            modalEl.addEventListener("click", (e) => onModalClick(e, el, modal3D, modalEl));
+        }
+    });
 }
 
 async function drawMap() {
@@ -280,44 +319,17 @@ function onMouseMove(e: MouseEvent) {
     mousePos.x = (e.offsetX / window.innerWidth) * 2 - 1;
     mousePos.y = -(e.offsetY / (window.innerHeight - 120)) * 2 + 1;
 
-    towerBaseMouseRay.setFromCamera(mousePos, camera);
-    handleTowerBaseHoverOpacityEfx();
+    mouseRay.setFromCamera(mousePos, camera);
+    handleHoverOpacityEfx();
 }
 
 function onMouseDown() {
     clickTimestamp = Date.now();
 }
 
-function init2DModals() {
-    scene.traverse((el) => {
-        if (el.name.includes("TowerBase")) {
-            const modalContainer = document.createElement("div");
-            modalContainer.className = "modal-container";
-
-            const modalEl = document.createElement("div");
-            modalEl.id = `modal2D-${el.name}`;
-            modalEl.className = "modal2D";
-            modalEl.style.pointerEvents = "all";
-            modalEl.style.opacity = "0.9";
-
-            const modal3D = new CSS2DObject(modalContainer);
-            modal3D.position.set(el.position.x, el.position.y + 8, el.position.z);
-            modal3D.name = `${el.name}-modal`;
-            modal3D.layers.set(AppLayers.Modals);
-            modal3D.visible = false;
-
-            scene.add(modal3D);
-
-            modalContainer.append(modalEl);
-            modalEl.innerHTML = modalTemplates.towerBuild();
-
-            modalEl.addEventListener("click", (e) => onModalClick(e, el, modal3D, modalEl));
-        }
-    });
-}
-
 function onModalClick(e: MouseEvent, el: THREE.Object3D, modal3D: CSS2DObject, modalEl: HTMLDivElement) {
     const evTarget = e.target as HTMLElement;
+    e.stopPropagation();
 
     // TOWER BUILD
     if (evTarget.classList.contains("tower-build-btn")) {
@@ -333,7 +345,7 @@ function onModalClick(e: MouseEvent, el: THREE.Object3D, modal3D: CSS2DObject, m
         modalEl.innerHTML = modalTemplates.towerDetails(towerToBuild!);
         modal3D.visible = false;
 
-        const tower = new Tower(towerToBuild!, el.position);
+        const tower = new Tower(towerToBuild!, el.position, modal3D.userData["tile_idx"]);
         el.userData["tower"] = towerToBuild;
         el.userData["tower_id"] = tower.id;
         modal3D.userData["tower"] = towerToBuild;
@@ -402,12 +414,17 @@ function onCanvasClick(e: MouseEvent) {
     mousePos.y = -(e.offsetY / (window.innerHeight - 120)) * 2 + 1;
 
     const clickedModal = [...e.composedPath()].find((el) => (el as HTMLElement)?.classList?.contains("modal2D"));
-    const clickedTowerBase = towerBaseMouseRay.intersectObjects(scene.children)[0];
+    const clickedTower = mouseRay.intersectObjects(scene.children).find((ch) => ch.object.name.includes("-Tower"));
+    const clickedTowerBase = mouseRay
+        .intersectObjects(scene.children)
+        .find((ch) => ch.object.name.includes("TowerBase"));
+
+    console.log({ rayIntersects: mouseRay.intersectObjects(scene.children), clickedTower, clickedTowerBase });
 
     revertCancelableModals(clickedModal as HTMLDivElement | undefined);
 
     if (clickedTowerBase) {
-        console.log("CLICKED TOWER BASE");
+        console.log("CLICKED TOWER BASE", { clickedTowerBase });
         const modal3D = scene.getObjectByName(`${clickedTowerBase.object.name}-modal`)!;
         // HIDE previously open modal
         scene.traverse((obj) => {
@@ -417,8 +434,30 @@ function onCanvasClick(e: MouseEvent) {
         });
         // SHOW modal
         modal3D.visible = true;
+    } else if (clickedTower) {
+        console.log("CLICKED TOWER", { clickedTower, scene });
+        // const modal3D = scene.getObjectByName(`${clickedTower.object.name}-modal`)!;
+        let modal3D: THREE.Object3D;
+        // HIDE previously open modal
+        scene.traverse((obj) => {
+            // if ((obj as any)) {
+            // }
+
+            if ((obj as any).isCSS2DObject) {
+                if (obj.userData.tile_idx === clickedTower.object.userData.tile_idx) {
+                    console.log(obj, "!!!!!");
+                    modal3D = obj;
+                }
+
+                if (obj.visible) {
+                    obj.visible = false;
+                }
+            }
+        });
+        // SHOW modal
+        modal3D!.visible = true;
     } else if (clickedModal) {
-        console.log("CLICKED MODAL");
+        console.log("CLICKED MODAL", { clickedModal });
     } else {
         console.log("CLICKED OUTSIDE: Neither modal nor towerBase");
 
@@ -434,17 +473,17 @@ function onCanvasClick(e: MouseEvent) {
     }
 }
 
-function handleTowerBaseHoverOpacityEfx() {
-    const hoveredTowerBase = towerBaseMouseRay.intersectObjects(scene.children)[0];
+function handleHoverOpacityEfx() {
+    const hoveredTower = mouseRay.intersectObjects(scene.children).find((ch) => ch.object.name.includes("-Tower"));
+    const hoveredTowerBase = mouseRay
+        .intersectObjects(scene.children)
+        .find((ch) => ch.object.name.includes("TowerBase"));
 
     if (hoveredTowerBase) {
-        // console.log({ hoveredTowerBase });
-
         const towerBaseMesh = hoveredTowerBase.object;
         // keep track of current towerBase
         hoveredTowerBaseName = towerBaseMesh.name;
 
-        // add opacity EFX
         (towerBaseMesh as THREE.Mesh).material = new THREE.MeshMatcapMaterial({
             color: COLORS.concrete,
             transparent: true,
@@ -452,19 +491,35 @@ function handleTowerBaseHoverOpacityEfx() {
         });
     } else {
         if (hoveredTowerBaseName) {
-            const hoveredTowerBase = scene.getObjectByName(hoveredTowerBaseName);
-            // const modal2D = scene.getObjectByName(`modal2D-${hoveredTowerBaseName}`)!;
+            const hoveredTowerBase = scene.getObjectByName(hoveredTowerBaseName) as THREE.Mesh;
 
-            // remove opacity EFX
-            (hoveredTowerBase as THREE.Mesh).material = new THREE.MeshMatcapMaterial({
+            hoveredTowerBase.material = new THREE.MeshMatcapMaterial({
                 color: COLORS.concrete,
-                transparent: true,
-                opacity: 1,
             });
-
             // remove memory of hovered towerBase
             hoveredTowerBaseName = null;
         }
+    }
+
+    if (hoveredTower) {
+        const towerMesh = hoveredTower.object as THREE.Mesh;
+        hoveredTowerName = towerMesh.name;
+        towerMesh.material = new THREE.MeshBasicMaterial({
+            transparent: true,
+            opacity: 0.75,
+            color: 0xca947d,
+            map: towerTexture,
+        });
+    } else {
+        if (hoveredTowerName) {
+            const hoveredTower = scene.getObjectByName(hoveredTowerName) as THREE.Mesh;
+
+            hoveredTower.material = new THREE.MeshBasicMaterial({
+                color: 0xca947d,
+                map: towerTexture,
+            });
+        }
+        hoveredTowerName = null;
     }
 }
 

@@ -1,6 +1,6 @@
 import { TOWER_BLUEPRINTS } from "./constants";
-import { TowerName } from "./enums";
-import { towerModels } from "./game";
+import { AppLayers, TowerName } from "./enums";
+import { towerModels, towerTexture } from "./game";
 import { idMaker } from "./helpers";
 import { TowerBluePrint } from "./types";
 import { THREE } from "../three";
@@ -11,17 +11,19 @@ export class Tower {
     position: THREE.Vector3;
     model!: THREE.Mesh;
     blueprint: TowerBluePrint;
-    constructor(towerName: TowerName, position: THREE.Vector3) {
+    tileIdx: string;
+    constructor(towerName: TowerName, position: THREE.Vector3, tileIdx: string) {
         this.id = idMaker();
         this.towerName = towerName;
         this.position = position;
+        this.tileIdx = tileIdx;
         this.blueprint = TOWER_BLUEPRINTS[towerName][0];
 
         this._init();
     }
 
     async _init() {
-        this._setupModel();
+        await this._setupModel();
 
         return this;
     }
@@ -31,14 +33,15 @@ export class Tower {
         this.model.scale.set(0.005, 0.005, 0.005);
         this.model.position.set(this.position.x, this.position.y, this.position.z);
         this.model.userData["tower_id"] = this.id;
-        const texture = await new THREE.TextureLoader().loadAsync("/assets/fbx/towers-texture.png");
+        this.model.userData["tile_idx"] = this.tileIdx;
+        this.model.layers.set(AppLayers.Tower);
         this.model.material = new THREE.MeshBasicMaterial({
             // color: COLORS[this.blueprint.color as keyof typeof COLORS],
             // color: 0xffffff,
             color: 0xca947d,
-            map: texture,
+            map: towerTexture,
         });
 
-        console.log({ texture });
+        // console.log({ texture, tileIdx: this.tileIdx });
     }
 }
