@@ -6,7 +6,7 @@ import { idMaker } from "./helpers";
 import { TowerBluePrint } from "./types";
 import { THREE } from "../three";
 import { Enemy } from "./Enemy";
-import { Projectile } from "./Projectile";
+import { StraightProjectile, ParabolaProjectile } from "./Projectile";
 
 export class Tower {
     id: string;
@@ -92,15 +92,13 @@ export class Tower {
     }
 
     tick(delta: number, enemy: Enemy | undefined) {
-        if (enemy) {
+        if (enemy && this.cooldown <= 0) {
             if (this.position.distanceTo(enemy.model.position) < this.blueprint.range) {
                 // console.log("enemyInSight", enemy.enemyType, enemy.id, this.position.distanceTo(enemy.model.position));
-                if (this.cooldown <= 0) {
-                    // console.log("ShoooT!", enemy.enemyType);
-                    this.cooldown = 1 / (this.blueprint.fireRate * 0.5);
+                // console.log("ShoooT!", enemy.enemyType);
+                this.cooldown = 1 / (this.blueprint.fireRate * 0.5);
 
-                    this.fireProjectile(enemy);
-                }
+                this.fireProjectile(enemy);
             }
         }
         // console.log(this.cooldown);
@@ -108,43 +106,63 @@ export class Tower {
     }
 
     fireProjectile(enemy: Enemy) {
-        const projBlueprint = PROJECTILE_BLUEPRINTS[this.towerName][this.blueprint.level - 1];
-
+        const projBlueprint = { ...PROJECTILE_BLUEPRINTS[this.towerName][this.blueprint.level - 1] };
         const projOrigin = new THREE.Vector3(
             this.model.position.x,
             this.model.position.y + this.blueprint.firePointY,
             this.model.position.z
         );
 
-        const maxHeight = 7;
-        const midPoint = projOrigin.clone().add(enemy.getFuturePosition(1).clone()).divideScalar(2);
-        midPoint.y += maxHeight;
+        switch (projBlueprint.trajectoryType) {
+            case TrajectoryType.Parabola: {
+                const maxHeight = 7;
+                const midPoint = projOrigin.clone().add(enemy.getFuturePosition(1).clone()).divideScalar(2);
+                midPoint.y += maxHeight;
 
-        const curve = new THREE.CatmullRomCurve3([projOrigin.clone(), midPoint, enemy.getFuturePosition(1).clone()]);
+                const curve = new THREE.CatmullRomCurve3([
+                    projOrigin.clone(),
+                    midPoint,
+                    enemy.getFuturePosition(1).clone(),
+                ]);
 
-        const timeToReachTargetViaParabola = curve.getLength() / projBlueprint.speed;
+                const timeToReachTargetViaParabola = curve.getLength() / projBlueprint.speed;
 
-        const timeToReachTargetViaStraightLine =
-            projOrigin.distanceTo(new THREE.Vector3().copy(enemy.getFuturePosition(0))) / projBlueprint.speed;
+                const destination = enemy.getFuturePosition(timeToReachTargetViaParabola);
 
-        const destination =
-            projBlueprint.trajectoryType === TrajectoryType.Parabola
-                ? enemy.getFuturePosition(timeToReachTargetViaParabola)
-                : enemy.getFuturePosition(timeToReachTargetViaStraightLine);
+                const projectile = new ParabolaProjectile(
+                    this.towerName,
+                    this.blueprint.level,
+                    new THREE.Vector3().copy(projOrigin),
+                    new THREE.Vector3().copy(destination),
+                    curve
+                );
+                window.dispatchEvent(new CustomEvent("projectile", { detail: projectile }));
+                break;
+            }
+            case TrajectoryType.Straight: {
+                const timeToReachTargetViaStraightLine =
+                    projOrigin.distanceTo(new THREE.Vector3().copy(enemy.getFuturePosition(0))) / projBlueprint.speed;
 
-        const projectile = new Projectile(
-            this.towerName,
-            this.blueprint.level,
-            new THREE.Vector3().copy(projOrigin),
-            new THREE.Vector3().copy(destination),
-            curve
-        );
+                const destination = enemy.getFuturePosition(timeToReachTargetViaStraightLine);
+
+                const projectile = new StraightProjectile(
+                    this.towerName,
+                    this.blueprint.level,
+                    new THREE.Vector3().copy(projOrigin),
+                    new THREE.Vector3().copy(destination)
+                );
+
+                window.dispatchEvent(new CustomEvent("projectile", { detail: projectile }));
+                break;
+            }
+            default:
+                break;
+        }
 
         // const timeToTarget = projectile.timeToTarget();
-        const timeToTarget = 1;
-        const futurePosition = enemy.getFuturePosition(timeToTarget);
-        projectile.destination.set(futurePosition.x, futurePosition.y, futurePosition.z);
-        window.dispatchEvent(new CustomEvent("projectile", { detail: projectile }));
+        // const timeToTarget = 1;
+        // const futurePosition = enemy.getFuturePosition(timeToTarget);
+        // projectile.destination.set(futurePosition.x, futurePosition.y, futurePosition.z);
     }
 }
 

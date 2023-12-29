@@ -11,10 +11,9 @@ import { Enemy } from "./Enemy";
 import { capitalize, getEnemyTypeFromChar, getProjectileTowerName, handleModelGun } from "./helpers";
 import { COLORS, DRAW_FUTURE_GIZMO, ENEMY_BLUEPRINTS, STAGE_WAVES_DATA } from "./constants";
 import { AppLayers, EnemyChar, EnemyType, GameState, ModalType, TargetingStrategy, TowerType } from "./enums";
-import { EnemyBluePrint } from "./types";
+import { EnemyBluePrint, Projectile } from "./types";
 import { cancelableModalNames, modalTemplates } from "./templates";
 import { Tower } from "./Tower";
-import { Projectile } from "./Projectile";
 
 let pathPoints: THREE.Vector3[] = [];
 

@@ -1,3 +1,4 @@
+import { ParabolaProjectile, StraightProjectile } from "./Projectile";
 import { EnemyType, TargetingStrategy, TowerType, TrajectoryType } from "./enums";
 
 export type EnemyBluePrint = {
@@ -30,3 +31,5 @@ export type ProjectileBluePrint = {
     modelScale: number;
     maxHeight?: number;
 };
+
+export type Projectile = ParabolaProjectile | StraightProjectile;
