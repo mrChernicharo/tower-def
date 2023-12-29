@@ -33,6 +33,7 @@ export let ambientLight: THREE.AmbientLight;
 export let enemies: Enemy[] = [];
 export let towers: Tower[] = [];
 export let projectiles: Map<string, Projectile>;
+export let futureGizmos: Map<string, THREE.Mesh>;
 export let gameState = GameState.Loading;
 export let pathCurve: THREE.CatmullRomCurve3;
 export let mouseRay: THREE.Raycaster;
@@ -65,6 +66,7 @@ export async function destroyGame() {
     enemies = [];
     towers = [];
     projectiles.clear();
+    futureGizmos.clear();
     gameState = GameState.Paused;
     gui.destroy();
     spawnTimeouts.forEach((timeoutId) => {
@@ -161,6 +163,7 @@ async function gameSetup() {
     camera.position.z = 62;
 
     projectiles = new Map();
+    futureGizmos = new Map();
 }
 
 async function _initEnemyModels() {
@@ -648,12 +651,16 @@ function onProjectile(e: any) {
 
     if (DRAW_FUTURE_GIZMO) {
         const futureGizmo = new THREE.Mesh(
-            new THREE.SphereGeometry(0.5),
+            new THREE.SphereGeometry(0.35),
             new THREE.MeshToonMaterial({ color: 0x00ffff })
             // new THREE.MeshToonMaterial({ color: 0xff0000 })
         );
-        // const hitPosition =
-        futureGizmo.position;
+        const hitPosition = new THREE.Vector3().copy(projectile.destination);
+        futureGizmo.position.set(hitPosition.x, hitPosition.y, hitPosition.z);
+        futureGizmo.name = "FutureGizmo";
+        futureGizmo.userData["id"] = projectile.id;
+        scene.add(futureGizmo);
+        futureGizmos.set(projectile.id, futureGizmo);
         // futureGizmo.visible = false;
     }
 
@@ -664,7 +671,10 @@ function onProjectile(e: any) {
 function onProjectileExplode(e: any) {
     const projectile = e.detail as Projectile;
     scene.remove(projectile.model);
-    // scene.remove(projectile.trajectory);
+
+    const futureGizmo = futureGizmos.get(projectile.id)!;
+    scene.remove(futureGizmo);
+    futureGizmos.delete(projectile.id);
     projectiles.delete(projectile.id);
 }
 

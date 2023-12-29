@@ -1,8 +1,8 @@
 import { EnemyType, TargetingStrategy, TowerType, TrajectoryType } from "./enums";
 import { EnemyBluePrint, ProjectileBluePrint, TowerBluePrint } from "./types";
 
-export const DRAW_FUTURE_GIZMO = false;
-// export const DRAW_FUTURE_GIZMO = true;
+// export const DRAW_FUTURE_GIZMO = false;
+export const DRAW_FUTURE_GIZMO = true;
 
 export const COLORS = {
     bg: 0x333355,

@@ -99,52 +99,52 @@ export class Tower {
                     // console.log("ShoooT!", enemy.enemyType);
                     this.cooldown = 1 / (this.blueprint.fireRate * 0.5);
 
-                    const projBlueprint = PROJECTILE_BLUEPRINTS[this.towerName][this.blueprint.level - 1];
-
-                    const origin = new THREE.Vector3(
-                        this.model.position.x,
-                        this.model.position.y + this.blueprint.firePointY,
-                        this.model.position.z
-                    );
-
-                    const maxHeight = 7;
-                    const midPoint = origin.clone().add(enemy.getFuturePosition(1).clone()).divideScalar(2);
-                    midPoint.y += maxHeight;
-
-                    const curve = new THREE.CatmullRomCurve3([
-                        origin.clone(),
-                        midPoint,
-                        enemy.getFuturePosition(1).clone(),
-                    ]);
-
-                    const timeToReachTargetViaParabola = curve.getLength() / projBlueprint.speed;
-
-                    const timeToReachTargetViaStraightLine =
-                        origin.distanceTo(new THREE.Vector3().copy(enemy.getFuturePosition(0.5))) / projBlueprint.speed;
-
-                    const destination =
-                        projBlueprint.trajectoryType === TrajectoryType.Parabola
-                            ? enemy.getFuturePosition(timeToReachTargetViaParabola)
-                            : enemy.getFuturePosition(timeToReachTargetViaStraightLine);
-
-                    const projectile = new Projectile(
-                        this.towerName,
-                        this.blueprint.level,
-                        new THREE.Vector3().copy(origin),
-                        new THREE.Vector3().copy(destination),
-                        curve
-                    );
-
-                    // const timeToTarget = projectile.timeToTarget();
-                    const timeToTarget = 1;
-                    const futurePosition = enemy.getFuturePosition(timeToTarget);
-                    projectile.destination.set(futurePosition.x, futurePosition.y, futurePosition.z);
-                    window.dispatchEvent(new CustomEvent("projectile", { detail: projectile }));
+                    this.fireProjectile(enemy);
                 }
             }
         }
         // console.log(this.cooldown);
         this.cooldown -= delta;
+    }
+
+    fireProjectile(enemy: Enemy) {
+        const projBlueprint = PROJECTILE_BLUEPRINTS[this.towerName][this.blueprint.level - 1];
+
+        const projOrigin = new THREE.Vector3(
+            this.model.position.x,
+            this.model.position.y + this.blueprint.firePointY,
+            this.model.position.z
+        );
+
+        const maxHeight = 7;
+        const midPoint = projOrigin.clone().add(enemy.getFuturePosition(1).clone()).divideScalar(2);
+        midPoint.y += maxHeight;
+
+        const curve = new THREE.CatmullRomCurve3([projOrigin.clone(), midPoint, enemy.getFuturePosition(1).clone()]);
+
+        const timeToReachTargetViaParabola = curve.getLength() / projBlueprint.speed;
+
+        const timeToReachTargetViaStraightLine =
+            projOrigin.distanceTo(new THREE.Vector3().copy(enemy.getFuturePosition(0))) / projBlueprint.speed;
+
+        const destination =
+            projBlueprint.trajectoryType === TrajectoryType.Parabola
+                ? enemy.getFuturePosition(timeToReachTargetViaParabola)
+                : enemy.getFuturePosition(timeToReachTargetViaStraightLine);
+
+        const projectile = new Projectile(
+            this.towerName,
+            this.blueprint.level,
+            new THREE.Vector3().copy(projOrigin),
+            new THREE.Vector3().copy(destination),
+            curve
+        );
+
+        // const timeToTarget = projectile.timeToTarget();
+        const timeToTarget = 1;
+        const futurePosition = enemy.getFuturePosition(timeToTarget);
+        projectile.destination.set(futurePosition.x, futurePosition.y, futurePosition.z);
+        window.dispatchEvent(new CustomEvent("projectile", { detail: projectile }));
     }
 }
 
