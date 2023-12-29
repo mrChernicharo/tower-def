@@ -22,10 +22,10 @@ export class PlayerStats {
     }
     gainHP(n: number) {
         this.hp += n;
-        this.hpDisplay.innerHTML = `$${this.hp}`;
+        this.hpDisplay.innerHTML = `❤️${this.hp}`;
     }
-    spendHP(n: number) {
+    loseHP(n: number) {
         this.hp -= n;
-        this.hpDisplay.innerHTML = `$${this.hp}`;
+        this.hpDisplay.innerHTML = `❤️${this.hp}`;
     }
 }

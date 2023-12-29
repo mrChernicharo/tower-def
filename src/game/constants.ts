@@ -19,6 +19,7 @@ export const ENEMY_BLUEPRINTS: { [k in EnemyType]: EnemyBluePrint } = {
     spider: {
         name: EnemyType.Spider,
         modelURL: "/assets/glb/spider.glb",
+        // speed: 30,
         speed: 3.5,
         maxHp: 40,
         modelScale: 80,
@@ -504,7 +505,11 @@ export const STAGE_WAVES_DATA: [string, number, number][][][] = [
         // wave 0
         [
             ["s", 0, 0],
+            ["s", 1, 1],
             ["s", 2, 1],
+            ["s", 3, 1],
+            ["s", 4, 1],
+            ["s", 5, 1],
             // ["s", 2, -1],
             // ["r", 3, -1],
             ["s", 6, 0],

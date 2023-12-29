@@ -77,10 +77,11 @@ export async function destroyGame() {
     window.removeEventListener("resize", onResize);
     window.removeEventListener("projectile", onProjectile);
     window.removeEventListener("projectile-explode", onProjectileExplode);
-    playPauseBtn.removeEventListener("click", onPlayPause);
+    window.removeEventListener("enemy-destroyed", onEnemyDestroyed);
     canvas.removeEventListener("mousemove", onMouseMove);
     canvas.removeEventListener("click", onCanvasClick);
     canvas.removeEventListener("mousedown", onMouseDown);
+    playPauseBtn.removeEventListener("click", onPlayPause);
 }
 
 export async function initGame(levelIdx: number, initialPlayerStats: GlobalPlayerStats) {
@@ -100,10 +101,11 @@ export async function initGame(levelIdx: number, initialPlayerStats: GlobalPlaye
     window.addEventListener("resize", onResize);
     window.addEventListener("projectile", onProjectile);
     window.addEventListener("projectile-explode", onProjectileExplode);
-    playPauseBtn.addEventListener("click", onPlayPause);
+    window.addEventListener("enemy-destroyed", onEnemyDestroyed);
     canvas.addEventListener("mousemove", onMouseMove);
     canvas.addEventListener("click", onCanvasClick);
     canvas.addEventListener("mousedown", onMouseDown);
+    playPauseBtn.addEventListener("click", onPlayPause);
 
     frameId = requestAnimationFrame(animate);
 }
@@ -521,8 +523,7 @@ function onModalClick(e: MouseEvent, el: THREE.Object3D, modal3D: CSS2DObject, m
 
         // const towerIdx = towers.findIndex((t) => t.id === tower_id);
         // console.log("tower upgrade", { e, el, modal3D, modalEl, tower_id, tower });
-
-        // if (towerIdx >= 0) {
+        // if (towerIdx >= 0)
         if (tower) {
             if (playerStats.gold < tower.blueprint.price) {
                 console.warn("not enough money");
@@ -541,7 +542,7 @@ function onModalClick(e: MouseEvent, el: THREE.Object3D, modal3D: CSS2DObject, m
             scene.add(upgradedTower.model);
             scene.add(upgradedTower.rangeGizmo);
 
-            console.log({ tower, towers });
+            // console.log({ tower, towers });
             modalEl.innerHTML = modalTemplates.towerDetails(tower);
             modal3D.visible = false;
         }
@@ -736,6 +737,25 @@ function onProjectileExplode(e: any) {
     // console.log({ projectiles });
     explosions.set(projectile.id, explosion);
     scene.add(explosion);
+}
+
+function onEnemyDestroyed(e: any) {
+    const data = e.detail;
+    console.log("enemy destroy", { data });
+    const { enemy, endReached } = data;
+
+    if (endReached) {
+        console.log("end reached");
+        playerStats.loseHP(1);
+    } else {
+        console.log("enemy killed");
+    }
+
+    enemies = enemies.filter((e) => e.id !== enemy.id);
+    scene.remove(enemy.model);
+
+    console.log({ enemies });
+    // enemies.splice
 }
 
 // function drawGrid() {

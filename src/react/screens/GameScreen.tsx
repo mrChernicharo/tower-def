@@ -20,7 +20,7 @@ const Game = () => {
         return () => {
             destroyGame();
         };
-    }, [area, level]);
+    }, [area, gold, hp, level]);
 
     return (
         <>

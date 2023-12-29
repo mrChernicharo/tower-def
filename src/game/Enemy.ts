@@ -9,6 +9,7 @@ import { idMaker } from "./helpers";
 
 export class Enemy {
     #ready = false;
+    #endReached = false;
     id: string;
     glb!: GLTF;
     enemyType: EnemyType;
@@ -88,11 +89,6 @@ export class Enemy {
         return pathCurve.getPointAt(t);
     }
 
-    // _drawFuturePosition(timeInSecs: number) {
-    //     const position = this.getFuturePosition(timeInSecs);
-    //     this.futureGizmo.position.copy(position);
-    // }
-
     ready() {
         return this.#ready;
     }
@@ -138,7 +134,24 @@ export class Enemy {
         const distCovered = this.bluePrint.speed * (this.timeSinceSpawn + timeInSecs);
         const distPerc = distCovered / pathLen;
 
+        if (distPerc > 1 && !this.#endReached) {
+            this.#endReached = true;
+            this.destroy(true);
+        }
+
         // console.log({ pathLen, distCovered, distPerc });
         return distPerc % 1;
+    }
+
+    takeDamage(dmg: number) {
+        this.hp -= dmg;
+
+        if (this.hp <= 0) {
+            this.destroy(false);
+        }
+    }
+
+    destroy(endReached: boolean) {
+        window.dispatchEvent(new CustomEvent("enemy-destroyed", { detail: { enemy: this, endReached } }));
     }
 }
