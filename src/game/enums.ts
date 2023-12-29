@@ -49,3 +49,8 @@ export enum ModalType {
     TowerInfo = "tower-info",
     ConfirmTowerUpgrade = "confirm-tower-upgrade",
 }
+
+export enum TrajectoryType {
+    Straight = "Straight",
+    Parabola = "Parabola",
+}

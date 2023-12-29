@@ -95,8 +95,6 @@ export class Tower {
                 if (this.cooldown <= 0) {
                     console.log("ShoooT!", enemy.enemyType);
                     this.cooldown = 1 / (this.blueprint.fireRate * 0.5);
-                    // this.cooldown = 1 / this.blueprint.fireRate;
-                    // @TODO: mind FUTURE POSITION
 
                     const origin = new THREE.Vector3(
                         this.model.position.x,

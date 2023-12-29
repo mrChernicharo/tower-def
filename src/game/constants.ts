@@ -1,5 +1,5 @@
-import { EnemyType, TowerType } from "./enums";
-import { EnemyBluePrint, TowerBluePrint } from "./types";
+import { EnemyType, TowerType, TrajectoryType } from "./enums";
+import { EnemyBluePrint, ProjectileBluePrint, TowerBluePrint } from "./types";
 
 export const DRAW_FUTURE_GIZMO = false;
 // export const DRAW_FUTURE_GIZMO = true;
@@ -262,6 +262,39 @@ export const TOWER_BLUEPRINTS: { [k in TowerType]: TowerBluePrint[] } = {
             range: 14,
             skills: [],
         },
+    ],
+};
+
+export const PROJECTILE_BLUEPRINTS: { [k in TowerType]: ProjectileBluePrint[] } = {
+    Archer: [
+        { type: TowerType.Archer, level: 1, modelScale: 0.005, speed: 14, trajectoryType: TrajectoryType.Straight },
+        { type: TowerType.Archer, level: 2, modelScale: 0.005, speed: 14, trajectoryType: TrajectoryType.Straight },
+        { type: TowerType.Archer, level: 3, modelScale: 0.005, speed: 14, trajectoryType: TrajectoryType.Straight },
+        { type: TowerType.Archer, level: 4, modelScale: 0.005, speed: 14, trajectoryType: TrajectoryType.Straight },
+    ],
+    Ballista: [
+        { type: TowerType.Ballista, level: 1, modelScale: 0.0075, speed: 18, trajectoryType: TrajectoryType.Straight },
+        { type: TowerType.Ballista, level: 2, modelScale: 0.0075, speed: 18, trajectoryType: TrajectoryType.Straight },
+        { type: TowerType.Ballista, level: 3, modelScale: 0.0075, speed: 18, trajectoryType: TrajectoryType.Straight },
+        { type: TowerType.Ballista, level: 4, modelScale: 0.0075, speed: 18, trajectoryType: TrajectoryType.Straight },
+    ],
+    Cannon: [
+        { type: TowerType.Ballista, level: 1, modelScale: 0.008, speed: 12, trajectoryType: TrajectoryType.Parabola },
+        { type: TowerType.Ballista, level: 2, modelScale: 0.01, speed: 12, trajectoryType: TrajectoryType.Parabola },
+        { type: TowerType.Ballista, level: 3, modelScale: 0.012, speed: 12, trajectoryType: TrajectoryType.Parabola },
+        { type: TowerType.Ballista, level: 4, modelScale: 0.015, speed: 12, trajectoryType: TrajectoryType.Parabola },
+    ],
+    Wizard: [
+        { type: TowerType.Ballista, level: 1, modelScale: 0.005, speed: 18, trajectoryType: TrajectoryType.Parabola },
+        { type: TowerType.Ballista, level: 2, modelScale: 0.006, speed: 18, trajectoryType: TrajectoryType.Parabola },
+        { type: TowerType.Ballista, level: 3, modelScale: 0.007, speed: 18, trajectoryType: TrajectoryType.Parabola },
+        { type: TowerType.Ballista, level: 4, modelScale: 0.008, speed: 18, trajectoryType: TrajectoryType.Parabola },
+    ],
+    Poison: [
+        { type: TowerType.Poison, level: 1, modelScale: 0.005, speed: 15, trajectoryType: TrajectoryType.Parabola },
+        { type: TowerType.Poison, level: 2, modelScale: 0.006, speed: 15, trajectoryType: TrajectoryType.Parabola },
+        { type: TowerType.Poison, level: 3, modelScale: 0.007, speed: 15, trajectoryType: TrajectoryType.Parabola },
+        { type: TowerType.Poison, level: 4, modelScale: 0.008, speed: 15, trajectoryType: TrajectoryType.Parabola },
     ],
 };
 

@@ -1,4 +1,4 @@
-import { EnemyType, TowerType } from "./enums";
+import { EnemyType, TowerType, TrajectoryType } from "./enums";
 
 export type EnemyBluePrint = {
     name: EnemyType;
@@ -18,4 +18,13 @@ export type TowerBluePrint = {
     range: number;
     price: number;
     skills?: unknown[];
+};
+
+export type ProjectileBluePrint = {
+    type: TowerType;
+    level: number;
+    trajectoryType: TrajectoryType;
+    speed: number;
+    modelScale: number;
+    maxHeight?: number;
 };

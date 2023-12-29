@@ -1,8 +1,10 @@
 import { Vector3 } from "three";
 import { THREE } from "../three";
-import { AppLayers, TowerType } from "./enums";
+import { AppLayers, TowerType, TrajectoryType } from "./enums";
 import { PROJECTILE_MODELS, towerTexture } from "./game";
 import { idMaker } from "./helpers";
+import { ProjectileBluePrint } from "./types";
+import { PROJECTILE_BLUEPRINTS } from "./constants";
 
 export class Projectile {
     id: string;
@@ -14,7 +16,7 @@ export class Projectile {
     trajectory!: THREE.Line;
     curve!: THREE.CatmullRomCurve3;
     timeSinceSpawn: number;
-    speed: number;
+    blueprint: ProjectileBluePrint;
     // maxHeight: number;
 
     constructor(
@@ -22,33 +24,27 @@ export class Projectile {
         towerLevel: number,
         origin: THREE.Vector3,
         destination: THREE.Vector3,
-        curve: THREE.CatmullRomCurve3,
-        speed: number
+        curve: THREE.CatmullRomCurve3
     ) {
         this.id = idMaker();
         this.type = towerType;
         this.level = towerLevel;
         this.origin = new THREE.Vector3(origin.x, origin.y + 8, origin.z);
         this.destination = new THREE.Vector3().copy(destination);
-        this.speed = speed;
-        // this.maxHeight = 7;
         this.curve = curve;
-        // this.speed = 15;
-        // this.speed = 8;
         this.timeSinceSpawn = 0;
+
+        this.blueprint = PROJECTILE_BLUEPRINTS[this.type][this.level - 1];
+        this.model = PROJECTILE_MODELS[this.type][`level-${this.level}`].clone();
 
         this._init();
     }
 
     _init() {
-        this._setupModel();
+        this._setupModelData();
         this._setupTrajectory();
 
         return this;
-    }
-    async _setupModel() {
-        this.model = PROJECTILE_MODELS[this.type][`level-${this.level}`].clone();
-        setupModelData(this.model, this.id, this.level, this.origin.clone());
     }
 
     _setupTrajectory() {
@@ -60,7 +56,7 @@ export class Projectile {
     }
 
     timeToTarget() {
-        const timeToREachTarget = this.curve.getLength() / this.speed;
+        const timeToREachTarget = this.curve.getLength() / this.blueprint.speed;
         console.log({ timeToREachTarget });
         return timeToREachTarget;
     }
@@ -68,26 +64,16 @@ export class Projectile {
     tick(delta: number) {
         this.timeSinceSpawn += delta;
 
-        console.log(this.timeSinceSpawn);
-
-        // const dest = new THREE.Vector3().copy(this.destination);
-        // const curPos = new THREE.Vector3().copy(this.mesh.position);
-        // const distance = curPos.distanceTo(dest);
-        // const velocity = dest.sub(curPos).normalize();
-
-        // this.mesh.position.set(
-        //     curPos.x + velocity.x * this.speed * delta,
-        //     curPos.y + velocity.y * this.speed * delta,
-        //     curPos.z + velocity.z * this.speed * delta
-        // );
-
-        const distance = this.handleMovement();
-
-        if (distance < 0.5) {
-            this.explode();
+        let distanceToTarget!: number;
+        if (this.blueprint.trajectoryType === TrajectoryType.Straight) {
+            distanceToTarget = this.handleStraightMovement(delta);
+        } else if (this.blueprint.trajectoryType === TrajectoryType.Parabola) {
+            distanceToTarget = this.handleParabolaMovement();
         }
 
-        // this.destination.sub(this.mesh.position)
+        if (distanceToTarget < 0.5) {
+            this.explode();
+        }
     }
 
     explode() {
@@ -95,8 +81,30 @@ export class Projectile {
         window.dispatchEvent(new CustomEvent("projectile-explode", { detail: this }));
     }
 
-    handleMovement() {
-        const t = getPercDist(this.curve, this.speed, this.timeSinceSpawn);
+    handleStraightMovement(delta: number) {
+        const dest = new THREE.Vector3().copy(this.destination);
+        const curPos = new THREE.Vector3().copy(this.model.position);
+        const distance = curPos.distanceTo(dest);
+        const velocity = dest.sub(curPos).normalize();
+        const result = new THREE.Vector3(
+            curPos.x + velocity.x * this.blueprint.speed * delta,
+            curPos.y + velocity.y * this.blueprint.speed * delta,
+            curPos.z + velocity.z * this.blueprint.speed * delta
+        );
+
+        this.model.position.set(result.x, result.y, result.z);
+        // this.model.lookAt(result);
+        this.model.lookAt(
+            // this.model.position.clone().sub(velocity.applyAxisAngle(new Vector3(0, 0, 1), -Math.PI * 0.5).sub(velocity))
+            // this.model.position.clone().add(velocity.applyAxisAngle(new Vector3(0, 0, 1), -Math.PI * 0.5).add(velocity))
+            this.model.position.clone().add(dest.applyAxisAngle(new Vector3(0, 0, 1), -Math.PI * 0.5).add(dest))
+        );
+
+        return distance;
+    }
+
+    handleParabolaMovement() {
+        const t = getPercDist(this.curve, this.blueprint.speed, this.timeSinceSpawn);
 
         const position = this.curve.getPointAt(t);
         const tangent = this.curve.getTangentAt(t);
@@ -112,6 +120,22 @@ export class Projectile {
     // setPosition(pos: THREE.Vector3) {
     //     this.model.position
     // }
+    _setupModelData() {
+        this.model.userData["projectile_id"] = this.id;
+        this.model.userData["projectile_level"] = this.level;
+
+        this.model.layers.set(AppLayers.Projectile);
+        this.model.material = new THREE.MeshBasicMaterial({
+            // color: COLORS[this.blueprint.color as keyof typeof COLORS],
+            // color: 0xffffff,
+            color: 0xca947d,
+            map: towerTexture,
+        });
+        const pos = this.origin.clone();
+        this.model.position.set(pos.x, pos.y, pos.z);
+        const s = this.blueprint.modelScale;
+        this.model.scale.set(s, s, s);
+    }
 }
 function getPercDist(pathCurve: THREE.CatmullRomCurve3, speed: number, timeSinceSpawn: number) {
     const pathLen = pathCurve.getLength();
@@ -120,19 +144,4 @@ function getPercDist(pathCurve: THREE.CatmullRomCurve3, speed: number, timeSince
 
     // console.log({ pathLen, distCovered, distPerc });
     return distPerc % 1;
-}
-
-function setupModelData(model: THREE.Mesh, id: string, level: number, position: THREE.Vector3) {
-    model.userData["projectile_id"] = id;
-    model.userData["projectile_level"] = level;
-
-    model.layers.set(AppLayers.Projectile);
-    model.material = new THREE.MeshBasicMaterial({
-        // color: COLORS[this.blueprint.color as keyof typeof COLORS],
-        // color: 0xffffff,
-        color: 0xca947d,
-        map: towerTexture,
-    });
-    model.position.set(position.x, position.y, position.z);
-    model.scale.set(0.005, 0.005, 0.005);
 }
