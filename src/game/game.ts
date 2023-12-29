@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { GLTF, GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import { GUI } from "dat.gui";
@@ -334,7 +333,6 @@ function spawnEnemy(enemyType: EnemyType) {
     const enemy = new Enemy(enemyType);
     enemies.push(enemy);
     scene.add(enemy.model);
-    if (DRAW_FUTURE_GIZMO) scene.add(enemy.futureGizmo);
 }
 
 function animate() {
@@ -378,7 +376,7 @@ function animate() {
 
             tower.tick(delta, targetEnemy!);
         }
-        for (const [id, projectile] of projectiles.entries()) {
+        for (const [, projectile] of projectiles.entries()) {
             projectile.tick(delta);
         }
     }
@@ -647,6 +645,18 @@ function onProjectile(e: any) {
     const projectile = e.detail as Projectile;
     projectiles.set(projectile.id, projectile);
     scene.add(projectile.model);
+
+    if (DRAW_FUTURE_GIZMO) {
+        const futureGizmo = new THREE.Mesh(
+            new THREE.SphereGeometry(0.5),
+            new THREE.MeshToonMaterial({ color: 0x00ffff })
+            // new THREE.MeshToonMaterial({ color: 0xff0000 })
+        );
+        // const hitPosition =
+        futureGizmo.position;
+        // futureGizmo.visible = false;
+    }
+
     // scene.add(projectile.trajectory);
     // console.log("onProjectile", { e, projectile });
 }

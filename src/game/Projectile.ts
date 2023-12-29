@@ -10,7 +10,7 @@ export class Projectile {
     id: string;
     type: TowerType;
     level: number;
-    origin: THREE.Vector3;
+    originPos: THREE.Vector3;
     destination: THREE.Vector3;
     model!: THREE.Mesh;
     trajectory!: THREE.Line;
@@ -29,13 +29,12 @@ export class Projectile {
         this.id = idMaker();
         this.type = towerType;
         this.level = towerLevel;
-        this.origin = new THREE.Vector3(origin.x, origin.y + 8, origin.z);
+        this.blueprint = PROJECTILE_BLUEPRINTS[this.type][this.level - 1];
+        this.model = PROJECTILE_MODELS[this.type][`level-${this.level}`].clone();
+        this.originPos = new THREE.Vector3(origin.x, origin.y, origin.z);
         this.destination = new THREE.Vector3().copy(destination);
         this.curve = curve;
         this.timeSinceSpawn = 0;
-
-        this.blueprint = PROJECTILE_BLUEPRINTS[this.type][this.level - 1];
-        this.model = PROJECTILE_MODELS[this.type][`level-${this.level}`].clone();
 
         this._init();
     }
@@ -98,6 +97,7 @@ export class Projectile {
             // this.model.position.clone().sub(velocity.applyAxisAngle(new Vector3(0, 0, 1), -Math.PI * 0.5).sub(velocity))
             // this.model.position.clone().add(velocity.applyAxisAngle(new Vector3(0, 0, 1), -Math.PI * 0.5).add(velocity))
             this.model.position.clone().add(dest.applyAxisAngle(new Vector3(0, 0, 1), -Math.PI * 0.5).add(dest))
+            // this.model.position.clone().add(dest.applyAxisAngle(new Vector3(1, 0, 0), -Math.PI * 0.5).add(dest))
         );
 
         return distance;
@@ -131,7 +131,7 @@ export class Projectile {
             color: 0xca947d,
             map: towerTexture,
         });
-        const pos = this.origin.clone();
+        const pos = new THREE.Vector3().copy(this.originPos);
         this.model.position.set(pos.x, pos.y, pos.z);
         const s = this.blueprint.modelScale;
         this.model.scale.set(s, s, s);
@@ -145,3 +145,12 @@ function getPercDist(pathCurve: THREE.CatmullRomCurve3, speed: number, timeSince
     // console.log({ pathLen, distCovered, distPerc });
     return distPerc % 1;
 }
+
+// function getPercDistStraight(start: THREE.Vector3, end: THREE.Vector3, speed: number, timeSinceSpawn: number) {
+//     const pathLen = start.distanceTo(end);
+//     const distCovered = speed * timeSinceSpawn;
+//     const distPerc = distCovered / pathLen;
+
+//     // console.log({ pathLen, distCovered, distPerc });
+//     return distPerc % 1;
+// }

@@ -18,6 +18,7 @@ export type TowerBluePrint = {
     range: number;
     price: number;
     defaultStrategy: TargetingStrategy;
+    firePointY: number;
     skills?: unknown[];
 };
 

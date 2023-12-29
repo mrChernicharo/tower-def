@@ -4,7 +4,7 @@ import { THREE } from "../three";
 import * as SkeletonUtils from "three/examples/jsm/utils/SkeletonUtils.js";
 import { EnemyType } from "./enums";
 import { EnemyBluePrint } from "./types";
-import { DRAW_FUTURE_GIZMO, ENEMY_BLUEPRINTS } from "./constants";
+import { ENEMY_BLUEPRINTS } from "./constants";
 import { idMaker } from "./helpers";
 
 export class Enemy {
@@ -40,14 +40,14 @@ export class Enemy {
         const walkAction = this.mixer.clipAction(walkClip);
         walkAction.play();
 
-        if (DRAW_FUTURE_GIZMO) {
-            this.futureGizmo = new THREE.Mesh(
-                new THREE.SphereGeometry(0.5),
-                new THREE.MeshToonMaterial({ color: 0x00ffff })
-                // new THREE.MeshToonMaterial({ color: 0xff0000 })
-            );
-            this.futureGizmo.visible = false;
-        }
+        // if (DRAW_FUTURE_GIZMO) {
+        //     this.futureGizmo = new THREE.Mesh(
+        //         new THREE.SphereGeometry(0.5),
+        //         new THREE.MeshToonMaterial({ color: 0x00ffff })
+        //         // new THREE.MeshToonMaterial({ color: 0xff0000 })
+        //     );
+        //     this.futureGizmo.visible = false;
+        // }
         this.timeSinceSpawn = 0;
         this.#ready = true;
 
@@ -77,10 +77,10 @@ export class Enemy {
 
         this.handleEnemyMovement();
 
-        if (DRAW_FUTURE_GIZMO) {
-            if (!this.futureGizmo.visible) this.futureGizmo.visible = true;
-            this._drawFuturePosition(1);
-        }
+        // if (DRAW_FUTURE_GIZMO) {
+        //     if (!this.futureGizmo.visible) this.futureGizmo.visible = true;
+        //     this._drawFuturePosition(1);
+        // }
     }
 
     getFuturePosition(timeInSecs: number) {
@@ -88,10 +88,10 @@ export class Enemy {
         return pathCurve.getPointAt(t);
     }
 
-    _drawFuturePosition(timeInSecs: number) {
-        const position = this.getFuturePosition(timeInSecs);
-        this.futureGizmo.position.copy(position);
-    }
+    // _drawFuturePosition(timeInSecs: number) {
+    //     const position = this.getFuturePosition(timeInSecs);
+    //     this.futureGizmo.position.copy(position);
+    // }
 
     ready() {
         return this.#ready;

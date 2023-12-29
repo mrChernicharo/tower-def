@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { TOWER_BLUEPRINTS } from "./constants";
-import { AppLayers, TargetingStrategy, TowerType } from "./enums";
+import { PROJECTILE_BLUEPRINTS, TOWER_BLUEPRINTS } from "./constants";
+import { AppLayers, TargetingStrategy, TowerType, TrajectoryType } from "./enums";
 import { gui, scene, TOWER_MODELS, towerTexture } from "./game";
 import { idMaker } from "./helpers";
 import { TowerBluePrint } from "./types";
@@ -99,9 +99,11 @@ export class Tower {
                     // console.log("ShoooT!", enemy.enemyType);
                     this.cooldown = 1 / (this.blueprint.fireRate * 0.5);
 
+                    const projBlueprint = PROJECTILE_BLUEPRINTS[this.towerName][this.blueprint.level - 1];
+
                     const origin = new THREE.Vector3(
                         this.model.position.x,
-                        this.model.position.y + 8,
+                        this.model.position.y + this.blueprint.firePointY,
                         this.model.position.z
                     );
 
@@ -115,14 +117,21 @@ export class Tower {
                         enemy.getFuturePosition(1).clone(),
                     ]);
 
-                    const speed = 20;
-                    const timeToREachTarget = curve.getLength() / speed;
+                    const timeToReachTargetViaParabola = curve.getLength() / projBlueprint.speed;
+
+                    const timeToReachTargetViaStraightLine =
+                        origin.distanceTo(new THREE.Vector3().copy(enemy.getFuturePosition(0.5))) / projBlueprint.speed;
+
+                    const destination =
+                        projBlueprint.trajectoryType === TrajectoryType.Parabola
+                            ? enemy.getFuturePosition(timeToReachTargetViaParabola)
+                            : enemy.getFuturePosition(timeToReachTargetViaStraightLine);
 
                     const projectile = new Projectile(
                         this.towerName,
                         this.blueprint.level,
-                        this.position,
-                        enemy.getFuturePosition(timeToREachTarget),
+                        new THREE.Vector3().copy(origin),
+                        new THREE.Vector3().copy(destination),
                         curve
                     );
 
