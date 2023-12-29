@@ -719,20 +719,26 @@ function onProjectile(e: any) {
 function onProjectileExplode(e: any) {
     const projectile = e.detail as Projectile;
 
-    const futureGizmo = futureGizmos.get(projectile.id)!;
     const explosion = projectile.explosion as THREE.Mesh;
     explosion.userData["projectile_id"] = projectile.id;
     explosion.userData["spawned_at"] = Date.now();
     explosion.userData["intensity"] = projectile.blueprint.explosionIntensity;
-
     explosion.position.set(projectile.model.position.x, projectile.model.position.y, projectile.model.position.z);
+
+    const futureGizmo = futureGizmos.get(projectile.id)!;
+    const targetEnemy = enemies.find((e) => e.id === projectile.targetEnemyId);
+
+    if (targetEnemy) {
+        const dmg = 10;
+        targetEnemy.takeDamage(dmg);
+    }
+
+    console.log("onProjectileExplode", { projectile, projectiles, towers, explosions, scene });
 
     futureGizmos.delete(projectile.id);
     projectiles.delete(projectile.id);
     scene.remove(projectile.model);
     scene.remove(futureGizmo);
-
-    console.log("onProjectileExplode", { projectiles, towers, explosions, scene });
 
     // console.log({ projectiles });
     explosions.set(projectile.id, explosion);

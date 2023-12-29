@@ -146,6 +146,7 @@ export class Enemy {
     takeDamage(dmg: number) {
         this.hp -= dmg;
 
+        console.log("takeDamage", dmg, this.hp);
         if (this.hp <= 0) {
             this.destroy(false);
         }

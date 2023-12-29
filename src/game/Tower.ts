@@ -126,6 +126,7 @@ export class Tower {
                     this.blueprint.level,
                     new THREE.Vector3().copy(projOrigin),
                     new THREE.Vector3().copy(destination),
+                    enemy.id,
                     curve
                 );
                 window.dispatchEvent(new CustomEvent("projectile", { detail: projectile }));
@@ -141,7 +142,8 @@ export class Tower {
                     this.towerName,
                     this.blueprint.level,
                     new THREE.Vector3().copy(projOrigin),
-                    new THREE.Vector3().copy(destination)
+                    new THREE.Vector3().copy(destination),
+                    enemy.id
                 );
 
                 window.dispatchEvent(new CustomEvent("projectile", { detail: projectile }));

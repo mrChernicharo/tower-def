@@ -7,6 +7,7 @@ import { COLORS, PROJECTILE_BLUEPRINTS } from "./constants";
 
 class ProjectileBase {
     id: string;
+    targetEnemyId: string;
     type: TowerType;
     level: number;
     originPos: THREE.Vector3;
@@ -16,8 +17,15 @@ class ProjectileBase {
     timeSinceSpawn: number;
     blueprint: ProjectileBluePrint;
     explosion: THREE.Mesh;
-    constructor(towerType: TowerType, towerLevel: number, origin: THREE.Vector3, destination: THREE.Vector3) {
+    constructor(
+        towerType: TowerType,
+        towerLevel: number,
+        origin: THREE.Vector3,
+        destination: THREE.Vector3,
+        targetId: string
+    ) {
         this.id = `proj-${towerType}-${idMaker()}`;
+        this.targetEnemyId = targetId;
         this.type = towerType;
         this.level = towerLevel;
         this.blueprint = { ...PROJECTILE_BLUEPRINTS[this.type][this.level - 1] };
@@ -53,8 +61,14 @@ class ProjectileBase {
 }
 
 export class StraightProjectile extends ProjectileBase {
-    constructor(towerType: TowerType, towerLevel: number, origin: THREE.Vector3, destination: THREE.Vector3) {
-        super(towerType, towerLevel, origin, destination);
+    constructor(
+        towerType: TowerType,
+        towerLevel: number,
+        origin: THREE.Vector3,
+        destination: THREE.Vector3,
+        targetId: string
+    ) {
+        super(towerType, towerLevel, origin, destination, targetId);
         this._setupTrajectory();
     }
 
@@ -113,9 +127,10 @@ export class ParabolaProjectile extends ProjectileBase {
         towerLevel: number,
         origin: THREE.Vector3,
         destination: THREE.Vector3,
+        targetId: string,
         curve: THREE.CatmullRomCurve3
     ) {
-        super(towerType, towerLevel, origin, destination);
+        super(towerType, towerLevel, origin, destination, targetId);
         this.curve = curve;
         this._setupTrajectory();
     }
