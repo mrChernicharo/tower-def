@@ -12,8 +12,6 @@ export type EnemyBluePrint = {
 export type TowerBluePrint = {
     name: TowerName;
     level: number;
-    modelURL: string;
-    modelScale: number;
     color: string;
     fireRate: number; // shots/s
     damage: [number, number]; // min - max

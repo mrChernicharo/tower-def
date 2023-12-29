@@ -70,11 +70,11 @@ export const modalTemplates = {
     `,
     confirmTowerUpgrade: (towerName: TowerName) => `
         <div class="${ModalType.ConfirmTowerUpgrade} ${towerName} modal-content">
-            <h3>${capitalize(towerName)} Tower</h3>
+            <h3>Upgrade ${capitalize(towerName)} Tower</h3>
 
             <button class="cancel-tower-upgrade-btn">←</button>
             <div>
-                upgrade stuff here...
+                <button class="confirm-tower-upgrade-btn">Confirm!</button>
             </div>
         </div>
     `,

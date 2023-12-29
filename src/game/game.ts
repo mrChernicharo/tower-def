@@ -330,6 +330,9 @@ function onMouseDown() {
 function onModalClick(e: MouseEvent, el: THREE.Object3D, modal3D: CSS2DObject, modalEl: HTMLDivElement) {
     const evTarget = e.target as HTMLElement;
     e.stopPropagation();
+    const tower_id = el.userData.tower_id ?? "";
+    const tower = towers.find((t) => t.id === tower_id);
+    console.log(":::onModalClick::::", { e, el, modal3D, modalEl, tower_id, tower });
 
     // TOWER BUILD
     if (evTarget.classList.contains("tower-build-btn")) {
@@ -341,9 +344,7 @@ function onModalClick(e: MouseEvent, el: THREE.Object3D, modal3D: CSS2DObject, m
         towerToBuild = null;
     }
     if (evTarget.classList.contains("confirm-tower-build-btn")) {
-        console.log(`BUILD THIS GODAMN ${towerToBuild} TOWER`, { el });
-        modalEl.innerHTML = modalTemplates.towerDetails(towerToBuild!);
-        modal3D.visible = false;
+        // console.log(`BUILD THIS GODAMN ${towerToBuild} TOWER`, { el });
 
         const tower = new Tower(towerToBuild!, el.position, modal3D.userData["tile_idx"]);
         el.userData["tower"] = towerToBuild;
@@ -351,9 +352,12 @@ function onModalClick(e: MouseEvent, el: THREE.Object3D, modal3D: CSS2DObject, m
         modal3D.userData["tower"] = towerToBuild;
         modal3D.userData["tower_id"] = tower.id;
 
+        modalEl.innerHTML = modalTemplates.towerDetails(towerToBuild!);
+        modal3D.visible = false;
+
         towers.push(tower);
         scene.add(tower.model);
-        console.log(":::", { tower, towers });
+        // console.log(":::", { tower, towers });
 
         towerToBuild = null;
     }
@@ -366,9 +370,7 @@ function onModalClick(e: MouseEvent, el: THREE.Object3D, modal3D: CSS2DObject, m
         modalEl.innerHTML = modalTemplates.towerDetails(el.userData.tower);
     }
     if (evTarget.id === "confirm-tower-sell-btn") {
-        console.log("SELL THIS GODAMN TOWER", { el });
-        const tower_id = el.userData.tower_id;
-
+        // console.log("SELL THIS GODAMN TOWER", { el });
         delete el.userData.tower;
         delete el.userData.tower_id;
         delete modal3D.userData.tower;
@@ -386,7 +388,7 @@ function onModalClick(e: MouseEvent, el: THREE.Object3D, modal3D: CSS2DObject, m
 
     // TOWER INFO
     if (evTarget.id === "tower-info-btn") {
-        console.log("INFO", { el });
+        // console.log("INFO", { el });
         modalEl.innerHTML = modalTemplates.towerInfo(el.userData.tower);
     }
     if (evTarget.classList.contains("cancel-tower-info-btn")) {
@@ -395,17 +397,38 @@ function onModalClick(e: MouseEvent, el: THREE.Object3D, modal3D: CSS2DObject, m
 
     // TOWER UPGRADE
     if (evTarget.id === "tower-upgrade-btn") {
-        console.log("UPGRADE", { el });
+        // console.log("UPGRADE", { el });
         modalEl.innerHTML = modalTemplates.confirmTowerUpgrade(el.userData.tower);
     }
     if (evTarget.classList.contains("cancel-tower-upgrade-btn")) {
         modalEl.innerHTML = modalTemplates.towerDetails(el.userData.tower);
     }
+    if (evTarget.classList.contains("confirm-tower-upgrade-btn")) {
+        const tower = towers.find((t) => t.id === tower_id);
+        // const towerIdx = towers.findIndex((t) => t.id === tower_id);
+        // console.log("tower upgrade", { e, el, modal3D, modalEl, tower_id, tower });
+
+        // if (towerIdx >= 0) {
+        if (tower) {
+            scene.remove(tower.model);
+
+            const upgradedTower = tower.upgrade();
+
+            scene.add(upgradedTower.model);
+
+            console.log({ tower, towers });
+            modalEl.innerHTML = modalTemplates.towerDetails(el.userData.tower);
+            modal3D.visible = false;
+
+            // towers.splice
+        }
+        // const tower = towers.find(t => t.id ===)
+    }
 }
 
 function onCanvasClick(e: MouseEvent) {
     if (Date.now() - clickTimestamp > 300) {
-        console.log("CLICK CANCELED");
+        // console.log("CLICK CANCELED");
         return;
     }
 
@@ -419,7 +442,7 @@ function onCanvasClick(e: MouseEvent) {
         .intersectObjects(scene.children)
         .find((ch) => ch.object.name.includes("TowerBase"));
 
-    console.log({ rayIntersects: mouseRay.intersectObjects(scene.children), clickedTower, clickedTowerBase });
+    // console.log({ rayIntersects: mouseRay.intersectObjects(scene.children), clickedTower, clickedTowerBase });
 
     revertCancelableModals(clickedModal as HTMLDivElement | undefined);
 
@@ -432,20 +455,16 @@ function onCanvasClick(e: MouseEvent) {
                 obj.visible = false;
             }
         });
-        // SHOW modal
+        // SHOW current modal
         modal3D.visible = true;
     } else if (clickedTower) {
         console.log("CLICKED TOWER", { clickedTower, scene });
-        // const modal3D = scene.getObjectByName(`${clickedTower.object.name}-modal`)!;
-        let modal3D: THREE.Object3D;
-        // HIDE previously open modal
-        scene.traverse((obj) => {
-            // if ((obj as any)) {
-            // }
 
+        // HIDE previously open modal
+        let modal3D: THREE.Object3D | undefined;
+        scene.traverse((obj) => {
             if ((obj as any).isCSS2DObject) {
                 if (obj.userData.tile_idx === clickedTower.object.userData.tile_idx) {
-                    console.log(obj, "!!!!!");
                     modal3D = obj;
                 }
 
@@ -454,8 +473,8 @@ function onCanvasClick(e: MouseEvent) {
                 }
             }
         });
-        // SHOW modal
-        modal3D!.visible = true;
+        // SHOW current modal
+        if (modal3D) modal3D.visible = true;
     } else if (clickedModal) {
         console.log("CLICKED MODAL", { clickedModal });
     } else {
@@ -465,7 +484,6 @@ function onCanvasClick(e: MouseEvent) {
         scene.traverse((obj) => {
             if ((obj as any).isCSS2DObject) {
                 if (obj.visible) {
-                    console.log(obj);
                     obj.visible = false;
                 }
             }
@@ -538,7 +556,7 @@ function onPlayPause() {
         gameState = GameState.Active;
         playPauseBtn.textContent = "Pause";
     }
-    console.log("playpause click", gameState);
+    // console.log("playpause click", gameState);
 }
 
 // function drawGrid() {

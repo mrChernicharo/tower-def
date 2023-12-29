@@ -80,6 +80,8 @@ export function revertCancelableModals(clickedModal: HTMLDivElement | undefined)
                     for (const className of modalEl.children[0].classList.entries()) {
                         if (className[1] in TowerName) {
                             const towerName = className[1] as TowerName;
+                            // const tower =
+                            console.log({ modalEl });
                             modalEl.innerHTML = modalTemplates.towerDetails(towerName);
                         }
                     }
