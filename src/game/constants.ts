@@ -1,4 +1,4 @@
-import { EnemyType, TowerType, TrajectoryType } from "./enums";
+import { EnemyType, TargetingStrategy, TowerType, TrajectoryType } from "./enums";
 import { EnemyBluePrint, ProjectileBluePrint, TowerBluePrint } from "./types";
 
 export const DRAW_FUTURE_GIZMO = false;
@@ -72,6 +72,7 @@ export const TOWER_BLUEPRINTS: { [k in TowerType]: TowerBluePrint[] } = {
         {
             name: TowerType.Archer,
             level: 1,
+            defaultStrategy: TargetingStrategy.FirstInLine,
             damage: [4, 7],
             fireRate: 6,
             color: "blue",
@@ -80,6 +81,7 @@ export const TOWER_BLUEPRINTS: { [k in TowerType]: TowerBluePrint[] } = {
         },
         {
             name: TowerType.Archer,
+            defaultStrategy: TargetingStrategy.FirstInLine,
             level: 2,
             damage: [8, 13],
             fireRate: 6,
@@ -89,6 +91,7 @@ export const TOWER_BLUEPRINTS: { [k in TowerType]: TowerBluePrint[] } = {
         },
         {
             name: TowerType.Archer,
+            defaultStrategy: TargetingStrategy.FirstInLine,
             level: 3,
             damage: [14, 22],
             fireRate: 7,
@@ -98,6 +101,7 @@ export const TOWER_BLUEPRINTS: { [k in TowerType]: TowerBluePrint[] } = {
         },
         {
             name: TowerType.Archer,
+            defaultStrategy: TargetingStrategy.FirstInLine,
             level: 4,
             damage: [20, 34],
             fireRate: 8,
@@ -110,6 +114,7 @@ export const TOWER_BLUEPRINTS: { [k in TowerType]: TowerBluePrint[] } = {
     Ballista: [
         {
             name: TowerType.Ballista,
+            defaultStrategy: TargetingStrategy.LastInLine,
             level: 1,
             damage: [10, 20],
             fireRate: 2,
@@ -119,6 +124,7 @@ export const TOWER_BLUEPRINTS: { [k in TowerType]: TowerBluePrint[] } = {
         },
         {
             name: TowerType.Ballista,
+            defaultStrategy: TargetingStrategy.LastInLine,
             level: 2,
             damage: [20, 38],
             fireRate: 2.25,
@@ -128,6 +134,7 @@ export const TOWER_BLUEPRINTS: { [k in TowerType]: TowerBluePrint[] } = {
         },
         {
             name: TowerType.Ballista,
+            defaultStrategy: TargetingStrategy.LastInLine,
             level: 3,
             damage: [34, 55],
             fireRate: 2.5,
@@ -137,6 +144,7 @@ export const TOWER_BLUEPRINTS: { [k in TowerType]: TowerBluePrint[] } = {
         },
         {
             name: TowerType.Ballista,
+            defaultStrategy: TargetingStrategy.LastInLine,
             level: 4,
             damage: [51, 76],
             fireRate: 2.75,
@@ -149,6 +157,7 @@ export const TOWER_BLUEPRINTS: { [k in TowerType]: TowerBluePrint[] } = {
     Cannon: [
         {
             name: TowerType.Cannon,
+            defaultStrategy: TargetingStrategy.LastInLine,
             level: 1,
             damage: [18, 36],
             fireRate: 0.8,
@@ -158,6 +167,7 @@ export const TOWER_BLUEPRINTS: { [k in TowerType]: TowerBluePrint[] } = {
         },
         {
             name: TowerType.Cannon,
+            defaultStrategy: TargetingStrategy.LastInLine,
             level: 2,
             damage: [29, 54],
             fireRate: 0.8,
@@ -167,6 +177,7 @@ export const TOWER_BLUEPRINTS: { [k in TowerType]: TowerBluePrint[] } = {
         },
         {
             name: TowerType.Cannon,
+            defaultStrategy: TargetingStrategy.LastInLine,
             level: 3,
             damage: [48, 86],
             fireRate: 0.8,
@@ -176,6 +187,7 @@ export const TOWER_BLUEPRINTS: { [k in TowerType]: TowerBluePrint[] } = {
         },
         {
             name: TowerType.Ballista,
+            defaultStrategy: TargetingStrategy.LastInLine,
             level: 4,
             damage: [60, 100],
             fireRate: 0.8,
@@ -188,6 +200,7 @@ export const TOWER_BLUEPRINTS: { [k in TowerType]: TowerBluePrint[] } = {
     Wizard: [
         {
             name: TowerType.Wizard,
+            defaultStrategy: TargetingStrategy.FirstInLine,
             level: 1,
             damage: [10, 21],
             fireRate: 2,
@@ -197,6 +210,7 @@ export const TOWER_BLUEPRINTS: { [k in TowerType]: TowerBluePrint[] } = {
         },
         {
             name: TowerType.Wizard,
+            defaultStrategy: TargetingStrategy.FirstInLine,
             level: 2,
             damage: [18, 36],
             fireRate: 1.8,
@@ -206,6 +220,7 @@ export const TOWER_BLUEPRINTS: { [k in TowerType]: TowerBluePrint[] } = {
         },
         {
             name: TowerType.Wizard,
+            defaultStrategy: TargetingStrategy.FirstInLine,
             level: 3,
             damage: [33, 57],
             fireRate: 1.6,
@@ -215,6 +230,7 @@ export const TOWER_BLUEPRINTS: { [k in TowerType]: TowerBluePrint[] } = {
         },
         {
             name: TowerType.Wizard,
+            defaultStrategy: TargetingStrategy.FirstInLine,
             level: 4,
             damage: [49, 75],
             fireRate: 1.5,
@@ -227,6 +243,7 @@ export const TOWER_BLUEPRINTS: { [k in TowerType]: TowerBluePrint[] } = {
     Poison: [
         {
             name: TowerType.Poison,
+            defaultStrategy: TargetingStrategy.FirstInLine,
             level: 1,
             damage: [4, 7],
             fireRate: 3,
@@ -236,6 +253,7 @@ export const TOWER_BLUEPRINTS: { [k in TowerType]: TowerBluePrint[] } = {
         },
         {
             name: TowerType.Poison,
+            defaultStrategy: TargetingStrategy.FirstInLine,
             level: 2,
             damage: [11, 22],
             fireRate: 2.5,
@@ -245,6 +263,7 @@ export const TOWER_BLUEPRINTS: { [k in TowerType]: TowerBluePrint[] } = {
         },
         {
             name: TowerType.Poison,
+            defaultStrategy: TargetingStrategy.FirstInLine,
             level: 3,
             damage: [21, 37],
             fireRate: 2,
@@ -254,6 +273,7 @@ export const TOWER_BLUEPRINTS: { [k in TowerType]: TowerBluePrint[] } = {
         },
         {
             name: TowerType.Poison,
+            defaultStrategy: TargetingStrategy.FirstInLine,
             level: 4,
             damage: [33, 60],
             fireRate: 2,
@@ -267,16 +287,16 @@ export const TOWER_BLUEPRINTS: { [k in TowerType]: TowerBluePrint[] } = {
 
 export const PROJECTILE_BLUEPRINTS: { [k in TowerType]: ProjectileBluePrint[] } = {
     Archer: [
-        { type: TowerType.Archer, level: 1, modelScale: 0.005, speed: 14, trajectoryType: TrajectoryType.Straight },
-        { type: TowerType.Archer, level: 2, modelScale: 0.005, speed: 14, trajectoryType: TrajectoryType.Straight },
-        { type: TowerType.Archer, level: 3, modelScale: 0.005, speed: 14, trajectoryType: TrajectoryType.Straight },
-        { type: TowerType.Archer, level: 4, modelScale: 0.005, speed: 14, trajectoryType: TrajectoryType.Straight },
+        { type: TowerType.Archer, level: 1, modelScale: 0.005, speed: 14, trajectoryType: TrajectoryType.Parabola },
+        { type: TowerType.Archer, level: 2, modelScale: 0.005, speed: 14, trajectoryType: TrajectoryType.Parabola },
+        { type: TowerType.Archer, level: 3, modelScale: 0.005, speed: 14, trajectoryType: TrajectoryType.Parabola },
+        { type: TowerType.Archer, level: 4, modelScale: 0.005, speed: 14, trajectoryType: TrajectoryType.Parabola },
     ],
     Ballista: [
-        { type: TowerType.Ballista, level: 1, modelScale: 0.0075, speed: 18, trajectoryType: TrajectoryType.Straight },
-        { type: TowerType.Ballista, level: 2, modelScale: 0.0075, speed: 18, trajectoryType: TrajectoryType.Straight },
-        { type: TowerType.Ballista, level: 3, modelScale: 0.0075, speed: 18, trajectoryType: TrajectoryType.Straight },
-        { type: TowerType.Ballista, level: 4, modelScale: 0.0075, speed: 18, trajectoryType: TrajectoryType.Straight },
+        { type: TowerType.Ballista, level: 1, modelScale: 0.0075, speed: 18, trajectoryType: TrajectoryType.Parabola },
+        { type: TowerType.Ballista, level: 2, modelScale: 0.0075, speed: 18, trajectoryType: TrajectoryType.Parabola },
+        { type: TowerType.Ballista, level: 3, modelScale: 0.0075, speed: 18, trajectoryType: TrajectoryType.Parabola },
+        { type: TowerType.Ballista, level: 4, modelScale: 0.0075, speed: 18, trajectoryType: TrajectoryType.Parabola },
     ],
     Cannon: [
         { type: TowerType.Ballista, level: 1, modelScale: 0.008, speed: 12, trajectoryType: TrajectoryType.Parabola },
@@ -285,10 +305,10 @@ export const PROJECTILE_BLUEPRINTS: { [k in TowerType]: ProjectileBluePrint[] } 
         { type: TowerType.Ballista, level: 4, modelScale: 0.015, speed: 12, trajectoryType: TrajectoryType.Parabola },
     ],
     Wizard: [
-        { type: TowerType.Ballista, level: 1, modelScale: 0.005, speed: 18, trajectoryType: TrajectoryType.Parabola },
-        { type: TowerType.Ballista, level: 2, modelScale: 0.006, speed: 18, trajectoryType: TrajectoryType.Parabola },
-        { type: TowerType.Ballista, level: 3, modelScale: 0.007, speed: 18, trajectoryType: TrajectoryType.Parabola },
-        { type: TowerType.Ballista, level: 4, modelScale: 0.008, speed: 18, trajectoryType: TrajectoryType.Parabola },
+        { type: TowerType.Ballista, level: 1, modelScale: 0.005, speed: 18, trajectoryType: TrajectoryType.Straight },
+        { type: TowerType.Ballista, level: 2, modelScale: 0.006, speed: 18, trajectoryType: TrajectoryType.Straight },
+        { type: TowerType.Ballista, level: 3, modelScale: 0.007, speed: 18, trajectoryType: TrajectoryType.Straight },
+        { type: TowerType.Ballista, level: 4, modelScale: 0.008, speed: 18, trajectoryType: TrajectoryType.Straight },
     ],
     Poison: [
         { type: TowerType.Poison, level: 1, modelScale: 0.005, speed: 15, trajectoryType: TrajectoryType.Parabola },

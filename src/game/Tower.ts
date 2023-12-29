@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { TOWER_BLUEPRINTS } from "./constants";
-import { AppLayers, TowerType } from "./enums";
+import { AppLayers, TargetingStrategy, TowerType } from "./enums";
 import { gui, scene, TOWER_MODELS, towerTexture } from "./game";
 import { idMaker } from "./helpers";
 import { TowerBluePrint } from "./types";
@@ -18,6 +18,7 @@ export class Tower {
     blueprint: TowerBluePrint;
     tileIdx: string;
     rangeGizmo!: THREE.Mesh;
+    strategy: TargetingStrategy;
     constructor(towerType: TowerType, position: THREE.Vector3, tileIdx: string) {
         this.id = idMaker();
         // this.level = 1;
@@ -26,6 +27,8 @@ export class Tower {
         this.tileIdx = tileIdx;
         this.cooldown = 0;
         this.blueprint = { ...TOWER_BLUEPRINTS[towerType][0] };
+        // this.strategy = TargetingStrategy.FirstInLine;
+        this.strategy = this.blueprint.defaultStrategy;
 
         this._init();
     }
@@ -88,8 +91,8 @@ export class Tower {
         return this;
     }
 
-    tick(delta: number, enemies: Enemy[]) {
-        for (const enemy of enemies) {
+    tick(delta: number, enemy: Enemy | undefined) {
+        if (enemy) {
             if (this.position.distanceTo(enemy.model.position) < this.blueprint.range) {
                 // console.log("enemyInSight", enemy.enemyType, enemy.id, this.position.distanceTo(enemy.model.position));
                 if (this.cooldown <= 0) {
@@ -131,11 +134,8 @@ export class Tower {
                 }
             }
         }
-
-        if (this.cooldown > 0) {
-            this.cooldown -= delta;
-        }
         // console.log(this.cooldown);
+        this.cooldown -= delta;
     }
 }
 

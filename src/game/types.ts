@@ -1,4 +1,4 @@
-import { EnemyType, TowerType, TrajectoryType } from "./enums";
+import { EnemyType, TargetingStrategy, TowerType, TrajectoryType } from "./enums";
 
 export type EnemyBluePrint = {
     name: EnemyType;
@@ -17,6 +17,7 @@ export type TowerBluePrint = {
     damage: [number, number]; // min - max
     range: number;
     price: number;
+    defaultStrategy: TargetingStrategy;
     skills?: unknown[];
 };
 

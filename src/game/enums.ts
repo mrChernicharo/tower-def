@@ -54,3 +54,8 @@ export enum TrajectoryType {
     Straight = "Straight",
     Parabola = "Parabola",
 }
+
+export enum TargetingStrategy {
+    FirstInLine = "first-in-line",
+    LastInLine = "last-in-line",
+}

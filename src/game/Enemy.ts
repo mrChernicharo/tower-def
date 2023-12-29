@@ -84,7 +84,7 @@ export class Enemy {
     }
 
     getFuturePosition(timeInSecs: number) {
-        const t = getPercDist(this.bluePrint.speed, this.timeSinceSpawn + timeInSecs);
+        const t = this.getPercDist(timeInSecs);
         return pathCurve.getPointAt(t);
     }
 
@@ -98,7 +98,7 @@ export class Enemy {
     }
 
     handleEnemyMovement() {
-        const t = getPercDist(this.bluePrint.speed, this.timeSinceSpawn);
+        const t = this.getPercDist();
 
         const position = pathCurve.getPointAt(t);
 
@@ -132,13 +132,13 @@ export class Enemy {
                 break;
         }
     }
-}
 
-function getPercDist(speed: number, timeSinceSpawn: number) {
-    const pathLen = pathCurve.getLength();
-    const distCovered = speed * timeSinceSpawn;
-    const distPerc = distCovered / pathLen;
+    getPercDist(timeInSecs = 0) {
+        const pathLen = pathCurve.getLength();
+        const distCovered = this.bluePrint.speed * (this.timeSinceSpawn + timeInSecs);
+        const distPerc = distCovered / pathLen;
 
-    // console.log({ pathLen, distCovered, distPerc });
-    return distPerc % 1;
+        // console.log({ pathLen, distCovered, distPerc });
+        return distPerc % 1;
+    }
 }

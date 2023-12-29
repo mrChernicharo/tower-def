@@ -11,7 +11,7 @@ import { THREE } from "../three";
 import { Enemy } from "./Enemy";
 import { capitalize, getEnemyTypeFromChar, getProjectileTowerName, handleModelGun } from "./helpers";
 import { COLORS, DRAW_FUTURE_GIZMO, ENEMY_BLUEPRINTS, STAGE_WAVES_DATA } from "./constants";
-import { AppLayers, EnemyChar, EnemyType, GameState, ModalType, TowerType } from "./enums";
+import { AppLayers, EnemyChar, EnemyType, GameState, ModalType, TargetingStrategy, TowerType } from "./enums";
 import { EnemyBluePrint } from "./types";
 import { cancelableModalNames, modalTemplates } from "./templates";
 import { Tower } from "./Tower";
@@ -152,14 +152,14 @@ async function gameSetup() {
     mouseRay.layers.enable(AppLayers.Tower);
     mouseRay.layers.enable(AppLayers.Modals);
 
-    gui = new GUI();
+    gui = new GUI({ closed: true });
     const camFolder = gui.addFolder("Camera");
     camFolder.add(camera.position, "x", -200, 200);
     camFolder.add(camera.position, "y", -2, 100);
     camFolder.add(camera.position, "z", -200, 200);
-    camera.position.x = 5;
-    camera.position.z = 4;
-    camera.position.y = 50;
+    camera.position.x = 18;
+    camera.position.y = 18;
+    camera.position.z = 62;
 
     projectiles = new Map();
 }
@@ -351,7 +351,32 @@ function animate() {
             enemy.tick(delta);
         }
         for (const tower of towers) {
-            tower.tick(delta, enemies);
+            let targetEnemy: Enemy;
+
+            const enemiesInRange = enemies.filter(
+                (e) => tower.position.distanceTo(e.model.position) < tower.blueprint.range
+            );
+
+            if (tower.strategy === TargetingStrategy.FirstInLine) {
+                let maxCoveredDistance = 0;
+                enemiesInRange.forEach((e) => {
+                    if (e.getPercDist() > maxCoveredDistance) {
+                        maxCoveredDistance = e.getPercDist();
+                        targetEnemy = e;
+                    }
+                });
+            }
+            if (tower.strategy === TargetingStrategy.LastInLine) {
+                let minCoveredDistance = Infinity;
+                enemiesInRange.forEach((e) => {
+                    if (e.getPercDist() < minCoveredDistance) {
+                        minCoveredDistance = e.getPercDist();
+                        targetEnemy = e;
+                    }
+                });
+            }
+
+            tower.tick(delta, targetEnemy!);
         }
         for (const [id, projectile] of projectiles.entries()) {
             projectile.tick(delta);
