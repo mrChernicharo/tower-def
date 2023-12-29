@@ -5,9 +5,11 @@ import * as SkeletonUtils from "three/examples/jsm/utils/SkeletonUtils.js";
 import { EnemyType } from "./enums";
 import { EnemyBluePrint } from "./types";
 import { DRAW_FUTURE_GIZMO, ENEMY_BLUEPRINTS } from "./constants";
+import { idMaker } from "./helpers";
 
 export class Enemy {
     #ready = false;
+    id: string;
     glb!: GLTF;
     enemyType: EnemyType;
     bluePrint: EnemyBluePrint;
@@ -20,6 +22,7 @@ export class Enemy {
     timeSinceSpawn!: number;
 
     constructor(enemyType: EnemyType) {
+        this.id = idMaker();
         this.enemyType = enemyType;
         this.bluePrint = ENEMY_BLUEPRINTS[this.enemyType];
         this.hp = this.bluePrint.maxHp;

@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { GLTF, GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
+import { GUI } from "dat.gui";
 import { FBXLoader } from "three/examples/jsm/loaders/FBXLoader.js";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import { CSS2DRenderer, CSS2DObject } from "three/examples/jsm/renderers/CSS2DRenderer.js";
@@ -34,6 +35,8 @@ export let gameState = GameState.Loading;
 export let pathCurve: THREE.CatmullRomCurve3;
 export let mouseRay: THREE.Raycaster;
 export let towerTexture: THREE.Texture;
+
+export let gui: GUI;
 
 const spawnTimeouts: number[] = []; // enable canceling waveScheduling timeouts when game is destroy
 export const glbEnemyModels = {} as { [k in EnemyType]: GLTF };
@@ -119,7 +122,7 @@ async function gameSetup() {
 
     camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
     camera.layers.enableAll();
-    camera.position.set(-10, 100, 40);
+    // camera.position.set(-10, 100, 40);
     // camera.position.set(5, 2, 46);
     // camera.position.set(-20, -10, -80);
     // camera.position.set(10, 10, 70); // Camera positioning
@@ -127,7 +130,7 @@ async function gameSetup() {
     // camera.position.set(5, 4, 50); // Camera positioning
 
     orbit = new OrbitControls(camera, renderer.domElement);
-    orbit.maxPolarAngle = Math.PI * 0.4;
+    // orbit.maxPolarAngle = Math.PI * 0.4;
 
     ambientLight = new THREE.AmbientLight(0xefefef, 1.5);
     scene = new THREE.Scene();
@@ -138,6 +141,15 @@ async function gameSetup() {
     mouseRay.layers.enable(AppLayers.TowerBase);
     mouseRay.layers.enable(AppLayers.Tower);
     mouseRay.layers.enable(AppLayers.Modals);
+
+    gui = new GUI();
+    const camFolder = gui.addFolder("Camera");
+    camFolder.add(camera.position, "x", -200, 200);
+    camFolder.add(camera.position, "y", -2, 100);
+    camFolder.add(camera.position, "z", -200, 200);
+    camera.position.x = 5;
+    camera.position.z = 4;
+    camera.position.y = 50;
 }
 
 async function _initEnemyModels() {
@@ -306,6 +318,18 @@ function animate() {
         for (const enemy of enemies) {
             enemy.tick(delta);
         }
+        for (const tower of towers) {
+            tower.tick(delta);
+        }
+
+        for (const tower of towers) {
+            for (const enemy of enemies) {
+                if (tower.position.distanceTo(enemy.model.position) < tower.blueprint.range) {
+                    console.log(enemy.enemyType, enemy.id, tower.position.distanceTo(enemy.model.position));
+                }
+                // if (DRAW_FUTURE_GIZMO) console.log('future', tower.position.distanceTo(enemy.futureGizmo.position));
+            }
+        }
     }
 
     frameId = requestAnimationFrame(animate);
@@ -354,6 +378,7 @@ function onModalClick(e: MouseEvent, el: THREE.Object3D, modal3D: CSS2DObject, m
 
         towers.push(tower);
         scene.add(tower.model);
+        scene.add(tower.rangeGizmo);
         // console.log(":::", { tower, towers });
 
         towerToBuild = null;
@@ -407,12 +432,14 @@ function onModalClick(e: MouseEvent, el: THREE.Object3D, modal3D: CSS2DObject, m
 
         // if (towerIdx >= 0) {
         if (tower) {
+            scene.remove(tower.rangeGizmo);
             scene.remove(tower.model);
 
             if (tower.blueprint.level > 3) return;
 
             const upgradedTower = tower.upgrade();
             scene.add(upgradedTower.model);
+            scene.add(upgradedTower.rangeGizmo);
 
             console.log({ tower, towers });
             modalEl.innerHTML = modalTemplates.towerDetails(tower);
