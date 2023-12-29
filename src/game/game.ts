@@ -405,6 +405,7 @@ function onModalClick(e: MouseEvent, el: THREE.Object3D, modal3D: CSS2DObject, m
         towers.push(tower);
         scene.add(tower.model);
         scene.add(tower.rangeGizmo);
+        tower.rangeGizmo.visible = false;
         // console.log(":::", { tower, towers });
 
         towerToBuild = null;
@@ -571,29 +572,29 @@ function handleHoverOpacityEfx() {
     if (hoveredTower) {
         const towerMesh = hoveredTower.object as THREE.Mesh;
         // console.log({ towerMesh, hoveredTower });
-        hoveredTowerId = towers.find((t) => t.id === hoveredTower.object.userData["tower_id"])!.id;
+        const tower = towers.find((t) => t.id === hoveredTower.object.userData["tower_id"]);
+        if (!tower) return;
+
+        hoveredTowerId = tower.id;
+
         towerMesh.material = new THREE.MeshBasicMaterial({
-            transparent: true,
-            opacity: 0.75,
+            // transparent: true,
+            // opacity: 0.75,
             color: 0xca947d,
             map: towerTexture,
         });
+        tower.rangeGizmo.visible = true;
     } else {
         if (hoveredTowerId) {
-            // console.log({ scene, hoveredTowerId });
-
-            const hoveredTower = towers.find((t) => t.id === hoveredTowerId) as Tower;
-            // scene.traverse((obj) => {
-            //     if ((obj as THREE.Mesh).isMesh && obj.userData.tower_id === hoveredTowerId) {
-            //         hoveredTower = obj as THREE.Mesh;
-            //     }
-            // });
+            const hoveredTower = towers.find((t) => t.id === hoveredTowerId);
+            // console.log({ scene, hoveredTowerId, hoveredTower });
 
             if (!hoveredTower) return;
             hoveredTower.model.material = new THREE.MeshBasicMaterial({
-                color: 0xca947d,
+                color: 0xdba58c,
                 map: towerTexture,
             });
+            hoveredTower.rangeGizmo.visible = false;
         }
         hoveredTowerId = null;
     }
@@ -622,7 +623,7 @@ function onProjectile(e: any) {
     projectiles.set(projectile.id, projectile);
     scene.add(projectile.model);
     // scene.add(projectile.trajectory);
-    console.log("onProjectile", { e, projectile });
+    // console.log("onProjectile", { e, projectile });
 }
 
 function onProjectileExplode(e: any) {
