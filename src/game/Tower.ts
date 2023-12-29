@@ -93,7 +93,7 @@ export class Tower {
             if (this.position.distanceTo(enemy.model.position) < this.blueprint.range) {
                 // console.log("enemyInSight", enemy.enemyType, enemy.id, this.position.distanceTo(enemy.model.position));
                 if (this.cooldown <= 0) {
-                    console.log("ShoooT!", enemy.enemyType);
+                    // console.log("ShoooT!", enemy.enemyType);
                     this.cooldown = 1 / (this.blueprint.fireRate * 0.5);
 
                     const origin = new THREE.Vector3(
@@ -120,8 +120,7 @@ export class Tower {
                         this.blueprint.level,
                         this.position,
                         enemy.getFuturePosition(timeToREachTarget),
-                        curve,
-                        speed
+                        curve
                     );
 
                     // const timeToTarget = projectile.timeToTarget();

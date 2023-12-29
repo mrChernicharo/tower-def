@@ -53,7 +53,7 @@ let frameId = 0;
 let clickTimestamp = 0;
 let towerToBuild: TowerType | null = null;
 let hoveredTowerBaseName: string | null = null;
-let hoveredTowerType: string | null = null;
+let hoveredTowerId: string | null = null;
 
 export async function destroyGame() {
     cancelAnimationFrame(frameId);
@@ -431,6 +431,7 @@ function onModalClick(e: MouseEvent, el: THREE.Object3D, modal3D: CSS2DObject, m
         const towerIdx = towers.findIndex((t) => t.id === tower_id);
         const [tower] = towers.splice(towerIdx, 1);
         scene.remove(tower.model);
+        scene.remove(tower.rangeGizmo);
         // console.log({ towers, tower, scene });
     }
 
@@ -569,7 +570,8 @@ function handleHoverOpacityEfx() {
 
     if (hoveredTower) {
         const towerMesh = hoveredTower.object as THREE.Mesh;
-        hoveredTowerType = towerMesh.name;
+        // console.log({ towerMesh, hoveredTower });
+        hoveredTowerId = towers.find((t) => t.id === hoveredTower.object.userData["tower_id"])!.id;
         towerMesh.material = new THREE.MeshBasicMaterial({
             transparent: true,
             opacity: 0.75,
@@ -577,15 +579,23 @@ function handleHoverOpacityEfx() {
             map: towerTexture,
         });
     } else {
-        if (hoveredTowerType) {
-            const hoveredTower = scene.getObjectByName(hoveredTowerType) as THREE.Mesh;
+        if (hoveredTowerId) {
+            // console.log({ scene, hoveredTowerId });
 
-            hoveredTower.material = new THREE.MeshBasicMaterial({
+            const hoveredTower = towers.find((t) => t.id === hoveredTowerId) as Tower;
+            // scene.traverse((obj) => {
+            //     if ((obj as THREE.Mesh).isMesh && obj.userData.tower_id === hoveredTowerId) {
+            //         hoveredTower = obj as THREE.Mesh;
+            //     }
+            // });
+
+            if (!hoveredTower) return;
+            hoveredTower.model.material = new THREE.MeshBasicMaterial({
                 color: 0xca947d,
                 map: towerTexture,
             });
         }
-        hoveredTowerType = null;
+        hoveredTowerId = null;
     }
 }
 
