@@ -1,12 +1,12 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import { Start } from "./screens/Start";
-import { Root } from "./Root";
-import Achievements from "./screens/Achievements";
-import AreaSelection from "./screens/AreaSelection";
-import LevelSelection from "./screens/LevelSelection";
-import Settings from "./screens/Settings";
-import Skills from "./screens/Skills";
-import Game from "./screens/GameScreen";
+import { Start } from "./react/screens/Start";
+import { Root } from "./react/Root";
+import Achievements from "./react/screens/Achievements";
+import AreaSelection from "./react/screens/AreaSelection";
+import LevelSelection from "./react/screens/LevelSelection";
+import Settings from "./react/screens/Settings";
+import Skills from "./react/screens/Skills";
+import Game from "./react/screens/GameScreen";
 
 export const appRoutes = [
     {

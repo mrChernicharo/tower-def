@@ -140,7 +140,7 @@ export class ParabolaProjectile extends ProjectileBase {
         const distanceToTarget = this.handleMovement();
         // console.log({ distanceToTarget });
 
-        if (distanceToTarget < 1 || this.timeSinceSpawn > 2) {
+        if (distanceToTarget < 1.5 || this.timeSinceSpawn > 1.8) {
             this.explode();
         }
     }

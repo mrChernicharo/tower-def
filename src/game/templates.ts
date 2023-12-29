@@ -30,9 +30,12 @@ export const modalTemplates = {
     `,
     confirmTowerBuild: (towerType: TowerType) => `
         <div class="${ModalType.ConfirmTowerBuild} ${towerType} modal-content">
-            <h3>Build ${capitalize(towerType)} Tower</h3>
-            
             <button class="cancel-tower-build-btn">←</button>
+
+            <h3>Build ${capitalize(towerType)} Tower</h3>
+
+            <div class="warning-msg-area"></div>
+
             <div>
                 <button id="confirm-tower-build-btn" class="confirm-tower-build-btn">Confirm</button>
             </div>
@@ -79,6 +82,8 @@ export const modalTemplates = {
     `,
     confirmTowerUpgrade: (tower: Tower) => `
         <div class="${ModalType.ConfirmTowerUpgrade} ${tower.towerName} modal-content">
+            <button class="cancel-tower-upgrade-btn">←</button>
+
             <h3>Upgrade ${capitalize(tower.towerName)} Tower</h3>
             <div>Cost $${tower.blueprint.price}</div>
 
@@ -92,8 +97,9 @@ export const modalTemplates = {
                 2
             )}
             </pre>
-            
-            <button class="cancel-tower-upgrade-btn">←</button>
+
+            <div class="warning-msg-area"></div>
+
             <div>
                 <button class="confirm-tower-upgrade-btn">Confirm!</button>
             </div>

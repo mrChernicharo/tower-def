@@ -2,9 +2,12 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import { Routes } from "./router.tsx";
 import "./index.css";
+import { PlayerStatsContextProvider } from "./react/context/PlayerStatsContext.tsx";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
     // <React.StrictMode>
-    <Routes />
+    <PlayerStatsContextProvider>
+        <Routes />
+    </PlayerStatsContextProvider>
     // </React.StrictMode>
 );

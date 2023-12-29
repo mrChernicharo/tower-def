@@ -9,11 +9,13 @@ import { THREE } from "../three";
 
 import { Enemy } from "./Enemy";
 import { capitalize, getEnemyTypeFromChar, getProjectileTowerName, handleModelGun } from "./helpers";
-import { COLORS, DRAW_FUTURE_GIZMO, ENEMY_BLUEPRINTS, STAGE_WAVES_DATA } from "./constants";
+import { COLORS, DRAW_FUTURE_GIZMO, ENEMY_BLUEPRINTS, STAGE_WAVES_DATA, TOWER_BLUEPRINTS } from "./constants";
 import { AppLayers, EnemyChar, EnemyType, GameState, ModalType, TargetingStrategy, TowerType } from "./enums";
 import { EnemyBluePrint, Projectile } from "./types";
 import { cancelableModalNames, modalTemplates } from "./templates";
 import { Tower } from "./Tower";
+import { GlobalPlayerStats } from "../react/utils/types";
+import { PlayerStats } from "./PlayerStats";
 
 let pathPoints: THREE.Vector3[] = [];
 
@@ -35,6 +37,7 @@ export let gameState = GameState.Loading;
 export let pathCurve: THREE.CatmullRomCurve3;
 export let mouseRay: THREE.Raycaster;
 export let towerTexture: THREE.Texture;
+export let playerStats: PlayerStats;
 
 export let gui: GUI;
 
@@ -80,7 +83,8 @@ export async function destroyGame() {
     canvas.removeEventListener("mousedown", onMouseDown);
 }
 
-export async function initGame(levelIdx: number) {
+export async function initGame(levelIdx: number, initialPlayerStats: GlobalPlayerStats) {
+    playerStats = new PlayerStats(initialPlayerStats);
     await gameSetup();
 
     await _initEnemyModels();
@@ -443,7 +447,17 @@ function onModalClick(e: MouseEvent, el: THREE.Object3D, modal3D: CSS2DObject, m
     if (evTarget.classList.contains("confirm-tower-build-btn")) {
         // console.log(`BUILD THIS GODAMN ${towerToBuild} TOWER`, { el });
 
+        const towerPrice = TOWER_BLUEPRINTS[towerToBuild!][0].price;
+        if (playerStats.gold < towerPrice) {
+            console.warn("not enough money");
+            const msgArea = document.querySelector(".warning-msg-area")!;
+            msgArea.innerHTML = "not enough money";
+            return;
+        }
+        playerStats.spendGold(towerPrice);
+
         const tower = new Tower(towerToBuild!, el.position, modal3D.userData["tile_idx"]);
+
         el.userData["tower"] = towerToBuild;
         el.userData["tower_id"] = tower.id;
         modal3D.userData["tower"] = towerToBuild;
@@ -456,7 +470,6 @@ function onModalClick(e: MouseEvent, el: THREE.Object3D, modal3D: CSS2DObject, m
         scene.add(tower.model);
         scene.add(tower.rangeGizmo);
         tower.rangeGizmo.visible = false;
-        // console.log(":::", { tower, towers });
 
         towerToBuild = null;
     }
@@ -505,11 +518,20 @@ function onModalClick(e: MouseEvent, el: THREE.Object3D, modal3D: CSS2DObject, m
     }
     if (evTarget.classList.contains("confirm-tower-upgrade-btn")) {
         const tower = towers.find((t) => t.id === tower_id);
+
         // const towerIdx = towers.findIndex((t) => t.id === tower_id);
         // console.log("tower upgrade", { e, el, modal3D, modalEl, tower_id, tower });
 
         // if (towerIdx >= 0) {
         if (tower) {
+            if (playerStats.gold < tower.blueprint.price) {
+                console.warn("not enough money");
+                const msgArea = document.querySelector(".warning-msg-area")!;
+                msgArea.innerHTML = "not enough money";
+                return;
+            }
+            playerStats.spendGold(tower.blueprint.price);
+
             scene.remove(tower.rangeGizmo);
             scene.remove(tower.model);
 

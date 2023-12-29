@@ -72,3 +72,8 @@ export function getProjectileTowerName(modelName: string) {
             return TowerType.Archer;
     }
 }
+
+/** wait for x milliseconds */
+export const wait = async (timeInMilliseconds: number): Promise<void> => {
+    return new Promise((resolve) => setTimeout(resolve, timeInMilliseconds));
+};
