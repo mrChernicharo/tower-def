@@ -610,14 +610,14 @@ function onPlayPause() {
 function onProjectile(e: any) {
     const projectile = e.detail as Projectile;
     projectiles.set(projectile.id, projectile);
-    scene.add(projectile.mesh);
+    scene.add(projectile.model);
     // scene.add(projectile.trajectory);
     console.log("onProjectile", { e, projectile });
 }
 
 function onProjectileExplode(e: any) {
     const projectile = e.detail as Projectile;
-    scene.remove(projectile.mesh);
+    scene.remove(projectile.model);
     // scene.remove(projectile.trajectory);
     projectiles.delete(projectile.id);
 }

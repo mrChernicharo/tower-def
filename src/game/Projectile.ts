@@ -10,11 +10,12 @@ export class Projectile {
     level: number;
     origin: THREE.Vector3;
     destination: THREE.Vector3;
-    mesh!: THREE.Mesh;
+    model!: THREE.Mesh;
     trajectory!: THREE.Line;
     curve!: THREE.CatmullRomCurve3;
     timeSinceSpawn: number;
     speed: number;
+    maxHeight: number;
 
     constructor(towerType: TowerType, towerLevel: number, origin: THREE.Vector3, destination: THREE.Vector3) {
         this.id = idMaker();
@@ -22,7 +23,10 @@ export class Projectile {
         this.level = towerLevel;
         this.origin = new THREE.Vector3(origin.x, origin.y + 8, origin.z);
         this.destination = new THREE.Vector3().copy(destination);
-        this.speed = 8;
+        this.speed = 25;
+        this.maxHeight = 7;
+        // this.speed = 15;
+        // this.speed = 8;
         this.timeSinceSpawn = 0;
 
         this._init();
@@ -35,24 +39,30 @@ export class Projectile {
         return this;
     }
     async _setupModel() {
-        this.mesh = PROJECTILE_MODELS[this.type][`level-${this.level}`].clone();
-        setupModelData(this.mesh, this.id, this.level, this.origin.clone());
+        this.model = PROJECTILE_MODELS[this.type][`level-${this.level}`].clone();
+        setupModelData(this.model, this.id, this.level, this.origin.clone());
     }
 
     _setupTrajectory() {
-        const midPoint = this.mesh.position.clone().add(this.destination.clone()).divideScalar(2);
-        midPoint.y += 10;
+        const midPoint = this.model.position.clone().add(this.destination.clone()).divideScalar(2);
+        midPoint.y += this.maxHeight;
 
-        this.curve = new THREE.CatmullRomCurve3([this.mesh.position.clone(), midPoint, this.destination.clone()]);
+        this.curve = new THREE.CatmullRomCurve3([this.model.position.clone(), midPoint, this.destination.clone()]);
         const points = this.curve.getPoints(50);
         const geometry = new THREE.BufferGeometry().setFromPoints(points);
         const material = new THREE.LineBasicMaterial({ color: 0xff0000 });
 
         this.trajectory = new THREE.Line(geometry, material);
+
+        // time-to-reach-target
+        const timeToREachTarget = this.curve.getLength() / this.speed;
+        console.log({ timeToREachTarget });
     }
 
     tick(delta: number) {
         this.timeSinceSpawn += delta;
+
+        console.log(this.timeSinceSpawn);
 
         // const dest = new THREE.Vector3().copy(this.destination);
         // const curPos = new THREE.Vector3().copy(this.mesh.position);
@@ -85,12 +95,12 @@ export class Projectile {
         const position = this.curve.getPointAt(t);
         const tangent = this.curve.getTangentAt(t);
 
-        this.mesh.position.copy(position);
-        this.mesh.lookAt(
+        this.model.position.copy(position);
+        this.model.lookAt(
             position.clone().add(tangent.applyAxisAngle(new Vector3(1, 0, 0), -Math.PI * 0.5).add(tangent))
         );
 
-        return this.mesh.position.distanceTo(this.destination);
+        return this.model.position.distanceTo(this.destination);
     }
 }
 function getPercDist(pathCurve: THREE.CatmullRomCurve3, speed: number, timeSinceSpawn: number) {
