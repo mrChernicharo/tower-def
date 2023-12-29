@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { TOWER_BLUEPRINTS } from "./constants";
 import { AppLayers, TowerType } from "./enums";
-import { gui, scene, towerModels, towerTexture } from "./game";
+import { gui, scene, TOWER_MODELS, towerTexture } from "./game";
 import { idMaker } from "./helpers";
 import { TowerBluePrint } from "./types";
 import { THREE } from "../three";
@@ -37,7 +37,7 @@ export class Tower {
     }
 
     async _setupModel() {
-        this.model = towerModels[this.towerName]["level-1"].clone();
+        this.model = TOWER_MODELS[this.towerName]["level-1"].clone();
         setupModelData(this.model, this.id, 1, this.tileIdx, this.position);
         this._setupRangeGizmo();
         console.log("created tower", this);
@@ -78,7 +78,7 @@ export class Tower {
         // this.level = nextLevel;
 
         const desiredBlueprint = { ...TOWER_BLUEPRINTS[this.towerName][currLevel] };
-        const desiredModel = towerModels[this.towerName][`level-${nextLevel}`].clone();
+        const desiredModel = TOWER_MODELS[this.towerName][`level-${nextLevel}`].clone();
         this.blueprint = desiredBlueprint;
         this.model = desiredModel;
 
@@ -96,7 +96,12 @@ export class Tower {
                     console.log("ShoooT!", enemy.enemyType);
                     this.cooldown = 1 / this.blueprint.fireRate;
                     // @TODO: mind FUTURE POSITION
-                    const projectile = new Projectile(this.towerName, this.position, enemy.model.position);
+                    const projectile = new Projectile(
+                        this.towerName,
+                        this.blueprint.level,
+                        this.position,
+                        enemy.model.position
+                    );
                     window.dispatchEvent(new CustomEvent("projectile", { detail: projectile }));
                 }
             }

@@ -9,7 +9,7 @@ import jsonCurve from "../desert-level-path.0.json";
 import { THREE } from "../three";
 
 import { Enemy } from "./Enemy";
-import { capitalize, getEnemyTypeFromChar, handleModelGun } from "./helpers";
+import { capitalize, getEnemyTypeFromChar, getProjectileTowerName, handleModelGun } from "./helpers";
 import { COLORS, DRAW_FUTURE_GIZMO, ENEMY_BLUEPRINTS, STAGE_WAVES_DATA } from "./constants";
 import { AppLayers, EnemyChar, EnemyType, GameState, ModalType, TowerType } from "./enums";
 import { EnemyBluePrint } from "./types";
@@ -42,8 +42,9 @@ export let towerTexture: THREE.Texture;
 export let gui: GUI;
 
 const spawnTimeouts: number[] = []; // enable canceling waveScheduling timeouts when game is destroy
-export const glbEnemyModels = {} as { [k in EnemyType]: GLTF };
-export const towerModels = {} as { [k in TowerType]: { [k: `level-${number}`]: THREE.Mesh } };
+export const ENEMY_MODELS = {} as { [k in EnemyType]: GLTF };
+export const TOWER_MODELS = {} as { [k in TowerType]: { [k: `level-${number}`]: THREE.Mesh } };
+export const PROJECTILE_MODELS = {} as { [k in TowerType]: { [k: `level-${number}`]: THREE.Mesh } };
 
 let canvas: HTMLCanvasElement;
 let playPauseBtn: HTMLButtonElement;
@@ -174,30 +175,50 @@ async function _initEnemyModels() {
 
     for (const model of models) {
         handleModelGun(model);
-        glbEnemyModels[model.userData.enemyType as EnemyType] = model;
+        ENEMY_MODELS[model.userData.enemyType as EnemyType] = model;
     }
 }
 
 async function _initTowerModels() {
-    const fbx = await fbxLoader.loadAsync("/assets/fbx/tower-collection.fbx");
+    const towersFbx = await fbxLoader.loadAsync("/assets/fbx/tower-collection.fbx");
+    const projectilesFbx = await fbxLoader.loadAsync("/assets/fbx/tower-projectiles.fbx");
     towerTexture = await new THREE.TextureLoader().loadAsync("/assets/fbx/towers-texture.png");
 
-    console.log({ fbx, towers: fbx.children.map((c) => c.name).sort((a, b) => a.localeCompare(b)) });
+    // console.log({ fbx: towersFbx, towers: towersFbx.children.map((c) => c.name).sort((a, b) => a.localeCompare(b)) });
 
-    const models = fbx.children;
-    for (const model of models) {
+    const towerModels = towersFbx.children;
+    for (const model of towerModels) {
         const towerLevel = +model.name.split("_")[3];
         const towerName = capitalize(model.name.split("_")[0]) as TowerType;
 
-        if (!towerModels[towerName]) {
-            towerModels[towerName] = {};
+        if (!TOWER_MODELS[towerName]) {
+            TOWER_MODELS[towerName] = {};
         }
 
         model.name = `${towerName}-Tower`;
-        towerModels[towerName][`level-${towerLevel}`] = model as THREE.Mesh;
+        TOWER_MODELS[towerName][`level-${towerLevel}`] = model as THREE.Mesh;
     }
 
-    console.log({ towerModels });
+    const projectileModels = projectilesFbx.children;
+    for (const model of projectileModels as THREE.Mesh[]) {
+        const towerName = getProjectileTowerName(model.name);
+        console.log(model, towerName);
+        if (!(towerName in PROJECTILE_MODELS)) {
+            PROJECTILE_MODELS[towerName] = {};
+        }
+
+        if (towerName === TowerType.Archer) {
+            const level = model.name.split("_")[3];
+            PROJECTILE_MODELS[towerName][`level-${+level}`] = model;
+        } else {
+            PROJECTILE_MODELS[towerName]["level-1"] = model;
+            PROJECTILE_MODELS[towerName]["level-2"] = model;
+            PROJECTILE_MODELS[towerName]["level-3"] = model;
+            PROJECTILE_MODELS[towerName]["level-4"] = model;
+        }
+    }
+
+    console.log({ TOWER_MODELS, PROJECTILE_MODELS });
 }
 
 function _init2DModals() {
@@ -590,14 +611,14 @@ function onProjectile(e: any) {
     const projectile = e.detail as Projectile;
     projectiles.set(projectile.id, projectile);
     scene.add(projectile.mesh);
-    scene.add(projectile.trajectory);
+    // scene.add(projectile.trajectory);
     console.log("onProjectile", { e, projectile });
 }
 
 function onProjectileExplode(e: any) {
     const projectile = e.detail as Projectile;
     scene.remove(projectile.mesh);
-    scene.remove(projectile.trajectory);
+    // scene.remove(projectile.trajectory);
     projectiles.delete(projectile.id);
 }
 

@@ -1,4 +1,4 @@
-import { EnemyChar, EnemyType } from "./enums";
+import { EnemyChar, EnemyType, TowerType } from "./enums";
 import { THREE } from "../three";
 import { GLTF } from "three/examples/jsm/Addons.js";
 
@@ -56,3 +56,19 @@ export const idMaker = (length = 12) =>
         .fill(0)
         .map(() => ID_CHARS.split("")[Math.round(Math.random() * ID_CHARS.length)])
         .join("");
+
+export function getProjectileTowerName(modelName: string) {
+    switch (true) {
+        case modelName.includes("Ballista"):
+            return TowerType.Ballista;
+        case modelName.includes("Caoon"):
+            return TowerType.Cannon;
+        case modelName.includes("poison"):
+            return TowerType.Poison;
+        case modelName.includes("wizard"):
+            return TowerType.Wizard;
+        case modelName.includes("Archer"):
+        default:
+            return TowerType.Archer;
+    }
+}

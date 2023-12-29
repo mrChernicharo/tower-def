@@ -1,10 +1,13 @@
+import { Vector3 } from "three";
 import { THREE } from "../three";
-import { TowerType } from "./enums";
+import { AppLayers, TowerType } from "./enums";
+import { PROJECTILE_MODELS, towerTexture } from "./game";
 import { idMaker } from "./helpers";
 
 export class Projectile {
     id: string;
     type: TowerType;
+    level: number;
     origin: THREE.Vector3;
     destination: THREE.Vector3;
     mesh!: THREE.Mesh;
@@ -13,12 +16,13 @@ export class Projectile {
     timeSinceSpawn: number;
     speed: number;
 
-    constructor(towerType: TowerType, origin: THREE.Vector3, destination: THREE.Vector3) {
+    constructor(towerType: TowerType, towerLevel: number, origin: THREE.Vector3, destination: THREE.Vector3) {
         this.id = idMaker();
         this.type = towerType;
-        this.origin = new THREE.Vector3().copy(origin);
+        this.level = towerLevel;
+        this.origin = new THREE.Vector3(origin.x, origin.y + 8, origin.z);
         this.destination = new THREE.Vector3().copy(destination);
-        this.speed = 20;
+        this.speed = 8;
         this.timeSinceSpawn = 0;
 
         this._init();
@@ -26,21 +30,13 @@ export class Projectile {
 
     _init() {
         this._setupModel();
+        this._setupTrajectory();
 
         return this;
     }
     async _setupModel() {
-        const sphereGeometry = new THREE.SphereGeometry(0.5);
-        const sphereMaterial = new THREE.MeshBasicMaterial({
-            transparent: true,
-            opacity: 0.8,
-            color: 0xff0000,
-        });
-        const sphereMesh = new THREE.Mesh(sphereGeometry, sphereMaterial);
-        sphereMesh.position.set(this.origin.x, this.origin.y + 10, this.origin.z);
-        this.mesh = sphereMesh;
-
-        this._setupTrajectory();
+        this.mesh = PROJECTILE_MODELS[this.type][`level-${this.level}`].clone();
+        setupModelData(this.mesh, this.id, this.level, this.origin.clone());
     }
 
     _setupTrajectory() {
@@ -90,7 +86,9 @@ export class Projectile {
         const tangent = this.curve.getTangentAt(t);
 
         this.mesh.position.copy(position);
-        this.mesh.lookAt(position.clone().sub(tangent));
+        this.mesh.lookAt(
+            position.clone().add(tangent.applyAxisAngle(new Vector3(1, 0, 0), -Math.PI * 0.5).add(tangent))
+        );
 
         return this.mesh.position.distanceTo(this.destination);
     }
@@ -102,4 +100,19 @@ function getPercDist(pathCurve: THREE.CatmullRomCurve3, speed: number, timeSince
 
     // console.log({ pathLen, distCovered, distPerc });
     return distPerc % 1;
+}
+
+function setupModelData(model: THREE.Mesh, id: string, level: number, position: THREE.Vector3) {
+    model.userData["projectile_id"] = id;
+    model.userData["projectile_level"] = level;
+
+    model.layers.set(AppLayers.Projectile);
+    model.material = new THREE.MeshBasicMaterial({
+        // color: COLORS[this.blueprint.color as keyof typeof COLORS],
+        // color: 0xffffff,
+        color: 0xca947d,
+        map: towerTexture,
+    });
+    model.position.set(position.x, position.y, position.z);
+    model.scale.set(0.005, 0.005, 0.005);
 }

@@ -1,5 +1,5 @@
 import { GLTF } from "three/examples/jsm/Addons.js";
-import { glbEnemyModels, pathCurve } from "./game";
+import { ENEMY_MODELS, pathCurve } from "./game";
 import { THREE } from "../three";
 import * as SkeletonUtils from "three/examples/jsm/utils/SkeletonUtils.js";
 import { EnemyType } from "./enums";
@@ -55,7 +55,7 @@ export class Enemy {
     }
 
     _setupModel() {
-        this.glb = glbEnemyModels[this.enemyType];
+        this.glb = ENEMY_MODELS[this.enemyType];
 
         const model = SkeletonUtils.clone(this.glb.scene);
 
