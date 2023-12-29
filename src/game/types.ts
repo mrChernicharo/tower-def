@@ -1,4 +1,4 @@
-import { EnemyType, TowerName } from "./enums";
+import { EnemyType, TowerType } from "./enums";
 
 export type EnemyBluePrint = {
     name: EnemyType;
@@ -10,7 +10,7 @@ export type EnemyBluePrint = {
 };
 
 export type TowerBluePrint = {
-    name: TowerName;
+    name: TowerType;
     level: number;
     color: string;
     fireRate: number; // shots/s

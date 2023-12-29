@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { GLTF, GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import { GUI } from "dat.gui";
@@ -10,10 +11,11 @@ import { THREE } from "../three";
 import { Enemy } from "./Enemy";
 import { capitalize, getEnemyTypeFromChar, handleModelGun } from "./helpers";
 import { COLORS, DRAW_FUTURE_GIZMO, ENEMY_BLUEPRINTS, STAGE_WAVES_DATA } from "./constants";
-import { AppLayers, EnemyChar, EnemyType, GameState, ModalType, TowerName } from "./enums";
+import { AppLayers, EnemyChar, EnemyType, GameState, ModalType, TowerType } from "./enums";
 import { EnemyBluePrint } from "./types";
 import { cancelableModalNames, modalTemplates } from "./templates";
 import { Tower } from "./Tower";
+import { Projectile } from "./Projectile";
 
 let pathPoints: THREE.Vector3[] = [];
 
@@ -31,6 +33,7 @@ export let camera: THREE.PerspectiveCamera;
 export let ambientLight: THREE.AmbientLight;
 export let enemies: Enemy[] = [];
 export let towers: Tower[] = [];
+export let projectiles: Map<string, Projectile>;
 export let gameState = GameState.Loading;
 export let pathCurve: THREE.CatmullRomCurve3;
 export let mouseRay: THREE.Raycaster;
@@ -40,16 +43,16 @@ export let gui: GUI;
 
 const spawnTimeouts: number[] = []; // enable canceling waveScheduling timeouts when game is destroy
 export const glbEnemyModels = {} as { [k in EnemyType]: GLTF };
-export const towerModels = {} as { [k in TowerName]: { [k: `level-${number}`]: THREE.Mesh } };
+export const towerModels = {} as { [k in TowerType]: { [k: `level-${number}`]: THREE.Mesh } };
 
 let canvas: HTMLCanvasElement;
 let playPauseBtn: HTMLButtonElement;
 
 let frameId = 0;
 let clickTimestamp = 0;
-let towerToBuild: TowerName | null = null;
+let towerToBuild: TowerType | null = null;
 let hoveredTowerBaseName: string | null = null;
-let hoveredTowerName: string | null = null;
+let hoveredTowerType: string | null = null;
 
 export async function destroyGame() {
     cancelAnimationFrame(frameId);
@@ -61,12 +64,16 @@ export async function destroyGame() {
     renderer.dispose();
     enemies = [];
     towers = [];
+    projectiles.clear();
     gameState = GameState.Paused;
+    gui.destroy();
     spawnTimeouts.forEach((timeoutId) => {
         clearTimeout(timeoutId);
     });
 
     window.removeEventListener("resize", onResize);
+    window.removeEventListener("projectile", onProjectile);
+    window.removeEventListener("projectile-explode", onProjectileExplode);
     playPauseBtn.removeEventListener("click", onPlayPause);
     canvas.removeEventListener("mousemove", onMouseMove);
     canvas.removeEventListener("click", onCanvasClick);
@@ -87,6 +94,8 @@ export async function initGame(levelIdx: number) {
     scheduleWaveEnemies(levelIdx, 0);
 
     window.addEventListener("resize", onResize);
+    window.addEventListener("projectile", onProjectile);
+    window.addEventListener("projectile-explode", onProjectileExplode);
     playPauseBtn.addEventListener("click", onPlayPause);
     canvas.addEventListener("mousemove", onMouseMove);
     canvas.addEventListener("click", onCanvasClick);
@@ -150,6 +159,8 @@ async function gameSetup() {
     camera.position.x = 5;
     camera.position.z = 4;
     camera.position.y = 50;
+
+    projectiles = new Map();
 }
 
 async function _initEnemyModels() {
@@ -176,7 +187,7 @@ async function _initTowerModels() {
     const models = fbx.children;
     for (const model of models) {
         const towerLevel = +model.name.split("_")[3];
-        const towerName = capitalize(model.name.split("_")[0]) as TowerName;
+        const towerName = capitalize(model.name.split("_")[0]) as TowerType;
 
         if (!towerModels[towerName]) {
             towerModels[towerName] = {};
@@ -319,16 +330,10 @@ function animate() {
             enemy.tick(delta);
         }
         for (const tower of towers) {
-            tower.tick(delta);
+            tower.tick(delta, enemies);
         }
-
-        for (const tower of towers) {
-            for (const enemy of enemies) {
-                if (tower.position.distanceTo(enemy.model.position) < tower.blueprint.range) {
-                    console.log(enemy.enemyType, enemy.id, tower.position.distanceTo(enemy.model.position));
-                }
-                // if (DRAW_FUTURE_GIZMO) console.log('future', tower.position.distanceTo(enemy.futureGizmo.position));
-            }
+        for (const [id, projectile] of projectiles.entries()) {
+            projectile.tick(delta);
         }
     }
 
@@ -357,7 +362,7 @@ function onModalClick(e: MouseEvent, el: THREE.Object3D, modal3D: CSS2DObject, m
 
     // TOWER BUILD
     if (evTarget.classList.contains("tower-build-btn")) {
-        towerToBuild = evTarget.id.split("-")[0] as TowerName;
+        towerToBuild = evTarget.id.split("-")[0] as TowerType;
         modalEl.innerHTML = modalTemplates.confirmTowerBuild(towerToBuild);
     }
     if (evTarget.classList.contains("cancel-tower-build-btn")) {
@@ -543,7 +548,7 @@ function handleHoverOpacityEfx() {
 
     if (hoveredTower) {
         const towerMesh = hoveredTower.object as THREE.Mesh;
-        hoveredTowerName = towerMesh.name;
+        hoveredTowerType = towerMesh.name;
         towerMesh.material = new THREE.MeshBasicMaterial({
             transparent: true,
             opacity: 0.75,
@@ -551,15 +556,15 @@ function handleHoverOpacityEfx() {
             map: towerTexture,
         });
     } else {
-        if (hoveredTowerName) {
-            const hoveredTower = scene.getObjectByName(hoveredTowerName) as THREE.Mesh;
+        if (hoveredTowerType) {
+            const hoveredTower = scene.getObjectByName(hoveredTowerType) as THREE.Mesh;
 
             hoveredTower.material = new THREE.MeshBasicMaterial({
                 color: 0xca947d,
                 map: towerTexture,
             });
         }
-        hoveredTowerName = null;
+        hoveredTowerType = null;
     }
 }
 
@@ -579,6 +584,21 @@ function onPlayPause() {
         playPauseBtn.textContent = "Pause";
     }
     // console.log("playpause click", gameState);
+}
+
+function onProjectile(e: any) {
+    const projectile = e.detail as Projectile;
+    projectiles.set(projectile.id, projectile);
+    scene.add(projectile.mesh);
+    scene.add(projectile.trajectory);
+    console.log("onProjectile", { e, projectile });
+}
+
+function onProjectileExplode(e: any) {
+    const projectile = e.detail as Projectile;
+    scene.remove(projectile.mesh);
+    scene.remove(projectile.trajectory);
+    projectiles.delete(projectile.id);
 }
 
 // function drawGrid() {
@@ -607,8 +627,8 @@ export function revertCancelableModals(clickedModal: HTMLDivElement | undefined)
                     modalEl.innerHTML = modalTemplates.towerBuild();
                 } else {
                     for (const [idx, className] of modalEl.children[0].classList.entries()) {
-                        if (className in TowerName) {
-                            // const towerName = className as TowerName;
+                        if (className in TowerType) {
+                            // const towerName = className as TowerType;
                             const tower = towers.find((t) => t.model.userData.tower_id);
 
                             // console.log(":::::::::revertCancelableModals", { modalEl, towers, idx, tower });

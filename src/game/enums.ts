@@ -32,7 +32,7 @@ export enum AppLayers {
     Modals = 3,
 }
 
-export enum TowerName {
+export enum TowerType {
     Archer = "Archer",
     Ballista = "Ballista",
     Cannon = "Cannon",

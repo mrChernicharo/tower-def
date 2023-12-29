@@ -43,7 +43,8 @@ export class Enemy {
         if (DRAW_FUTURE_GIZMO) {
             this.futureGizmo = new THREE.Mesh(
                 new THREE.SphereGeometry(0.5),
-                new THREE.MeshToonMaterial({ color: 0xff0000 })
+                new THREE.MeshToonMaterial({ color: 0x00ffff })
+                // new THREE.MeshToonMaterial({ color: 0xff0000 })
             );
             this.futureGizmo.visible = false;
         }

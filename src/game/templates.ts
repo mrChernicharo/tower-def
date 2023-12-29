@@ -1,6 +1,6 @@
 import { Tower } from "./Tower";
 import { TOWER_BLUEPRINTS } from "./constants";
-import { ModalType, TowerName } from "./enums";
+import { ModalType, TowerType } from "./enums";
 import { capitalize } from "./helpers";
 
 export const modalTemplates = {
@@ -8,29 +8,29 @@ export const modalTemplates = {
         <div class="${ModalType.TowerBuild} modal-content">
             <h3>Build Tower</h3>
             <div>
-                <button id="${TowerName.Archer}-tower-build-btn" class="tower-build-btn">
-                    ${capitalize(TowerName.Archer)}
+                <button id="${TowerType.Archer}-tower-build-btn" class="tower-build-btn">
+                    ${capitalize(TowerType.Archer)}
                 </button>
-                <button id="${TowerName.Ballista}-tower-build-btn" class="tower-build-btn">
-                    ${capitalize(TowerName.Ballista)}
+                <button id="${TowerType.Ballista}-tower-build-btn" class="tower-build-btn">
+                    ${capitalize(TowerType.Ballista)}
                 </button>
             </div>
             <div>
-                <button id="${TowerName.Cannon}-tower-build-btn" class="tower-build-btn">
-                    ${capitalize(TowerName.Cannon)}
+                <button id="${TowerType.Cannon}-tower-build-btn" class="tower-build-btn">
+                    ${capitalize(TowerType.Cannon)}
                 </button>
-                <button id="${TowerName.Poison}-tower-build-btn" class="tower-build-btn">
-                    ${capitalize(TowerName.Poison)}
+                <button id="${TowerType.Poison}-tower-build-btn" class="tower-build-btn">
+                    ${capitalize(TowerType.Poison)}
                 </button>
-                <button id="${TowerName.Wizard}-tower-build-btn" class="tower-build-btn">
-                    ${capitalize(TowerName.Wizard)}
+                <button id="${TowerType.Wizard}-tower-build-btn" class="tower-build-btn">
+                    ${capitalize(TowerType.Wizard)}
                 </button>
             </div>
         </div>
     `,
-    confirmTowerBuild: (towerName: TowerName) => `
-        <div class="${ModalType.ConfirmTowerBuild} ${towerName} modal-content">
-            <h3>Build ${capitalize(towerName)} Tower</h3>
+    confirmTowerBuild: (towerType: TowerType) => `
+        <div class="${ModalType.ConfirmTowerBuild} ${towerType} modal-content">
+            <h3>Build ${capitalize(towerType)} Tower</h3>
             
             <button class="cancel-tower-build-btn">←</button>
             <div>

@@ -1,27 +1,31 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { TOWER_BLUEPRINTS } from "./constants";
-import { AppLayers, TowerName } from "./enums";
+import { AppLayers, TowerType } from "./enums";
 import { gui, scene, towerModels, towerTexture } from "./game";
 import { idMaker } from "./helpers";
 import { TowerBluePrint } from "./types";
 import { THREE } from "../three";
+import { Enemy } from "./Enemy";
+import { Projectile } from "./Projectile";
 
 export class Tower {
     id: string;
     // level: number;
-    towerName: TowerName;
+    cooldown: number;
+    towerName: TowerType;
     position: THREE.Vector3;
     model!: THREE.Mesh;
     blueprint: TowerBluePrint;
     tileIdx: string;
     rangeGizmo!: THREE.Mesh;
-    constructor(towerName: TowerName, position: THREE.Vector3, tileIdx: string) {
+    constructor(towerType: TowerType, position: THREE.Vector3, tileIdx: string) {
         this.id = idMaker();
         // this.level = 1;
-        this.towerName = towerName;
+        this.towerName = towerType;
         this.position = position;
         this.tileIdx = tileIdx;
-        this.blueprint = { ...TOWER_BLUEPRINTS[towerName][0] };
+        this.cooldown = 0;
+        this.blueprint = { ...TOWER_BLUEPRINTS[towerType][0] };
 
         this._init();
     }
@@ -69,7 +73,7 @@ export class Tower {
             throw Error("MAX LEVEL REACHED");
         }
 
-        console.log("upgrade tower", { currLevel, nextLevel, currBluePrint: { ...this.blueprint } });
+        // console.log("upgrade tower", { currLevel, nextLevel, currBluePrint: { ...this.blueprint } });
 
         // this.level = nextLevel;
 
@@ -80,12 +84,28 @@ export class Tower {
 
         setupModelData(this.model, this.id, nextLevel, this.tileIdx, this.position);
         this._setupRangeGizmo();
-        console.log("upgrade tower", { currLevel, nextLevel, desiredBlueprint, desiredModel });
+        // console.log("upgrade tower", { currLevel, nextLevel, desiredBlueprint, desiredModel });
         return this;
     }
 
-    tick(delta: number) {
-        //
+    tick(delta: number, enemies: Enemy[]) {
+        for (const enemy of enemies) {
+            if (this.position.distanceTo(enemy.model.position) < this.blueprint.range) {
+                // console.log("enemyInSight", enemy.enemyType, enemy.id, this.position.distanceTo(enemy.model.position));
+                if (this.cooldown <= 0) {
+                    console.log("ShoooT!", enemy.enemyType);
+                    this.cooldown = 1 / this.blueprint.fireRate;
+                    // @TODO: mind FUTURE POSITION
+                    const projectile = new Projectile(this.towerName, this.position, enemy.model.position);
+                    window.dispatchEvent(new CustomEvent("projectile", { detail: projectile }));
+                }
+            }
+        }
+
+        if (this.cooldown > 0) {
+            this.cooldown -= delta;
+        }
+        // console.log(this.cooldown);
     }
 }
 

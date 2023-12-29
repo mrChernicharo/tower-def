@@ -1,4 +1,4 @@
-import { EnemyType, TowerName } from "./enums";
+import { EnemyType, TowerType } from "./enums";
 import { EnemyBluePrint, TowerBluePrint } from "./types";
 
 // export const DRAW_FUTURE_GIZMO = false;
@@ -67,10 +67,10 @@ export const ENEMY_BLUEPRINTS: { [k in EnemyType]: EnemyBluePrint } = {
     },
 } as const;
 
-export const TOWER_BLUEPRINTS: { [k in TowerName]: TowerBluePrint[] } = {
+export const TOWER_BLUEPRINTS: { [k in TowerType]: TowerBluePrint[] } = {
     Archer: [
         {
-            name: TowerName.Archer,
+            name: TowerType.Archer,
             level: 1,
             damage: [4, 7],
             fireRate: 6,
@@ -79,7 +79,7 @@ export const TOWER_BLUEPRINTS: { [k in TowerName]: TowerBluePrint[] } = {
             range: 8,
         },
         {
-            name: TowerName.Archer,
+            name: TowerType.Archer,
             level: 2,
             damage: [8, 13],
             fireRate: 6,
@@ -88,7 +88,7 @@ export const TOWER_BLUEPRINTS: { [k in TowerName]: TowerBluePrint[] } = {
             range: 9,
         },
         {
-            name: TowerName.Archer,
+            name: TowerType.Archer,
             level: 3,
             damage: [14, 22],
             fireRate: 7,
@@ -97,7 +97,7 @@ export const TOWER_BLUEPRINTS: { [k in TowerName]: TowerBluePrint[] } = {
             range: 10,
         },
         {
-            name: TowerName.Archer,
+            name: TowerType.Archer,
             level: 4,
             damage: [20, 34],
             fireRate: 8,
@@ -109,37 +109,37 @@ export const TOWER_BLUEPRINTS: { [k in TowerName]: TowerBluePrint[] } = {
     ],
     Ballista: [
         {
-            name: TowerName.Ballista,
+            name: TowerType.Ballista,
             level: 1,
-            damage: [4, 7],
-            fireRate: 6,
+            damage: [10, 20],
+            fireRate: 2,
             color: "red",
             price: 100,
             range: 8,
         },
         {
-            name: TowerName.Ballista,
+            name: TowerType.Ballista,
             level: 2,
-            damage: [8, 13],
-            fireRate: 6,
+            damage: [20, 38],
+            fireRate: 2.25,
             color: "red",
             price: 160,
             range: 9,
         },
         {
-            name: TowerName.Ballista,
+            name: TowerType.Ballista,
             level: 3,
-            damage: [14, 22],
-            fireRate: 6,
+            damage: [34, 55],
+            fireRate: 2.5,
             color: "red",
             price: 220,
             range: 10,
         },
         {
-            name: TowerName.Ballista,
+            name: TowerType.Ballista,
             level: 4,
-            damage: [20, 36],
-            fireRate: 6,
+            damage: [51, 76],
+            fireRate: 2.75,
             color: "red",
             price: 380,
             range: 10,
@@ -148,7 +148,7 @@ export const TOWER_BLUEPRINTS: { [k in TowerName]: TowerBluePrint[] } = {
     ],
     Cannon: [
         {
-            name: TowerName.Cannon,
+            name: TowerType.Cannon,
             level: 1,
             damage: [18, 36],
             fireRate: 0.8,
@@ -157,7 +157,7 @@ export const TOWER_BLUEPRINTS: { [k in TowerName]: TowerBluePrint[] } = {
             range: 9,
         },
         {
-            name: TowerName.Cannon,
+            name: TowerType.Cannon,
             level: 2,
             damage: [29, 54],
             fireRate: 0.8,
@@ -166,7 +166,7 @@ export const TOWER_BLUEPRINTS: { [k in TowerName]: TowerBluePrint[] } = {
             range: 10,
         },
         {
-            name: TowerName.Cannon,
+            name: TowerType.Cannon,
             level: 3,
             damage: [48, 86],
             fireRate: 0.8,
@@ -175,7 +175,7 @@ export const TOWER_BLUEPRINTS: { [k in TowerName]: TowerBluePrint[] } = {
             range: 11,
         },
         {
-            name: TowerName.Ballista,
+            name: TowerType.Ballista,
             level: 4,
             damage: [60, 100],
             fireRate: 0.8,
@@ -187,7 +187,7 @@ export const TOWER_BLUEPRINTS: { [k in TowerName]: TowerBluePrint[] } = {
     ],
     Wizard: [
         {
-            name: TowerName.Wizard,
+            name: TowerType.Wizard,
             level: 1,
             damage: [10, 21],
             fireRate: 2,
@@ -196,7 +196,7 @@ export const TOWER_BLUEPRINTS: { [k in TowerName]: TowerBluePrint[] } = {
             range: 12,
         },
         {
-            name: TowerName.Wizard,
+            name: TowerType.Wizard,
             level: 2,
             damage: [18, 36],
             fireRate: 1.8,
@@ -205,7 +205,7 @@ export const TOWER_BLUEPRINTS: { [k in TowerName]: TowerBluePrint[] } = {
             range: 13,
         },
         {
-            name: TowerName.Wizard,
+            name: TowerType.Wizard,
             level: 3,
             damage: [33, 57],
             fireRate: 1.6,
@@ -214,7 +214,7 @@ export const TOWER_BLUEPRINTS: { [k in TowerName]: TowerBluePrint[] } = {
             range: 14,
         },
         {
-            name: TowerName.Wizard,
+            name: TowerType.Wizard,
             level: 4,
             damage: [49, 75],
             fireRate: 1.5,
@@ -226,7 +226,7 @@ export const TOWER_BLUEPRINTS: { [k in TowerName]: TowerBluePrint[] } = {
     ],
     Poison: [
         {
-            name: TowerName.Poison,
+            name: TowerType.Poison,
             level: 1,
             damage: [4, 7],
             fireRate: 3,
@@ -235,7 +235,7 @@ export const TOWER_BLUEPRINTS: { [k in TowerName]: TowerBluePrint[] } = {
             range: 10,
         },
         {
-            name: TowerName.Poison,
+            name: TowerType.Poison,
             level: 2,
             damage: [11, 22],
             fireRate: 2.5,
@@ -244,7 +244,7 @@ export const TOWER_BLUEPRINTS: { [k in TowerName]: TowerBluePrint[] } = {
             range: 12,
         },
         {
-            name: TowerName.Poison,
+            name: TowerType.Poison,
             level: 3,
             damage: [21, 37],
             fireRate: 2,
@@ -253,7 +253,7 @@ export const TOWER_BLUEPRINTS: { [k in TowerName]: TowerBluePrint[] } = {
             range: 13,
         },
         {
-            name: TowerName.Poison,
+            name: TowerType.Poison,
             level: 4,
             damage: [33, 60],
             fireRate: 2,
