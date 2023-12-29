@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { PROJECTILE_BLUEPRINTS, TOWER_BLUEPRINTS } from "./constants";
 import { AppLayers, TargetingStrategy, TowerType, TrajectoryType } from "./enums";
-import { gui, scene, TOWER_MODELS, towerTexture } from "./game";
+import { TOWER_MODELS, towerTexture } from "./game";
 import { idMaker } from "./helpers";
 import { TowerBluePrint } from "./types";
 import { THREE } from "../three";
@@ -57,15 +57,7 @@ export class Tower {
         circleMesh.position.set(this.position.x, this.position.y + 0.5, this.position.z);
         circleMesh.rotation.x = -Math.PI * 0.5;
 
-        // if (this.rangeGizmo) {
-        //     scene.remove(this.rangeGizmo);
-        // }
         this.rangeGizmo = circleMesh;
-        // scene.add(this.rangeGizmo);
-        // const rangeFolder = gui.addFolder("Tower" + this.id);
-        // rangeFolder.add(circleMesh.rotation, "x", -Math.PI * 2, Math.PI * 2);
-        // rangeFolder.add(circleMesh.rotation, "y", -Math.PI * 2, Math.PI * 2);
-        // rangeFolder.add(circleMesh.rotation, "z", -Math.PI * 2, Math.PI * 2);
     }
 
     upgrade() {
@@ -95,10 +87,10 @@ export class Tower {
         if (enemy && this.cooldown <= 0) {
             if (this.position.distanceTo(enemy.model.position) < this.blueprint.range) {
                 // console.log("enemyInSight", enemy.enemyType, enemy.id, this.position.distanceTo(enemy.model.position));
-                // console.log("ShoooT!", enemy.enemyType);
-                this.cooldown = 1 / (this.blueprint.fireRate * 0.5);
-
+                console.log("ShoooT!", enemy.enemyType);
                 this.fireProjectile(enemy);
+
+                this.cooldown = 1 / (this.blueprint.fireRate * 0.5);
             }
         }
         // console.log(this.cooldown);
@@ -137,7 +129,7 @@ export class Tower {
                     curve
                 );
                 window.dispatchEvent(new CustomEvent("projectile", { detail: projectile }));
-                break;
+                return;
             }
             case TrajectoryType.Straight: {
                 const timeToReachTargetViaStraightLine =
@@ -153,16 +145,11 @@ export class Tower {
                 );
 
                 window.dispatchEvent(new CustomEvent("projectile", { detail: projectile }));
-                break;
+                return;
             }
             default:
-                break;
+                return;
         }
-
-        // const timeToTarget = projectile.timeToTarget();
-        // const timeToTarget = 1;
-        // const futurePosition = enemy.getFuturePosition(timeToTarget);
-        // projectile.destination.set(futurePosition.x, futurePosition.y, futurePosition.z);
     }
 }
 

@@ -1,4 +1,3 @@
-import { Vector3 } from "three";
 import { THREE } from "../three";
 import { AppLayers, TowerType } from "./enums";
 import { PROJECTILE_MODELS, towerTexture } from "./game";
@@ -16,11 +15,12 @@ class ProjectileBase {
     trajectory!: THREE.Line;
     timeSinceSpawn: number;
     blueprint: ProjectileBluePrint;
+    explosion: THREE.Mesh;
     constructor(towerType: TowerType, towerLevel: number, origin: THREE.Vector3, destination: THREE.Vector3) {
-        this.id = idMaker();
+        this.id = `proj-${towerType}-${idMaker()}`;
         this.type = towerType;
         this.level = towerLevel;
-        this.blueprint = PROJECTILE_BLUEPRINTS[this.type][this.level - 1];
+        this.blueprint = { ...PROJECTILE_BLUEPRINTS[this.type][this.level - 1] };
         this.model = PROJECTILE_MODELS[this.type][`level-${this.level}`].clone();
         this.originPos = new THREE.Vector3(origin.x, origin.y, origin.z);
         this.destination = new THREE.Vector3().copy(destination);
@@ -40,11 +40,10 @@ class ProjectileBase {
         this.model.position.set(pos.x, pos.y, pos.z);
         const s = this.blueprint.modelScale;
         this.model.scale.set(s, s, s);
-    }
 
-    explode() {
-        // draw efx here
-        window.dispatchEvent(new CustomEvent("projectile-explode", { detail: this }));
+        const explosionGeometry = new THREE.SphereGeometry(0.1);
+        const explosionMaterial = new THREE.MeshToonMaterial({ color: "red", transparent: true, opacity: 0.6 });
+        this.explosion = new THREE.Mesh(explosionGeometry, explosionMaterial);
     }
 }
 
@@ -87,13 +86,18 @@ export class StraightProjectile extends ProjectileBase {
         this.model.position.set(result.x, result.y, result.z);
         // this.model.lookAt(result);
         this.model.lookAt(
-            // this.model.position.clone().sub(velocity.applyAxisAngle(new Vector3(0, 0, 1), -Math.PI * 0.5).sub(velocity))
-            // this.model.position.clone().add(velocity.applyAxisAngle(new Vector3(0, 0, 1), -Math.PI * 0.5).add(velocity))
-            this.model.position.clone().add(dest.applyAxisAngle(new Vector3(0, 0, 1), -Math.PI * 0.5).add(dest))
-            // this.model.position.clone().add(dest.applyAxisAngle(new Vector3(1, 0, 0), -Math.PI * 0.5).add(dest))
+            // this.model.position.clone().sub(velocity.applyAxisAngle(new THREE.Vector3(0, 0, 1), -Math.PI * 0.5).sub(velocity))
+            // this.model.position.clone().add(velocity.applyAxisAngle(new THREE.Vector3(0, 0, 1), -Math.PI * 0.5).add(velocity))
+            this.model.position.clone().add(dest.applyAxisAngle(new THREE.Vector3(0, 0, 1), -Math.PI * 0.5).add(dest))
+            // this.model.position.clone().add(dest.applyAxisAngle(new THREE.Vector3(1, 0, 0), -Math.PI * 0.5).add(dest))
         );
 
         return distance;
+    }
+
+    explode() {
+        // draw efx here
+        window.dispatchEvent(new CustomEvent("projectile-explode", { detail: this }));
     }
 }
 
@@ -129,8 +133,9 @@ export class ParabolaProjectile extends ProjectileBase {
         this.timeSinceSpawn += delta;
 
         const distanceToTarget = this.handleMovement();
+        // console.log({ distanceToTarget });
 
-        if (distanceToTarget < 0.5) {
+        if (distanceToTarget < 1.5) {
             this.explode();
         }
     }
@@ -143,10 +148,15 @@ export class ParabolaProjectile extends ProjectileBase {
 
         this.model.position.copy(position);
         this.model.lookAt(
-            position.clone().add(tangent.applyAxisAngle(new Vector3(1, 0, 0), -Math.PI * 0.5).add(tangent))
+            position.clone().add(tangent.applyAxisAngle(new THREE.Vector3(1, 0, 0), -Math.PI * 0.5).add(tangent))
         );
 
-        return this.model.position.distanceTo(this.destination);
+        return position.distanceTo(new THREE.Vector3().copy(this.destination));
+    }
+
+    explode() {
+        // draw efx here
+        window.dispatchEvent(new CustomEvent("projectile-explode", { detail: this }));
     }
 }
 

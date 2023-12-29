@@ -24,7 +24,7 @@ export class Enemy {
     constructor(enemyType: EnemyType) {
         this.id = idMaker();
         this.enemyType = enemyType;
-        this.bluePrint = ENEMY_BLUEPRINTS[this.enemyType];
+        this.bluePrint = { ...ENEMY_BLUEPRINTS[this.enemyType] };
         this.hp = this.bluePrint.maxHp;
 
         this._init();

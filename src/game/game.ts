@@ -17,9 +17,6 @@ import { Tower } from "./Tower";
 
 let pathPoints: THREE.Vector3[] = [];
 
-// export type EnemyType = keyof typeof ENEMY_BLUEPRINTS;
-// export type EnemyBluePrint = (typeof ENEMY_BLUEPRINTS)[keyof typeof ENEMY_BLUEPRINTS];
-
 export let scene: THREE.Scene;
 export let gltfLoader: GLTFLoader;
 export let fbxLoader: FBXLoader;
@@ -32,6 +29,7 @@ export let ambientLight: THREE.AmbientLight;
 export let enemies: Enemy[] = [];
 export let towers: Tower[] = [];
 export let projectiles: Map<string, Projectile>;
+export let explosions: Map<string, THREE.Mesh>;
 export let futureGizmos: Map<string, THREE.Mesh>;
 export let gameState = GameState.Loading;
 export let pathCurve: THREE.CatmullRomCurve3;
@@ -66,6 +64,7 @@ export async function destroyGame() {
     towers = [];
     projectiles.clear();
     futureGizmos.clear();
+    explosions.clear();
     gameState = GameState.Paused;
     gui.destroy();
     spawnTimeouts.forEach((timeoutId) => {
@@ -163,12 +162,13 @@ async function gameSetup() {
 
     projectiles = new Map();
     futureGizmos = new Map();
+    explosions = new Map();
 }
 
 async function _initEnemyModels() {
     const promises: Promise<GLTF>[] = [];
     for (const enemyType of Object.keys(ENEMY_BLUEPRINTS)) {
-        const bluePrint: EnemyBluePrint = ENEMY_BLUEPRINTS[enemyType as EnemyType];
+        const bluePrint: EnemyBluePrint = { ...ENEMY_BLUEPRINTS[enemyType as EnemyType] };
         promises.push(gltfLoader.loadAsync(bluePrint.modelURL).then((glb) => ({ ...glb, userData: { enemyType } })));
     }
 
@@ -354,33 +354,57 @@ function animate() {
             let targetEnemy: Enemy;
 
             const enemiesInRange = enemies.filter(
-                (e) => tower.position.distanceTo(e.model.position) < tower.blueprint.range
+                (e) => tower.position.distanceTo(e.model.position) <= tower.blueprint.range
             );
 
-            if (tower.strategy === TargetingStrategy.FirstInLine) {
-                let maxCoveredDistance = 0;
-                enemiesInRange.forEach((e) => {
-                    if (e.getPercDist() > maxCoveredDistance) {
-                        maxCoveredDistance = e.getPercDist();
-                        targetEnemy = e;
-                    }
-                });
-            }
-            if (tower.strategy === TargetingStrategy.LastInLine) {
-                let minCoveredDistance = Infinity;
-                enemiesInRange.forEach((e) => {
-                    if (e.getPercDist() < minCoveredDistance) {
-                        minCoveredDistance = e.getPercDist();
-                        targetEnemy = e;
-                    }
-                });
+            if (enemiesInRange) {
+                if (tower.strategy === TargetingStrategy.FirstInLine) {
+                    let maxCoveredDistance = 0;
+                    enemiesInRange.forEach((e) => {
+                        if (e.getPercDist() > maxCoveredDistance) {
+                            maxCoveredDistance = e.getPercDist();
+                            targetEnemy = e;
+                        }
+                    });
+                } else if (tower.strategy === TargetingStrategy.LastInLine) {
+                    let minCoveredDistance = Infinity;
+                    enemiesInRange.forEach((e) => {
+                        if (e.getPercDist() < minCoveredDistance) {
+                            minCoveredDistance = e.getPercDist();
+                            targetEnemy = e;
+                        }
+                    });
+                }
             }
 
             tower.tick(delta, targetEnemy!);
         }
+        // console.log({ projectiles: projectiles.entries() });
         for (const [, projectile] of projectiles.entries()) {
+            // console.log({ projectile });
             projectile.tick(delta);
         }
+
+        const removingExplosions = [];
+        for (const [, explosion] of explosions.entries()) {
+            const elapsed = Date.now() - explosion.userData.spawned_at;
+            if (elapsed < 200) {
+                explosion.scale.x += 1;
+                explosion.scale.y += 1;
+                explosion.scale.z += 1;
+            } else if (elapsed < 600) {
+                explosion.scale.x -= 0.5;
+                explosion.scale.y -= 0.5;
+                explosion.scale.z -= 0.5;
+            } else {
+                removingExplosions.push(explosion);
+            }
+            // console.log({ explosion, elapsed });
+        }
+        removingExplosions.forEach((ex) => {
+            explosions.delete(ex.userData.projectile_id);
+            scene.remove(ex);
+        });
     }
 
     frameId = requestAnimationFrame(animate);
@@ -663,18 +687,31 @@ function onProjectile(e: any) {
         // futureGizmo.visible = false;
     }
 
+    console.log("onProjectile", { projectiles, towers, explosions, scene });
     // scene.add(projectile.trajectory);
     // console.log("onProjectile", { e, projectile });
 }
 
 function onProjectileExplode(e: any) {
     const projectile = e.detail as Projectile;
-    scene.remove(projectile.model);
 
     const futureGizmo = futureGizmos.get(projectile.id)!;
-    scene.remove(futureGizmo);
+    const explosion = projectile.explosion as THREE.Mesh;
+    explosion.userData["projectile_id"] = projectile.id;
+    explosion.userData["spawned_at"] = Date.now();
+
+    explosion.position.set(projectile.model.position.x, projectile.model.position.y, projectile.model.position.z);
+
     futureGizmos.delete(projectile.id);
     projectiles.delete(projectile.id);
+    scene.remove(projectile.model);
+    scene.remove(futureGizmo);
+
+    console.log("onProjectileExplode", { projectiles, towers, explosions, scene });
+
+    // console.log({ projectiles });
+    explosions.set(projectile.id, explosion);
+    scene.add(explosion);
 }
 
 // function drawGrid() {
