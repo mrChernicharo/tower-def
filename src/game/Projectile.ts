@@ -15,16 +15,24 @@ export class Projectile {
     curve!: THREE.CatmullRomCurve3;
     timeSinceSpawn: number;
     speed: number;
-    maxHeight: number;
+    // maxHeight: number;
 
-    constructor(towerType: TowerType, towerLevel: number, origin: THREE.Vector3, destination: THREE.Vector3) {
+    constructor(
+        towerType: TowerType,
+        towerLevel: number,
+        origin: THREE.Vector3,
+        destination: THREE.Vector3,
+        curve: THREE.CatmullRomCurve3,
+        speed: number
+    ) {
         this.id = idMaker();
         this.type = towerType;
         this.level = towerLevel;
         this.origin = new THREE.Vector3(origin.x, origin.y + 8, origin.z);
         this.destination = new THREE.Vector3().copy(destination);
-        this.speed = 25;
-        this.maxHeight = 7;
+        this.speed = speed;
+        // this.maxHeight = 7;
+        this.curve = curve;
         // this.speed = 15;
         // this.speed = 8;
         this.timeSinceSpawn = 0;
@@ -44,19 +52,17 @@ export class Projectile {
     }
 
     _setupTrajectory() {
-        const midPoint = this.model.position.clone().add(this.destination.clone()).divideScalar(2);
-        midPoint.y += this.maxHeight;
-
-        this.curve = new THREE.CatmullRomCurve3([this.model.position.clone(), midPoint, this.destination.clone()]);
         const points = this.curve.getPoints(50);
         const geometry = new THREE.BufferGeometry().setFromPoints(points);
         const material = new THREE.LineBasicMaterial({ color: 0xff0000 });
 
         this.trajectory = new THREE.Line(geometry, material);
+    }
 
-        // time-to-reach-target
+    timeToTarget() {
         const timeToREachTarget = this.curve.getLength() / this.speed;
         console.log({ timeToREachTarget });
+        return timeToREachTarget;
     }
 
     tick(delta: number) {
@@ -102,6 +108,10 @@ export class Projectile {
 
         return this.model.position.distanceTo(this.destination);
     }
+
+    // setPosition(pos: THREE.Vector3) {
+    //     this.model.position
+    // }
 }
 function getPercDist(pathCurve: THREE.CatmullRomCurve3, speed: number, timeSinceSpawn: number) {
     const pathLen = pathCurve.getLength();

@@ -94,14 +94,42 @@ export class Tower {
                 // console.log("enemyInSight", enemy.enemyType, enemy.id, this.position.distanceTo(enemy.model.position));
                 if (this.cooldown <= 0) {
                     console.log("ShoooT!", enemy.enemyType);
-                    this.cooldown = 1 / this.blueprint.fireRate;
+                    this.cooldown = 1 / (this.blueprint.fireRate * 0.5);
+                    // this.cooldown = 1 / this.blueprint.fireRate;
                     // @TODO: mind FUTURE POSITION
+
+                    const origin = new THREE.Vector3(
+                        this.model.position.x,
+                        this.model.position.y + 8,
+                        this.model.position.z
+                    );
+
+                    const maxHeight = 7;
+                    const midPoint = origin.clone().add(enemy.getFuturePosition(1).clone()).divideScalar(2);
+                    midPoint.y += maxHeight;
+
+                    const curve = new THREE.CatmullRomCurve3([
+                        origin.clone(),
+                        midPoint,
+                        enemy.getFuturePosition(1).clone(),
+                    ]);
+
+                    const speed = 20;
+                    const timeToREachTarget = curve.getLength() / speed;
+
                     const projectile = new Projectile(
                         this.towerName,
                         this.blueprint.level,
                         this.position,
-                        enemy.model.position
+                        enemy.getFuturePosition(timeToREachTarget),
+                        curve,
+                        speed
                     );
+
+                    // const timeToTarget = projectile.timeToTarget();
+                    const timeToTarget = 1;
+                    const futurePosition = enemy.getFuturePosition(timeToTarget);
+                    projectile.destination.set(futurePosition.x, futurePosition.y, futurePosition.z);
                     window.dispatchEvent(new CustomEvent("projectile", { detail: projectile }));
                 }
             }

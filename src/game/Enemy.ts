@@ -75,7 +75,7 @@ export class Enemy {
         this.timeSinceSpawn += delta;
         this.mixer.update(delta);
 
-        handleEnemyMovement(this.enemyType, this.model, this.bluePrint.speed, this.timeSinceSpawn);
+        this.handleEnemyMovement();
 
         if (DRAW_FUTURE_GIZMO) {
             if (!this.futureGizmo.visible) this.futureGizmo.visible = true;
@@ -83,46 +83,54 @@ export class Enemy {
         }
     }
 
-    _drawFuturePosition(timeInSecs: number) {
+    getFuturePosition(timeInSecs: number) {
         const t = getPercDist(this.bluePrint.speed, this.timeSinceSpawn + timeInSecs);
-        const position = pathCurve.getPointAt(t);
+        return pathCurve.getPointAt(t);
+    }
+
+    _drawFuturePosition(timeInSecs: number) {
+        const position = this.getFuturePosition(timeInSecs);
         this.futureGizmo.position.copy(position);
     }
 
     ready() {
         return this.#ready;
     }
-}
 
-function handleEnemyMovement(enemyType: EnemyType, model: THREE.Object3D, speed: number, timeSinceSpawn: number) {
-    const t = getPercDist(speed, timeSinceSpawn);
+    handleEnemyMovement() {
+        const t = getPercDist(this.bluePrint.speed, this.timeSinceSpawn);
 
-    const position = pathCurve.getPointAt(t);
-    const tangent = pathCurve.getTangentAt(t);
+        const position = pathCurve.getPointAt(t);
 
-    model.position.copy(position);
+        // const position =
+        const tangent = pathCurve.getTangentAt(t);
 
-    switch (enemyType) {
-        case "spider":
-            model.lookAt(position.clone().sub(tangent));
-            break;
-        case "orc":
-            model.lookAt(position.clone().add(tangent));
-            model.position.y += 3;
-            break;
-        case "raptor":
-            model.lookAt(position.clone().add(tangent.applyAxisAngle(model.up, -Math.PI * 0.5).add(tangent)));
-            model.position.y += 0.1;
-            break;
-        case "soldier":
-        case "brigand":
-        case "warrior":
-            model.lookAt(position.clone().add(tangent));
-            model.position.y += 0.175;
-            break;
-        default:
-            model.lookAt(position.clone().sub(tangent));
-            break;
+        this.model.position.copy(position);
+
+        switch (this.enemyType) {
+            case "spider":
+                this.model.lookAt(position.clone().sub(tangent));
+                break;
+            case "orc":
+                this.model.lookAt(position.clone().add(tangent));
+                this.model.position.y += 3;
+                break;
+            case "raptor":
+                this.model.lookAt(
+                    position.clone().add(tangent.applyAxisAngle(this.model.up, -Math.PI * 0.5).add(tangent))
+                );
+                this.model.position.y += 0.1;
+                break;
+            case "soldier":
+            case "brigand":
+            case "warrior":
+                this.model.lookAt(position.clone().add(tangent));
+                this.model.position.y += 0.175;
+                break;
+            default:
+                this.model.lookAt(position.clone().sub(tangent));
+                break;
+        }
     }
 }
 
