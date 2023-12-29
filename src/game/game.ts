@@ -388,14 +388,15 @@ function animate() {
         const removingExplosions = [];
         for (const [, explosion] of explosions.entries()) {
             const elapsed = Date.now() - explosion.userData.spawned_at;
+            const intensity = explosion.userData.intensity;
             if (elapsed < 200) {
-                explosion.scale.x += 1;
-                explosion.scale.y += 1;
-                explosion.scale.z += 1;
+                explosion.scale.x += intensity * 0.5;
+                explosion.scale.y += intensity * 0.5;
+                explosion.scale.z += intensity * 0.5;
             } else if (elapsed < 600) {
-                explosion.scale.x -= 0.5;
-                explosion.scale.y -= 0.5;
-                explosion.scale.z -= 0.5;
+                explosion.scale.x -= intensity * 0.25;
+                explosion.scale.y -= intensity * 0.25;
+                explosion.scale.z -= intensity * 0.25;
             } else {
                 removingExplosions.push(explosion);
             }
@@ -699,6 +700,7 @@ function onProjectileExplode(e: any) {
     const explosion = projectile.explosion as THREE.Mesh;
     explosion.userData["projectile_id"] = projectile.id;
     explosion.userData["spawned_at"] = Date.now();
+    explosion.userData["intensity"] = projectile.blueprint.explosionIntensity;
 
     explosion.position.set(projectile.model.position.x, projectile.model.position.y, projectile.model.position.z);
 

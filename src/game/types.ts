@@ -27,8 +27,10 @@ export type ProjectileBluePrint = {
     type: TowerType;
     level: number;
     trajectoryType: TrajectoryType;
+    color: string;
     speed: number;
     modelScale: number;
+    explosionIntensity: number;
     maxHeight?: number;
 };
 

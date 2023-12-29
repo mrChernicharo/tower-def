@@ -3,7 +3,7 @@ import { AppLayers, TowerType } from "./enums";
 import { PROJECTILE_MODELS, towerTexture } from "./game";
 import { idMaker } from "./helpers";
 import { ProjectileBluePrint } from "./types";
-import { PROJECTILE_BLUEPRINTS } from "./constants";
+import { COLORS, PROJECTILE_BLUEPRINTS } from "./constants";
 
 class ProjectileBase {
     id: string;
@@ -25,15 +25,15 @@ class ProjectileBase {
         this.originPos = new THREE.Vector3(origin.x, origin.y, origin.z);
         this.destination = new THREE.Vector3().copy(destination);
         this.timeSinceSpawn = 0;
+        const color = COLORS[this.blueprint.color as keyof typeof COLORS];
 
         this.model.userData["projectile_id"] = this.id;
         this.model.userData["projectile_level"] = this.level;
 
         this.model.layers.set(AppLayers.Projectile);
         this.model.material = new THREE.MeshBasicMaterial({
-            // color: COLORS[this.blueprint.color as keyof typeof COLORS],
-            // color: 0xffffff,
-            color: 0xca947d,
+            color,
+            // color: 0xca947d,
             map: towerTexture,
         });
         const pos = new THREE.Vector3().copy(this.originPos);
@@ -41,8 +41,13 @@ class ProjectileBase {
         const s = this.blueprint.modelScale;
         this.model.scale.set(s, s, s);
 
+        // SETUP EXPLOSION
         const explosionGeometry = new THREE.SphereGeometry(0.1);
-        const explosionMaterial = new THREE.MeshToonMaterial({ color: "red", transparent: true, opacity: 0.6 });
+        const explosionMaterial = new THREE.MeshToonMaterial({
+            color,
+            transparent: true,
+            opacity: 0.6,
+        });
         this.explosion = new THREE.Mesh(explosionGeometry, explosionMaterial);
     }
 }
@@ -135,7 +140,7 @@ export class ParabolaProjectile extends ProjectileBase {
         const distanceToTarget = this.handleMovement();
         // console.log({ distanceToTarget });
 
-        if (distanceToTarget < 1.5) {
+        if (distanceToTarget < 1 || this.timeSinceSpawn > 2) {
             this.explode();
         }
     }
