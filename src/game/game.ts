@@ -7,11 +7,11 @@ import jsonCurve from "../desert-level-path.0.json";
 import { THREE } from "../three";
 
 import { Enemy } from "./Enemy";
-import { capitalize, getEnemyTypeFromChar, handleModelGun, revertCancelableModals } from "./helpers";
+import { capitalize, getEnemyTypeFromChar, handleModelGun } from "./helpers";
 import { COLORS, DRAW_FUTURE_GIZMO, ENEMY_BLUEPRINTS, STAGE_WAVES_DATA } from "./constants";
-import { AppLayers, EnemyChar, EnemyType, GameState, TowerName } from "./enums";
+import { AppLayers, EnemyChar, EnemyType, GameState, ModalType, TowerName } from "./enums";
 import { EnemyBluePrint } from "./types";
-import { modalTemplates } from "./templates";
+import { cancelableModalNames, modalTemplates } from "./templates";
 import { Tower } from "./Tower";
 
 let pathPoints: THREE.Vector3[] = [];
@@ -73,21 +73,23 @@ export async function destroyGame() {
 export async function initGame(levelIdx: number) {
     await gameSetup();
 
-    await drawMap();
+    await _initEnemyModels();
+    await _initTowerModels();
 
+    await drawMap();
     drawPath();
 
-    init2DModals();
+    _init2DModals();
 
     scheduleWaveEnemies(levelIdx, 0);
-
-    frameId = requestAnimationFrame(animate);
 
     window.addEventListener("resize", onResize);
     playPauseBtn.addEventListener("click", onPlayPause);
     canvas.addEventListener("mousemove", onMouseMove);
     canvas.addEventListener("click", onCanvasClick);
     canvas.addEventListener("mousedown", onMouseDown);
+
+    frameId = requestAnimationFrame(animate);
 }
 
 async function gameSetup() {
@@ -136,11 +138,6 @@ async function gameSetup() {
     mouseRay.layers.enable(AppLayers.TowerBase);
     mouseRay.layers.enable(AppLayers.Tower);
     mouseRay.layers.enable(AppLayers.Modals);
-
-    //
-
-    await _initEnemyModels();
-    await _initTowerModels();
 }
 
 async function _initEnemyModels() {
@@ -180,7 +177,7 @@ async function _initTowerModels() {
     console.log({ towerModels });
 }
 
-function init2DModals() {
+function _init2DModals() {
     scene.traverse((el) => {
         if (el.name.includes("TowerBase")) {
             const tileIdx = el.userData.name.split(".")[1];
@@ -352,7 +349,7 @@ function onModalClick(e: MouseEvent, el: THREE.Object3D, modal3D: CSS2DObject, m
         modal3D.userData["tower"] = towerToBuild;
         modal3D.userData["tower_id"] = tower.id;
 
-        modalEl.innerHTML = modalTemplates.towerDetails(towerToBuild!);
+        modalEl.innerHTML = modalTemplates.towerDetails(tower!);
         modal3D.visible = false;
 
         towers.push(tower);
@@ -364,10 +361,10 @@ function onModalClick(e: MouseEvent, el: THREE.Object3D, modal3D: CSS2DObject, m
 
     // TOWER SELL
     if (evTarget.id === "tower-sell-btn") {
-        modalEl.innerHTML = modalTemplates.confirmTowerSell(el.userData.tower);
+        modalEl.innerHTML = modalTemplates.confirmTowerSell(tower!);
     }
     if (evTarget.classList.contains("cancel-tower-sell-btn")) {
-        modalEl.innerHTML = modalTemplates.towerDetails(el.userData.tower);
+        modalEl.innerHTML = modalTemplates.towerDetails(tower!);
     }
     if (evTarget.id === "confirm-tower-sell-btn") {
         // console.log("SELL THIS GODAMN TOWER", { el });
@@ -389,19 +386,19 @@ function onModalClick(e: MouseEvent, el: THREE.Object3D, modal3D: CSS2DObject, m
     // TOWER INFO
     if (evTarget.id === "tower-info-btn") {
         // console.log("INFO", { el });
-        modalEl.innerHTML = modalTemplates.towerInfo(el.userData.tower);
+        modalEl.innerHTML = modalTemplates.towerInfo(tower!);
     }
     if (evTarget.classList.contains("cancel-tower-info-btn")) {
-        modalEl.innerHTML = modalTemplates.towerDetails(el.userData.tower);
+        modalEl.innerHTML = modalTemplates.towerDetails(tower!);
     }
 
     // TOWER UPGRADE
     if (evTarget.id === "tower-upgrade-btn") {
         // console.log("UPGRADE", { el });
-        modalEl.innerHTML = modalTemplates.confirmTowerUpgrade(el.userData.tower);
+        modalEl.innerHTML = modalTemplates.confirmTowerUpgrade(tower!);
     }
     if (evTarget.classList.contains("cancel-tower-upgrade-btn")) {
-        modalEl.innerHTML = modalTemplates.towerDetails(el.userData.tower);
+        modalEl.innerHTML = modalTemplates.towerDetails(tower!);
     }
     if (evTarget.classList.contains("confirm-tower-upgrade-btn")) {
         const tower = towers.find((t) => t.id === tower_id);
@@ -412,17 +409,15 @@ function onModalClick(e: MouseEvent, el: THREE.Object3D, modal3D: CSS2DObject, m
         if (tower) {
             scene.remove(tower.model);
 
-            const upgradedTower = tower.upgrade();
+            if (tower.blueprint.level > 3) return;
 
+            const upgradedTower = tower.upgrade();
             scene.add(upgradedTower.model);
 
             console.log({ tower, towers });
-            modalEl.innerHTML = modalTemplates.towerDetails(el.userData.tower);
+            modalEl.innerHTML = modalTemplates.towerDetails(tower);
             modal3D.visible = false;
-
-            // towers.splice
         }
-        // const tower = towers.find(t => t.id ===)
     }
 }
 
@@ -568,3 +563,38 @@ function onPlayPause() {
 //     const axesHelper = new THREE.AxesHelper(14);
 //     scene.add(axesHelper);
 // }
+
+export function revertCancelableModals(clickedModal: HTMLDivElement | undefined) {
+    const allModals = Array.from(document.querySelectorAll<HTMLDivElement>(".modal2D"));
+    // console.log("REVERT CANCELABLE MODALS");
+    // console.log(":::", { allModals, e, clickedTowerBase, clickedModal });
+    allModals.forEach((modalEl) => {
+        if (modalEl === clickedModal) return;
+        // console.log(":::", { modalEl });
+
+        for (const cancelableModalName of cancelableModalNames) {
+            if (modalEl.children[0].classList.contains(cancelableModalName)) {
+                // console.log(":::: cancel this one!", { cancelableModalName, modalEl });
+
+                if (cancelableModalName === ModalType.ConfirmTowerBuild) {
+                    modalEl.innerHTML = modalTemplates.towerBuild();
+                } else {
+                    for (const [idx, className] of modalEl.children[0].classList.entries()) {
+                        if (className in TowerName) {
+                            // const towerName = className as TowerName;
+                            const tower = towers.find((t) => t.model.userData.tower_id);
+
+                            // console.log(":::::::::revertCancelableModals", { modalEl, towers, idx, tower });
+                            if (tower) {
+                                modalEl.innerHTML = modalTemplates.towerDetails(tower);
+                            }
+                        }
+
+                        console.log(":::::::::revertCancelableModals", { className, idx });
+                    }
+                }
+                break;
+            }
+        }
+    });
+}
