@@ -158,7 +158,7 @@ async function gameSetup() {
     camera.layers.enableAll();
 
     orbit = new OrbitControls(camera, renderer.domElement);
-    orbit.maxPolarAngle = Math.PI * 0.4;
+    orbit.maxPolarAngle = Math.PI * 0.48;
 
     ambientLight = new THREE.AmbientLight(0xefefef, 1.5);
     scene = new THREE.Scene();
@@ -380,7 +380,7 @@ function animate() {
 
         // TOWERS
         for (const tower of towers) {
-            let targetEnemy: Enemy;
+            let targetEnemy: Enemy | undefined;
 
             const enemiesInRange = enemies.filter(
                 (e) => e.hp > 0 && tower.position.distanceTo(e.model.position) <= tower.blueprint.range
@@ -408,6 +408,7 @@ function animate() {
                 }
             }
 
+            // console.log({ tower, enemiesInRange, enemies: [...enemies], targetEnemy });
             tower.tick(delta, targetEnemy!);
         }
 
@@ -654,8 +655,7 @@ function handleHoverOpacityEfx() {
     const hoveredTowerBase = mouseRay
         .intersectObjects(scene.children)
         .find((ch) => (ch.object as THREE.Mesh).isMesh && ch.object.name.includes("TowerBase"));
-
-    console.log({ scene, hoveredTowerBase });
+    // console.log({ scene, hoveredTowerBase });
 
     if (hoveredTowerBase) {
         const towerBaseMesh = hoveredTowerBase.object;

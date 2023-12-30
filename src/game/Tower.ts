@@ -79,15 +79,12 @@ export class Tower {
         return this;
     }
 
-    tick(delta: number, enemy: Enemy | undefined) {
-        if (enemy && this.cooldown <= 0) {
-            if (this.position.distanceTo(enemy.getFuturePosition(1)) < this.blueprint.range) {
-                // console.log("enemyInSight", enemy.enemyType, enemy.id, this.position.distanceTo(enemy.model.position));
-                console.log("ShoooT!", enemy.enemyType);
-                this.fireProjectile(enemy);
+    tick(delta: number, targetEnemy: Enemy | undefined) {
+        if (targetEnemy && this.cooldown <= 0) {
+            // console.log("ShoooT!", targetEnemy.enemyType);
+            this.fireProjectile(targetEnemy);
 
-                this.cooldown = 1 / (this.blueprint.fireRate * 0.5);
-            }
+            this.cooldown = 1 / (this.blueprint.fireRate * 0.5);
         }
         this.cooldown -= delta;
     }
