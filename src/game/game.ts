@@ -12,7 +12,7 @@ import { capitalize, getEnemyTypeFromChar, getProjectileTowerName, handleModelGu
 import { COLORS, DRAW_FUTURE_GIZMO, ENEMY_BLUEPRINTS, STAGE_WAVES_DATA, TOWER_BLUEPRINTS } from "./constants";
 import { AppLayers, EnemyChar, EnemyType, GameState, ModalType, TargetingStrategy, TowerType } from "./enums";
 import { EnemyBluePrint, Projectile, WaveEnemy } from "./types";
-import { cancelableModalNames, modalTemplates } from "./templates";
+import { cancelableModalNames, gameEndTemplates, modalTemplates } from "./templates";
 import { Tower } from "./Tower";
 import { GlobalPlayerStats } from "../react/utils/types";
 import { PlayerStats } from "./PlayerStats";
@@ -50,6 +50,7 @@ let canvas: HTMLCanvasElement;
 let playPauseBtn: HTMLButtonElement;
 let waveDisplay: HTMLDivElement;
 let endGameBanner: HTMLDivElement;
+let endGameBtn: HTMLButtonElement;
 
 let frameId = 0;
 let clickTimestamp = 0;
@@ -60,6 +61,7 @@ let hoveredTowerId: string | null = null;
 let levelIdx: number;
 let currWave: WaveEnemy[] = [];
 let currWaveIdx = 0;
+let gameLost = false;
 
 export async function destroyGame() {
     cancelAnimationFrame(frameId);
@@ -117,8 +119,8 @@ async function gameSetup() {
     playPauseBtn = document.querySelector("#play-pause-btn") as HTMLButtonElement;
     waveDisplay = document.querySelector("#wave-display") as HTMLDivElement;
     endGameBanner = document.querySelector("#end-game-banner") as HTMLDivElement;
+
     endGameBanner.classList.add("hidden");
-    // console.log({ waveDisplay, endGameBanner });
 
     canvas.innerHTML = "";
 
@@ -783,6 +785,14 @@ function onEnemyDestroyed(e: any) {
     if (endReached) {
         console.log("end reached");
         playerStats.loseHP(1);
+        if (playerStats.hp <= 0) {
+            console.log("GAME END ... LOSE");
+            endGameBanner.innerHTML = gameEndTemplates.gameLose();
+            endGameBanner.classList.remove("hidden");
+            endGameBtn = document.querySelector("#confirm-end-game-btn") as HTMLButtonElement;
+            endGameBtn.addEventListener("click", onEndGameConfirm);
+            gameLost = true;
+        }
     } else {
         console.log("enemy killed");
         playerStats.gainGold(enemy.bluePrint.reward);
@@ -792,7 +802,7 @@ function onEnemyDestroyed(e: any) {
     enemies = enemies.filter((e) => e.id !== enemy.id);
     scene.remove(enemy.model);
 
-    if (enemies.length === 0) {
+    if (enemies.length === 0 && !gameLost) {
         console.log("wave ended");
         gameState = GameState.Idle;
         currWaveIdx++;
@@ -800,14 +810,20 @@ function onEnemyDestroyed(e: any) {
 
         const waveCount = STAGE_WAVES_DATA[levelIdx].length;
         if (currWaveIdx === waveCount) {
-            console.log("GAME END ...");
-            setTimeout(() => {
-                endGameBanner.classList.remove("hidden");
-            }, 2000);
+            console.log("GAME END ... WIN!");
+            endGameBanner.innerHTML = gameEndTemplates.gameWin();
+            endGameBanner.classList.remove("hidden");
+            endGameBtn = document.querySelector("#confirm-end-game-btn") as HTMLButtonElement;
+            endGameBtn.addEventListener("click", onEndGameConfirm);
         }
 
         playPauseBtn.innerHTML = `Start Wave ${currWaveIdx + 1}`;
     }
+}
+
+function onEndGameConfirm() {
+    location.assign("/area");
+    endGameBtn.removeEventListener("click", onEndGameConfirm);
 }
 
 export function revertCancelableModals(clickedModal: HTMLDivElement | undefined) {

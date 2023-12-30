@@ -107,6 +107,17 @@ export const modalTemplates = {
     `,
 } as const;
 
+export const gameEndTemplates = {
+    gameWin: () => `
+        <h2>You Win!</h2>
+        <button id="confirm-end-game-btn">Ok</button>
+    `,
+    gameLose: () => `
+        <h2>You Lose!</h2>
+        <button id="confirm-end-game-btn">Ok</button>
+    `,
+};
+
 export const cancelableModalNames = [
     ModalType.ConfirmTowerUpgrade,
     ModalType.ConfirmTowerBuild,
