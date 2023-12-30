@@ -1,8 +1,9 @@
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { createHashRouter, RouterProvider } from "react-router-dom";
 import { Root } from "./Root";
 import { appRoutes } from "./utils/appRoutes";
 
-const router = createBrowserRouter([
+// createBrowserRouter messes up refreshing off of subpages in netlify build
+const router = createHashRouter([
     {
         path: "/",
         element: <Root />,
