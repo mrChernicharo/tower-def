@@ -26,13 +26,13 @@ const Game = () => {
         <>
             <div style={topBarStyles}>
                 <Link to={`/area/${area}`}>←</Link>
-                <div>Game Screen</div>
                 <div>
                     {area} {level}
                 </div>
                 <div id="gold-display">${gold}</div>
                 <div id="hp-display">❤️{hp}</div>
-                <button id="play-pause-btn">Start</button>
+                <div id="wave-display">Wave 1</div>
+                <button id="play-pause-btn">Start Game</button>
             </div>
 
             <div id="game-canvas"></div>

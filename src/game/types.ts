@@ -8,6 +8,7 @@ export type EnemyBluePrint = {
     walkAnimationName: string;
     speed: number;
     maxHp: number;
+    reward: number;
 };
 
 export type TowerBluePrint = {

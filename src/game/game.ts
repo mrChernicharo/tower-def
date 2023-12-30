@@ -33,11 +33,12 @@ export let towers: Tower[] = [];
 export let projectiles: Map<string, Projectile>;
 export let explosions: Map<string, THREE.Mesh>;
 export let futureGizmos: Map<string, THREE.Mesh>;
-export let gameState = GameState.Loading;
+export let gameState = GameState.Idle;
 export let pathCurve: THREE.CatmullRomCurve3;
 export let mouseRay: THREE.Raycaster;
 export let towerTexture: THREE.Texture;
 export let playerStats: PlayerStats;
+export let gameElapsedTime: number;
 
 export let gui: GUI;
 
@@ -54,6 +55,7 @@ let clickTimestamp = 0;
 let towerToBuild: TowerType | null = null;
 let hoveredTowerBaseName: string | null = null;
 let hoveredTowerId: string | null = null;
+let levelIdx: number;
 
 export async function destroyGame() {
     cancelAnimationFrame(frameId);
@@ -84,8 +86,9 @@ export async function destroyGame() {
     playPauseBtn.removeEventListener("click", onPlayPause);
 }
 
-export async function initGame(levelIdx: number, initialPlayerStats: GlobalPlayerStats) {
+export async function initGame(levelIndex: number, initialPlayerStats: GlobalPlayerStats) {
     playerStats = new PlayerStats(initialPlayerStats);
+    levelIdx = levelIndex;
     await gameSetup();
 
     await _initEnemyModels();
@@ -95,8 +98,6 @@ export async function initGame(levelIdx: number, initialPlayerStats: GlobalPlaye
     drawPath();
 
     _init2DModals();
-
-    scheduleWaveEnemies(levelIdx, 0);
 
     window.addEventListener("resize", onResize);
     window.addEventListener("projectile", onProjectile);
@@ -134,6 +135,7 @@ async function gameSetup() {
     gltfLoader = new GLTFLoader();
     fbxLoader = new FBXLoader();
     gameClock = new THREE.Clock();
+    gameElapsedTime = 0;
 
     camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
     camera.layers.enableAll();
@@ -320,6 +322,7 @@ function drawPath() {
     scene.add(pathMesh);
 }
 
+// BUG: THIS IS STARTING WITH THE GAME PAUSED
 function scheduleWaveEnemies(levelIdx: number, waveIdx: number) {
     try {
         const wave = STAGE_WAVES_DATA[levelIdx][waveIdx].map((wEnemy) => ({
@@ -328,7 +331,10 @@ function scheduleWaveEnemies(levelIdx: number, waveIdx: number) {
         }));
 
         for (const waveEnemy of wave) {
-            const spawnFn = setTimeout(() => spawnEnemy(waveEnemy.enemyType), waveEnemy.spawnAt);
+            const spawnFn = setTimeout(() => {
+                console.log("spawn enemy", { spawnAt: waveEnemy.spawnAt });
+                spawnEnemy(waveEnemy.enemyType);
+            }, waveEnemy.spawnAt);
             spawnTimeouts.push(spawnFn);
         }
     } catch (err) {
@@ -353,30 +359,35 @@ function animate() {
     orbit.update();
 
     if (gameState === GameState.Active) {
+        // ENEMIES
         for (const enemy of enemies) {
             enemy.tick(delta);
         }
+
+        // TOWERS
         for (const tower of towers) {
             let targetEnemy: Enemy;
 
             const enemiesInRange = enemies.filter(
-                (e) => tower.position.distanceTo(e.model.position) <= tower.blueprint.range
+                (e) => e.hp > 0 && tower.position.distanceTo(e.model.position) <= tower.blueprint.range
             );
 
             if (enemiesInRange) {
                 if (tower.strategy === TargetingStrategy.FirstInLine) {
                     let maxCoveredDistance = 0;
                     enemiesInRange.forEach((e) => {
-                        if (e.getPercDist() > maxCoveredDistance) {
-                            maxCoveredDistance = e.getPercDist();
+                        const coveredDist = e.getPercDist();
+                        if (coveredDist > maxCoveredDistance) {
+                            maxCoveredDistance = coveredDist;
                             targetEnemy = e;
                         }
                     });
                 } else if (tower.strategy === TargetingStrategy.LastInLine) {
                     let minCoveredDistance = Infinity;
                     enemiesInRange.forEach((e) => {
-                        if (e.getPercDist() < minCoveredDistance) {
-                            minCoveredDistance = e.getPercDist();
+                        const coveredDist = e.getPercDist();
+                        if (coveredDist < minCoveredDistance) {
+                            minCoveredDistance = coveredDist;
                             targetEnemy = e;
                         }
                     });
@@ -385,12 +396,14 @@ function animate() {
 
             tower.tick(delta, targetEnemy!);
         }
-        // console.log({ projectiles: projectiles.entries() });
+
+        // PROJECTILE
         for (const [, projectile] of projectiles.entries()) {
             // console.log({ projectile });
             projectile.tick(delta);
         }
 
+        // EXPLOSIONS
         const removingExplosions = [];
         for (const [, explosion] of explosions.entries()) {
             const elapsed = Date.now() - explosion.userData.spawned_at;
@@ -681,14 +694,21 @@ function onResize() {
 }
 
 function onPlayPause() {
-    if (gameState === GameState.Active) {
-        gameState = GameState.Paused;
-        playPauseBtn.textContent = "Resume";
-    } else if (gameState === GameState.Paused || gameState === GameState.Loading) {
-        gameState = GameState.Active;
-        playPauseBtn.textContent = "Pause";
+    switch (gameState) {
+        case GameState.Idle:
+            scheduleWaveEnemies(levelIdx, 0);
+            gameState = GameState.Active;
+            playPauseBtn.textContent = "Pause";
+            break;
+        case GameState.Active:
+            gameState = GameState.Paused;
+            playPauseBtn.textContent = "Resume";
+            break;
+        case GameState.Paused:
+            gameState = GameState.Active;
+            playPauseBtn.textContent = "Pause";
+            break;
     }
-    // console.log("playpause click", gameState);
 }
 
 function onProjectile(e: any) {
@@ -711,13 +731,21 @@ function onProjectile(e: any) {
         // futureGizmo.visible = false;
     }
 
-    console.log("onProjectile", { projectiles, towers, explosions, scene });
+    console.log("onProjectile", {
+        projectiles,
+        towers,
+        explosions,
+        scene,
+        lerp: THREE.MathUtils.lerp(4, 7, Math.random()),
+    });
     // scene.add(projectile.trajectory);
     // console.log("onProjectile", { e, projectile });
 }
 
 function onProjectileExplode(e: any) {
     const projectile = e.detail as Projectile;
+    const futureGizmo = futureGizmos.get(projectile.id)!;
+    const targetEnemy = enemies.find((e) => e.id === projectile.targetEnemyId);
 
     const explosion = projectile.explosion as THREE.Mesh;
     explosion.userData["projectile_id"] = projectile.id;
@@ -725,54 +753,40 @@ function onProjectileExplode(e: any) {
     explosion.userData["intensity"] = projectile.blueprint.explosionIntensity;
     explosion.position.set(projectile.model.position.x, projectile.model.position.y, projectile.model.position.z);
 
-    const futureGizmo = futureGizmos.get(projectile.id)!;
-    const targetEnemy = enemies.find((e) => e.id === projectile.targetEnemyId);
-
     if (targetEnemy) {
-        const dmg = 10;
-        targetEnemy.takeDamage(dmg);
+        targetEnemy.takeDamage(projectile.damage);
     }
 
-    console.log("onProjectileExplode", { projectile, projectiles, towers, explosions, scene });
+    // console.log("onProjectileExplode", { projectile, projectiles, towers, explosions, scene });
 
     futureGizmos.delete(projectile.id);
     projectiles.delete(projectile.id);
     scene.remove(projectile.model);
     scene.remove(futureGizmo);
 
-    // console.log({ projectiles });
     explosions.set(projectile.id, explosion);
     scene.add(explosion);
 }
 
 function onEnemyDestroyed(e: any) {
     const data = e.detail;
-    console.log("enemy destroy", { data });
-    const { enemy, endReached } = data;
+    // console.log("enemy destroy", { data });
+    const { enemy, endReached } = data as { enemy: Enemy; endReached: boolean };
 
     if (endReached) {
         console.log("end reached");
         playerStats.loseHP(1);
     } else {
         console.log("enemy killed");
+        playerStats.gainGold(enemy.bluePrint.reward);
+        // draw money gain effect
     }
 
     enemies = enemies.filter((e) => e.id !== enemy.id);
     scene.remove(enemy.model);
 
     console.log({ enemies });
-    // enemies.splice
 }
-
-// function drawGrid() {
-//     // Sets a 12 by 12 gird helper
-//     const gridHelper = new THREE.GridHelper(12, 12);
-//     scene.add(gridHelper);
-
-//     // Sets the x, y, and z axes with each having a length of 4
-//     const axesHelper = new THREE.AxesHelper(14);
-//     scene.add(axesHelper);
-// }
 
 export function revertCancelableModals(clickedModal: HTMLDivElement | undefined) {
     const allModals = Array.from(document.querySelectorAll<HTMLDivElement>(".modal2D"));
@@ -808,3 +822,13 @@ export function revertCancelableModals(clickedModal: HTMLDivElement | undefined)
         }
     });
 }
+
+// function drawGrid() {
+//     // Sets a 12 by 12 gird helper
+//     const gridHelper = new THREE.GridHelper(12, 12);
+//     scene.add(gridHelper);
+
+//     // Sets the x, y, and z axes with each having a length of 4
+//     const axesHelper = new THREE.AxesHelper(14);
+//     scene.add(axesHelper);
+// }

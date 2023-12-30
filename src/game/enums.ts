@@ -18,7 +18,8 @@ export enum EnemyChar {
 
 export enum GameState {
     // Dormant = "dormant",
-    Loading = "loading",
+    Idle = "idle",
+    // Loading = "loading",
     Active = "active",
     Paused = "paused",
     // Win = "win",

@@ -68,10 +68,6 @@ export class Tower {
             throw Error("MAX LEVEL REACHED");
         }
 
-        // console.log("upgrade tower", { currLevel, nextLevel, currBluePrint: { ...this.blueprint } });
-
-        // this.level = nextLevel;
-
         const desiredBlueprint = { ...TOWER_BLUEPRINTS[this.towerName][currLevel] };
         const desiredModel = TOWER_MODELS[this.towerName][`level-${nextLevel}`].clone();
         this.blueprint = desiredBlueprint;
@@ -85,7 +81,7 @@ export class Tower {
 
     tick(delta: number, enemy: Enemy | undefined) {
         if (enemy && this.cooldown <= 0) {
-            if (this.position.distanceTo(enemy.model.position) < this.blueprint.range) {
+            if (this.position.distanceTo(enemy.getFuturePosition(1)) < this.blueprint.range) {
                 // console.log("enemyInSight", enemy.enemyType, enemy.id, this.position.distanceTo(enemy.model.position));
                 console.log("ShoooT!", enemy.enemyType);
                 this.fireProjectile(enemy);
@@ -93,7 +89,6 @@ export class Tower {
                 this.cooldown = 1 / (this.blueprint.fireRate * 0.5);
             }
         }
-        // console.log(this.cooldown);
         this.cooldown -= delta;
     }
 
@@ -121,14 +116,7 @@ export class Tower {
 
                 const destination = enemy.getFuturePosition(timeToReachTargetViaParabola);
 
-                const projectile = new ParabolaProjectile(
-                    this.towerName,
-                    this.blueprint.level,
-                    new THREE.Vector3().copy(projOrigin),
-                    new THREE.Vector3().copy(destination),
-                    enemy.id,
-                    curve
-                );
+                const projectile = new ParabolaProjectile(this, new THREE.Vector3().copy(destination), enemy.id, curve);
                 window.dispatchEvent(new CustomEvent("projectile", { detail: projectile }));
                 return;
             }
@@ -138,13 +126,7 @@ export class Tower {
 
                 const destination = enemy.getFuturePosition(timeToReachTargetViaStraightLine);
 
-                const projectile = new StraightProjectile(
-                    this.towerName,
-                    this.blueprint.level,
-                    new THREE.Vector3().copy(projOrigin),
-                    new THREE.Vector3().copy(destination),
-                    enemy.id
-                );
+                const projectile = new StraightProjectile(this, new THREE.Vector3().copy(destination), enemy.id);
 
                 window.dispatchEvent(new CustomEvent("projectile", { detail: projectile }));
                 return;
@@ -161,8 +143,6 @@ function setupModelData(model: THREE.Mesh, id: string, level: number, tileIdx: s
     model.userData["tile_idx"] = tileIdx;
     model.layers.set(AppLayers.Tower);
     model.material = new THREE.MeshBasicMaterial({
-        // color: COLORS[this.blueprint.color as keyof typeof COLORS],
-        // color: 0xffffff,
         color: 0xca947d,
         map: towerTexture,
     });

@@ -18,8 +18,8 @@ export const COLORS = {
 export const ENEMY_BLUEPRINTS: { [k in EnemyType]: EnemyBluePrint } = {
     spider: {
         name: EnemyType.Spider,
+        reward: 5,
         modelURL: "/assets/glb/spider.glb",
-        // speed: 30,
         speed: 3.5,
         maxHp: 40,
         modelScale: 80,
@@ -27,6 +27,7 @@ export const ENEMY_BLUEPRINTS: { [k in EnemyType]: EnemyBluePrint } = {
     },
     orc: {
         name: EnemyType.Orc,
+        reward: 10,
         // modelURL: "/assets/glb/hand-painted_orc.glb",
         modelURL: "/assets/glb/low-poly_orc.glb",
         speed: 2,
@@ -36,6 +37,7 @@ export const ENEMY_BLUEPRINTS: { [k in EnemyType]: EnemyBluePrint } = {
     },
     raptor: {
         name: EnemyType.Raptor,
+        reward: 10,
         modelURL: "/assets/glb/raptoid.glb",
         speed: 6,
         maxHp: 100,
@@ -44,25 +46,28 @@ export const ENEMY_BLUEPRINTS: { [k in EnemyType]: EnemyBluePrint } = {
     },
     soldier: {
         name: EnemyType.Soldier,
+        reward: 15,
         modelURL: "/assets/glb/Character_Soldier.gltf",
         speed: 2,
-        maxHp: 100,
+        maxHp: 150,
         modelScale: 1.5,
         walkAnimationName: "Walk",
     },
     brigand: {
         name: EnemyType.Brigand,
+        reward: 15,
         modelURL: "/assets/glb/Character_Hazmat.gltf",
         speed: 2,
-        maxHp: 100,
+        maxHp: 150,
         modelScale: 1.5,
         walkAnimationName: "Walk",
     },
     warrior: {
         name: EnemyType.Warrior,
+        reward: 15,
         modelURL: "/assets/glb/Character_Enemy.gltf",
         speed: 1.6,
-        maxHp: 100,
+        maxHp: 150,
         modelScale: 1.5,
         walkAnimationName: "Walk",
     },
