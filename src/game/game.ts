@@ -158,7 +158,7 @@ async function gameSetup() {
     camera.layers.enableAll();
 
     orbit = new OrbitControls(camera, renderer.domElement);
-    // orbit.maxPolarAngle = Math.PI * 0.4;
+    orbit.maxPolarAngle = Math.PI * 0.4;
 
     ambientLight = new THREE.AmbientLight(0xefefef, 1.5);
     scene = new THREE.Scene();
@@ -578,6 +578,7 @@ function onModalClick(e: MouseEvent, el: THREE.Object3D, modal3D: CSS2DObject, m
 
             // console.log({ tower, towers });
             modalEl.innerHTML = modalTemplates.towerDetails(tower);
+            upgradedTower.rangeGizmo.visible = false;
             modal3D.visible = false;
         }
     }
