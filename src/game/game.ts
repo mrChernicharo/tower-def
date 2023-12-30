@@ -92,6 +92,8 @@ export async function destroyGame() {
 export async function initGame(levelIndex: number, initialPlayerStats: GlobalPlayerStats) {
     playerStats = new PlayerStats(initialPlayerStats);
     levelIdx = levelIndex;
+    console.log("initGame", { COLORS, DRAW_FUTURE_GIZMO, ENEMY_BLUEPRINTS, STAGE_WAVES_DATA, TOWER_BLUEPRINTS });
+
     await gameSetup();
 
     await _initEnemyModels();

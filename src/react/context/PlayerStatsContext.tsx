@@ -1,4 +1,4 @@
-import { ReactNode, createContext, useContext, useEffect, useState } from "react";
+import { ReactNode, createContext, useEffect, useState } from "react";
 import { wait } from "../../game/helpers";
 import { GlobalPlayerStats } from "../utils/types";
 
@@ -34,8 +34,6 @@ export const PlayerStatsContextProvider = ({ children }: { children: ReactNode }
         </PlayerStatsContext.Provider>
     );
 };
-
-export const usePlayerContext = () => useContext(PlayerStatsContext);
 
 async function loadUserStats() {
     const stats: GlobalPlayerStats = {
