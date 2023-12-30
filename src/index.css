@@ -70,3 +70,22 @@ button:focus-visible {
     padding: 1rem;
     border-radius: 12px;
 }
+
+#end-game-banner {
+    position: fixed;
+    inset: 0px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #242424;
+    opacity: 0.5;
+}
+
+#end-game-banner h2,
+#end-game-banner button {
+    opacity: 1;
+}
+
+.hidden {
+    display: none !important;
+}

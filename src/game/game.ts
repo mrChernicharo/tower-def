@@ -49,6 +49,7 @@ export const PROJECTILE_MODELS = {} as { [k in TowerType]: { [k: `level-${number
 let canvas: HTMLCanvasElement;
 let playPauseBtn: HTMLButtonElement;
 let waveDisplay: HTMLDivElement;
+let endGameBanner: HTMLDivElement;
 
 let frameId = 0;
 let clickTimestamp = 0;
@@ -115,7 +116,9 @@ async function gameSetup() {
     canvas = document.querySelector("#game-canvas") as HTMLCanvasElement;
     playPauseBtn = document.querySelector("#play-pause-btn") as HTMLButtonElement;
     waveDisplay = document.querySelector("#wave-display") as HTMLDivElement;
-    console.log({ waveDisplay });
+    endGameBanner = document.querySelector("#end-game-banner") as HTMLDivElement;
+    endGameBanner.classList.add("hidden");
+    // console.log({ waveDisplay, endGameBanner });
 
     canvas.innerHTML = "";
 
@@ -797,8 +800,10 @@ function onEnemyDestroyed(e: any) {
 
         const waveCount = STAGE_WAVES_DATA[levelIdx].length;
         if (currWaveIdx === waveCount) {
-            console.log("GAME END");
-            // destroyGame();
+            console.log("GAME END ...");
+            setTimeout(() => {
+                endGameBanner.classList.remove("hidden");
+            }, 2000);
         }
 
         playPauseBtn.innerHTML = `Start Wave ${currWaveIdx + 1}`;

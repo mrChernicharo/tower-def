@@ -36,6 +36,18 @@ const Game = () => {
             </div>
 
             <div id="game-canvas"></div>
+
+            <div id="end-game-banner" className="hidden">
+                <h2>Game Over</h2>
+                <button
+                    onClick={() => {
+                        location.assign("/area");
+                        setTimeout(() => document.querySelector("#end-game-banner")!.classList.add("hidden"), 1000);
+                    }}
+                >
+                    Ok
+                </button>
+            </div>
         </>
     );
 };
