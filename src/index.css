@@ -71,7 +71,37 @@ button:focus-visible {
     border-radius: 12px;
 }
 
-#end-game-banner {
+#loading-screen {
+    background: #242424;
+    opacity: 1;
+    pointer-events: none;
+}
+
+#progress-bar-container {
+    position: fixed;
+    inset: 0px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+#progress-bar {
+    width: 300px;
+}
+progress {
+    border-radius: 7px;
+    height: 20px;
+}
+progress::-webkit-progress-bar {
+    background-color: black;
+    border-radius: 7px;
+}
+progress::-webkit-progress-value {
+    background-color: yellow;
+    border-radius: 7px;
+}
+
+#end-game-screen {
     position: fixed;
     inset: 0px;
     display: flex;
@@ -83,8 +113,8 @@ button:focus-visible {
     pointer-events: none;
 }
 
-#end-game-banner h2,
-#end-game-banner button {
+#end-game-screen h2,
+#end-game-screen button {
     pointer-events: all;
 }
 

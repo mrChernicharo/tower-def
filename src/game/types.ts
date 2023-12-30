@@ -42,3 +42,10 @@ export type WaveEnemy = {
     spawnAt: number;
     xOffset: number;
 };
+
+export type GameInitProps = {
+    area: string;
+    level: number;
+    gold: number;
+    hp: number;
+};

@@ -16,10 +16,9 @@ import {
     desertLevelPath as jsonCurve,
 } from "./constants";
 import { AppLayers, EnemyChar, EnemyType, GameState, ModalType, TargetingStrategy, TowerType } from "./enums";
-import { EnemyBluePrint, Projectile, WaveEnemy } from "./types";
+import { EnemyBluePrint, Projectile, WaveEnemy, GameInitProps } from "./types";
 import { cancelableModalNames, gameEndTemplates, modalTemplates } from "./templates";
 import { Tower } from "./Tower";
-import { GlobalPlayerStats } from "../react/utils/types";
 import { PlayerStats } from "./PlayerStats";
 
 let pathPoints: THREE.Vector3[] = [];
@@ -39,6 +38,7 @@ export let mouseRay: THREE.Raycaster;
 export let towerTexture: THREE.Texture;
 export let playerStats: PlayerStats;
 export let gameElapsedTime: number;
+export let loadingManager: THREE.LoadingManager;
 
 export let enemies: Enemy[] = [];
 export let towers: Tower[] = [];
@@ -55,8 +55,10 @@ export const PROJECTILE_MODELS = {} as { [k in TowerType]: { [k: `level-${number
 let canvas: HTMLCanvasElement;
 let playPauseBtn: HTMLButtonElement;
 let waveDisplay: HTMLDivElement;
-let endGameBanner: HTMLDivElement;
+let endGameScreen: HTMLDivElement;
+let loadingScreen: HTMLDivElement;
 let endGameBtn: HTMLButtonElement;
+let progressBar: HTMLProgressElement;
 
 let frameId = 0;
 let clickTimestamp = 0;
@@ -64,6 +66,7 @@ let towerToBuild: TowerType | null = null;
 let hoveredTowerBaseName: string | null = null;
 let hoveredTowerId: string | null = null;
 
+let levelArea: string;
 let levelIdx: number;
 let currWave: WaveEnemy[] = [];
 let currWaveIdx = 0;
@@ -97,12 +100,23 @@ export async function destroyGame() {
     playPauseBtn.removeEventListener("click", onPlayPause);
 }
 
-export async function initGame(levelIndex: number, initialPlayerStats: GlobalPlayerStats) {
-    playerStats = new PlayerStats(initialPlayerStats);
-    levelIdx = levelIndex;
-    console.log("initGame", { COLORS, DRAW_FUTURE_GIZMO, ENEMY_BLUEPRINTS, STAGE_WAVES_DATA, TOWER_BLUEPRINTS });
+export async function initGame({ area, level, gold, hp }: GameInitProps) {
+    playerStats = new PlayerStats({ gold, hp });
+    levelIdx = level;
+    levelArea = area;
+
+    console.log("initGame", {
+        levelArea,
+        levelIdx,
+        COLORS,
+        DRAW_FUTURE_GIZMO,
+        ENEMY_BLUEPRINTS,
+        STAGE_WAVES_DATA,
+        TOWER_BLUEPRINTS,
+    });
 
     await gameSetup();
+    _wireUpLoadingManager();
 
     await _initEnemyModels();
     await _initTowerModels();
@@ -125,12 +139,16 @@ export async function initGame(levelIndex: number, initialPlayerStats: GlobalPla
 }
 
 async function gameSetup() {
+    loadingManager = new THREE.LoadingManager();
+
     canvas = document.querySelector("#game-canvas") as HTMLCanvasElement;
     playPauseBtn = document.querySelector("#play-pause-btn") as HTMLButtonElement;
     waveDisplay = document.querySelector("#wave-display") as HTMLDivElement;
-    endGameBanner = document.querySelector("#end-game-banner") as HTMLDivElement;
+    endGameScreen = document.querySelector("#end-game-screen") as HTMLDivElement;
+    loadingScreen = document.querySelector("#loading-screen") as HTMLDivElement;
+    progressBar = document.querySelector("#progress-bar") as HTMLProgressElement;
 
-    endGameBanner.classList.add("hidden");
+    endGameScreen.classList.add("hidden");
 
     canvas.innerHTML = "";
 
@@ -149,8 +167,8 @@ async function gameSetup() {
 
     canvas.appendChild(cssRenderer.domElement);
 
-    gltfLoader = new GLTFLoader();
-    fbxLoader = new FBXLoader();
+    gltfLoader = new GLTFLoader(loadingManager);
+    fbxLoader = new FBXLoader(loadingManager);
     gameClock = new THREE.Clock();
     gameElapsedTime = 0;
 
@@ -182,6 +200,27 @@ async function gameSetup() {
     projectiles = new Map();
     futureGizmos = new Map();
     explosions = new Map();
+}
+
+function _wireUpLoadingManager() {
+    loadingManager.onStart = (url, loaded, total) => {
+        console.log(progressBar);
+        console.log("loadingManager::START", { url, loaded, total });
+    };
+
+    loadingManager.onProgress = (url, loaded, total) => {
+        console.log("loadingManager::PROGRESS", { url, loaded, total });
+        progressBar.value = (total / loaded) * 100;
+    };
+
+    loadingManager.onLoad = () => {
+        console.log("loadingManager::DONE!");
+        loadingScreen.classList.add("hidden");
+    };
+
+    loadingManager.onError = (url) => {
+        console.log("loadingManager::ERROR!", { url });
+    };
 }
 
 async function _initEnemyModels() {
@@ -804,8 +843,8 @@ function onEnemyDestroyed(e: any) {
         playerStats.loseHP(1);
         if (playerStats.hp <= 0) {
             console.log("GAME END ... LOSE");
-            endGameBanner.innerHTML = gameEndTemplates.gameLose();
-            endGameBanner.classList.remove("hidden");
+            endGameScreen.innerHTML = gameEndTemplates.gameLose();
+            endGameScreen.classList.remove("hidden");
             endGameBtn = document.querySelector("#confirm-end-game-btn") as HTMLButtonElement;
             endGameBtn.addEventListener("click", onEndGameConfirm);
             gameLost = true;
@@ -828,8 +867,8 @@ function onEnemyDestroyed(e: any) {
         const waveCount = STAGE_WAVES_DATA[levelIdx].length;
         if (currWaveIdx === waveCount) {
             console.log("GAME END ... WIN!");
-            endGameBanner.innerHTML = gameEndTemplates.gameWin();
-            endGameBanner.classList.remove("hidden");
+            endGameScreen.innerHTML = gameEndTemplates.gameWin();
+            endGameScreen.classList.remove("hidden");
             endGameBtn = document.querySelector("#confirm-end-game-btn") as HTMLButtonElement;
             endGameBtn.addEventListener("click", onEndGameConfirm);
         }
@@ -839,7 +878,7 @@ function onEnemyDestroyed(e: any) {
 }
 
 function onEndGameConfirm() {
-    location.assign("/area");
+    location.assign("#/area");
     endGameBtn.removeEventListener("click", onEndGameConfirm);
 }
 

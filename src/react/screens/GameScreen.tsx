@@ -15,9 +15,9 @@ const Game = () => {
     const gameRunning = useRef(false);
 
     useEffect(() => {
-        if (gameRunning.current) return;
+        if (gameRunning.current || !area || !level) return;
 
-        initGame(+level!, { gold, hp });
+        initGame({ gold, hp, area, level: +level });
         gameRunning.current = true;
 
         return () => {
@@ -41,7 +41,13 @@ const Game = () => {
 
             <div id="game-canvas"></div>
 
-            <div id="end-game-banner" className="hidden"></div>
+            <div id="end-game-screen" className="hidden"></div>
+            <div id="loading-screen">
+                <div id="progress-bar-container">
+                    <label htmlFor="progress-bar">Loading...</label>
+                    <progress id="progress-bar" value={0} max={100}></progress>
+                </div>
+            </div>
         </>
     );
 };
