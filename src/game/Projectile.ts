@@ -140,20 +140,20 @@ export class ParabolaProjectile extends ProjectileBase {
     }
 
     timeToTarget() {
-        const timeToREachTarget = this.curve.getLength() / this.blueprint.speed;
-        console.log({ timeToREachTarget });
-        return timeToREachTarget;
+        const timeToReachTarget = this.curve.getLength() / this.blueprint.speed;
+        // console.log({ timeToReachTarget });
+        return timeToReachTarget;
     }
 
     tick(delta: number) {
         this.timeSinceSpawn += delta;
 
         const distanceToTarget = this.handleMovement();
-        console.log("parabola projectile tick", {
-            distanceToTarget,
-            timeToTarget: this.timeToTarget(),
-            timeSinceSpawn: this.timeSinceSpawn,
-        });
+        // console.log("parabola projectile tick", {
+        //     distanceToTarget,
+        //     timeToTarget: this.timeToTarget(),
+        //     timeSinceSpawn: this.timeSinceSpawn,
+        // });
 
         if (distanceToTarget < 1.5 || this.timeToTarget() - 0.1 < this.timeSinceSpawn) {
             this.explode();

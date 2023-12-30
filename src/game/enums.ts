@@ -17,11 +17,11 @@ export enum EnemyChar {
 }
 
 export enum GameState {
-    // Dormant = "dormant",
     Idle = "idle",
-    // Loading = "loading",
     Active = "active",
     Paused = "paused",
+    // Dormant = "dormant",
+    // Loading = "loading",
     // Win = "win",
     // Lose = "lose",
 }

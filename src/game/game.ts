@@ -11,7 +11,7 @@ import { Enemy } from "./Enemy";
 import { capitalize, getEnemyTypeFromChar, getProjectileTowerName, handleModelGun } from "./helpers";
 import { COLORS, DRAW_FUTURE_GIZMO, ENEMY_BLUEPRINTS, STAGE_WAVES_DATA, TOWER_BLUEPRINTS } from "./constants";
 import { AppLayers, EnemyChar, EnemyType, GameState, ModalType, TargetingStrategy, TowerType } from "./enums";
-import { EnemyBluePrint, Projectile } from "./types";
+import { EnemyBluePrint, Projectile, WaveEnemy } from "./types";
 import { cancelableModalNames, modalTemplates } from "./templates";
 import { Tower } from "./Tower";
 import { GlobalPlayerStats } from "../react/utils/types";
@@ -42,20 +42,23 @@ export let gameElapsedTime: number;
 
 export let gui: GUI;
 
-const spawnTimeouts: number[] = []; // enable canceling waveScheduling timeouts when game is destroy
 export const ENEMY_MODELS = {} as { [k in EnemyType]: GLTF };
 export const TOWER_MODELS = {} as { [k in TowerType]: { [k: `level-${number}`]: THREE.Mesh } };
 export const PROJECTILE_MODELS = {} as { [k in TowerType]: { [k: `level-${number}`]: THREE.Mesh } };
 
 let canvas: HTMLCanvasElement;
 let playPauseBtn: HTMLButtonElement;
+let waveDisplay: HTMLDivElement;
 
 let frameId = 0;
 let clickTimestamp = 0;
 let towerToBuild: TowerType | null = null;
 let hoveredTowerBaseName: string | null = null;
 let hoveredTowerId: string | null = null;
+
 let levelIdx: number;
+let currWave: WaveEnemy[] = [];
+let currWaveIdx = 0;
 
 export async function destroyGame() {
     cancelAnimationFrame(frameId);
@@ -72,9 +75,6 @@ export async function destroyGame() {
     explosions.clear();
     gameState = GameState.Paused;
     gui.destroy();
-    spawnTimeouts.forEach((timeoutId) => {
-        clearTimeout(timeoutId);
-    });
 
     window.removeEventListener("resize", onResize);
     window.removeEventListener("projectile", onProjectile);
@@ -114,6 +114,8 @@ export async function initGame(levelIndex: number, initialPlayerStats: GlobalPla
 async function gameSetup() {
     canvas = document.querySelector("#game-canvas") as HTMLCanvasElement;
     playPauseBtn = document.querySelector("#play-pause-btn") as HTMLButtonElement;
+    waveDisplay = document.querySelector("#wave-display") as HTMLDivElement;
+    console.log({ waveDisplay });
 
     canvas.innerHTML = "";
 
@@ -139,12 +141,6 @@ async function gameSetup() {
 
     camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
     camera.layers.enableAll();
-    // camera.position.set(-10, 100, 40);
-    // camera.position.set(5, 2, 46);
-    // camera.position.set(-20, -10, -80);
-    // camera.position.set(10, 10, 70); // Camera positioning
-    // camera.position.set(0, 0, 100);
-    // camera.position.set(5, 4, 50); // Camera positioning
 
     orbit = new OrbitControls(camera, renderer.domElement);
     // orbit.maxPolarAngle = Math.PI * 0.4;
@@ -192,7 +188,6 @@ async function _initTowerModels() {
     const towersFbx = await fbxLoader.loadAsync("/assets/fbx/tower-collection.fbx");
     const projectilesFbx = await fbxLoader.loadAsync("/assets/fbx/tower-projectiles.fbx");
     towerTexture = await new THREE.TextureLoader().loadAsync("/assets/fbx/towers-texture.png");
-
     // console.log({ fbx: towersFbx, towers: towersFbx.children.map((c) => c.name).sort((a, b) => a.localeCompare(b)) });
 
     const towerModels = towersFbx.children;
@@ -211,7 +206,7 @@ async function _initTowerModels() {
     const projectileModels = projectilesFbx.children;
     for (const model of projectileModels as THREE.Mesh[]) {
         const towerName = getProjectileTowerName(model.name);
-        console.log(model, towerName);
+
         if (!(towerName in PROJECTILE_MODELS)) {
             PROJECTILE_MODELS[towerName] = {};
         }
@@ -226,8 +221,6 @@ async function _initTowerModels() {
             PROJECTILE_MODELS[towerName]["level-4"] = model;
         }
     }
-
-    console.log({ TOWER_MODELS, PROJECTILE_MODELS });
 }
 
 function _init2DModals() {
@@ -324,19 +317,16 @@ function drawPath() {
 
 // BUG: THIS IS STARTING WITH THE GAME PAUSED
 function scheduleWaveEnemies(levelIdx: number, waveIdx: number) {
+    console.log("scheduleWaveEnemies", { levelIdx, waveIdx });
     try {
-        const wave = STAGE_WAVES_DATA[levelIdx][waveIdx].map((wEnemy) => ({
-            enemyType: getEnemyTypeFromChar(wEnemy[0] as EnemyChar),
-            spawnAt: (wEnemy[1] as number) * 1000,
-        }));
-
-        for (const waveEnemy of wave) {
-            const spawnFn = setTimeout(() => {
-                console.log("spawn enemy", { spawnAt: waveEnemy.spawnAt });
-                spawnEnemy(waveEnemy.enemyType);
-            }, waveEnemy.spawnAt);
-            spawnTimeouts.push(spawnFn);
-        }
+        currWave = STAGE_WAVES_DATA[levelIdx][waveIdx].map(
+            (wEnemy) =>
+                ({
+                    enemyType: getEnemyTypeFromChar(wEnemy[0] as EnemyChar),
+                    spawnAt: wEnemy[1] as number,
+                    xOffset: wEnemy[2] as number,
+                } as WaveEnemy)
+        );
     } catch (err) {
         console.error({ err, STAGE_WAVES_DATA });
         throw Error(`couldn't find wave ${waveIdx} of level ${levelIdx} at the STAGE_WAVES_DATA object`);
@@ -344,6 +334,7 @@ function scheduleWaveEnemies(levelIdx: number, waveIdx: number) {
 }
 
 function spawnEnemy(enemyType: EnemyType) {
+    // console.log("spawnEnemy", { enemyType, currWave });
     const enemy = new Enemy(enemyType);
     enemies.push(enemy);
     scene.add(enemy.model);
@@ -359,6 +350,10 @@ function animate() {
     orbit.update();
 
     if (gameState === GameState.Active) {
+        gameElapsedTime += delta;
+    }
+
+    if (gameState === GameState.Active || gameState === GameState.Idle) {
         // ENEMIES
         for (const enemy of enemies) {
             enemy.tick(delta);
@@ -425,6 +420,13 @@ function animate() {
             explosions.delete(ex.userData.projectile_id);
             scene.remove(ex);
         });
+
+        // WAVE SPAWNING
+        const spawningEnemyIdx = currWave.findIndex((e) => e.spawnAt < gameElapsedTime);
+        if (spawningEnemyIdx > -1) {
+            const [spawningEnemy] = currWave.splice(spawningEnemyIdx, 1);
+            spawnEnemy(spawningEnemy.enemyType);
+        }
     }
 
     frameId = requestAnimationFrame(animate);
@@ -448,7 +450,7 @@ function onModalClick(e: MouseEvent, el: THREE.Object3D, modal3D: CSS2DObject, m
     e.stopPropagation();
     const tower_id = el.userData.tower_id ?? "";
     const tower = towers.find((t) => t.id === tower_id);
-    console.log(":::onModalClick::::", { e, el, modal3D, modalEl, tower_id, tower });
+    // console.log(":::onModalClick::::", { e, el, modal3D, modalEl, tower_id, tower });
 
     // TOWER BUILD
     if (evTarget.classList.contains("tower-build-btn")) {
@@ -696,9 +698,12 @@ function onResize() {
 function onPlayPause() {
     switch (gameState) {
         case GameState.Idle:
-            scheduleWaveEnemies(levelIdx, 0);
+            // WAVE START
+            console.log("<<< WAVE START >>>", { levelIdx, currWaveIdx });
+            scheduleWaveEnemies(levelIdx, currWaveIdx);
             gameState = GameState.Active;
             playPauseBtn.textContent = "Pause";
+            waveDisplay.innerHTML = `Wave ${currWaveIdx + 1}`;
             break;
         case GameState.Active:
             gameState = GameState.Paused;
@@ -731,15 +736,14 @@ function onProjectile(e: any) {
         // futureGizmo.visible = false;
     }
 
-    console.log("onProjectile", {
-        projectiles,
-        towers,
-        explosions,
-        scene,
-        lerp: THREE.MathUtils.lerp(4, 7, Math.random()),
-    });
+    // console.log("onProjectile", {
+    //     projectiles,
+    //     towers,
+    //     explosions,
+    //     scene,
+    //     lerp: THREE.MathUtils.lerp(4, 7, Math.random()),
+    // });
     // scene.add(projectile.trajectory);
-    // console.log("onProjectile", { e, projectile });
 }
 
 function onProjectileExplode(e: any) {
@@ -779,13 +783,26 @@ function onEnemyDestroyed(e: any) {
     } else {
         console.log("enemy killed");
         playerStats.gainGold(enemy.bluePrint.reward);
-        // draw money gain effect
+        // @TODO: draw money gain effect
     }
 
     enemies = enemies.filter((e) => e.id !== enemy.id);
     scene.remove(enemy.model);
 
-    console.log({ enemies });
+    if (enemies.length === 0) {
+        console.log("wave ended");
+        gameState = GameState.Idle;
+        currWaveIdx++;
+        gameElapsedTime = 0;
+
+        const waveCount = STAGE_WAVES_DATA[levelIdx].length;
+        if (currWaveIdx === waveCount) {
+            console.log("GAME END");
+            // destroyGame();
+        }
+
+        playPauseBtn.innerHTML = `Start Wave ${currWaveIdx + 1}`;
+    }
 }
 
 export function revertCancelableModals(clickedModal: HTMLDivElement | undefined) {
@@ -803,7 +820,7 @@ export function revertCancelableModals(clickedModal: HTMLDivElement | undefined)
                 if (cancelableModalName === ModalType.ConfirmTowerBuild) {
                     modalEl.innerHTML = modalTemplates.towerBuild();
                 } else {
-                    for (const [idx, className] of modalEl.children[0].classList.entries()) {
+                    for (const [, className] of modalEl.children[0].classList.entries()) {
                         if (className in TowerType) {
                             // const towerName = className as TowerType;
                             const tower = towers.find((t) => t.model.userData.tower_id);
@@ -813,8 +830,7 @@ export function revertCancelableModals(clickedModal: HTMLDivElement | undefined)
                                 modalEl.innerHTML = modalTemplates.towerDetails(tower);
                             }
                         }
-
-                        console.log(":::::::::revertCancelableModals", { className, idx });
+                        // console.log(":::::::::revertCancelableModals", { className, idx });
                     }
                 }
                 break;

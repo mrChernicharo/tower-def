@@ -36,3 +36,9 @@ export type ProjectileBluePrint = {
 };
 
 export type Projectile = ParabolaProjectile | StraightProjectile;
+
+export type WaveEnemy = {
+    enemyType: EnemyType;
+    spawnAt: number;
+    xOffset: number;
+};

@@ -31,7 +31,7 @@ const Game = () => {
                 </div>
                 <div id="gold-display">${gold}</div>
                 <div id="hp-display">❤️{hp}</div>
-                <div id="wave-display">Wave 1</div>
+                <div id="wave-display"></div>
                 <button id="play-pause-btn">Start Game</button>
             </div>
 
