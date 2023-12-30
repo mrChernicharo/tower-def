@@ -92,6 +92,8 @@ export async function destroyGame() {
 export async function initGame(levelIndex: number, initialPlayerStats: GlobalPlayerStats) {
     playerStats = new PlayerStats(initialPlayerStats);
     levelIdx = levelIndex;
+    console.log("initGame", { COLORS, DRAW_FUTURE_GIZMO, ENEMY_BLUEPRINTS, STAGE_WAVES_DATA, TOWER_BLUEPRINTS });
+
     await gameSetup();
 
     await _initEnemyModels();
@@ -190,8 +192,8 @@ async function _initEnemyModels() {
 }
 
 async function _initTowerModels() {
-    const towersFbx = await fbxLoader.loadAsync("/assets/fbx/tower-collection.fbx");
-    const projectilesFbx = await fbxLoader.loadAsync("/assets/fbx/tower-projectiles.fbx");
+    const towersFbx = await fbxLoader.loadAsync("/assets/fbx/towers-no-texture.fbx");
+    const projectilesFbx = await fbxLoader.loadAsync("/assets/fbx/projectiles-no-texture.fbx");
     towerTexture = await new THREE.TextureLoader().loadAsync("/assets/fbx/towers-texture.png");
     // console.log({ fbx: towersFbx, towers: towersFbx.children.map((c) => c.name).sort((a, b) => a.localeCompare(b)) });
 
