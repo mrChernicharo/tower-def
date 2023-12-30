@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useParams } from "react-router-dom";
 import { destroyGame, initGame } from "../../game/game";
 import { Link } from "react-router-dom";
@@ -11,14 +11,18 @@ const topBarStyles = {
 
 const Game = () => {
     const { area, level } = useParams();
-
     const { gold, hp } = usePlayerContext();
+    const gameRunning = useRef(false);
 
     useEffect(() => {
+        if (gameRunning.current) return;
+
         initGame(+level!, { gold, hp });
+        gameRunning.current = true;
 
         return () => {
             destroyGame();
+            gameRunning.current = false;
         };
     }, [area, gold, hp, level]);
 

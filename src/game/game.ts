@@ -33,17 +33,18 @@ export let gameClock: THREE.Clock;
 export let orbit: OrbitControls;
 export let camera: THREE.PerspectiveCamera;
 export let ambientLight: THREE.AmbientLight;
-export let enemies: Enemy[] = [];
-export let towers: Tower[] = [];
-export let projectiles: Map<string, Projectile>;
-export let explosions: Map<string, THREE.Mesh>;
-export let futureGizmos: Map<string, THREE.Mesh>;
 export let gameState = GameState.Idle;
 export let pathCurve: THREE.CatmullRomCurve3;
 export let mouseRay: THREE.Raycaster;
 export let towerTexture: THREE.Texture;
 export let playerStats: PlayerStats;
 export let gameElapsedTime: number;
+
+export let enemies: Enemy[] = [];
+export let towers: Tower[] = [];
+export let projectiles: Map<string, Projectile>;
+export let explosions: Map<string, THREE.Mesh>;
+export let futureGizmos: Map<string, THREE.Mesh>;
 
 export let gui: GUI;
 
@@ -69,7 +70,9 @@ let currWaveIdx = 0;
 let gameLost = false;
 
 export async function destroyGame() {
+    console.log("destroy", { scene });
     cancelAnimationFrame(frameId);
+    gui.destroy();
     gameClock.stop();
     scene.clear();
     camera.clear();
@@ -78,11 +81,11 @@ export async function destroyGame() {
     renderer.dispose();
     enemies = [];
     towers = [];
+    currWave = [];
     projectiles.clear();
     futureGizmos.clear();
     explosions.clear();
-    gameState = GameState.Paused;
-    gui.destroy();
+    gameState = GameState.Idle;
 
     window.removeEventListener("resize", onResize);
     window.removeEventListener("projectile", onProjectile);
@@ -236,10 +239,11 @@ async function _initTowerModels() {
 }
 
 function _init2DModals() {
+    console.log({ scene });
     scene.traverse((el) => {
-        if (/TowerBase.\d\d\d/.test(el.name)) {
-            // if (el.name.includes("TowerBase")) {
-            console.log({ el });
+        // if (/TowerBase.\d\d\d/.test(el.name)) {q
+        if ((el as THREE.Mesh).isMesh && el.name.includes("TowerBase")) {
+            // console.log({ el });
 
             const tileIdx = el.userData.name.split(".")[1];
             el.userData["tile_idx"] = tileIdx;
@@ -600,7 +604,7 @@ function onCanvasClick(e: MouseEvent) {
     revertCancelableModals(clickedModal as HTMLDivElement | undefined);
 
     if (clickedTowerBase) {
-        console.log("CLICKED TOWER BASE", { clickedTowerBase });
+        console.log("CLICKED TOWER BASE", { clickedTowerBase, scene });
         const modal3D = scene.getObjectByName(`${clickedTowerBase.object.name}-modal`)!;
         // HIDE previously open modal
         scene.traverse((obj) => {
@@ -648,7 +652,9 @@ function handleHoverOpacityEfx() {
     const hoveredTower = mouseRay.intersectObjects(scene.children).find((ch) => ch.object.name.includes("-Tower"));
     const hoveredTowerBase = mouseRay
         .intersectObjects(scene.children)
-        .find((ch) => ch.object.name.includes("TowerBase"));
+        .find((ch) => (ch.object as THREE.Mesh).isMesh && ch.object.name.includes("TowerBase"));
+
+    console.log({ scene, hoveredTowerBase });
 
     if (hoveredTowerBase) {
         const towerBaseMesh = hoveredTowerBase.object;
