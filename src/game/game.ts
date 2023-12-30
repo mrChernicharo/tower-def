@@ -4,12 +4,17 @@ import { GUI } from "dat.gui";
 import { FBXLoader } from "three/examples/jsm/loaders/FBXLoader.js";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import { CSS2DRenderer, CSS2DObject } from "three/examples/jsm/renderers/CSS2DRenderer.js";
-import jsonCurve from "../desert-level-path.0.json";
 import { THREE } from "../three";
-
 import { Enemy } from "./Enemy";
 import { capitalize, getEnemyTypeFromChar, getProjectileTowerName, handleModelGun } from "./helpers";
-import { COLORS, DRAW_FUTURE_GIZMO, ENEMY_BLUEPRINTS, STAGE_WAVES_DATA, TOWER_BLUEPRINTS } from "./constants";
+import {
+    COLORS,
+    DRAW_FUTURE_GIZMO,
+    ENEMY_BLUEPRINTS,
+    STAGE_WAVES_DATA,
+    TOWER_BLUEPRINTS,
+    desertLevelPath as jsonCurve,
+} from "./constants";
 import { AppLayers, EnemyChar, EnemyType, GameState, ModalType, TargetingStrategy, TowerType } from "./enums";
 import { EnemyBluePrint, Projectile, WaveEnemy } from "./types";
 import { cancelableModalNames, gameEndTemplates, modalTemplates } from "./templates";
@@ -232,7 +237,10 @@ async function _initTowerModels() {
 
 function _init2DModals() {
     scene.traverse((el) => {
-        if (el.name.includes("TowerBase")) {
+        if (/TowerBase.\d\d\d/.test(el.name)) {
+            // if (el.name.includes("TowerBase")) {
+            console.log({ el });
+
             const tileIdx = el.userData.name.split(".")[1];
             el.userData["tile_idx"] = tileIdx;
 
