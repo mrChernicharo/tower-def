@@ -322,7 +322,7 @@ function drawPath() {
 
 // BUG: THIS IS STARTING WITH THE GAME PAUSED
 function scheduleWaveEnemies(levelIdx: number, waveIdx: number) {
-    console.log("scheduleWaveEnemies", { levelIdx, waveIdx });
+    console.log("scheduleWaveEnemies", { levelIdx, waveIdx, STAGE_WAVES_DATA });
     try {
         currWave = STAGE_WAVES_DATA[levelIdx][waveIdx].map(
             (wEnemy) =>

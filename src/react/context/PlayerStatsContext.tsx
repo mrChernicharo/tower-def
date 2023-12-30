@@ -39,8 +39,8 @@ export const usePlayerContext = () => useContext(PlayerStatsContext);
 
 async function loadUserStats() {
     const stats: GlobalPlayerStats = {
-        gold: 400,
-        hp: 1,
+        gold: 1000,
+        hp: 10,
     };
 
     await wait(1000);

@@ -9,11 +9,11 @@ export enum EnemyType {
 
 export enum EnemyChar {
     Spider = "s",
-    Raptor = "r",
     Orc = "o",
     Soldier = "z",
     Brigand = "b",
     Warrior = "w",
+    Raptor = "r",
 }
 
 export enum GameState {

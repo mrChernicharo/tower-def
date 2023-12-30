@@ -1,4 +1,4 @@
-import { EnemyType, TargetingStrategy, TowerType, TrajectoryType } from "./enums";
+import { EnemyChar, EnemyType, TargetingStrategy, TowerType, TrajectoryType } from "./enums";
 import { EnemyBluePrint, ProjectileBluePrint, TowerBluePrint } from "./types";
 
 export const DRAW_FUTURE_GIZMO = false;
@@ -623,30 +623,67 @@ export const STAGE_WAVES_DATA: [string, number, number][][][] = [
 
     // stage 01
     [
-        // wave 0
+        // wave 000
         [
-            ["r", 0, 0],
-            // ["r", 3, 0],
-            // ["r", 6, 0],
-            // ["r", 9, 0],
-            // ["r", 12, 0],
+            ...waveSegment(EnemyChar.Warrior, 2.3),
+            ...waveSegment(EnemyChar.Soldier, 2.5, 10, 30),
+            ...waveSegment(EnemyChar.Brigand, 2.3, 10, 60),
+            ...waveSegment(EnemyChar.Spider, 1.5, 100, 0, [-1, 1]),
+        ],
+        // wave 1
+        waveSegment(EnemyChar.Spider),
+        // wave 2
+        waveSegment(EnemyChar.Brigand, 2),
+        // wave 3
+        [...waveSegment(EnemyChar.Soldier, 2), ...waveSegment(EnemyChar.Spider)],
+        // wave 4
+        [...waveSegment(EnemyChar.Warrior, 2), ...waveSegment(EnemyChar.Spider, 0.8, 20)],
+        // wave 5
+        [
+            ...waveSegment(EnemyChar.Brigand, 2),
+            ...waveSegment(EnemyChar.Soldier, 2, 10, 22),
+            ...waveSegment(EnemyChar.Spider, 0.8, 20),
+        ],
+        // wave 5
+        [
+            ...waveSegment(EnemyChar.Brigand, 2),
+            ...waveSegment(EnemyChar.Warrior, 2, 10, 22),
+            ...waveSegment(EnemyChar.Spider, 0.8, 50),
+        ],
+        // wave 6
+        [
+            ...waveSegment(EnemyChar.Warrior, 2),
+            ...waveSegment(EnemyChar.Soldier, 2, 10, 22),
+            ...waveSegment(EnemyChar.Brigand, 2, 10, 44),
+            ...waveSegment(EnemyChar.Spider, 1.5, 100, 0, [-1, 1]),
         ],
     ],
 
     // stage 02
     [
-        // wave 0
+        // wave 1
         [
-            ["o", 0, 0],
-            ["o", 2, 0],
-            ["o", 4, 0],
-            ["o", 6, 0],
+            ["s", 0, 0],
+            ["s", 2, 0],
+            ["s", 4, 0],
+            ["s", 6, 0],
         ],
+        // wave 2
+        [
+            ["s", 0, 0],
+            ["s", 1, 0],
+            ["s", 2, 0],
+            ["s", 3, 0],
+            ["s", 4, 0],
+            ["s", 5, 0],
+            ["s", 6, 0],
+        ],
+        //...
     ],
 
     // stage 03
     [
-        // wave 0
+        // wave 1
         [
             ["z", 0, 0],
             ["s", 1, 0],
@@ -660,7 +697,7 @@ export const STAGE_WAVES_DATA: [string, number, number][][][] = [
     ],
     // stage 04
     [
-        // wave 0
+        // wave 1
         [
             ["b", 0, 0],
             ["s", 1, 0],
@@ -674,7 +711,7 @@ export const STAGE_WAVES_DATA: [string, number, number][][][] = [
     ],
     // stage 05
     [
-        // wave 0
+        // wave 1
         [
             ["w", 0, 0],
             ["s", 1, 0],
@@ -687,3 +724,39 @@ export const STAGE_WAVES_DATA: [string, number, number][][][] = [
         ],
     ],
 ];
+
+function waveSegment(
+    e: EnemyChar,
+    interval = 1,
+    enemyCount = 10,
+    startSpawningAt = 0,
+    xOffList = [0]
+): [EnemyChar, number, number][] {
+    // console.log("waveSegment", { e, enemyCount, interval, startSpawningAt, xOffList });
+
+    return Array.from({ length: enemyCount }, (_, index) => [
+        e,
+        index * interval + startSpawningAt,
+        xOffList[index % xOffList.length],
+    ]);
+}
+
+//   // Wave 1
+
+//   // Wave 2
+//   Array.from({ length: 10 }, (_, index) => [EnemyChar.Spider, index * 2, 0]),
+
+//   // Wave 3
+//   Array.from({ length: 18 }, (_, index) => [EnemyChar.Warrior, index * 1.5, 0]),
+
+//   // Wave 4
+//   Array.from({ length: 26 }, (_, index) => [EnemyChar.Orc, index * 1, 0]),
+
+//   // Wave 5
+//   Array.from({ length: 35 }, (_, index) => [EnemyChar.Brigand, index * 1, 0]),
+
+//   // Wave 6
+//   Array.from({ length: 45 }, (_, index) => [EnemyChar.Soldier, index * 1, 0]),
+
+//   // Wave 7
+//   Array.from({ length: 56 }, (_, index) => [EnemyChar.Spider, index * 1, 0]),
