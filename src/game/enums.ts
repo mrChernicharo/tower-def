@@ -2,6 +2,7 @@ export enum EnemyType {
     Spider = "spider",
     Orc = "orc",
     Raptor = "raptor",
+    Raptor2 = "raptor2",
     Soldier = "soldier",
     Brigand = "brigand",
     Warrior = "warrior",
@@ -14,6 +15,7 @@ export enum EnemyChar {
     Brigand = "b",
     Warrior = "w",
     Raptor = "r",
+    Raptor2 = "r2",
 }
 
 export enum GameState {

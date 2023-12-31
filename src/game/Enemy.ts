@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { GLTF } from "three/examples/jsm/Addons.js";
 import { ENEMY_MODELS, pathCurve } from "./game";
 import { THREE } from "../three";
@@ -21,6 +22,7 @@ export class Enemy {
     timestamp = Date.now();
     hp: number;
     timeSinceSpawn!: number;
+    isHurt = false;
 
     constructor(enemyType: EnemyType) {
         this.id = idMaker();
@@ -28,34 +30,30 @@ export class Enemy {
         this.bluePrint = { ...ENEMY_BLUEPRINTS[this.enemyType] };
         this.hp = this.bluePrint.maxHp;
 
-        this._init();
+        this.#_init();
     }
 
-    _init() {
-        this.model = this._setupModel();
+    #_init() {
+        this.model = this.#_setupModel();
         this.model.visible = false;
 
         this.mixer = new THREE.AnimationMixer(this.model);
+
+        if (this.enemyType === EnemyType.Raptor2) {
+            this.mixer.timeScale = 0.4;
+        }
 
         const walkClip = this.glb.animations.find((anim) => anim.name === this.bluePrint.walkAnimationName)!;
         const walkAction = this.mixer.clipAction(walkClip);
         walkAction.play();
 
-        // if (DRAW_FUTURE_GIZMO) {
-        //     this.futureGizmo = new THREE.Mesh(
-        //         new THREE.SphereGeometry(0.5),
-        //         new THREE.MeshToonMaterial({ color: 0x00ffff })
-        //         // new THREE.MeshToonMaterial({ color: 0xff0000 })
-        //     );
-        //     this.futureGizmo.visible = false;
-        // }
         this.timeSinceSpawn = 0;
         this.#ready = true;
 
         return this;
     }
 
-    _setupModel() {
+    #_setupModel() {
         this.glb = ENEMY_MODELS[this.enemyType];
 
         const model = SkeletonUtils.clone(this.glb.scene);
@@ -95,10 +93,7 @@ export class Enemy {
 
     handleEnemyMovement() {
         const t = this.getPercDist();
-
         const position = pathCurve.getPointAt(t);
-
-        // const position =
         const tangent = pathCurve.getTangentAt(t);
 
         this.model.position.copy(position);
@@ -112,6 +107,7 @@ export class Enemy {
                 this.model.position.y += 3;
                 break;
             case "raptor":
+            case "raptor2":
                 this.model.lookAt(
                     position.clone().add(tangent.applyAxisAngle(this.model.up, -Math.PI * 0.5).add(tangent))
                 );
@@ -145,10 +141,56 @@ export class Enemy {
 
     takeDamage(dmg: number) {
         this.hp -= dmg;
+        this.isHurt = true;
 
-        console.log("takeDamage", dmg, this.hp);
-        if (this.hp <= 0) {
-            this.destroy(false);
+        setTimeout(() => {
+            this.isHurt = false;
+        }, 160);
+
+        // console.log("takeDamage", dmg, this.hp);
+
+        if (this.model)
+            this.model.traverse((obj) => {
+                if ((obj as any).isMesh && (obj as any).material) {
+                    switch (this.enemyType) {
+                        case EnemyType.Spider:
+                            this.#_drawDamageEfx(obj, "MeshPhysicalMaterial");
+                            break;
+                        case EnemyType.Orc:
+                        case EnemyType.Soldier:
+                        case EnemyType.Brigand:
+                        case EnemyType.Warrior:
+                        case EnemyType.Raptor:
+                        case EnemyType.Raptor2:
+                            this.#_drawDamageEfx(obj, "MeshStandardMaterial");
+                            break;
+                        default:
+                            // console.log(obj);
+                            break;
+                    }
+                }
+            });
+
+        if (this.hp <= 0) this.destroy(false);
+    }
+
+    #_drawDamageEfx(obj: any, materialType: "MeshStandardMaterial" | "MeshPhysicalMaterial") {
+        const enemyMesh = obj as THREE.Mesh;
+
+        try {
+            const material = new (THREE[materialType] as any)().copy(enemyMesh.material as any);
+
+            enemyMesh.material = new THREE.MeshStandardMaterial({ color: "red" });
+
+            setTimeout(() => {
+                if (!this.isHurt) {
+                    enemyMesh.material = material;
+                }
+            }, 160);
+
+            // console.log({ obj, material });
+        } catch (error) {
+            console.log({ error });
         }
     }
 

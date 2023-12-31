@@ -20,6 +20,7 @@ export type TowerBluePrint = {
     range: number;
     price: number;
     defaultStrategy: TargetingStrategy;
+    modelScale: number;
     firePointY: number;
     skills?: unknown[];
 };
@@ -31,6 +32,7 @@ export type ProjectileBluePrint = {
     color: string;
     speed: number;
     modelScale: number;
+    explosionColor: string;
     explosionIntensity: number;
     maxHeight?: number;
 };

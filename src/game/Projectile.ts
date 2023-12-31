@@ -38,14 +38,12 @@ class ProjectileBase {
             tower.position.z
         );
 
-        const color = COLORS[this.blueprint.color as keyof typeof COLORS];
         const size = this.blueprint.modelScale;
         this.model.userData["projectile_id"] = this.id;
         this.model.userData["projectile_level"] = this.level;
         this.model.layers.set(AppLayers.Projectile);
         this.model.material = new THREE.MeshBasicMaterial({
-            // color: 0xca947d,
-            color,
+            color: COLORS[this.blueprint.color as keyof typeof COLORS],
             map: towerTexture,
         });
         this.model.position.set(this.originPos.x, this.originPos.y, this.originPos.z);
@@ -54,7 +52,7 @@ class ProjectileBase {
         // SETUP EXPLOSION
         const explosionGeometry = new THREE.SphereGeometry(0.1);
         const explosionMaterial = new THREE.MeshToonMaterial({
-            color,
+            color: COLORS[this.blueprint.explosionColor as keyof typeof COLORS],
             transparent: true,
             opacity: 0.6,
         });

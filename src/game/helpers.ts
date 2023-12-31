@@ -6,6 +6,8 @@ export function getEnemyTypeFromChar(char: EnemyChar): EnemyType {
     switch (char) {
         case "r":
             return EnemyType.Raptor;
+        case "r2":
+            return EnemyType.Raptor2;
         case "o":
             return EnemyType.Orc;
         case "z":

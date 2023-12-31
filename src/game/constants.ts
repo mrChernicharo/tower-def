@@ -12,9 +12,17 @@ export const COLORS = {
     blue: 0x3484d4,
     red: 0xd43434,
     orange: 0xd47f34,
+    orangered: 0xff5a00,
     green: 0x34d4af,
     purple: 0xb834d4,
+    yellow: 0xfffc00,
+    black: 0x000000,
+    white: 0xffffff,
 } as const;
+
+// export const MATERIALS = {
+//     damageMaterial
+// }
 
 export const ENEMY_BLUEPRINTS: { [k in EnemyType]: EnemyBluePrint } = {
     spider: {
@@ -43,6 +51,15 @@ export const ENEMY_BLUEPRINTS: { [k in EnemyType]: EnemyBluePrint } = {
         speed: 6,
         maxHp: 100,
         modelScale: 0.02,
+        walkAnimationName: "Running",
+    },
+    raptor2: {
+        name: EnemyType.Raptor2,
+        reward: 100,
+        modelURL: "/assets/glb/raptoid.glb",
+        speed: 3,
+        maxHp: 1500,
+        modelScale: 0.04,
         walkAnimationName: "Running",
     },
     soldier: {
@@ -81,43 +98,47 @@ export const TOWER_BLUEPRINTS: { [k in TowerType]: TowerBluePrint[] } = {
             level: 1,
             defaultStrategy: TargetingStrategy.FirstInLine,
             firePointY: 6,
-            damage: [4, 7],
+            damage: [3, 7],
             fireRate: 6,
             color: "blue",
             price: 100,
             range: 8,
+            modelScale: 0.005,
         },
         {
             name: TowerType.Archer,
             defaultStrategy: TargetingStrategy.FirstInLine,
-            firePointY: 6,
+            firePointY: 6.5,
             level: 2,
-            damage: [8, 13],
+            damage: [6, 13],
             fireRate: 6,
             color: "blue",
             price: 160,
             range: 9,
+            modelScale: 0.0055,
         },
         {
             name: TowerType.Archer,
             defaultStrategy: TargetingStrategy.FirstInLine,
-            firePointY: 6,
+            firePointY: 7,
             level: 3,
             damage: [14, 22],
             fireRate: 7,
             color: "blue",
             price: 220,
+            modelScale: 0.006,
             range: 10,
         },
         {
             name: TowerType.Archer,
             defaultStrategy: TargetingStrategy.FirstInLine,
-            firePointY: 6,
+            firePointY: 7.5,
             level: 4,
             damage: [20, 34],
             fireRate: 8,
             color: "blue",
             price: 380,
+            modelScale: 0.0065,
             range: 10,
             skills: [],
         },
@@ -126,45 +147,49 @@ export const TOWER_BLUEPRINTS: { [k in TowerType]: TowerBluePrint[] } = {
         {
             name: TowerType.Ballista,
             defaultStrategy: TargetingStrategy.LastInLine,
-            firePointY: 8,
+            firePointY: 6,
             level: 1,
             damage: [10, 20],
             fireRate: 2,
             color: "red",
             price: 100,
             range: 8,
+            modelScale: 0.005,
         },
         {
             name: TowerType.Ballista,
             defaultStrategy: TargetingStrategy.LastInLine,
-            firePointY: 8,
+            firePointY: 6.5,
             level: 2,
             damage: [20, 38],
             fireRate: 2.25,
             color: "red",
             price: 160,
             range: 9,
+            modelScale: 0.0055,
         },
         {
             name: TowerType.Ballista,
             defaultStrategy: TargetingStrategy.LastInLine,
-            firePointY: 8,
+            firePointY: 7,
             level: 3,
             damage: [34, 55],
             fireRate: 2.5,
             color: "red",
             price: 220,
+            modelScale: 0.006,
             range: 10,
         },
         {
             name: TowerType.Ballista,
             defaultStrategy: TargetingStrategy.LastInLine,
-            firePointY: 8,
+            firePointY: 7.5,
             level: 4,
             damage: [51, 76],
             fireRate: 2.75,
             color: "red",
             price: 380,
+            modelScale: 0.0065,
             range: 10,
             skills: [],
         },
@@ -180,86 +205,43 @@ export const TOWER_BLUEPRINTS: { [k in TowerType]: TowerBluePrint[] } = {
             color: "orange",
             price: 100,
             range: 9,
+            modelScale: 0.005,
         },
         {
             name: TowerType.Cannon,
             defaultStrategy: TargetingStrategy.LastInLine,
-            firePointY: 8,
+            firePointY: 8.5,
             level: 2,
             damage: [29, 54],
             fireRate: 0.8,
             color: "orange",
             price: 160,
+            modelScale: 0.0055,
             range: 10,
         },
         {
             name: TowerType.Cannon,
             defaultStrategy: TargetingStrategy.LastInLine,
-            firePointY: 8,
+            firePointY: 9,
             level: 3,
             damage: [48, 86],
             fireRate: 0.8,
             color: "orange",
             price: 220,
+            modelScale: 0.006,
             range: 11,
         },
         {
             name: TowerType.Ballista,
             defaultStrategy: TargetingStrategy.LastInLine,
-            firePointY: 8,
+            firePointY: 9.5,
             level: 4,
             damage: [60, 100],
             fireRate: 0.8,
             color: "orange",
             price: 380,
+            modelScale: 0.0065,
             range: 12,
-            skills: [],
-        },
-    ],
-    Wizard: [
-        {
-            name: TowerType.Wizard,
-            defaultStrategy: TargetingStrategy.FirstInLine,
-            firePointY: 12,
-            level: 1,
-            damage: [10, 21],
-            fireRate: 2,
-            color: "purple",
-            price: 100,
-            range: 12,
-        },
-        {
-            name: TowerType.Wizard,
-            defaultStrategy: TargetingStrategy.FirstInLine,
-            firePointY: 12,
-            level: 2,
-            damage: [18, 36],
-            fireRate: 1.8,
-            color: "purple",
-            price: 160,
-            range: 13,
-        },
-        {
-            name: TowerType.Wizard,
-            defaultStrategy: TargetingStrategy.FirstInLine,
-            firePointY: 12,
-            level: 3,
-            damage: [33, 57],
-            fireRate: 1.6,
-            color: "purple",
-            price: 220,
-            range: 14,
-        },
-        {
-            name: TowerType.Wizard,
-            defaultStrategy: TargetingStrategy.FirstInLine,
-            firePointY: 12,
-            level: 4,
-            damage: [49, 75],
-            fireRate: 1.5,
-            color: "purple",
-            price: 380,
-            range: 14,
             skills: [],
         },
     ],
@@ -273,39 +255,94 @@ export const TOWER_BLUEPRINTS: { [k in TowerType]: TowerBluePrint[] } = {
             fireRate: 3,
             color: "green",
             price: 100,
+            modelScale: 0.005,
             range: 10,
         },
         {
             name: TowerType.Poison,
             defaultStrategy: TargetingStrategy.FirstInLine,
-            firePointY: 8,
+            firePointY: 8.5,
             level: 2,
             damage: [11, 22],
             fireRate: 2.5,
             color: "green",
             price: 160,
+            modelScale: 0.0055,
             range: 12,
         },
         {
             name: TowerType.Poison,
             defaultStrategy: TargetingStrategy.FirstInLine,
-            firePointY: 8,
+            firePointY: 9,
             level: 3,
             damage: [21, 37],
             fireRate: 2,
             color: "green",
             price: 220,
+            modelScale: 0.006,
             range: 13,
         },
         {
             name: TowerType.Poison,
             defaultStrategy: TargetingStrategy.FirstInLine,
-            firePointY: 8,
+            firePointY: 10,
             level: 4,
             damage: [33, 60],
             fireRate: 2,
             color: "green",
             price: 380,
+            modelScale: 0.0065,
+            range: 14,
+            skills: [],
+        },
+    ],
+    Wizard: [
+        {
+            name: TowerType.Wizard,
+            defaultStrategy: TargetingStrategy.FirstInLine,
+            firePointY: 9.5,
+            level: 1,
+            damage: [9, 18],
+            fireRate: 2,
+            color: "purple",
+            price: 100,
+            modelScale: 0.005,
+            range: 12,
+        },
+        {
+            name: TowerType.Wizard,
+            defaultStrategy: TargetingStrategy.FirstInLine,
+            firePointY: 11,
+            level: 2,
+            damage: [14, 30],
+            fireRate: 1.8,
+            color: "purple",
+            price: 160,
+            modelScale: 0.0055,
+            range: 13,
+        },
+        {
+            name: TowerType.Wizard,
+            defaultStrategy: TargetingStrategy.FirstInLine,
+            firePointY: 12,
+            level: 3,
+            damage: [26, 49],
+            fireRate: 1.6,
+            color: "purple",
+            price: 220,
+            modelScale: 0.006,
+            range: 14,
+        },
+        {
+            name: TowerType.Wizard,
+            defaultStrategy: TargetingStrategy.FirstInLine,
+            firePointY: 13.5,
+            level: 4,
+            damage: [40, 65],
+            fireRate: 1.5,
+            color: "purple",
+            price: 380,
+            modelScale: 0.0065,
             range: 14,
             skills: [],
         },
@@ -318,6 +355,7 @@ export const PROJECTILE_BLUEPRINTS: { [k in TowerType]: ProjectileBluePrint[] } 
             type: TowerType.Archer,
             level: 1,
             explosionIntensity: 0.5,
+            explosionColor: "orangered",
             color: "blue",
             modelScale: 0.005,
             speed: 14,
@@ -327,6 +365,7 @@ export const PROJECTILE_BLUEPRINTS: { [k in TowerType]: ProjectileBluePrint[] } 
             type: TowerType.Archer,
             level: 2,
             explosionIntensity: 0.5,
+            explosionColor: "orangered",
             color: "blue",
             modelScale: 0.005,
             speed: 14,
@@ -336,6 +375,7 @@ export const PROJECTILE_BLUEPRINTS: { [k in TowerType]: ProjectileBluePrint[] } 
             type: TowerType.Archer,
             level: 3,
             explosionIntensity: 0.5,
+            explosionColor: "orangered",
             color: "blue",
             modelScale: 0.005,
             speed: 14,
@@ -345,6 +385,7 @@ export const PROJECTILE_BLUEPRINTS: { [k in TowerType]: ProjectileBluePrint[] } 
             type: TowerType.Archer,
             level: 4,
             explosionIntensity: 0.5,
+            explosionColor: "orangered",
             color: "blue",
             modelScale: 0.005,
             speed: 14,
@@ -356,72 +397,80 @@ export const PROJECTILE_BLUEPRINTS: { [k in TowerType]: ProjectileBluePrint[] } 
             type: TowerType.Ballista,
             level: 1,
             explosionIntensity: 0.5,
+            explosionColor: "orangered",
             color: "red",
             modelScale: 0.0075,
-            speed: 18,
+            speed: 13,
             trajectoryType: TrajectoryType.Straight,
         },
         {
             type: TowerType.Ballista,
             level: 2,
             explosionIntensity: 0.5,
+            explosionColor: "orangered",
             color: "red",
             modelScale: 0.0075,
-            speed: 18,
+            speed: 13,
             trajectoryType: TrajectoryType.Straight,
         },
         {
             type: TowerType.Ballista,
             level: 3,
             explosionIntensity: 0.5,
+            explosionColor: "orangered",
             color: "red",
             modelScale: 0.0075,
-            speed: 18,
+            speed: 13,
             trajectoryType: TrajectoryType.Straight,
         },
         {
             type: TowerType.Ballista,
             level: 4,
             explosionIntensity: 0.5,
+            explosionColor: "orangered",
             color: "red",
             modelScale: 0.0075,
-            speed: 18,
+            speed: 13,
             trajectoryType: TrajectoryType.Straight,
         },
     ],
     Cannon: [
         {
-            type: TowerType.Ballista,
+            type: TowerType.Cannon,
             level: 1,
             explosionIntensity: 2,
-            color: "orange",
-            modelScale: 0.008,
+            explosionColor: "yellow",
+            color: "black",
+            modelScale: 0.0065,
             speed: 12,
             trajectoryType: TrajectoryType.Parabola,
         },
         {
-            type: TowerType.Ballista,
+            type: TowerType.Cannon,
             level: 2,
             explosionIntensity: 2,
-            color: "orange",
+            explosionColor: "yellow",
+            color: "black",
             modelScale: 0.01,
             speed: 12,
             trajectoryType: TrajectoryType.Parabola,
         },
         {
-            type: TowerType.Ballista,
+            type: TowerType.Cannon,
             level: 3,
             explosionIntensity: 2,
-            color: "orange",
+            explosionColor: "yellow",
+            color: "black",
             modelScale: 0.012,
             speed: 12,
             trajectoryType: TrajectoryType.Parabola,
         },
         {
-            type: TowerType.Ballista,
+            type: TowerType.Cannon,
             level: 4,
             explosionIntensity: 2,
-            color: "orange",
+            explosionColor: "yellow",
+            color: "black",
             modelScale: 0.015,
             speed: 12,
             trajectoryType: TrajectoryType.Parabola,
@@ -429,38 +478,42 @@ export const PROJECTILE_BLUEPRINTS: { [k in TowerType]: ProjectileBluePrint[] } 
     ],
     Wizard: [
         {
-            type: TowerType.Ballista,
+            type: TowerType.Wizard,
             level: 1,
             explosionIntensity: 1,
+            explosionColor: "purple",
             color: "purple",
             modelScale: 0.005,
             speed: 18,
             trajectoryType: TrajectoryType.Straight,
         },
         {
-            type: TowerType.Ballista,
+            type: TowerType.Wizard,
             level: 2,
             explosionIntensity: 1,
+            explosionColor: "purple",
+            color: "purple",
+            modelScale: 0.0055,
+            speed: 18,
+            trajectoryType: TrajectoryType.Straight,
+        },
+        {
+            type: TowerType.Wizard,
+            level: 3,
+            explosionIntensity: 1,
+            explosionColor: "purple",
             color: "purple",
             modelScale: 0.006,
             speed: 18,
             trajectoryType: TrajectoryType.Straight,
         },
         {
-            type: TowerType.Ballista,
-            level: 3,
-            explosionIntensity: 1,
-            color: "purple",
-            modelScale: 0.007,
-            speed: 18,
-            trajectoryType: TrajectoryType.Straight,
-        },
-        {
-            type: TowerType.Ballista,
+            type: TowerType.Wizard,
             level: 4,
             explosionIntensity: 1,
+            explosionColor: "purple",
             color: "purple",
-            modelScale: 0.008,
+            modelScale: 0.0065,
             speed: 18,
             trajectoryType: TrajectoryType.Straight,
         },
@@ -470,6 +523,7 @@ export const PROJECTILE_BLUEPRINTS: { [k in TowerType]: ProjectileBluePrint[] } 
             type: TowerType.Poison,
             level: 1,
             explosionIntensity: 1,
+            explosionColor: "green",
             color: "green",
             modelScale: 0.005,
             speed: 15,
@@ -479,8 +533,9 @@ export const PROJECTILE_BLUEPRINTS: { [k in TowerType]: ProjectileBluePrint[] } 
             type: TowerType.Poison,
             level: 2,
             explosionIntensity: 1,
+            explosionColor: "green",
             color: "green",
-            modelScale: 0.006,
+            modelScale: 0.0055,
             speed: 15,
             trajectoryType: TrajectoryType.Parabola,
         },
@@ -488,8 +543,9 @@ export const PROJECTILE_BLUEPRINTS: { [k in TowerType]: ProjectileBluePrint[] } 
             type: TowerType.Poison,
             level: 3,
             explosionIntensity: 1,
+            explosionColor: "green",
             color: "green",
-            modelScale: 0.007,
+            modelScale: 0.006,
             speed: 15,
             trajectoryType: TrajectoryType.Parabola,
         },
@@ -497,8 +553,9 @@ export const PROJECTILE_BLUEPRINTS: { [k in TowerType]: ProjectileBluePrint[] } 
             type: TowerType.Poison,
             level: 4,
             explosionIntensity: 1,
+            explosionColor: "green",
             color: "green",
-            modelScale: 0.008,
+            modelScale: 0.0065,
             speed: 15,
             trajectoryType: TrajectoryType.Parabola,
         },
@@ -509,128 +566,253 @@ export const STAGE_WAVES_DATA: [string, number, number][][][] = [
     // stage 00
     [
         // wave 1
-        [
-            ["s", 0, 0],
-            ["s", 1, 1],
-            ["s", 2, 1],
-            ["s", 3, 1],
-            ["s", 4, 1],
-            ["s", 5, 1],
-            ["s", 6, 0],
-            ["s", 7, 1],
-            ["s", 8, 1],
-            ["s", 9, 0],
-            ["s", 10, 1],
-            ["s", 12, 0],
-            ["s", 14, 1],
-            ["s", 16, 0],
-        ],
+        waveSegment(EnemyChar.Spider, 1),
         // wave 2
-        [
-            ["r", 0, 0],
-            ["s", 1, 0],
-            ["r", 4, 0],
-            ["s", 5, 0],
-            ["s", 8, 0],
-            ["r", 9, 0],
-            ["s", 11, 0],
-            ["s", 12, 0],
-            ["s", 13, 0],
-            ["r", 14, 0],
-        ],
+        waveSegment(EnemyChar.Raptor, 4),
         // wave 3
-        [
-            ["s", 0, 0],
-            ["s", 1, 0],
-            ["s", 2, 0],
-            ["s", 3, 0],
-            ["r", 3, 0],
-            ["s", 4, 0],
-            ["s", 6, 0],
-            ["s", 8, 0],
-            ["r", 9, 0],
-            ["s", 10, 0],
-            ["s", 11, 0],
-            ["s", 12, 0],
-            ["s", 13, 0],
-            ["s", 14, 0],
-            ["r", 15, 0],
-            ["s", 16, 0],
-            ["s", 17, 0],
-        ],
+        [...waveSegment(EnemyChar.Soldier), ...waveSegment(EnemyChar.Spider)],
         // wave 4
+        [...waveSegment(EnemyChar.Raptor), ...waveSegment(EnemyChar.Spider, 0.8, 20)],
+        // wave 5
         [
-            ["b", 0, 0],
-            ["s", 0, 0],
-            ["s", 1, 0],
-            ["s", 2, 0],
-            ["s", 3, 0],
-            ["r", 3, 0],
-            ["s", 4, 0],
-            ["b", 5, 0],
-            ["s", 6, 0],
-            ["s", 8, 0],
-            ["r", 9, 0],
-            ["s", 10, 0],
-            ["b", 10, 0],
-            ["s", 11, 0],
-            ["s", 12, 0],
-            ["s", 13, 0],
-            ["s", 14, 0],
-            ["r", 15, 0],
-            ["b", 15, 0],
-            ["s", 16, 0],
-            ["s", 17, 0],
-            ["s", 18, 0],
+            ...waveSegment(EnemyChar.Brigand),
+            ...waveSegment(EnemyChar.Soldier, 3, 10, 22),
+            ...waveSegment(EnemyChar.Spider, 0.8, 20),
         ],
         // wave 5
         [
-            ["b", 0, 0],
-            ["s", 0, 0],
-            ["s", 1, 0],
-            ["s", 2, 0],
-            ["w", 2, 0],
-            ["s", 3, 0],
-            ["r", 3, 0],
-            ["s", 4, 0],
-            ["b", 5, 0],
-            ["s", 6, 0],
-            ["w", 7, 0],
-            ["s", 8, 0],
-            ["r", 9, 0],
-            ["s", 10, 0],
-            ["b", 10, 0],
-            ["s", 11, 0],
-            ["s", 12, 0],
-            ["s", 13, 0],
-            ["w", 13, 0],
-            ["s", 14, 0],
-            ["r", 15, 0],
-            ["b", 15, 0],
-            ["s", 16, 0],
-            ["s", 17, 0],
-            ["s", 18, 0],
-            ["w", 19, 0],
-            ["s", 19, 0],
-            ["s", 20, 0],
-            ["r", 20, 0],
-            ["s", 21, 0],
-            ["w", 21, 0],
-            ["s", 22, 0],
-            ["s", 23, 0],
-            ["s", 24, 0],
+            ...waveSegment(EnemyChar.Brigand, 2),
+            ...waveSegment(EnemyChar.Raptor, 3, 10, 22),
+            ...waveSegment(EnemyChar.Spider, 0.8, 50),
         ],
+        // wave 6
+        [
+            ...waveSegment(EnemyChar.Raptor, 2),
+            ...waveSegment(EnemyChar.Soldier, 3, 8, 22),
+            ...waveSegment(EnemyChar.Brigand, 3, 8, 44),
+            ...waveSegment(EnemyChar.Spider, 1.5, 100, 0, [-1, 1]),
+        ],
+        // wave 7
+        [...waveSegment(EnemyChar.Raptor2, 1, 1), ...waveSegment(EnemyChar.Spider, 1.5, 1000)],
     ],
 
     // stage 01
     [
-        // wave 000
+        // wave 1
+        waveSegment(EnemyChar.Spider, 1),
+        // wave 2
+        waveSegment(EnemyChar.Raptor, 4),
+        // wave 3
+        [...waveSegment(EnemyChar.Soldier), ...waveSegment(EnemyChar.Spider)],
+        // wave 4
+        [...waveSegment(EnemyChar.Raptor), ...waveSegment(EnemyChar.Spider, 0.8, 20)],
+        // wave 5
         [
-            ...waveSegment(EnemyChar.Warrior, 2.3),
-            ...waveSegment(EnemyChar.Soldier, 2.5, 10, 30),
-            ...waveSegment(EnemyChar.Brigand, 2.3, 10, 60),
+            ...waveSegment(EnemyChar.Brigand),
+            ...waveSegment(EnemyChar.Soldier, 3, 10, 22),
+            ...waveSegment(EnemyChar.Spider, 0.8, 20),
+        ],
+        // wave 5
+        [
+            ...waveSegment(EnemyChar.Brigand, 2),
+            ...waveSegment(EnemyChar.Raptor, 3, 10, 22),
+            ...waveSegment(EnemyChar.Spider, 0.8, 50),
+        ],
+        // wave 6
+        [
+            ...waveSegment(EnemyChar.Raptor, 2),
+            ...waveSegment(EnemyChar.Soldier, 3, 8, 22),
+            ...waveSegment(EnemyChar.Brigand, 3, 8, 44),
             ...waveSegment(EnemyChar.Spider, 1.5, 100, 0, [-1, 1]),
         ],
+    ],
+
+    // stage 02
+    [
+        // wave 1
+        waveSegment(EnemyChar.Spider, 1),
+        // wave 2
+        waveSegment(EnemyChar.Raptor, 4),
+        // wave 3
+        [...waveSegment(EnemyChar.Soldier), ...waveSegment(EnemyChar.Spider)],
+        // wave 4
+        [...waveSegment(EnemyChar.Raptor), ...waveSegment(EnemyChar.Spider, 0.8, 20)],
+        // wave 5
+        [
+            ...waveSegment(EnemyChar.Brigand),
+            ...waveSegment(EnemyChar.Soldier, 3, 10, 22),
+            ...waveSegment(EnemyChar.Spider, 0.8, 20),
+        ],
+        // wave 5
+        [
+            ...waveSegment(EnemyChar.Brigand, 2),
+            ...waveSegment(EnemyChar.Raptor, 3, 10, 22),
+            ...waveSegment(EnemyChar.Spider, 0.8, 50),
+        ],
+        // wave 6
+        [
+            ...waveSegment(EnemyChar.Raptor, 2),
+            ...waveSegment(EnemyChar.Soldier, 3, 8, 22),
+            ...waveSegment(EnemyChar.Brigand, 3, 8, 44),
+            ...waveSegment(EnemyChar.Spider, 1.5, 100, 0, [-1, 1]),
+        ],
+    ],
+
+    // stage 03
+    [
+        // wave 1
+        waveSegment(EnemyChar.Spider, 1),
+        // wave 2
+        waveSegment(EnemyChar.Raptor, 4),
+        // wave 3
+        [...waveSegment(EnemyChar.Soldier), ...waveSegment(EnemyChar.Spider)],
+        // wave 4
+        [...waveSegment(EnemyChar.Raptor), ...waveSegment(EnemyChar.Spider, 0.8, 20)],
+        // wave 5
+        [
+            ...waveSegment(EnemyChar.Brigand),
+            ...waveSegment(EnemyChar.Soldier, 3, 10, 22),
+            ...waveSegment(EnemyChar.Spider, 0.8, 20),
+        ],
+        // wave 5
+        [
+            ...waveSegment(EnemyChar.Brigand, 2),
+            ...waveSegment(EnemyChar.Raptor, 3, 10, 22),
+            ...waveSegment(EnemyChar.Spider, 0.8, 50),
+        ],
+        // wave 6
+        [
+            ...waveSegment(EnemyChar.Raptor, 2),
+            ...waveSegment(EnemyChar.Soldier, 3, 8, 22),
+            ...waveSegment(EnemyChar.Brigand, 3, 8, 44),
+            ...waveSegment(EnemyChar.Spider, 1.5, 100, 0, [-1, 1]),
+        ],
+    ],
+
+    // stage 04
+    [
+        // wave 1
+        waveSegment(EnemyChar.Spider, 1),
+        // wave 2
+        waveSegment(EnemyChar.Raptor, 4),
+        // wave 3
+        [...waveSegment(EnemyChar.Soldier), ...waveSegment(EnemyChar.Spider)],
+        // wave 4
+        [...waveSegment(EnemyChar.Raptor), ...waveSegment(EnemyChar.Spider, 0.8, 20)],
+        // wave 5
+        [
+            ...waveSegment(EnemyChar.Brigand),
+            ...waveSegment(EnemyChar.Soldier, 3, 10, 22),
+            ...waveSegment(EnemyChar.Spider, 0.8, 20),
+        ],
+        // wave 5
+        [
+            ...waveSegment(EnemyChar.Brigand, 2),
+            ...waveSegment(EnemyChar.Raptor, 3, 10, 22),
+            ...waveSegment(EnemyChar.Spider, 0.8, 50),
+        ],
+        // wave 6
+        [
+            ...waveSegment(EnemyChar.Raptor, 2),
+            ...waveSegment(EnemyChar.Soldier, 3, 8, 22),
+            ...waveSegment(EnemyChar.Brigand, 3, 8, 44),
+            ...waveSegment(EnemyChar.Spider, 1.5, 100, 0, [-1, 1]),
+        ],
+    ],
+
+    // stage 05
+    [
+        // wave 1
+        waveSegment(EnemyChar.Spider),
+        // wave 2
+        waveSegment(EnemyChar.Raptor, 2),
+        // wave 3
+        [...waveSegment(EnemyChar.Soldier, 2), ...waveSegment(EnemyChar.Spider)],
+        // wave 4
+        [...waveSegment(EnemyChar.Raptor, 2), ...waveSegment(EnemyChar.Spider, 0.8, 20)],
+        // wave 5
+        [
+            ...waveSegment(EnemyChar.Brigand, 2),
+            ...waveSegment(EnemyChar.Soldier, 2, 10, 22),
+            ...waveSegment(EnemyChar.Spider, 0.8, 20),
+        ],
+        // wave 5
+        [
+            ...waveSegment(EnemyChar.Brigand, 2),
+            ...waveSegment(EnemyChar.Raptor, 2, 10, 22),
+            ...waveSegment(EnemyChar.Spider, 0.8, 50),
+        ],
+        // wave 6
+        [
+            ...waveSegment(EnemyChar.Raptor, 2),
+            ...waveSegment(EnemyChar.Soldier, 2, 10, 22),
+            ...waveSegment(EnemyChar.Brigand, 2, 10, 44),
+            ...waveSegment(EnemyChar.Spider, 1.5, 100, 0, [-1, 1]),
+        ],
+    ],
+
+    // stage 06
+    [
+        // wave 1
+        waveSegment(EnemyChar.Spider),
+        // wave 2
+        waveSegment(EnemyChar.Raptor, 2),
+        // wave 3
+        [...waveSegment(EnemyChar.Soldier, 2), ...waveSegment(EnemyChar.Spider)],
+        // wave 4
+        [...waveSegment(EnemyChar.Raptor, 2), ...waveSegment(EnemyChar.Spider, 0.8, 20)],
+        // wave 5
+        [
+            ...waveSegment(EnemyChar.Brigand, 2),
+            ...waveSegment(EnemyChar.Soldier, 2, 10, 22),
+            ...waveSegment(EnemyChar.Spider, 0.8, 20),
+        ],
+        // wave 5
+        [
+            ...waveSegment(EnemyChar.Brigand, 2),
+            ...waveSegment(EnemyChar.Raptor, 2, 10, 22),
+            ...waveSegment(EnemyChar.Spider, 0.8, 50),
+        ],
+        // wave 6
+        [
+            ...waveSegment(EnemyChar.Raptor, 2),
+            ...waveSegment(EnemyChar.Soldier, 2, 10, 22),
+            ...waveSegment(EnemyChar.Brigand, 2, 10, 44),
+            ...waveSegment(EnemyChar.Spider, 1.5, 100, 0, [-1, 1]),
+        ],
+    ],
+    // stage 07
+    [
+        // wave 1
+        waveSegment(EnemyChar.Orc, 4),
+        // wave 2
+        waveSegment(EnemyChar.Raptor, 2),
+        // wave 3
+        [...waveSegment(EnemyChar.Soldier, 2), ...waveSegment(EnemyChar.Spider)],
+        // wave 4
+        [...waveSegment(EnemyChar.Raptor, 2), ...waveSegment(EnemyChar.Spider, 0.8, 20)],
+        // wave 5
+        [
+            ...waveSegment(EnemyChar.Brigand, 2),
+            ...waveSegment(EnemyChar.Soldier, 2, 10, 22),
+            ...waveSegment(EnemyChar.Spider, 0.8, 20),
+        ],
+        // wave 5
+        [
+            ...waveSegment(EnemyChar.Brigand, 2),
+            ...waveSegment(EnemyChar.Raptor, 2, 10, 22),
+            ...waveSegment(EnemyChar.Spider, 0.8, 50),
+        ],
+        // wave 6
+        [
+            ...waveSegment(EnemyChar.Raptor, 2),
+            ...waveSegment(EnemyChar.Soldier, 2, 10, 22),
+            ...waveSegment(EnemyChar.Brigand, 2, 10, 44),
+            ...waveSegment(EnemyChar.Spider, 1.5, 100, 0, [-1, 1]),
+        ],
+    ],
+    // stage 08
+    [
         // wave 1
         waveSegment(EnemyChar.Spider),
         // wave 2
@@ -659,76 +841,221 @@ export const STAGE_WAVES_DATA: [string, number, number][][][] = [
             ...waveSegment(EnemyChar.Spider, 1.5, 100, 0, [-1, 1]),
         ],
     ],
-
-    // stage 02
+    // stage 09
     [
         // wave 1
-        [
-            ["s", 0, 0],
-            ["s", 2, 0],
-            ["s", 4, 0],
-            ["s", 6, 0],
-        ],
+        waveSegment(EnemyChar.Spider),
         // wave 2
+        waveSegment(EnemyChar.Brigand, 2),
+        // wave 3
+        [...waveSegment(EnemyChar.Soldier, 2), ...waveSegment(EnemyChar.Spider)],
+        // wave 4
+        [...waveSegment(EnemyChar.Warrior, 2), ...waveSegment(EnemyChar.Spider, 0.8, 20)],
+        // wave 5
         [
-            ["s", 0, 0],
-            ["s", 1, 0],
-            ["s", 2, 0],
-            ["s", 3, 0],
-            ["s", 4, 0],
-            ["s", 5, 0],
-            ["s", 6, 0],
+            ...waveSegment(EnemyChar.Brigand, 2),
+            ...waveSegment(EnemyChar.Soldier, 2, 10, 22),
+            ...waveSegment(EnemyChar.Spider, 0.8, 20),
         ],
-        //...
-    ],
-
-    // stage 03
-    [
-        // wave 1
+        // wave 5
         [
-            ["z", 0, 0],
-            ["s", 1, 0],
-            ["z", 3, 0],
-            ["s", 4, 0],
-            ["r", 6, 0],
-            ["s", 7, 0],
-            ["z", 9, 0],
-            ["s", 10, 0],
+            ...waveSegment(EnemyChar.Brigand, 2),
+            ...waveSegment(EnemyChar.Warrior, 2, 10, 22),
+            ...waveSegment(EnemyChar.Spider, 0.8, 50),
         ],
-    ],
-    // stage 04
-    [
-        // wave 1
+        // wave 6
         [
-            ["b", 0, 0],
-            ["s", 1, 0],
-            ["b", 3, 0],
-            ["s", 4, 0],
-            ["r", 6, 0],
-            ["s", 7, 0],
-            ["b", 9, 0],
-            ["s", 10, 0],
+            ...waveSegment(EnemyChar.Warrior, 2),
+            ...waveSegment(EnemyChar.Soldier, 2, 10, 22),
+            ...waveSegment(EnemyChar.Brigand, 2, 10, 44),
+            ...waveSegment(EnemyChar.Spider, 1.5, 100, 0, [-1, 1]),
         ],
     ],
-    // stage 05
+    // stage 10
     [
         // wave 1
+        waveSegment(EnemyChar.Spider),
+        // wave 2
+        waveSegment(EnemyChar.Brigand, 2),
+        // wave 3
+        [...waveSegment(EnemyChar.Soldier, 2), ...waveSegment(EnemyChar.Spider)],
+        // wave 4
+        [...waveSegment(EnemyChar.Warrior, 2), ...waveSegment(EnemyChar.Spider, 0.8, 20)],
+        // wave 5
         [
-            ["w", 0, 0],
-            ["s", 1, 0],
-            ["w", 3, 0],
-            ["s", 4, 0],
-            ["r", 6, 0],
-            ["s", 7, 0],
-            ["w", 9, 0],
-            ["s", 10, 0],
+            ...waveSegment(EnemyChar.Brigand, 2),
+            ...waveSegment(EnemyChar.Soldier, 2, 10, 22),
+            ...waveSegment(EnemyChar.Spider, 0.8, 20),
+        ],
+        // wave 5
+        [
+            ...waveSegment(EnemyChar.Brigand, 2),
+            ...waveSegment(EnemyChar.Warrior, 2, 10, 22),
+            ...waveSegment(EnemyChar.Spider, 0.8, 50),
+        ],
+        // wave 6
+        [
+            ...waveSegment(EnemyChar.Warrior, 2),
+            ...waveSegment(EnemyChar.Soldier, 2, 10, 22),
+            ...waveSegment(EnemyChar.Brigand, 2, 10, 44),
+            ...waveSegment(EnemyChar.Spider, 1.5, 100, 0, [-1, 1]),
+        ],
+    ],
+    // stage 11
+    [
+        // wave 1
+        waveSegment(EnemyChar.Spider),
+        // wave 2
+        waveSegment(EnemyChar.Brigand, 2),
+        // wave 3
+        [...waveSegment(EnemyChar.Soldier, 2), ...waveSegment(EnemyChar.Spider)],
+        // wave 4
+        [...waveSegment(EnemyChar.Warrior, 2), ...waveSegment(EnemyChar.Spider, 0.8, 20)],
+        // wave 5
+        [
+            ...waveSegment(EnemyChar.Brigand, 2),
+            ...waveSegment(EnemyChar.Soldier, 2, 10, 22),
+            ...waveSegment(EnemyChar.Spider, 0.8, 20),
+        ],
+        // wave 5
+        [
+            ...waveSegment(EnemyChar.Brigand, 2),
+            ...waveSegment(EnemyChar.Warrior, 2, 10, 22),
+            ...waveSegment(EnemyChar.Spider, 0.8, 50),
+        ],
+        // wave 6
+        [
+            ...waveSegment(EnemyChar.Warrior, 2),
+            ...waveSegment(EnemyChar.Soldier, 2, 10, 22),
+            ...waveSegment(EnemyChar.Brigand, 2, 10, 44),
+            ...waveSegment(EnemyChar.Spider, 1.5, 100, 0, [-1, 1]),
+        ],
+    ],
+    // stage 12
+    [
+        // wave 1
+        waveSegment(EnemyChar.Spider),
+        // wave 2
+        waveSegment(EnemyChar.Brigand, 2),
+        // wave 3
+        [...waveSegment(EnemyChar.Soldier, 2), ...waveSegment(EnemyChar.Spider)],
+        // wave 4
+        [...waveSegment(EnemyChar.Warrior, 2), ...waveSegment(EnemyChar.Spider, 0.8, 20)],
+        // wave 5
+        [
+            ...waveSegment(EnemyChar.Brigand, 2),
+            ...waveSegment(EnemyChar.Soldier, 2, 10, 22),
+            ...waveSegment(EnemyChar.Spider, 0.8, 20),
+        ],
+        // wave 5
+        [
+            ...waveSegment(EnemyChar.Brigand, 2),
+            ...waveSegment(EnemyChar.Warrior, 2, 10, 22),
+            ...waveSegment(EnemyChar.Spider, 0.8, 50),
+        ],
+        // wave 6
+        [
+            ...waveSegment(EnemyChar.Warrior, 2),
+            ...waveSegment(EnemyChar.Soldier, 2, 10, 22),
+            ...waveSegment(EnemyChar.Brigand, 2, 10, 44),
+            ...waveSegment(EnemyChar.Spider, 1.5, 100, 0, [-1, 1]),
+        ],
+    ],
+    // stage 13
+    [
+        // wave 1
+        waveSegment(EnemyChar.Spider),
+        // wave 2
+        waveSegment(EnemyChar.Brigand, 2),
+        // wave 3
+        [...waveSegment(EnemyChar.Soldier, 2), ...waveSegment(EnemyChar.Spider)],
+        // wave 4
+        [...waveSegment(EnemyChar.Warrior, 2), ...waveSegment(EnemyChar.Spider, 0.8, 20)],
+        // wave 5
+        [
+            ...waveSegment(EnemyChar.Brigand, 2),
+            ...waveSegment(EnemyChar.Soldier, 2, 10, 22),
+            ...waveSegment(EnemyChar.Spider, 0.8, 20),
+        ],
+        // wave 5
+        [
+            ...waveSegment(EnemyChar.Brigand, 2),
+            ...waveSegment(EnemyChar.Warrior, 2, 10, 22),
+            ...waveSegment(EnemyChar.Spider, 0.8, 50),
+        ],
+        // wave 6
+        [
+            ...waveSegment(EnemyChar.Warrior, 2),
+            ...waveSegment(EnemyChar.Soldier, 2, 10, 22),
+            ...waveSegment(EnemyChar.Brigand, 2, 10, 44),
+            ...waveSegment(EnemyChar.Spider, 1.5, 100, 0, [-1, 1]),
+        ],
+    ],
+    // stage 14
+    [
+        // wave 1
+        waveSegment(EnemyChar.Spider),
+        // wave 2
+        waveSegment(EnemyChar.Brigand, 2),
+        // wave 3
+        [...waveSegment(EnemyChar.Soldier, 2), ...waveSegment(EnemyChar.Spider)],
+        // wave 4
+        [...waveSegment(EnemyChar.Warrior, 2), ...waveSegment(EnemyChar.Spider, 0.8, 20)],
+        // wave 5
+        [
+            ...waveSegment(EnemyChar.Brigand, 2),
+            ...waveSegment(EnemyChar.Soldier, 2, 10, 22),
+            ...waveSegment(EnemyChar.Spider, 0.8, 20),
+        ],
+        // wave 5
+        [
+            ...waveSegment(EnemyChar.Brigand, 2),
+            ...waveSegment(EnemyChar.Warrior, 2, 10, 22),
+            ...waveSegment(EnemyChar.Spider, 0.8, 50),
+        ],
+        // wave 6
+        [
+            ...waveSegment(EnemyChar.Warrior, 2),
+            ...waveSegment(EnemyChar.Soldier, 2, 10, 22),
+            ...waveSegment(EnemyChar.Brigand, 2, 10, 44),
+            ...waveSegment(EnemyChar.Spider, 1.5, 100, 0, [-1, 1]),
+        ],
+    ],
+    // stage 15
+    [
+        // wave 1
+        waveSegment(EnemyChar.Spider),
+        // wave 2
+        waveSegment(EnemyChar.Brigand, 2),
+        // wave 3
+        [...waveSegment(EnemyChar.Soldier, 2), ...waveSegment(EnemyChar.Spider)],
+        // wave 4
+        [...waveSegment(EnemyChar.Warrior, 2), ...waveSegment(EnemyChar.Spider, 0.8, 20)],
+        // wave 5
+        [
+            ...waveSegment(EnemyChar.Brigand, 2),
+            ...waveSegment(EnemyChar.Soldier, 2, 10, 22),
+            ...waveSegment(EnemyChar.Spider, 0.8, 20),
+        ],
+        // wave 5
+        [
+            ...waveSegment(EnemyChar.Brigand, 2),
+            ...waveSegment(EnemyChar.Warrior, 2, 10, 22),
+            ...waveSegment(EnemyChar.Spider, 0.8, 50),
+        ],
+        // wave 6
+        [
+            ...waveSegment(EnemyChar.Warrior, 2),
+            ...waveSegment(EnemyChar.Soldier, 2, 10, 22),
+            ...waveSegment(EnemyChar.Brigand, 2, 10, 44),
+            ...waveSegment(EnemyChar.Spider, 1.5, 100, 0, [-1, 1]),
         ],
     ],
 ];
 
 function waveSegment(
     e: EnemyChar,
-    interval = 1,
+    interval = 2,
     enemyCount = 10,
     startSpawningAt = 0,
     xOffList = [0]

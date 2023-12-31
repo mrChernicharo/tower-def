@@ -41,7 +41,7 @@ export class Tower {
 
     async _setupModel() {
         this.model = TOWER_MODELS[this.towerName]["level-1"].clone();
-        setupModelData(this.model, this.id, 1, this.tileIdx, this.position);
+        this._setupModelData();
         this._setupRangeGizmo();
         console.log("created tower", this);
     }
@@ -73,10 +73,24 @@ export class Tower {
         this.blueprint = desiredBlueprint;
         this.model = desiredModel;
 
-        setupModelData(this.model, this.id, nextLevel, this.tileIdx, this.position);
+        this._setupModelData();
         this._setupRangeGizmo();
         // console.log("upgrade tower", { currLevel, nextLevel, desiredBlueprint, desiredModel });
         return this;
+    }
+
+    _setupModelData() {
+        this.model.userData["tower_id"] = this.id;
+        this.model.userData["tower_level"] = this.blueprint.level;
+        this.model.userData["tile_idx"] = this.tileIdx;
+        this.model.layers.set(AppLayers.Tower);
+        this.model.material = new THREE.MeshBasicMaterial({
+            color: 0xca947d,
+            map: towerTexture,
+        });
+        this.model.position.set(this.position.x, this.position.y, this.position.z);
+        const s = this.blueprint.modelScale;
+        this.model.scale.set(s, s, s);
     }
 
     tick(delta: number, targetEnemy: Enemy | undefined) {
@@ -132,17 +146,4 @@ export class Tower {
                 return;
         }
     }
-}
-
-function setupModelData(model: THREE.Mesh, id: string, level: number, tileIdx: string, position: THREE.Vector3) {
-    model.userData["tower_id"] = id;
-    model.userData["tower_level"] = level;
-    model.userData["tile_idx"] = tileIdx;
-    model.layers.set(AppLayers.Tower);
-    model.material = new THREE.MeshBasicMaterial({
-        color: 0xca947d,
-        map: towerTexture,
-    });
-    model.position.set(position.x, position.y, position.z);
-    model.scale.set(0.005, 0.005, 0.005);
 }

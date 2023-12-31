@@ -75,6 +75,8 @@ let gameLost = false;
 export async function destroyGame() {
     console.log("destroy", { scene });
     cancelAnimationFrame(frameId);
+    currWaveIdx = 0;
+    frameId = 0;
     gui.destroy();
     gameClock.stop();
     scene.clear();
@@ -117,13 +119,10 @@ export async function initGame({ area, level, gold, hp }: GameInitProps) {
 
     await gameSetup();
     _wireUpLoadingManager();
-
     await _initEnemyModels();
     await _initTowerModels();
-
     await drawMap();
     drawPath();
-
     _init2DModals();
 
     window.addEventListener("resize", onResize);
@@ -797,13 +796,7 @@ function onProjectile(e: any) {
         // futureGizmo.visible = false;
     }
 
-    // console.log("onProjectile", {
-    //     projectiles,
-    //     towers,
-    //     explosions,
-    //     scene,
-    //     lerp: THREE.MathUtils.lerp(4, 7, Math.random()),
-    // });
+    // in case you want to draw trajectories
     // scene.add(projectile.trajectory);
 }
 
