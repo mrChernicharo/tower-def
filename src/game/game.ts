@@ -313,10 +313,11 @@ function _init2DModals() {
 }
 
 async function drawMap() {
+    // const glb = await gltfLoader.loadAsync("/assets/glb/village-level-000.glb");
     const glb = await gltfLoader.loadAsync("/assets/glb/desert-level.0.glb");
     const model = glb.scene;
 
-    // console.log({ glb, model });
+    console.log({ glb, model });
 
     model.traverse((obj) => {
         if ((obj as THREE.Mesh).isMesh) {
@@ -325,9 +326,9 @@ async function drawMap() {
             if (mesh.name.includes("TowerBase")) {
                 mesh.material = new THREE.MeshMatcapMaterial({ color: COLORS.concrete });
                 obj.layers.set(AppLayers.TowerBase);
-            }
-
-            if (/desert|Plane/g.test(mesh.name)) {
+            } else if (/desert|Plane/g.test(mesh.name)) {
+                mesh.material = new THREE.MeshMatcapMaterial({ color: COLORS.desert });
+            } else {
                 mesh.material = new THREE.MeshMatcapMaterial({ color: COLORS.desert });
             }
         }
@@ -526,7 +527,7 @@ function onModalClick(e: MouseEvent, el: THREE.Object3D, modal3D: CSS2DObject, m
         if (playerStats.gold < towerPrice) {
             console.warn("not enough money");
             const msgArea = document.querySelector(".warning-msg-area")!;
-            msgArea.innerHTML = "not enough money";
+            msgArea.innerHTML = "not enough money!";
             return;
         }
         playerStats.spendGold(towerPrice);
@@ -571,6 +572,8 @@ function onModalClick(e: MouseEvent, el: THREE.Object3D, modal3D: CSS2DObject, m
         const [tower] = towers.splice(towerIdx, 1);
         scene.remove(tower.model);
         scene.remove(tower.rangeGizmo);
+        playerStats.gainGold(tower.blueprint.price * 0.7);
+
         // console.log({ towers, tower, scene });
     }
 
@@ -601,7 +604,7 @@ function onModalClick(e: MouseEvent, el: THREE.Object3D, modal3D: CSS2DObject, m
             if (playerStats.gold < tower.blueprint.price) {
                 console.warn("not enough money");
                 const msgArea = document.querySelector(".warning-msg-area")!;
-                msgArea.innerHTML = "not enough money";
+                msgArea.innerHTML = "not enough money!";
                 return;
             }
             playerStats.spendGold(tower.blueprint.price);

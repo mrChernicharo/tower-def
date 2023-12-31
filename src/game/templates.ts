@@ -41,23 +41,28 @@ export const modalTemplates = {
             </div>
         </div>
     `,
-    towerDetails: (tower: Tower) => `
+    towerDetails: (tower: Tower) => {
+        const t = tower.blueprint;
+        // const t2 = TOWER_BLUEPRINTS[tower.towerName][tower.blueprint.level];
+
+        return `
         <div class="${ModalType.TowerDetails} ${tower.towerName}  modal-content">
             <h3>${capitalize(tower.towerName)} Tower 
-                <span>Lv ${tower.blueprint.level}</span>
+                <span>Lv ${t.level}</span>
             </h3>
 
             <div>
                 ${
                     tower.blueprint.level < 4
-                        ? `<button id="tower-upgrade-btn" class="tower-details-btn">Upgrade</button>`
+                        ? `<button id="tower-upgrade-btn" class="tower-details-btn">Upgrade $${t.price}</button>`
                         : `<span>SKILLS</span>`
                 }
                 <button id="tower-info-btn" class="tower-details-btn">Info</button>
-                <button id="tower-sell-btn" class="tower-details-btn">Sell</button>
+                <button id="tower-sell-btn" class="tower-details-btn">Sell $${t.price * 0.7}</button>
             </div>
         </div>
-    `,
+    `;
+    },
     confirmTowerSell: (tower: Tower) => `
         <div class="${ModalType.ConfirmTowerSell} ${tower.towerName} modal-content">
             <h3>Sell ${capitalize(tower.towerName)} Tower</h3>
@@ -80,23 +85,24 @@ export const modalTemplates = {
 
         </div>
     `,
-    confirmTowerUpgrade: (tower: Tower) => `
+    confirmTowerUpgrade: (tower: Tower) => {
+        const t = tower.blueprint;
+        const t2 = TOWER_BLUEPRINTS[tower.towerName][tower.blueprint.level];
+
+        return `
         <div class="${ModalType.ConfirmTowerUpgrade} ${tower.towerName} modal-content">
             <button class="cancel-tower-upgrade-btn">←</button>
 
             <h3>Upgrade ${capitalize(tower.towerName)} Tower</h3>
-            <div>Cost $${tower.blueprint.price}</div>
 
-            <pre style="font-size: 9px;">${JSON.stringify(tower.blueprint, null, 2)}</pre>
-            
-            <div>next lv ${tower.blueprint.level + 1}</div>
+            <h2>Cost $${tower.blueprint.price}</h2>
 
-            <pre style="font-size: 9px;">${JSON.stringify(
-                TOWER_BLUEPRINTS[tower.towerName][tower.blueprint.level],
-                null,
-                2
-            )}
-            </pre>
+            <div>
+                <div>Level ${t.level} → ${t2.level}</div>
+                <div>Damage ${t.damage.join(" - ")} → ${t2.damage.join(" - ")}</div>
+                <div>FireRate ${t.fireRate} → ${t2.fireRate}</div>
+                <div>Range ${t.range} → ${t2.range}</div>
+            </div>
 
             <div class="warning-msg-area"></div>
 
@@ -104,7 +110,8 @@ export const modalTemplates = {
                 <button class="confirm-tower-upgrade-btn">Confirm!</button>
             </div>
         </div>
-    `,
+    `;
+    },
 } as const;
 
 export const gameEndTemplates = {
@@ -132,3 +139,5 @@ export const cancelableModalNames = [
 // <div>Rng ${tower.blueprint.range}</div>
 // <div>Pr ${tower.blueprint.price}</div>
 // </div>
+
+// <pre style="font-size: 9px;">${JSON.stringify(tower.blueprint, null, 2)}</pre>
