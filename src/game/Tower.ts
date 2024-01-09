@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { PROJECTILE_BLUEPRINTS, TOWER_BLUEPRINTS } from "./constants";
+import { MATERIALS, PROJECTILE_BLUEPRINTS, TOWER_BLUEPRINTS } from "./constants";
 import { AppLayers, TargetingStrategy, TowerType, TrajectoryType } from "./enums";
 import { TOWER_MODELS, towerTexture } from "./game";
 import { idMaker } from "./helpers";
@@ -48,11 +48,7 @@ export class Tower {
 
     _setupRangeGizmo() {
         const circleGeometry = new THREE.CircleGeometry(this.blueprint.range);
-        const circleMaterial = new THREE.MeshBasicMaterial({
-            transparent: true,
-            opacity: 0.15,
-            color: this.blueprint.color,
-        });
+        const circleMaterial = MATERIALS.towerRangeGizmo(this.blueprint.color);
         const circleMesh = new THREE.Mesh(circleGeometry, circleMaterial);
         circleMesh.position.set(this.position.x, this.position.y + 0.5, this.position.z);
         circleMesh.rotation.x = -Math.PI * 0.5;
@@ -84,10 +80,7 @@ export class Tower {
         this.model.userData["tower_level"] = this.blueprint.level;
         this.model.userData["tile_idx"] = this.tileIdx;
         this.model.layers.set(AppLayers.Tower);
-        this.model.material = new THREE.MeshBasicMaterial({
-            color: 0xca947d,
-            map: towerTexture,
-        });
+        this.model.material = MATERIALS.tower(towerTexture);
         this.model.position.set(this.position.x, this.position.y, this.position.z);
         const s = this.blueprint.modelScale;
         this.model.scale.set(s, s, s);

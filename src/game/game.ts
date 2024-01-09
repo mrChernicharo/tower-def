@@ -17,6 +17,7 @@ import {
     COLORS,
     DRAW_FUTURE_GIZMO,
     ENEMY_BLUEPRINTS,
+    MATERIALS,
     STAGE_WAVES_DATA,
     TOWER_BLUEPRINTS,
     desertLevelPath as jsonCurve,
@@ -346,13 +347,13 @@ async function drawMap() {
             const mesh = obj as THREE.Mesh;
 
             if (mesh.name.includes("TowerBase")) {
-                mesh.material = new THREE.MeshMatcapMaterial({ color: COLORS.concrete });
+                mesh.material = MATERIALS.concrete();
                 obj.layers.set(AppLayers.TowerBase);
             } else if (/desert|Plane/g.test(mesh.name)) {
-                mesh.material = new THREE.MeshMatcapMaterial({ color: COLORS.desert });
+                mesh.material = MATERIALS.desert();
                 mesh.receiveShadow = true;
             } else {
-                mesh.material = new THREE.MeshMatcapMaterial({ color: COLORS.desert });
+                mesh.material = MATERIALS.desert();
                 mesh.receiveShadow = true;
             }
         }
@@ -380,15 +381,11 @@ function drawPath() {
         new THREE.Vector2(-shapeH, shapeW),
     ];
     const extrudeShape = new THREE.Shape(shapePts);
-
     const geometry = new THREE.ExtrudeGeometry(extrudeShape, {
         steps: 100,
         extrudePath: pathCurve,
     });
-    // const material = new THREE.MeshLambertMaterial({ color: 0xcccccc, wireframe: false });
-    const material = new THREE.MeshMatcapMaterial({ color: COLORS.concrete });
-
-    const pathMesh = new THREE.Mesh(geometry, material);
+    const pathMesh = new THREE.Mesh(geometry, MATERIALS.path());
     pathMesh.name = "Road";
     pathMesh.position.y = shapeH;
 
@@ -727,18 +724,12 @@ function handleHoverOpacityEfx() {
         // keep track of current towerBase
         hoveredTowerBaseName = towerBaseMesh.name;
 
-        (towerBaseMesh as THREE.Mesh).material = new THREE.MeshMatcapMaterial({
-            color: COLORS.concrete,
-            transparent: true,
-            opacity: 0.5,
-        });
+        (towerBaseMesh as THREE.Mesh).material = MATERIALS.concreteTransparent();
     } else {
         if (hoveredTowerBaseName) {
             const hoveredTowerBase = scene.getObjectByName(hoveredTowerBaseName) as THREE.Mesh;
+            hoveredTowerBase.material = MATERIALS.concrete();
 
-            hoveredTowerBase.material = new THREE.MeshMatcapMaterial({
-                color: COLORS.concrete,
-            });
             // remove memory of hovered towerBase
             hoveredTowerBaseName = null;
         }
@@ -752,23 +743,15 @@ function handleHoverOpacityEfx() {
 
         hoveredTowerId = tower.id;
 
-        towerMesh.material = new THREE.MeshBasicMaterial({
-            // transparent: true,
-            // opacity: 0.75,
-            color: 0xca947d,
-            map: towerTexture,
-        });
+        towerMesh.material = MATERIALS.towerHighlight(towerTexture);
         tower.rangeGizmo.visible = true;
     } else {
         if (hoveredTowerId) {
             const hoveredTower = towers.find((t) => t.id === hoveredTowerId);
             // console.log({ scene, hoveredTowerId, hoveredTower });
-
             if (!hoveredTower) return;
-            hoveredTower.model.material = new THREE.MeshBasicMaterial({
-                color: 0xdba58c,
-                map: towerTexture,
-            });
+
+            hoveredTower.model.material = MATERIALS.tower(towerTexture);
             hoveredTower.rangeGizmo.visible = false;
         }
         hoveredTowerId = null;
@@ -809,11 +792,7 @@ function onProjectile(e: any) {
     scene.add(projectile.model);
 
     if (DRAW_FUTURE_GIZMO) {
-        const futureGizmo = new THREE.Mesh(
-            new THREE.SphereGeometry(0.35),
-            new THREE.MeshToonMaterial({ color: 0x00ffff })
-            // new THREE.MeshToonMaterial({ color: 0xff0000 })
-        );
+        const futureGizmo = new THREE.Mesh(new THREE.SphereGeometry(0.35), MATERIALS.projectileGizmo());
         const hitPosition = new THREE.Vector3().copy(projectile.destination);
         futureGizmo.position.set(hitPosition.x, hitPosition.y, hitPosition.z);
         futureGizmo.name = "FutureGizmo";

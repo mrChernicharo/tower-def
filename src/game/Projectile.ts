@@ -3,7 +3,7 @@ import { AppLayers, TowerType, TrajectoryType } from "./enums";
 import { PROJECTILE_MODELS, towerTexture } from "./game";
 import { idMaker } from "./helpers";
 import { ProjectileBluePrint } from "./types";
-import { COLORS, PROJECTILE_BLUEPRINTS } from "./constants";
+import { COLORS, MATERIALS, PROJECTILE_BLUEPRINTS } from "./constants";
 import { Tower } from "./Tower";
 
 class ProjectileBase {
@@ -20,6 +20,7 @@ class ProjectileBase {
     explosion: THREE.Mesh;
     damage: number;
     constructor(tower: Tower, destination: THREE.Vector3, targetId: string) {
+        // INITIALIZE CLASS MEMBERS
         this.id = `proj-${tower.towerName}-${idMaker()}`;
         this.targetEnemyId = targetId;
         this.type = tower.blueprint.name;
@@ -38,15 +39,13 @@ class ProjectileBase {
             tower.position.z
         );
 
+        // SETUP MODEL
         if (this.blueprint.trajectoryType === TrajectoryType.Straight) {
             const geometry = this.model.geometry.clone();
             geometry.rotateX(Math.PI * 0.5);
             this.model.geometry = geometry;
         }
-        this.model.material = new THREE.MeshBasicMaterial({
-            color: COLORS[this.blueprint.color as keyof typeof COLORS],
-            map: towerTexture,
-        });
+        this.model.material = MATERIALS.projectile(COLORS[this.blueprint.color as keyof typeof COLORS], towerTexture);
         this.model.position.set(this.originPos.x, this.originPos.y, this.originPos.z);
         const size = this.blueprint.modelScale;
         this.model.scale.set(size, size, size);
@@ -56,11 +55,7 @@ class ProjectileBase {
 
         // SETUP EXPLOSION
         const explosionGeometry = new THREE.SphereGeometry(0.1);
-        const explosionMaterial = new THREE.MeshToonMaterial({
-            color: COLORS[this.blueprint.explosionColor as keyof typeof COLORS],
-            transparent: true,
-            opacity: 0.6,
-        });
+        const explosionMaterial = MATERIALS.explosion(COLORS[this.blueprint.explosionColor as keyof typeof COLORS]);
         this.explosion = new THREE.Mesh(explosionGeometry, explosionMaterial);
     }
 }
@@ -76,7 +71,7 @@ export class StraightProjectile extends ProjectileBase {
         const dest = new THREE.Vector3().copy(this.destination);
         const curPos = new THREE.Vector3().copy(this.model.position);
         const geometry = new THREE.BufferGeometry().setFromPoints([curPos, dest]);
-        const material = new THREE.LineBasicMaterial({ color: 0xff0000 });
+        const material = MATERIALS.trajectoryLine();
         this.trajectory = new THREE.Line(geometry, material);
     }
 
@@ -134,7 +129,7 @@ export class ParabolaProjectile extends ProjectileBase {
     _setupTrajectory() {
         const points = this.curve.getPoints(50);
         const geometry = new THREE.BufferGeometry().setFromPoints(points);
-        const material = new THREE.LineBasicMaterial({ color: 0xff0000 });
+        const material = MATERIALS.trajectoryLine();
 
         this.trajectory = new THREE.Line(geometry, material);
     }

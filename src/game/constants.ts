@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-loss-of-precision */
 import { EnemyChar, EnemyType, TargetingStrategy, TowerType, TrajectoryType } from "./enums";
 import { EnemyBluePrint, ProjectileBluePrint, TowerBluePrint } from "./types";
+import { THREE } from "../three";
 
 export const DRAW_FUTURE_GIZMO = false;
 // export const DRAW_FUTURE_GIZMO = true;
@@ -69,10 +70,6 @@ export const COLORS = {
     white: 0xffffff,
 } as const;
 
-// export const MATERIALS = {
-//     damageMaterial
-// }
-
 export const ENEMY_BLUEPRINTS: { [k in EnemyType]: EnemyBluePrint } = {
     spider: {
         name: EnemyType.Spider,
@@ -140,6 +137,49 @@ export const ENEMY_BLUEPRINTS: { [k in EnemyType]: EnemyBluePrint } = {
         walkAnimationName: "Walk",
     },
 } as const;
+
+export const MATERIALS = {
+    damageMaterialStd: () => new THREE.MeshStandardMaterial({ color: "red" }),
+    damageMaterialPhysical: () => new THREE.MeshStandardMaterial({ color: "red" }),
+    concrete: () => new THREE.MeshMatcapMaterial({ color: COLORS.concrete }),
+    desert: () => new THREE.MeshMatcapMaterial({ color: COLORS.desert }),
+    path: () => new THREE.MeshMatcapMaterial({ color: COLORS.concrete }),
+    concreteTransparent: () =>
+        new THREE.MeshMatcapMaterial({
+            color: COLORS.concrete,
+            transparent: true,
+            opacity: 0.5,
+        }),
+    tower: (towerTexture: THREE.Texture) =>
+        new THREE.MeshBasicMaterial({
+            color: 0xdba58c,
+            map: towerTexture,
+        }),
+    towerHighlight: (towerTexture: THREE.Texture) =>
+        new THREE.MeshBasicMaterial({
+            color: 0xca947d,
+            map: towerTexture,
+        }),
+    towerRangeGizmo: (color: string) =>
+        new THREE.MeshBasicMaterial({
+            transparent: true,
+            opacity: 0.15,
+            color,
+        }),
+    projectileGizmo: () => new THREE.MeshToonMaterial({ color: 0x00ffff }),
+    projectile: (color: number, towerTexture: THREE.Texture) =>
+        new THREE.MeshBasicMaterial({
+            color,
+            map: towerTexture,
+        }),
+    explosion: (color: number) =>
+        new THREE.MeshToonMaterial({
+            color,
+            transparent: true,
+            opacity: 0.6,
+        }),
+    trajectoryLine: () => new THREE.LineBasicMaterial({ color: 0xff0000 }),
+};
 
 export const TOWER_BLUEPRINTS: { [k in TowerType]: TowerBluePrint[] } = {
     Archer: [

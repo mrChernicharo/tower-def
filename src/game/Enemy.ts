@@ -5,7 +5,7 @@ import { THREE } from "../three";
 import * as SkeletonUtils from "three/examples/jsm/utils/SkeletonUtils.js";
 import { EnemyType } from "./enums";
 import { EnemyBluePrint } from "./types";
-import { ENEMY_BLUEPRINTS } from "./constants";
+import { ENEMY_BLUEPRINTS, MATERIALS } from "./constants";
 import { idMaker } from "./helpers";
 
 export class Enemy {
@@ -184,9 +184,9 @@ export class Enemy {
         const enemyMesh = obj as THREE.Mesh;
 
         try {
-            const material = new (THREE[materialType] as any)().copy(enemyMesh.material as any);
+            const material = new (THREE[materialType] as any)().copy(enemyMesh.material as any) as THREE.Material;
 
-            enemyMesh.material = new THREE.MeshStandardMaterial({ color: "red" });
+            enemyMesh.material = MATERIALS.damageMaterialStd();
 
             setTimeout(() => {
                 if (!this.isHurt) {
