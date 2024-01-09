@@ -1,6 +1,8 @@
 import { EnemyChar, EnemyType, TowerType } from "./enums";
 import { THREE } from "../three";
 import { GLTF } from "three/examples/jsm/Addons.js";
+import { allAreaLevels } from "./constants";
+import { LevelStarCount } from "./types";
 
 export function getEnemyTypeFromChar(char: EnemyChar): EnemyType {
     switch (char) {
@@ -79,3 +81,34 @@ export function getProjectileTowerName(modelName: string) {
 export const wait = async (timeInMilliseconds: number): Promise<void> => {
     return new Promise((resolve) => setTimeout(resolve, timeInMilliseconds));
 };
+
+export function getTotalStageCount() {
+    let count = 0;
+    for (const area of Object.keys(allAreaLevels)) {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        allAreaLevels[area as keyof typeof allAreaLevels].forEach((_) => {
+            count++;
+        });
+    }
+    return count;
+}
+
+export function calcEarnedStarsForGameWin(hp: number) {
+    if (hp >= 9) return 3;
+    else if (hp >= 5) return 2;
+    else return 1;
+}
+
+export function getStarIcons(stars: LevelStarCount) {
+    switch (stars) {
+        case 1:
+            return "★ ☆ ☆";
+        case 2:
+            return "★ ★ ☆";
+        case 3:
+            return "★ ★ ★";
+        case 0:
+        default:
+            return "☆ ☆ ☆";
+    }
+}

@@ -1,8 +1,9 @@
-import { useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import { useParams } from "react-router-dom";
 import { destroyGame, initGame } from "../../game/game";
 import { Link } from "react-router-dom";
 import { usePlayerContext } from "../context/usePlayerContext";
+import { LevelStarCount } from "../../game/types";
 
 const topBarStyles = {
     display: "flex",
@@ -11,7 +12,7 @@ const topBarStyles = {
 
 const Game = () => {
     const { area, level } = useParams();
-    const { gold, hp } = usePlayerContext();
+    const { gold, hp, updateStars } = usePlayerContext();
     const gameRunning = useRef(false);
 
     useEffect(() => {
@@ -25,6 +26,21 @@ const Game = () => {
             gameRunning.current = false;
         };
     }, [area, gold, hp, level]);
+
+    const onGameWon = useCallback(
+        (e: CustomEvent<LevelStarCount>) => {
+            console.log("game-win", { e, stars: e.detail });
+            updateStars(Number(level), e.detail);
+        },
+        [level, updateStars]
+    ) as () => void;
+
+    useEffect(() => {
+        window.addEventListener("game-win", onGameWon);
+        return () => {
+            window.removeEventListener("game-win", onGameWon);
+        };
+    }, [onGameWon]);
 
     return (
         <>

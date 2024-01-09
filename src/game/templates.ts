@@ -1,7 +1,8 @@
 import { Tower } from "./Tower";
 import { TOWER_BLUEPRINTS } from "./constants";
 import { ModalType, TowerType } from "./enums";
-import { capitalize } from "./helpers";
+import { capitalize, getStarIcons } from "./helpers";
+import { LevelStarCount } from "./types";
 
 export const modalTemplates = {
     towerBuild: () => `
@@ -115,8 +116,9 @@ export const modalTemplates = {
 } as const;
 
 export const gameEndTemplates = {
-    gameWin: () => `
+    gameWin: (stars: LevelStarCount) => `
         <h2>You Win!</h2>
+        <div id="earned-stars">${getStarIcons(stars)}</div>
         <button id="confirm-end-game-btn">Ok</button>
     `,
     gameLose: () => `

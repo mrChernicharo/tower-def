@@ -6,7 +6,13 @@ import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import { CSS2DRenderer, CSS2DObject } from "three/examples/jsm/renderers/CSS2DRenderer.js";
 import { THREE } from "../three";
 import { Enemy } from "./Enemy";
-import { capitalize, getEnemyTypeFromChar, getProjectileTowerName, handleModelGun } from "./helpers";
+import {
+    calcEarnedStarsForGameWin,
+    capitalize,
+    getEnemyTypeFromChar,
+    getProjectileTowerName,
+    handleModelGun,
+} from "./helpers";
 import {
     COLORS,
     DRAW_FUTURE_GIZMO,
@@ -80,7 +86,7 @@ export async function destroyGame() {
     cancelAnimationFrame(frameId);
     currWaveIdx = 0;
     frameId = 0;
-    gui.destroy();
+    gui?.destroy();
     gameClock.stop();
     scene.clear();
     camera.clear();
@@ -213,7 +219,7 @@ function _wireUpLoadingManager() {
         console.log("loadingManager::START", { url, loaded, total });
     };
 
-    loadingManager.onProgress = (url, loaded, total) => {
+    loadingManager.onProgress = (_url, loaded, total) => {
         // console.log("loadingManager::PROGRESS", { url, loaded, total });
         progressBar.value = (total / loaded) * 100;
     };
@@ -869,8 +875,11 @@ function onEnemyDestroyed(e: any) {
         const waveCount = STAGE_WAVES_DATA[levelIdx].length;
         if (currWaveIdx === waveCount) {
             console.log("GAME END ... WIN!");
-            endGameScreen.innerHTML = gameEndTemplates.gameWin();
+            const stars = calcEarnedStarsForGameWin(playerStats.hp);
+            endGameScreen.innerHTML = gameEndTemplates.gameWin(stars);
             endGameScreen.classList.remove("hidden");
+            window.dispatchEvent(new CustomEvent("game-win", { detail: stars }));
+
             endGameBtn = document.querySelector("#confirm-end-game-btn") as HTMLButtonElement;
             endGameBtn.addEventListener("click", onEndGameConfirm);
         }

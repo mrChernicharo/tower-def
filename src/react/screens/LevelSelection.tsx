@@ -1,20 +1,14 @@
 import { Link, useParams } from "react-router-dom";
 import { LevelStars } from "../components/levelStars";
 import { usePlayerContext } from "../context/usePlayerContext";
-
-const allAreaLevels = {
-    desert: [0, 1, 2, 3],
-    forest: [4, 5, 6, 7],
-    winter: [8, 9, 10, 11],
-    lava: [12, 13, 14, 15],
-} as const;
+import { allAreaLevels } from "../../game/constants";
 
 const LevelSelection = () => {
     const { area } = useParams();
     const areaLevels = allAreaLevels[area as keyof typeof allAreaLevels];
     const { stars } = usePlayerContext();
 
-    console.log(area, areaLevels);
+    console.log({ area, areaLevels, stars });
 
     return (
         <>
