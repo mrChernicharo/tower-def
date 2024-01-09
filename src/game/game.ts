@@ -46,6 +46,9 @@ export let projectiles: Map<string, Projectile>;
 export let explosions: Map<string, THREE.Mesh>;
 export let futureGizmos: Map<string, THREE.Mesh>;
 
+export let projectileFolder: any;
+export const projRotation = { x: 0 };
+
 export let gui: GUI;
 
 export const ENEMY_MODELS = {} as { [k in EnemyType]: GLTF };
@@ -172,6 +175,9 @@ async function gameSetup() {
     gameElapsedTime = 0;
 
     camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
+    camera.position.x = 18;
+    camera.position.y = 18;
+    camera.position.z = 62;
     camera.layers.enableAll();
 
     orbit = new OrbitControls(camera, renderer.domElement);
@@ -187,14 +193,14 @@ async function gameSetup() {
     mouseRay.layers.enable(AppLayers.Tower);
     mouseRay.layers.enable(AppLayers.Modals);
 
-    gui = new GUI({ closed: true });
-    const camFolder = gui.addFolder("Camera");
-    camFolder.add(camera.position, "x", -200, 200);
-    camFolder.add(camera.position, "y", -2, 100);
-    camFolder.add(camera.position, "z", -200, 200);
-    camera.position.x = 18;
-    camera.position.y = 18;
-    camera.position.z = 62;
+    // gui = new GUI({ closed: true });
+    // const camFolder = gui.addFolder("Camera");
+    // camFolder.add(camera.position, "x", -200, 200);
+    // camFolder.add(camera.position, "y", -2, 100);
+    // camFolder.add(camera.position, "z", -200, 200);
+
+    // projectileFolder = gui.addFolder("Projectile Rotation");
+    // projectileFolder.add(projRotation, "x", -Math.PI * 2, Math.PI * 2, 0.1);
 
     projectiles = new Map();
     futureGizmos = new Map();

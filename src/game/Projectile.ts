@@ -39,15 +39,18 @@ class ProjectileBase {
         );
 
         const size = this.blueprint.modelScale;
-        this.model.userData["projectile_id"] = this.id;
-        this.model.userData["projectile_level"] = this.level;
-        this.model.layers.set(AppLayers.Projectile);
+        const geometry = this.model.geometry.clone();
+        geometry.rotateX(Math.PI * 0.5);
+        this.model.geometry = geometry;
         this.model.material = new THREE.MeshBasicMaterial({
             color: COLORS[this.blueprint.color as keyof typeof COLORS],
             map: towerTexture,
         });
         this.model.position.set(this.originPos.x, this.originPos.y, this.originPos.z);
         this.model.scale.set(size, size, size);
+        this.model.userData["projectile_id"] = this.id;
+        this.model.userData["projectile_level"] = this.level;
+        this.model.layers.set(AppLayers.Projectile);
 
         // SETUP EXPLOSION
         const explosionGeometry = new THREE.SphereGeometry(0.1);
@@ -61,14 +64,7 @@ class ProjectileBase {
 }
 
 export class StraightProjectile extends ProjectileBase {
-    constructor(
-        // towerType: TowerType,
-        // towerLevel: number,
-        // origin: THREE.Vector3,
-        tower: Tower,
-        destination: THREE.Vector3,
-        targetId: string
-    ) {
+    constructor(tower: Tower, destination: THREE.Vector3, targetId: string) {
         super(tower, destination, targetId);
         this._setupTrajectory();
     }
@@ -105,10 +101,14 @@ export class StraightProjectile extends ProjectileBase {
 
         this.model.position.set(result.x, result.y, result.z);
         // this.model.lookAt(result);
+
         this.model.lookAt(
+            // velocity
+            // result
+            this.destination
             // this.model.position.clone().sub(velocity.applyAxisAngle(new THREE.Vector3(0, 0, 1), -Math.PI * 0.5).sub(velocity))
             // this.model.position.clone().add(velocity.applyAxisAngle(new THREE.Vector3(0, 0, 1), -Math.PI * 0.5).add(velocity))
-            this.model.position.clone().add(dest.applyAxisAngle(new THREE.Vector3(0, 0, 1), -Math.PI * 0.5).add(dest))
+            // this.model.position.clone().add(dest.applyAxisAngle(new THREE.Vector3(0, 0, 1), -Math.PI * 0.5).add(dest))
             // this.model.position.clone().add(dest.applyAxisAngle(new THREE.Vector3(1, 0, 0), -Math.PI * 0.5).add(dest))
         );
 
