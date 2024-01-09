@@ -24,12 +24,12 @@ export const appRoutes = [
         element: <Game />,
     },
     {
-        path: "achievements",
-        element: <Achievements />,
-    },
-    {
         path: "skills",
         element: <Skills />,
+    },
+    {
+        path: "achievements",
+        element: <Achievements />,
     },
     {
         path: "settings",

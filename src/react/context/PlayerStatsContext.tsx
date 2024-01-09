@@ -3,17 +3,17 @@ import { getTotalStageCount, wait } from "../../game/helpers";
 import { GlobalPlayerStats, LevelStarCount, LevelStarMap } from "../../game/types";
 
 export type PlayerStatsContextType = {
-    loaded: boolean;
-    gold: number;
     hp: number;
+    gold: number;
     stars: LevelStarMap;
     unlockedStages: number;
+    loaded: boolean;
     updateStars: (stage: number, starCount: LevelStarCount) => void;
 };
 
 const defaultPlayerStats: GlobalPlayerStats = {
-    gold: 250,
     hp: 10,
+    gold: 250,
     stars: Array(getTotalStageCount()).fill(0),
     unlockedStages: 0,
 };
@@ -42,11 +42,11 @@ export const PlayerStatsContextProvider = ({ children }: { children: ReactNode }
     }, [playerStats]);
 
     const value: PlayerStatsContextType = {
+        hp: playerStats?.hp ?? defaultPlayerStats.hp,
+        gold: playerStats?.gold ?? defaultPlayerStats.gold,
+        stars: playerStats?.stars ?? defaultPlayerStats.stars,
+        unlockedStages: playerStats?.unlockedStages ?? defaultPlayerStats.unlockedStages,
         loaded: !!playerStats,
-        gold: playerStats?.gold ?? 0,
-        hp: playerStats?.hp ?? 0,
-        unlockedStages: playerStats?.unlockedStages ?? 0,
-        stars: playerStats?.stars ?? [],
         updateStars(stage, starCount) {
             setPlayerStats((prev) => {
                 const copy = { ...prev };

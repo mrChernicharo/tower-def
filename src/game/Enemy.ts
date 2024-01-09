@@ -61,6 +61,12 @@ export class Enemy {
         const s = this.bluePrint.modelScale;
         model.scale.set(s, s, s);
 
+        model.traverse((obj) => {
+            if ((obj as any).isMesh) {
+                obj.castShadow = true;
+            }
+        });
+
         return model;
     }
 

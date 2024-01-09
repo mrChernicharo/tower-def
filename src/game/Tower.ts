@@ -91,6 +91,13 @@ export class Tower {
         this.model.position.set(this.position.x, this.position.y, this.position.z);
         const s = this.blueprint.modelScale;
         this.model.scale.set(s, s, s);
+
+        this.model.traverse((obj) => {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            if ((obj as any).isMesh) {
+                obj.castShadow = true;
+            }
+        });
     }
 
     tick(delta: number, targetEnemy: Enemy | undefined) {

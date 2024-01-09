@@ -1,5 +1,5 @@
 import { THREE } from "../three";
-import { AppLayers, TowerType } from "./enums";
+import { AppLayers, TowerType, TrajectoryType } from "./enums";
 import { PROJECTILE_MODELS, towerTexture } from "./game";
 import { idMaker } from "./helpers";
 import { ProjectileBluePrint } from "./types";
@@ -38,15 +38,17 @@ class ProjectileBase {
             tower.position.z
         );
 
-        const size = this.blueprint.modelScale;
-        const geometry = this.model.geometry.clone();
-        geometry.rotateX(Math.PI * 0.5);
-        this.model.geometry = geometry;
+        if (this.blueprint.trajectoryType === TrajectoryType.Straight) {
+            const geometry = this.model.geometry.clone();
+            geometry.rotateX(Math.PI * 0.5);
+            this.model.geometry = geometry;
+        }
         this.model.material = new THREE.MeshBasicMaterial({
             color: COLORS[this.blueprint.color as keyof typeof COLORS],
             map: towerTexture,
         });
         this.model.position.set(this.originPos.x, this.originPos.y, this.originPos.z);
+        const size = this.blueprint.modelScale;
         this.model.scale.set(size, size, size);
         this.model.userData["projectile_id"] = this.id;
         this.model.userData["projectile_level"] = this.level;

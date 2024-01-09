@@ -37,7 +37,6 @@ export let cssRenderer: CSS2DRenderer;
 export let gameClock: THREE.Clock;
 export let orbit: OrbitControls;
 export let camera: THREE.PerspectiveCamera;
-export let ambientLight: THREE.AmbientLight;
 export let gameState = GameState.Idle;
 export let pathCurve: THREE.CatmullRomCurve3;
 export let mouseRay: THREE.Raycaster;
@@ -45,6 +44,10 @@ export let towerTexture: THREE.Texture;
 export let playerStats: PlayerStats;
 export let gameElapsedTime: number;
 export let loadingManager: THREE.LoadingManager;
+
+export let ambientLight: THREE.AmbientLight;
+export let pointLight: THREE.PointLight;
+export let lightProbe: THREE.LightProbe;
 
 export let enemies: Enemy[] = [];
 export let towers: Tower[] = [];
@@ -200,6 +203,13 @@ async function gameSetup() {
     mouseRay.layers.enable(AppLayers.Modals);
 
     // gui = new GUI({ closed: true });
+
+    // const lightFolder = gui.addFolder("Light");
+    // lightFolder.add(lightProbe, "intensity", 0, 100);
+    // lightFolder.add(lightProbe.position, "x", -200, 200);
+    // lightFolder.add(lightProbe.position, "y", -2, 100);
+    // lightFolder.add(lightProbe.position, "z", -200, 200);
+
     // const camFolder = gui.addFolder("Camera");
     // camFolder.add(camera.position, "x", -200, 200);
     // camFolder.add(camera.position, "y", -2, 100);
@@ -340,8 +350,10 @@ async function drawMap() {
                 obj.layers.set(AppLayers.TowerBase);
             } else if (/desert|Plane/g.test(mesh.name)) {
                 mesh.material = new THREE.MeshMatcapMaterial({ color: COLORS.desert });
+                mesh.receiveShadow = true;
             } else {
                 mesh.material = new THREE.MeshMatcapMaterial({ color: COLORS.desert });
+                mesh.receiveShadow = true;
             }
         }
     });

@@ -19,6 +19,41 @@ export const allAreas = [
     { id: 3, name: "lava" },
 ] as const;
 
+export const gameSkills = {
+    constructor: [
+        { name: "masonry basics", description: "reduce 10% build cost of level 1 towers", starCost: 2 },
+        { name: "reinforced walls", description: "1 extra ❤️", starCost: 2 },
+        { name: "advanced tools", description: "reduce 10% upgrade cost of level 2 towers", starCost: 3 },
+        { name: "fortified walls", description: "3 extra ❤️", starCost: 3 },
+        { name: "specialized artisans", description: "reduce 10% upgrade cost of level 3 towers", starCost: 4 },
+        { name: "masonry mastery", description: "reduce 10% cost of all towers", starCost: 5 },
+    ],
+    merchant: [
+        { name: "developing economy", description: "earn 10 gold every time you survive a wave", starCost: 2 },
+        { name: "trade with foreigners", description: "start with extra 50 gold", starCost: 2 },
+        { name: "oversees colony", description: "start with extra 100 gold", starCost: 3 },
+        { name: "bounty hunter", description: "earn 20 gold every time you survive a wave", starCost: 3 },
+        { name: "maximized profits", description: "earn 1 extra gold piece for every killed enemy", starCost: 4 },
+        { name: "advanced economy", description: "start with extra 150 gold", starCost: 5 },
+    ],
+    chemist: [
+        { name: "basic chemistry", description: "poison towers deal 10% extra damage", starCost: 2 },
+        { name: "herbal lore", description: "wizard towers deal 10% extra damage", starCost: 2 },
+        { name: "philosophy stone", description: "poison damage increased by 1", starCost: 3 },
+        { name: "laboratory trinkets", description: "poison towers deal 20% extra damage", starCost: 3 },
+        { name: "classical library", description: "wizard towers deal 20% extra damage", starCost: 4 },
+        { name: "chemical mastery", description: "poison damage increased by 3", starCost: 5 },
+    ],
+    blackSmith: [
+        { name: "basic smithery", description: "archer towers deal 10% extra damage", starCost: 2 },
+        { name: "metal alloy", description: "ballista towers deal 10% extra damage", starCost: 2 },
+        { name: "gold hammer", description: "cannon towers deal 10% extra damage", starCost: 3 },
+        { name: "high temperature oven", description: "archer towers deal 20% extra damage", starCost: 3 },
+        { name: "advanced forgery", description: "ballista towers deal 20% extra damage", starCost: 4 },
+        { name: "smith mastery", description: "cannon towers deal 20% extra damage", starCost: 5 },
+    ],
+};
+
 export const COLORS = {
     bg: 0x333355,
     desert: 0xdd6600,
@@ -374,7 +409,7 @@ export const PROJECTILE_BLUEPRINTS: { [k in TowerType]: ProjectileBluePrint[] } 
             color: "blue",
             modelScale: 0.005,
             speed: 14,
-            trajectoryType: TrajectoryType.Parabola,
+            trajectoryType: TrajectoryType.Straight,
         },
         {
             type: TowerType.Archer,
@@ -384,7 +419,7 @@ export const PROJECTILE_BLUEPRINTS: { [k in TowerType]: ProjectileBluePrint[] } 
             color: "blue",
             modelScale: 0.005,
             speed: 14,
-            trajectoryType: TrajectoryType.Parabola,
+            trajectoryType: TrajectoryType.Straight,
         },
         {
             type: TowerType.Archer,
@@ -394,7 +429,7 @@ export const PROJECTILE_BLUEPRINTS: { [k in TowerType]: ProjectileBluePrint[] } 
             color: "blue",
             modelScale: 0.005,
             speed: 14,
-            trajectoryType: TrajectoryType.Parabola,
+            trajectoryType: TrajectoryType.Straight,
         },
         {
             type: TowerType.Archer,
@@ -404,7 +439,7 @@ export const PROJECTILE_BLUEPRINTS: { [k in TowerType]: ProjectileBluePrint[] } 
             color: "blue",
             modelScale: 0.005,
             speed: 14,
-            trajectoryType: TrajectoryType.Parabola,
+            trajectoryType: TrajectoryType.Straight,
         },
     ],
     Ballista: [
@@ -620,33 +655,6 @@ export const STAGE_WAVES_DATA: [string, number, number][][][] = [
     [
         // wave 1
         waveSegment(EnemyChar.Spider, 1),
-        // wave 2
-        waveSegment(EnemyChar.Raptor, 4),
-        // wave 3
-        [...waveSegment(EnemyChar.Soldier), ...waveSegment(EnemyChar.Spider)],
-        // wave 4
-        [...waveSegment(EnemyChar.Raptor), ...waveSegment(EnemyChar.Spider, 0.8, 20)],
-        // wave 5
-        [
-            ...waveSegment(EnemyChar.Brigand),
-            ...waveSegment(EnemyChar.Soldier, 3, 10, 22),
-            ...waveSegment(EnemyChar.Spider, 0.8, 20),
-        ],
-        // wave 5
-        [
-            ...waveSegment(EnemyChar.Brigand, 2),
-            ...waveSegment(EnemyChar.Raptor, 3, 10, 22),
-            ...waveSegment(EnemyChar.Spider, 0.8, 50),
-        ],
-        // wave 6
-        [
-            ...waveSegment(EnemyChar.Raptor, 2),
-            ...waveSegment(EnemyChar.Soldier, 3, 8, 22),
-            ...waveSegment(EnemyChar.Brigand, 3, 8, 44),
-            ...waveSegment(EnemyChar.Spider, 1.5, 100, 0, [-1, 1]),
-        ],
-        // wave 7
-        [...waveSegment(EnemyChar.Raptor2, 1, 1), ...waveSegment(EnemyChar.Spider, 1.5, 1000)],
     ],
 
     // stage 05
@@ -679,7 +687,7 @@ export const STAGE_WAVES_DATA: [string, number, number][][][] = [
             ...waveSegment(EnemyChar.Spider, 1.5, 100, 0, [-1, 1]),
         ],
         // wave 7
-        [...waveSegment(EnemyChar.Raptor2, 1, 1), ...waveSegment(EnemyChar.Spider, 1.5, 1000)],
+        [...waveSegment(EnemyChar.Raptor2, 1, 1), ...waveSegment(EnemyChar.Spider, 1.5, 40)],
     ],
 
     // stage 06
@@ -3215,7 +3223,7 @@ export const desertLevelPath = {
         {
             x: -3.5637168884277344,
             y: 0.0,
-            z: -10.611454010009766,
+            z: -10.6114540409766,
         },
         {
             x: -3.560542106628418,
