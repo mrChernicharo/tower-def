@@ -569,31 +569,6 @@ export const STAGE_WAVES_DATA: [string, number, number][][][] = [
         waveSegment(EnemyChar.Spider, 1),
         // wave 2
         waveSegment(EnemyChar.Raptor, 4),
-        // wave 3
-        [...waveSegment(EnemyChar.Soldier), ...waveSegment(EnemyChar.Spider)],
-        // wave 4
-        [...waveSegment(EnemyChar.Raptor), ...waveSegment(EnemyChar.Spider, 0.8, 20)],
-        // wave 5
-        [
-            ...waveSegment(EnemyChar.Brigand),
-            ...waveSegment(EnemyChar.Soldier, 3, 10, 22),
-            ...waveSegment(EnemyChar.Spider, 0.8, 20),
-        ],
-        // wave 5
-        [
-            ...waveSegment(EnemyChar.Brigand, 2),
-            ...waveSegment(EnemyChar.Raptor, 3, 10, 22),
-            ...waveSegment(EnemyChar.Spider, 0.8, 50),
-        ],
-        // wave 6
-        [
-            ...waveSegment(EnemyChar.Raptor, 2),
-            ...waveSegment(EnemyChar.Soldier, 3, 8, 22),
-            ...waveSegment(EnemyChar.Brigand, 3, 8, 44),
-            ...waveSegment(EnemyChar.Spider, 1.5, 100, 0, [-1, 1]),
-        ],
-        // wave 7
-        [...waveSegment(EnemyChar.Raptor2, 1, 1), ...waveSegment(EnemyChar.Spider, 1.5, 1000)],
     ],
 
     // stage 01
@@ -625,6 +600,8 @@ export const STAGE_WAVES_DATA: [string, number, number][][][] = [
             ...waveSegment(EnemyChar.Brigand, 3, 8, 44),
             ...waveSegment(EnemyChar.Spider, 1.5, 100, 0, [-1, 1]),
         ],
+        // wave 7
+        [...waveSegment(EnemyChar.Raptor2, 1, 1), ...waveSegment(EnemyChar.Spider, 1.5, 1000)],
     ],
 
     // stage 02
@@ -687,6 +664,8 @@ export const STAGE_WAVES_DATA: [string, number, number][][][] = [
             ...waveSegment(EnemyChar.Brigand, 3, 8, 44),
             ...waveSegment(EnemyChar.Spider, 1.5, 100, 0, [-1, 1]),
         ],
+        // wave 7
+        [...waveSegment(EnemyChar.Raptor2, 1, 1), ...waveSegment(EnemyChar.Spider, 1.5, 1000)],
     ],
 
     // stage 04

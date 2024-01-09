@@ -214,7 +214,7 @@ function _wireUpLoadingManager() {
     };
 
     loadingManager.onProgress = (url, loaded, total) => {
-        console.log("loadingManager::PROGRESS", { url, loaded, total });
+        // console.log("loadingManager::PROGRESS", { url, loaded, total });
         progressBar.value = (total / loaded) * 100;
     };
 

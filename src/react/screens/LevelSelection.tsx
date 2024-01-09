@@ -1,4 +1,6 @@
 import { Link, useParams } from "react-router-dom";
+import { LevelStars } from "../components/levelStars";
+import { usePlayerContext } from "../context/usePlayerContext";
 
 const allAreaLevels = {
     desert: [0, 1, 2, 3],
@@ -10,6 +12,7 @@ const allAreaLevels = {
 const LevelSelection = () => {
     const { area } = useParams();
     const areaLevels = allAreaLevels[area as keyof typeof allAreaLevels];
+    const { stars } = usePlayerContext();
 
     console.log(area, areaLevels);
 
@@ -25,6 +28,7 @@ const LevelSelection = () => {
                         <Link to={`/area/${area}/level/${level}`}>
                             <button>{level}</button>
                         </Link>
+                        <LevelStars stars={stars[level]} />
                     </ul>
                 ))}
             </ul>

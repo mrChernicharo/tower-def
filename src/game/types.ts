@@ -51,3 +51,12 @@ export type GameInitProps = {
     gold: number;
     hp: number;
 };
+
+export type LevelStarCount = 0 | 1 | 2 | 3;
+export type LevelStarMap = LevelStarCount[];
+
+export type GlobalPlayerStats = {
+    hp: number;
+    gold: number;
+    stars: LevelStarMap;
+};
