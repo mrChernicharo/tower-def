@@ -6,7 +6,7 @@ import { allAreaLevels } from "../../game/constants";
 const LevelSelection = () => {
     const { area } = useParams();
     const areaLevels = allAreaLevels[area as keyof typeof allAreaLevels];
-    const { stars } = usePlayerContext();
+    const { stars, unlockedStages } = usePlayerContext();
 
     console.log({ area, areaLevels, stars });
 
@@ -20,7 +20,7 @@ const LevelSelection = () => {
                 {areaLevels.map((level) => (
                     <ul key={level}>
                         <Link to={`/area/${area}/level/${level}`}>
-                            <button>{level}</button>
+                            <button disabled={level > unlockedStages}>{level}</button>
                         </Link>
                         <LevelStars stars={stars[level]} />
                     </ul>

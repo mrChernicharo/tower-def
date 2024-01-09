@@ -1,23 +1,21 @@
 import { Link } from "react-router-dom";
-
-const areas = [
-    { id: 0, name: "desert" },
-    { id: 1, name: "forest" },
-    { id: 2, name: "winter" },
-    { id: 3, name: "lava" },
-];
+import { allAreaLevels, allAreas } from "../../game/constants";
+import { usePlayerContext } from "../context/usePlayerContext";
 
 const AreaSelection = () => {
+    const { unlockedStages } = usePlayerContext();
     return (
         <>
             <Link to="/">←</Link>
             <h1>AreaSelection</h1>
 
             <ul>
-                {areas.map((area) => (
+                {allAreas.map((area) => (
                     <li key={area.id}>
                         <Link to={`/area/${area.name}`}>
-                            <button>{area.name}</button>
+                            <button disabled={!allAreaLevels[area.name].some((val) => unlockedStages >= val)}>
+                                {area.name}
+                            </button>
                         </Link>
                     </li>
                 ))}

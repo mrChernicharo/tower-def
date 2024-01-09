@@ -7,14 +7,20 @@ export type PlayerStatsContextType = {
     gold: number;
     hp: number;
     stars: LevelStarMap;
+    unlockedStages: number;
     updateStars: (stage: number, starCount: LevelStarCount) => void;
 };
 
+const defaultPlayerStats: GlobalPlayerStats = {
+    gold: 250,
+    hp: 10,
+    stars: Array(getTotalStageCount()).fill(0),
+    unlockedStages: 0,
+};
+
 export const PlayerStatsContext = createContext<PlayerStatsContextType>({
+    ...defaultPlayerStats,
     loaded: false,
-    gold: 0,
-    hp: 0,
-    stars: [],
     updateStars() {},
 });
 
@@ -39,6 +45,7 @@ export const PlayerStatsContextProvider = ({ children }: { children: ReactNode }
         loaded: !!playerStats,
         gold: playerStats?.gold ?? 0,
         hp: playerStats?.hp ?? 0,
+        unlockedStages: playerStats?.unlockedStages ?? 0,
         stars: playerStats?.stars ?? [],
         updateStars(stage, starCount) {
             setPlayerStats((prev) => {
@@ -47,7 +54,7 @@ export const PlayerStatsContextProvider = ({ children }: { children: ReactNode }
                 if (copy.stars && starCount > copy.stars[stage]) {
                     copy.stars?.splice(stage, 1, starCount);
                 }
-                return { ...copy, stars: copy.stars } as GlobalPlayerStats;
+                return { ...copy, stars: copy.stars, unlockedStages: stage + 1 } as GlobalPlayerStats;
             });
         },
     };
@@ -56,12 +63,6 @@ export const PlayerStatsContextProvider = ({ children }: { children: ReactNode }
 };
 
 async function loadUserStats() {
-    const defaultPlayerStats: GlobalPlayerStats = {
-        gold: 250,
-        hp: 10,
-        stars: Array(getTotalStageCount()).fill(0),
-    };
-
     const stats = localStorage.getItem("playerStats")
         ? JSON.parse(localStorage.getItem("playerStats")!)
         : defaultPlayerStats;

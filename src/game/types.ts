@@ -58,5 +58,6 @@ export type LevelStarMap = LevelStarCount[];
 export type GlobalPlayerStats = {
     hp: number;
     gold: number;
+    unlockedStages: number;
     stars: LevelStarMap;
 };
