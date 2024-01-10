@@ -16,6 +16,7 @@ import {
 import {
     COLORS,
     DRAW_FUTURE_GIZMO,
+    DRAW_PROJECTILE_TRAJECTORIES,
     ENEMY_BLUEPRINTS,
     MATERIALS,
     STAGE_WAVES_DATA,
@@ -804,7 +805,9 @@ function onProjectile(e: any) {
     }
 
     // in case you want to draw trajectories
-    // scene.add(projectile.trajectory);
+    if (DRAW_PROJECTILE_TRAJECTORIES) {
+        scene.add(projectile.trajectory);
+    }
 }
 
 function onProjectileExplode(e: any) {
@@ -839,7 +842,7 @@ function onEnemyDestroyed(e: any) {
     const { enemy, endReached } = data as { enemy: Enemy; endReached: boolean };
 
     if (endReached) {
-        console.log("end reached");
+        console.log(`${enemy.enemyType} reached end`);
         playerStats.loseHP(1);
         if (playerStats.hp <= 0) {
             console.log("GAME END ... LOSE");

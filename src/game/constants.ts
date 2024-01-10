@@ -6,6 +6,9 @@ import { THREE } from "../three";
 export const DRAW_FUTURE_GIZMO = false;
 // export const DRAW_FUTURE_GIZMO = true;
 
+export const DRAW_PROJECTILE_TRAJECTORIES = false;
+// export const DRAW_PROJECTILE_TRAJECTORIES = true;
+
 export const allAreaLevels = {
     desert: [0, 1, 2, 3],
     forest: [4, 5, 6, 7],
@@ -492,7 +495,7 @@ export const PROJECTILE_BLUEPRINTS: { [k in TowerType]: ProjectileBluePrint[] } 
             color: "red",
             modelScale: 0.0075,
             speed: 13,
-            trajectoryType: TrajectoryType.Straight,
+            trajectoryType: TrajectoryType.Parabola,
         },
         {
             type: TowerType.Ballista,
@@ -502,7 +505,7 @@ export const PROJECTILE_BLUEPRINTS: { [k in TowerType]: ProjectileBluePrint[] } 
             color: "red",
             modelScale: 0.0075,
             speed: 13,
-            trajectoryType: TrajectoryType.Straight,
+            trajectoryType: TrajectoryType.Parabola,
         },
         {
             type: TowerType.Ballista,
@@ -512,7 +515,7 @@ export const PROJECTILE_BLUEPRINTS: { [k in TowerType]: ProjectileBluePrint[] } 
             color: "red",
             modelScale: 0.0075,
             speed: 13,
-            trajectoryType: TrajectoryType.Straight,
+            trajectoryType: TrajectoryType.Parabola,
         },
         {
             type: TowerType.Ballista,
@@ -522,7 +525,7 @@ export const PROJECTILE_BLUEPRINTS: { [k in TowerType]: ProjectileBluePrint[] } 
             color: "red",
             modelScale: 0.0075,
             speed: 13,
-            trajectoryType: TrajectoryType.Straight,
+            trajectoryType: TrajectoryType.Parabola,
         },
     ],
     Cannon: [

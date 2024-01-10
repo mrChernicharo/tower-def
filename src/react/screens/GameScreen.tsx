@@ -33,7 +33,7 @@ const Game = () => {
                 skillsObj[id as keyof typeof skills] = true;
             }
         });
-        console.log({ skillsObj });
+        // console.log({ skillsObj });
 
         // const skillList = Object.entries(skills)
         //     .filter(([_id, bool]) => bool)
@@ -69,7 +69,7 @@ const Game = () => {
             <div style={topBarStyles}>
                 <Link to={`/area/${area}`}>←</Link>
                 <div>
-                    {area} {level}
+                    {area} #{level}
                 </div>
                 <div id="gold-display">${gold}</div>
                 <div id="hp-display">❤️{hp}</div>

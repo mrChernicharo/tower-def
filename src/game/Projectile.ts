@@ -1,5 +1,5 @@
 import { THREE } from "../three";
-import { AppLayers, TowerType, TrajectoryType } from "./enums";
+import { AppLayers, TowerType } from "./enums";
 import { PROJECTILE_MODELS, towerTexture } from "./game";
 import { idMaker } from "./helpers";
 import { ProjectileBluePrint } from "./types";
@@ -40,11 +40,10 @@ class ProjectileBase {
         );
 
         // SETUP MODEL
-        if (this.blueprint.trajectoryType === TrajectoryType.Straight) {
-            const geometry = this.model.geometry.clone();
-            geometry.rotateX(Math.PI * 0.5);
-            this.model.geometry = geometry;
-        }
+        const geometry = this.model.geometry.clone();
+        geometry.rotateX(-Math.PI * 0.5);
+        // geometry.rotateX(this.blueprint.trajectoryType === TrajectoryType.Straight ? Math.PI * 0.5 : -Math.PI * 0.5);
+        this.model.geometry = geometry;
         this.model.material = MATERIALS.projectile(COLORS[this.blueprint.color as keyof typeof COLORS], towerTexture);
         this.model.position.set(this.originPos.x, this.originPos.y, this.originPos.z);
         const size = this.blueprint.modelScale;
@@ -97,17 +96,7 @@ export class StraightProjectile extends ProjectileBase {
         );
 
         this.model.position.set(result.x, result.y, result.z);
-        // this.model.lookAt(result);
-
-        this.model.lookAt(
-            // velocity
-            // result
-            this.destination
-            // this.model.position.clone().sub(velocity.applyAxisAngle(new THREE.Vector3(0, 0, 1), -Math.PI * 0.5).sub(velocity))
-            // this.model.position.clone().add(velocity.applyAxisAngle(new THREE.Vector3(0, 0, 1), -Math.PI * 0.5).add(velocity))
-            // this.model.position.clone().add(dest.applyAxisAngle(new THREE.Vector3(0, 0, 1), -Math.PI * 0.5).add(dest))
-            // this.model.position.clone().add(dest.applyAxisAngle(new THREE.Vector3(1, 0, 0), -Math.PI * 0.5).add(dest))
-        );
+        this.model.lookAt(this.destination);
 
         return distance;
     }
@@ -159,11 +148,13 @@ export class ParabolaProjectile extends ProjectileBase {
         const t = getPercDist(this.curve, this.blueprint.speed, this.timeSinceSpawn);
 
         const position = this.curve.getPointAt(t);
-        const tangent = this.curve.getTangentAt(t);
+        const direction = this.curve.getPointAt(t + 0.04);
 
         this.model.position.copy(position);
         this.model.lookAt(
-            position.clone().add(tangent.applyAxisAngle(new THREE.Vector3(1, 0, 0), -Math.PI * 0.5).add(tangent))
+            direction
+            // tangent,
+            // position.clone().add(tangent.applyAxisAngle(new THREE.Vector3(1, 0, 0), -Math.PI * 0.5).add(tangent))
         );
 
         return position.distanceTo(new THREE.Vector3().copy(this.destination));

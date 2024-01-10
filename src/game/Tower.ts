@@ -105,7 +105,7 @@ export class Tower {
 
     fireProjectile(enemy: Enemy) {
         const projBlueprint = { ...PROJECTILE_BLUEPRINTS[this.towerName][this.blueprint.level - 1] };
-        const projOrigin = new THREE.Vector3(
+        const origin = new THREE.Vector3(
             this.model.position.x,
             this.model.position.y + this.blueprint.firePointY,
             this.model.position.z
@@ -113,15 +113,22 @@ export class Tower {
 
         switch (projBlueprint.trajectoryType) {
             case TrajectoryType.Parabola: {
-                const maxHeight = 7;
-                const midPoint = projOrigin.clone().add(enemy.getFuturePosition(1).clone()).divideScalar(2);
-                midPoint.y += maxHeight;
+                const estimatedTimeToTarget = 1;
+                const diff = new THREE.Vector3()
+                    .copy(origin)
+                    .sub(new THREE.Vector3().copy(enemy.getFuturePosition(estimatedTimeToTarget)));
 
                 const curve = new THREE.CatmullRomCurve3([
-                    projOrigin.clone(),
-                    midPoint,
-                    enemy.getFuturePosition(1).clone(),
+                    new THREE.Vector3(origin.x - diff.x * (1 / 7), origin.y * 1, origin.z - diff.z * (1 / 7)),
+                    new THREE.Vector3(origin.x - diff.x * (2 / 7), origin.y * 1.2, origin.z - diff.z * (2 / 7)),
+                    new THREE.Vector3(origin.x - diff.x * (3 / 7), origin.y * 1.3, origin.z - diff.z * (3 / 7)),
+                    new THREE.Vector3(origin.x - diff.x * (4 / 7), origin.y * 1.2, origin.z - diff.z * (4 / 7)),
+                    new THREE.Vector3(origin.x - diff.x * (5 / 7), origin.y * 1, origin.z - diff.z * (5 / 7)),
+                    new THREE.Vector3(origin.x - diff.x * (6 / 7), origin.y * 0.6, origin.z - diff.z * (6 / 7)),
+                    new THREE.Vector3(origin.x - diff.x * (7 / 7), 0, origin.z - diff.z * (7 / 7)),
                 ]);
+
+                // console.log({ diff, curve });
 
                 const timeToReachTargetViaParabola = curve.getLength() / projBlueprint.speed;
 
@@ -133,7 +140,7 @@ export class Tower {
             }
             case TrajectoryType.Straight: {
                 const timeToReachTargetViaStraightLine =
-                    projOrigin.distanceTo(new THREE.Vector3().copy(enemy.getFuturePosition(0))) / projBlueprint.speed;
+                    origin.distanceTo(new THREE.Vector3().copy(enemy.getFuturePosition(0))) / projBlueprint.speed;
 
                 const destination = enemy.getFuturePosition(timeToReachTargetViaStraightLine);
 
