@@ -66,6 +66,7 @@ export const ENEMY_MODELS = {} as { [k in EnemyType]: GLTF };
 export const TOWER_MODELS = {} as { [k in TowerType]: { [k: `level-${number}`]: THREE.Mesh } };
 export const PROJECTILE_MODELS = {} as { [k in TowerType]: { [k: `level-${number}`]: THREE.Mesh } };
 
+const canvasHeight = window.innerHeight - 64;
 let canvas: HTMLCanvasElement;
 let playPauseBtn: HTMLButtonElement;
 let waveDisplay: HTMLDivElement;
@@ -167,18 +168,16 @@ async function gameSetup() {
     canvas.innerHTML = "";
 
     renderer = new THREE.WebGLRenderer({ antialias: true });
-    renderer.setSize(window.innerWidth, window.innerHeight - 120);
+    renderer.setSize(window.innerWidth, canvasHeight);
     renderer.setClearColor(COLORS.bg); // Sets the color of the background
-    // renderer.setClearColor(0xcbcbcb); // Sets the color of the background
     canvas.appendChild(renderer.domElement);
 
     cssRenderer = new CSS2DRenderer();
-    cssRenderer.setSize(window.innerWidth, window.innerHeight - 120);
+    cssRenderer.setSize(window.innerWidth, canvasHeight);
     cssRenderer.domElement.id = "css2d-overlay";
     cssRenderer.domElement.style.position = "absolute";
     cssRenderer.domElement.style.top = "64px";
     cssRenderer.domElement.style.pointerEvents = "none";
-
     canvas.appendChild(cssRenderer.domElement);
 
     gltfLoader = new GLTFLoader(loadingManager);
@@ -517,7 +516,7 @@ function animate() {
 function onMouseMove(e: MouseEvent) {
     const mousePos = new THREE.Vector2();
     mousePos.x = (e.offsetX / window.innerWidth) * 2 - 1;
-    mousePos.y = -(e.offsetY / (window.innerHeight - 120)) * 2 + 1;
+    mousePos.y = -(e.offsetY / canvasHeight) * 2 + 1;
 
     mouseRay.setFromCamera(mousePos, camera);
     handleHoverOpacityEfx();
@@ -657,7 +656,7 @@ function onCanvasClick(e: MouseEvent) {
 
     const mousePos = new THREE.Vector2();
     mousePos.x = (e.offsetX / window.innerWidth) * 2 - 1;
-    mousePos.y = -(e.offsetY / (window.innerHeight - 120)) * 2 + 1;
+    mousePos.y = -(e.offsetY / canvasHeight) * 2 + 1;
 
     const clickedModal = [...e.composedPath()].find((el) => (el as HTMLElement)?.classList?.contains("modal2D"));
     const clickedTower = mouseRay.intersectObjects(scene.children).find((ch) => ch.object.name.includes("-Tower"));
@@ -763,8 +762,8 @@ function handleHoverOpacityEfx() {
 function onResize() {
     camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
-    renderer.setSize(window.innerWidth, window.innerHeight - 120);
-    cssRenderer.setSize(window.innerWidth, window.innerHeight - 120);
+    renderer.setSize(window.innerWidth, canvasHeight);
+    cssRenderer.setSize(window.innerWidth, canvasHeight);
 }
 
 function onPlayPause() {
@@ -821,7 +820,7 @@ function onProjectileExplode(e: any) {
     explosion.userData["intensity"] = projectile.blueprint.explosionIntensity;
     explosion.position.set(projectile.model.position.x, projectile.model.position.y, projectile.model.position.z);
 
-    if (targetEnemy) {
+    if (targetEnemy && targetEnemy.hp > 0) {
         targetEnemy.takeDamage(projectile.damage);
     }
 

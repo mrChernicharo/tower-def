@@ -22,7 +22,7 @@ export class Enemy {
     timestamp = Date.now();
     hp: number;
     timeSinceSpawn!: number;
-    isHurt = false;
+    originalMaterial!: THREE.Material;
 
     constructor(enemyType: EnemyType) {
         this.id = idMaker();
@@ -36,6 +36,13 @@ export class Enemy {
     #_init() {
         this.model = this.#_setupModel();
         this.model.visible = false;
+        console.log(this.model);
+        this.model.traverse((obj) => {
+            if ((obj as any).isMesh && obj.type === "SkinnedMesh") {
+                this.originalMaterial = (obj as THREE.Mesh).material as THREE.Material;
+                return;
+            }
+        });
 
         this.mixer = new THREE.AnimationMixer(this.model);
 
@@ -147,56 +154,29 @@ export class Enemy {
 
     takeDamage(dmg: number) {
         this.hp -= dmg;
-        this.isHurt = true;
-
-        setTimeout(() => {
-            this.isHurt = false;
-        }, 160);
 
         // console.log("takeDamage", dmg, this.hp);
 
-        if (this.model)
+        if (this.model && this.hp > 0)
             this.model.traverse((obj) => {
-                if ((obj as any).isMesh && (obj as any).material) {
-                    switch (this.enemyType) {
-                        case EnemyType.Spider:
-                            this.#_drawDamageEfx(obj, "MeshPhysicalMaterial");
-                            break;
-                        case EnemyType.Orc:
-                        case EnemyType.Soldier:
-                        case EnemyType.Brigand:
-                        case EnemyType.Warrior:
-                        case EnemyType.Raptor:
-                        case EnemyType.Raptor2:
-                            this.#_drawDamageEfx(obj, "MeshStandardMaterial");
-                            break;
-                        default:
-                            // console.log(obj);
-                            break;
-                    }
+                if ((obj as any).isMesh) {
+                    this.#_drawDamageEfx(obj as THREE.Mesh);
                 }
             });
 
         if (this.hp <= 0) this.destroy(false);
     }
 
-    #_drawDamageEfx(obj: any, materialType: "MeshStandardMaterial" | "MeshPhysicalMaterial") {
-        const enemyMesh = obj as THREE.Mesh;
-
+    #_drawDamageEfx(enemyMesh: THREE.Mesh) {
+        // console.log("_drawDamageEfx", { enemyMesh, originalMaterial: this.originalMaterial });
         try {
-            const material = new (THREE[materialType] as any)().copy(enemyMesh.material as any) as THREE.Material;
-
             enemyMesh.material = MATERIALS.damageMaterialStd();
-
-            setTimeout(() => {
-                if (!this.isHurt) {
-                    enemyMesh.material = material;
-                }
-            }, 160);
-
-            // console.log({ obj, material });
         } catch (error) {
-            console.log({ error });
+            console.error({ error });
+        } finally {
+            setTimeout(() => {
+                enemyMesh.material = this.originalMaterial;
+            }, 160);
         }
     }
 

@@ -661,38 +661,27 @@ export const STAGE_WAVES_DATA: [string, number, number][][][] = [
     [
         // wave 1
         waveSegment(EnemyChar.Spider, 1),
-        // // wave 2
-        // waveSegment(EnemyChar.Raptor, 4),
     ],
 
     // stage 01
     [
         // wave 1
         waveSegment(EnemyChar.Spider, 1),
-        // // wave 2
+        // wave 2
         waveSegment(EnemyChar.Raptor, 4),
     ],
 
     // stage 02
     [
         // wave 1
-        waveSegment(EnemyChar.Spider, 1),
-        // // wave 2
-        // waveSegment(EnemyChar.Raptor, 4),
-        // // wave 3
-        // [...waveSegment(EnemyChar.Soldier, 3.2), ...waveSegment(EnemyChar.Spider, 4)],
+        waveSegment(EnemyChar.Raptor, 4),
     ],
 
     // stage 03
     [
         // wave 1
-        waveSegment(EnemyChar.Spider, 1),
-        // wave 2
-        // waveSegment(EnemyChar.Raptor, 4),
-        // // wave 3
-        // [...waveSegment(EnemyChar.Soldier), ...waveSegment(EnemyChar.Spider)],
-        // // wave 4
-        // [...waveSegment(EnemyChar.Raptor), ...waveSegment(EnemyChar.Spider, 0.8, 20)],
+        [...waveSegment(EnemyChar.Spider, 1), ...waveSegment(EnemyChar.Raptor, 4)],
+        // // wave 2
     ],
 
     // stage 04

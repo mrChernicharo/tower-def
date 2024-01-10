@@ -35,13 +35,6 @@ const Game = () => {
         });
         // console.log({ skillsObj });
 
-        // const skillList = Object.entries(skills)
-        //     .filter(([_id, bool]) => bool)
-        //     .map(([id, _bool]) => ({
-        //         ...gameSkills[id.split("-")[0] as keyof typeof gameSkills][Number(id.split("-")[1]) - 1],
-        //     }));
-        // console.log(skillList);
-
         initGame({
             gold,
             hp,
@@ -91,3 +84,10 @@ const Game = () => {
 };
 
 export default Game;
+
+// const skillList = Object.entries(skills)
+//     .filter(([_id, bool]) => bool)
+//     .map(([id, _bool]) => ({
+//         ...gameSkills[id.split("-")[0] as keyof typeof gameSkills][Number(id.split("-")[1]) - 1],
+//     }));
+// console.log(skillList);
