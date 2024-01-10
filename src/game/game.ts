@@ -24,8 +24,8 @@ import {
     desertLevelPath as jsonCurve,
 } from "./constants";
 import { AppLayers, EnemyChar, EnemyType, GameState, ModalType, TargetingStrategy, TowerType } from "./enums";
-import { EnemyBluePrint, Projectile, WaveEnemy, GameInitProps } from "./types";
-import { cancelableModalNames, gameEndTemplates, modalTemplates } from "./templates";
+import { EnemyBluePrint, Projectile, WaveEnemy, GameInitProps, GameSpeed } from "./types";
+import { cancelableModalNames, gameEndTemplates, modalTemplates, speedBtnsTemplate } from "./templates";
 import { Tower } from "./Tower";
 import { PlayerStats } from "./PlayerStats";
 
@@ -46,6 +46,7 @@ export let towerTexture: THREE.Texture;
 export let playerStats: PlayerStats;
 export let gameElapsedTime: number;
 export let loadingManager: THREE.LoadingManager;
+export let gameSpeed: GameSpeed;
 
 export let ambientLight: THREE.AmbientLight;
 export let pointLight: THREE.PointLight;
@@ -74,6 +75,7 @@ let endGameScreen: HTMLDivElement;
 let loadingScreen: HTMLDivElement;
 let endGameBtn: HTMLButtonElement;
 let progressBar: HTMLProgressElement;
+let speedBtns: HTMLDivElement;
 
 let frameId = 0;
 let clickTimestamp = 0;
@@ -115,6 +117,7 @@ export async function destroyGame() {
     canvas.removeEventListener("click", onCanvasClick);
     canvas.removeEventListener("mousedown", onMouseDown);
     playPauseBtn.removeEventListener("click", onPlayPause);
+    speedBtns.removeEventListener("click", onGameSpeedChange);
 }
 
 export async function initGame({ area, level, gold, hp, skills }: GameInitProps) {
@@ -149,6 +152,7 @@ export async function initGame({ area, level, gold, hp, skills }: GameInitProps)
     canvas.addEventListener("click", onCanvasClick);
     canvas.addEventListener("mousedown", onMouseDown);
     playPauseBtn.addEventListener("click", onPlayPause);
+    speedBtns.addEventListener("click", onGameSpeedChange);
 
     frameId = requestAnimationFrame(animate);
 }
@@ -162,8 +166,12 @@ async function gameSetup() {
     endGameScreen = document.querySelector("#end-game-screen") as HTMLDivElement;
     loadingScreen = document.querySelector("#loading-screen") as HTMLDivElement;
     progressBar = document.querySelector("#progress-bar") as HTMLProgressElement;
+    speedBtns = document.querySelector("#speed-btn") as HTMLDivElement;
 
     endGameScreen.classList.add("hidden");
+    speedBtns.innerHTML = speedBtnsTemplate.btns();
+    (speedBtns.children[1] as HTMLInputElement).checked = true;
+    gameSpeed = 1;
 
     canvas.innerHTML = "";
 
@@ -421,7 +429,7 @@ function spawnEnemy(enemyType: EnemyType) {
 }
 
 function animate() {
-    const delta = gameClock.getDelta();
+    const delta = gameClock.getDelta() * gameSpeed;
     // const elapsed = gameClock.getElapsedTime();
 
     cssRenderer.render(scene, camera);
@@ -885,6 +893,16 @@ function onEnemyDestroyed(e: any) {
 function onEndGameConfirm() {
     location.assign("#/area");
     endGameBtn.removeEventListener("click", onEndGameConfirm);
+}
+
+function onGameSpeedChange(e: MouseEvent) {
+    const elTarget = e.target as HTMLElement;
+    if (elTarget.tagName === "INPUT") {
+        const speedStr = elTarget.id.split("-")[1];
+        const speed = Number(speedStr[0]);
+        gameSpeed = speed as GameSpeed;
+        console.log("onGameSpeedChange", { gameSpeed });
+    }
 }
 
 export function revertCancelableModals(clickedModal: HTMLDivElement | undefined) {

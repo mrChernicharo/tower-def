@@ -127,6 +127,17 @@ export const gameEndTemplates = {
     `,
 };
 
+export const speedBtnsTemplate = {
+    btns: () => `
+        <label for="speed-1x">1x</label>
+        <input type="radio" name="speed" id="speed-1x" />
+        <label for="speed-2x">2x</label>
+        <input type="radio" name="speed" id="speed-2x" />
+        <label for="speed-4x">4x</label>
+        <input type="radio" name="speed" id="speed-4x" />
+    `,
+};
+
 export const cancelableModalNames = [
     ModalType.ConfirmTowerUpgrade,
     ModalType.ConfirmTowerBuild,

@@ -97,3 +97,5 @@ export type GlobalPlayerStats = {
     stars: LevelStarMap;
     skills: PlayerSkills;
 };
+
+export type GameSpeed = 1 | 2 | 4;
