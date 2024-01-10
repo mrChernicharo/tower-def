@@ -62,3 +62,10 @@ export enum TargetingStrategy {
     FirstInLine = "first-in-line",
     LastInLine = "last-in-line",
 }
+
+export enum SkillPath {
+    Constructor = "constructor",
+    Merchant = "merchant",
+    Chemist = "chemist",
+    Blacksmith = "blacksmith",
+}

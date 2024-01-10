@@ -55,9 +55,44 @@ export type GameInitProps = {
 export type LevelStarCount = 0 | 1 | 2 | 3;
 export type LevelStarMap = LevelStarCount[];
 
+export type PlayerSkills = {
+    "constructor-1": boolean;
+    "constructor-2": boolean;
+    "constructor-3": boolean;
+    "constructor-4": boolean;
+    "constructor-5": boolean;
+    "constructor-6": boolean;
+    "merchant-1": boolean;
+    "merchant-2": boolean;
+    "merchant-3": boolean;
+    "merchant-4": boolean;
+    "merchant-5": boolean;
+    "merchant-6": boolean;
+    "chemist-1": boolean;
+    "chemist-2": boolean;
+    "chemist-3": boolean;
+    "chemist-4": boolean;
+    "chemist-5": boolean;
+    "chemist-6": boolean;
+    "blacksmith-1": boolean;
+    "blacksmith-2": boolean;
+    "blacksmith-3": boolean;
+    "blacksmith-4": boolean;
+    "blacksmith-5": boolean;
+    "blacksmith-6": boolean;
+};
+
+export type Skill = {
+    id: string;
+    name: string;
+    description: string;
+    starCost: number;
+};
+
 export type GlobalPlayerStats = {
     hp: number;
     gold: number;
     unlockedStages: number;
     stars: LevelStarMap;
+    skills: PlayerSkills;
 };

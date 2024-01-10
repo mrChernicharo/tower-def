@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-loss-of-precision */
-import { EnemyChar, EnemyType, TargetingStrategy, TowerType, TrajectoryType } from "./enums";
-import { EnemyBluePrint, ProjectileBluePrint, TowerBluePrint } from "./types";
+import { EnemyChar, EnemyType, SkillPath, TargetingStrategy, TowerType, TrajectoryType } from "./enums";
+import { EnemyBluePrint, ProjectileBluePrint, Skill, TowerBluePrint } from "./types";
 import { THREE } from "../three";
 
 export const DRAW_FUTURE_GIZMO = false;
@@ -20,38 +20,39 @@ export const allAreas = [
     { id: 3, name: "lava" },
 ] as const;
 
-export const gameSkills = {
+// prettier-ignore
+export const gameSkills: { [k in SkillPath]: Skill[] }  = {
     constructor: [
-        { name: "masonry basics", description: "reduce 10% build cost of level 1 towers", starCost: 2 },
-        { name: "reinforced walls", description: "1 extra ❤️", starCost: 2 },
-        { name: "advanced tools", description: "reduce 10% upgrade cost of level 2 towers", starCost: 3 },
-        { name: "fortified walls", description: "3 extra ❤️", starCost: 3 },
-        { name: "specialized artisans", description: "reduce 10% upgrade cost of level 3 towers", starCost: 4 },
-        { name: "masonry mastery", description: "reduce 10% cost of all towers", starCost: 5 },
+        { id: "constructor-1", name: "masonry basics", description: "reduce 10% build cost of level 1 towers", starCost: 2 },
+        { id: "constructor-2", name: "reinforced walls", description: "1 extra ❤️", starCost: 2 },
+        { id: "constructor-3", name: "advanced tools", description: "reduce 10% upgrade cost of level 2 towers", starCost: 3 },
+        { id: "constructor-4", name: "fortified walls", description: "3 extra ❤️", starCost: 3 },
+        { id: "constructor-5", name: "specialized artisans", description: "reduce 10% upgrade cost of level 3 towers", starCost: 4 },
+        { id: "constructor-6", name: "masonry mastery", description: "reduce 10% cost of all towers", starCost: 5 },
     ],
     merchant: [
-        { name: "developing economy", description: "earn 10 gold every time you survive a wave", starCost: 2 },
-        { name: "trade with foreigners", description: "start with extra 50 gold", starCost: 2 },
-        { name: "oversees colony", description: "start with extra 100 gold", starCost: 3 },
-        { name: "bounty hunter", description: "earn 20 gold every time you survive a wave", starCost: 3 },
-        { name: "maximized profits", description: "earn 1 extra gold piece for every killed enemy", starCost: 4 },
-        { name: "advanced economy", description: "start with extra 150 gold", starCost: 5 },
+        { id: "merchant-1", name: "developing economy", description: "earn 10 gold every time you survive a wave", starCost: 2 },
+        { id: "merchant-2", name: "trade with foreigners", description: "start with extra 50 gold", starCost: 2 },
+        { id: "merchant-3", name: "oversees colony", description: "start with extra 100 gold", starCost: 3 },
+        { id: "merchant-4", name: "bounty hunter", description: "earn 20 gold every time you survive a wave", starCost: 3 },
+        { id: "merchant-5", name: "maximized profits", description: "earn 1 extra gold piece for every killed enemy", starCost: 4 },
+        { id: "merchant-6", name: "advanced economy", description: "start with extra 150 gold", starCost: 5 },
     ],
     chemist: [
-        { name: "basic chemistry", description: "poison towers deal 10% extra damage", starCost: 2 },
-        { name: "herbal lore", description: "wizard towers deal 10% extra damage", starCost: 2 },
-        { name: "philosophy stone", description: "poison damage increased by 1", starCost: 3 },
-        { name: "laboratory trinkets", description: "poison towers deal 20% extra damage", starCost: 3 },
-        { name: "classical library", description: "wizard towers deal 20% extra damage", starCost: 4 },
-        { name: "chemical mastery", description: "poison damage increased by 3", starCost: 5 },
+        { id: "chemist-1", name: "basic chemistry", description: "poison towers deal 10% extra damage", starCost: 2 },
+        { id: "chemist-2", name: "herbal lore", description: "wizard towers deal 10% extra damage", starCost: 2 },
+        { id: "chemist-3", name: "philosophy stone", description: "poison damage increased by 1", starCost: 3 },
+        { id: "chemist-4", name: "laboratory trinkets", description: "poison towers deal 20% extra damage", starCost: 3 },
+        { id: "chemist-5", name: "classical library", description: "wizard towers deal 20% extra damage", starCost: 4 },
+        { id: "chemist-6", name: "chemical mastery", description: "poison damage increased by 3", starCost: 5 },
     ],
-    blackSmith: [
-        { name: "basic smithery", description: "archer towers deal 10% extra damage", starCost: 2 },
-        { name: "metal alloy", description: "ballista towers deal 10% extra damage", starCost: 2 },
-        { name: "gold hammer", description: "cannon towers deal 10% extra damage", starCost: 3 },
-        { name: "high temperature oven", description: "archer towers deal 20% extra damage", starCost: 3 },
-        { name: "advanced forgery", description: "ballista towers deal 20% extra damage", starCost: 4 },
-        { name: "smith mastery", description: "cannon towers deal 20% extra damage", starCost: 5 },
+    blacksmith: [
+        { id: "blacksmith-1", name: "basic smithery", description: "archer towers deal 10% extra damage", starCost: 2 },
+        { id: "blacksmith-2", name: "metal alloy", description: "ballista towers deal 10% extra damage", starCost: 2 },
+        { id: "blacksmith-3", name: "gold hammer", description: "cannon towers deal 10% extra damage", starCost: 3 },
+        { id: "blacksmith-4", name: "high temperature oven", description: "archer towers deal 20% extra damage", starCost: 3 },
+        { id: "blacksmith-5", name: "advanced forgery", description: "ballista towers deal 20% extra damage", starCost: 4 },
+        { id: "blacksmith-6", name: "smith mastery", description: "cannon towers deal 20% extra damage", starCost: 5 },
     ],
 };
 

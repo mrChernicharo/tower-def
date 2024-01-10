@@ -1,3 +1,8 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+
 :root {
     font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
     line-height: 1.5;
@@ -23,7 +28,6 @@ a:hover {
 }
 
 body {
-    margin: 0;
     min-width: 320px;
     min-height: 100vh;
 }
@@ -31,6 +35,11 @@ body {
 h1 {
     font-size: 3.2em;
     line-height: 1.1;
+}
+
+ul,
+li {
+    list-style: none;
 }
 
 button {
@@ -116,6 +125,21 @@ progress::-webkit-progress-value {
 #end-game-screen h2,
 #end-game-screen button {
     pointer-events: all;
+}
+
+.skills-container {
+    border: 1px solid;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.skill-column {
+    border: 1px solid;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 }
 
 .hidden {
