@@ -1,11 +1,9 @@
-import { GlobalPlayerStats } from "../react/utils/types";
-
 export class PlayerStats {
     hp: number;
     gold: number;
     hpDisplay: HTMLDivElement;
     goldDisplay: HTMLDivElement;
-    constructor(playerStats: GlobalPlayerStats) {
+    constructor(playerStats: { hp: number; gold: number }) {
         this.hp = playerStats.hp;
         this.gold = playerStats.gold;
         this.hpDisplay = document.querySelector("#hp-display")!;
