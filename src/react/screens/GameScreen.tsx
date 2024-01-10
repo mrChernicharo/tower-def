@@ -1,9 +1,10 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { useCallback, useEffect, useRef } from "react";
 import { useParams } from "react-router-dom";
 import { destroyGame, initGame } from "../../game/game";
 import { Link } from "react-router-dom";
 import { usePlayerContext } from "../context/usePlayerContext";
-import { LevelStarCount } from "../../game/types";
+import { LevelStarCount, PlayerSkills } from "../../game/types";
 
 const topBarStyles = {
     display: "flex",
@@ -12,20 +13,8 @@ const topBarStyles = {
 
 const Game = () => {
     const { area, level } = useParams();
-    const { gold, hp, updateStars } = usePlayerContext();
+    const { gold, hp, skills, updateStars } = usePlayerContext();
     const gameRunning = useRef(false);
-
-    useEffect(() => {
-        if (gameRunning.current || !area || !level) return;
-
-        initGame({ gold, hp, area, level: +level });
-        gameRunning.current = true;
-
-        return () => {
-            destroyGame();
-            gameRunning.current = false;
-        };
-    }, [area, gold, hp, level]);
 
     const onGameWon = useCallback(
         (e: CustomEvent<LevelStarCount>) => {
@@ -34,6 +23,39 @@ const Game = () => {
         },
         [level, updateStars]
     ) as () => void;
+
+    useEffect(() => {
+        if (gameRunning.current || !area || !level) return;
+
+        const skillsObj: Partial<PlayerSkills> = {};
+        Object.entries(skills).forEach(([id, bool]) => {
+            if (bool) {
+                skillsObj[id as keyof typeof skills] = true;
+            }
+        });
+        console.log({ skillsObj });
+
+        // const skillList = Object.entries(skills)
+        //     .filter(([_id, bool]) => bool)
+        //     .map(([id, _bool]) => ({
+        //         ...gameSkills[id.split("-")[0] as keyof typeof gameSkills][Number(id.split("-")[1]) - 1],
+        //     }));
+        // console.log(skillList);
+
+        initGame({
+            gold,
+            hp,
+            area,
+            level: +level,
+            skills: skillsObj,
+        });
+        gameRunning.current = true;
+
+        return () => {
+            destroyGame();
+            gameRunning.current = false;
+        };
+    }, [area, gold, hp, level, skills]);
 
     useEffect(() => {
         window.addEventListener("game-win", onGameWon);

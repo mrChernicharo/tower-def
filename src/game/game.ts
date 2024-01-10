@@ -115,12 +115,13 @@ export async function destroyGame() {
     playPauseBtn.removeEventListener("click", onPlayPause);
 }
 
-export async function initGame({ area, level, gold, hp }: GameInitProps) {
+export async function initGame({ area, level, gold, hp, skills }: GameInitProps) {
     playerStats = new PlayerStats({ gold, hp });
     levelIdx = level;
     levelArea = area;
 
     console.log("initGame", {
+        skills,
         levelArea,
         levelIdx,
         COLORS,

@@ -2,11 +2,12 @@ import { Link, useParams } from "react-router-dom";
 import { LevelStars } from "../components/levelStars";
 import { usePlayerContext } from "../context/usePlayerContext";
 import { allAreaLevels } from "../../game/constants";
+import { getUnlockedStages } from "../../game/helpers";
 
 const LevelSelection = () => {
     const { area } = useParams();
     const areaLevels = allAreaLevels[area as keyof typeof allAreaLevels];
-    const { stars, unlockedStages } = usePlayerContext();
+    const { stars } = usePlayerContext();
 
     console.log({ area, areaLevels, stars });
 
@@ -20,7 +21,7 @@ const LevelSelection = () => {
                 {areaLevels.map((level) => (
                     <ul key={level}>
                         <Link to={`/area/${area}/level/${level}`}>
-                            <button disabled={level > unlockedStages}>{level}</button>
+                            <button disabled={level > getUnlockedStages(stars)}>{level}</button>
                         </Link>
                         <LevelStars stars={stars[level]} />
                     </ul>

@@ -6,7 +6,6 @@ export type PlayerStatsContextType = {
     hp: number;
     gold: number;
     stars: LevelStarMap;
-    unlockedStages: number;
     loaded: boolean;
     skills: PlayerSkills;
     updateStars: (stage: number, starCount: LevelStarCount) => void;
@@ -44,7 +43,6 @@ const defaultPlayerStats: GlobalPlayerStats = {
     hp: 10,
     gold: 250,
     stars: Array(getTotalStageCount()).fill(0),
-    unlockedStages: 0,
     skills: defaultPlayerSkills,
 };
 
@@ -76,7 +74,6 @@ export const PlayerStatsContextProvider = ({ children }: { children: ReactNode }
         hp: playerStats?.hp ?? defaultPlayerStats.hp,
         gold: playerStats?.gold ?? defaultPlayerStats.gold,
         stars: playerStats?.stars ?? defaultPlayerStats.stars,
-        unlockedStages: playerStats?.unlockedStages ?? defaultPlayerStats.unlockedStages,
         skills: playerStats?.skills ?? defaultPlayerStats.skills,
         loaded: !!playerStats,
         updateStars(stage, starCount) {
@@ -89,13 +86,10 @@ export const PlayerStatsContextProvider = ({ children }: { children: ReactNode }
                 return {
                     ...copy,
                     stars: copy.stars,
-                    unlockedStages: copy.stars?.filter((v) => v > 0).length,
                 } as GlobalPlayerStats;
             });
         },
         addSkill(skill) {
-            console.log({ skill });
-
             setPlayerStats((prev) => {
                 const copy = { ...prev };
 

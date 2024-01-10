@@ -45,13 +45,6 @@ export type WaveEnemy = {
     xOffset: number;
 };
 
-export type GameInitProps = {
-    area: string;
-    level: number;
-    gold: number;
-    hp: number;
-};
-
 export type LevelStarCount = 0 | 1 | 2 | 3;
 export type LevelStarMap = LevelStarCount[];
 
@@ -89,10 +82,18 @@ export type Skill = {
     starCost: number;
 };
 
+export type GameInitProps = {
+    area: string;
+    level: number;
+    gold: number;
+    hp: number;
+    skills: Partial<PlayerSkills>;
+    // skills: Skill[];
+};
+
 export type GlobalPlayerStats = {
     hp: number;
     gold: number;
-    unlockedStages: number;
     stars: LevelStarMap;
     skills: PlayerSkills;
 };

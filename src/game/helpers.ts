@@ -2,7 +2,7 @@ import { EnemyChar, EnemyType, TowerType } from "./enums";
 import { THREE } from "../three";
 import { GLTF } from "three/examples/jsm/Addons.js";
 import { allAreaLevels } from "./constants";
-import { LevelStarCount } from "./types";
+import { LevelStarCount, LevelStarMap } from "./types";
 
 export function getEnemyTypeFromChar(char: EnemyChar): EnemyType {
     switch (char) {
@@ -111,4 +111,8 @@ export function getStarIcons(stars: LevelStarCount) {
         default:
             return "☆ ☆ ☆";
     }
+}
+
+export function getUnlockedStages(stars: LevelStarMap) {
+    return stars.filter((v) => v > 0).length;
 }
