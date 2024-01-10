@@ -23,6 +23,14 @@ export const allAreas = [
     { id: 3, name: "lava" },
 ] as const;
 
+export const imgs = {
+    Archer: "/assets/imgs/archer.webp",
+    Ballista: "/assets/imgs/ballista.webp",
+    Cannon: "/assets/imgs/cannon.webp",
+    Poison: "/assets/imgs/poison.webp",
+    Wizard: "/assets/imgs/wizard.webp",
+};
+
 // prettier-ignore
 export const gameSkills: { [k in SkillPath]: Skill[] }  = {
     constructor: [

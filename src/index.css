@@ -77,11 +77,43 @@ button:focus-visible {
     }
 }
 
+/**********************************************/
+/******************** MODAL *******************/
+/**********************************************/
+
 .modal2D {
     background: #444;
     padding: 1rem;
     border-radius: 12px;
+    transform: translate(0, -165px);
 }
+
+.modal-content-row {
+    display: flex;
+    gap: 6px;
+    padding-top: 6px;
+}
+
+.tower-build > .modal-content-row:first-of-type {
+    justify-content: center;
+}
+
+.tower-build-btn {
+    padding: 0.8rem;
+}
+
+.tower-build-btn > img {
+    pointer-events: none;
+    transform: translate(-1px, 1.5px);
+}
+
+.hidden {
+    opacity: 0 !important;
+}
+
+/**********************************************/
+/****************** LOADING *******************/
+/**********************************************/
 
 #loading-screen {
     background: #242424;
@@ -113,6 +145,10 @@ progress::-webkit-progress-value {
     border-radius: 7px;
 }
 
+/**********************************************/
+/****************** END GAME ******************/
+/**********************************************/
+
 #end-game-screen {
     position: fixed;
     inset: 0px;
@@ -130,6 +166,10 @@ progress::-webkit-progress-value {
     pointer-events: all;
 }
 
+/**********************************************/
+/******************* SKILLS *******************/
+/**********************************************/
+
 .skills-container {
     border: 1px solid;
     display: flex;
@@ -143,8 +183,4 @@ progress::-webkit-progress-value {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-}
-
-.hidden {
-    opacity: 0 !important;
 }

@@ -36,7 +36,7 @@ export class Enemy {
     #_init() {
         this.model = this.#_setupModel();
         this.model.visible = false;
-        console.log(this.model);
+        // console.log(this.model);
         this.model.traverse((obj) => {
             if ((obj as any).isMesh && obj.type === "SkinnedMesh") {
                 this.originalMaterial = (obj as THREE.Mesh).material as THREE.Material;

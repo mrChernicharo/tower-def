@@ -328,7 +328,7 @@ function _init2DModals() {
             modalEl.style.opacity = "0.9";
 
             const modal3D = new CSS2DObject(modalContainer);
-            modal3D.position.set(el.position.x, el.position.y + 8, el.position.z);
+            modal3D.position.set(el.position.x, el.position.y, el.position.z);
             modal3D.name = `${el.name}-modal`;
             modal3D.userData["tile_idx"] = tileIdx;
             modal3D.layers.set(AppLayers.Modals);

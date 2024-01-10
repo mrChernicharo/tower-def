@@ -1,30 +1,31 @@
 import { Tower } from "./Tower";
-import { TOWER_BLUEPRINTS } from "./constants";
+import { TOWER_BLUEPRINTS, imgs } from "./constants";
 import { ModalType, TowerType } from "./enums";
 import { capitalize, getStarIcons } from "./helpers";
 import { LevelStarCount } from "./types";
 
+// <img src="${IMAGES}" />
 export const modalTemplates = {
     towerBuild: () => `
         <div class="${ModalType.TowerBuild} modal-content">
             <h3>Build Tower</h3>
-            <div>
+            <div class="modal-content-row">
                 <button id="${TowerType.Archer}-tower-build-btn" class="tower-build-btn">
-                    ${capitalize(TowerType.Archer)}
+                    <img width="50" height="50" src="${imgs.Archer}" />
                 </button>
                 <button id="${TowerType.Ballista}-tower-build-btn" class="tower-build-btn">
-                    ${capitalize(TowerType.Ballista)}
+                    <img width="50" height="50" src="${imgs.Ballista}" />
                 </button>
             </div>
-            <div>
+            <div class="modal-content-row">
                 <button id="${TowerType.Cannon}-tower-build-btn" class="tower-build-btn">
-                    ${capitalize(TowerType.Cannon)}
+                    <img width="50" height="50" src="${imgs.Cannon}" />
                 </button>
                 <button id="${TowerType.Poison}-tower-build-btn" class="tower-build-btn">
-                    ${capitalize(TowerType.Poison)}
+                    <img width="50" height="50" src="${imgs.Poison}" />
                 </button>
                 <button id="${TowerType.Wizard}-tower-build-btn" class="tower-build-btn">
-                    ${capitalize(TowerType.Wizard)}
+                    <img width="50" height="50" src="${imgs.Wizard}" />
                 </button>
             </div>
         </div>
