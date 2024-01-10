@@ -184,7 +184,7 @@ async function gameSetup() {
     cssRenderer.setSize(window.innerWidth, canvasHeight);
     cssRenderer.domElement.id = "css2d-overlay";
     cssRenderer.domElement.style.position = "absolute";
-    cssRenderer.domElement.style.top = "64px";
+    cssRenderer.domElement.style.top = "40px";
     cssRenderer.domElement.style.pointerEvents = "none";
     canvas.appendChild(cssRenderer.domElement);
 

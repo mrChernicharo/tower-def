@@ -64,6 +64,10 @@ button:focus-visible {
     outline: 4px auto -webkit-focus-ring-color;
 }
 
+.hidden {
+    opacity: 0 !important;
+}
+
 @media (prefers-color-scheme: light) {
     :root {
         color: #213547;
@@ -107,8 +111,19 @@ button:focus-visible {
     transform: translate(-1px, 1.5px);
 }
 
-.hidden {
-    opacity: 0 !important;
+.modal-content h3 {
+    padding-bottom: 1rem;
+}
+
+.modal-content .cancel-btn-container {
+    position: relative;
+    height: 50px;
+}
+
+.modal-content .cancel-btn {
+    background-color: transparent;
+    right: 0;
+    position: absolute;
 }
 
 /**********************************************/
