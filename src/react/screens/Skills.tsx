@@ -1,10 +1,10 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { Link } from "react-router-dom";
 import { usePlayerContext } from "../context/usePlayerContext";
-import { gameSkills } from "../../game/constants";
+import { gameSkills, imgs } from "../../game/constants";
 import { useCallback, useEffect, useState } from "react";
 import { Skill, SkillId } from "../../game/types";
-import { getSkillInfo } from "../../game/helpers";
+import { capitalize, getSkillInfo } from "../../game/helpers";
 // import { useState } from "react";
 
 const Skills = () => {
@@ -74,6 +74,11 @@ const Skills = () => {
                     return (
                         <ul className="skill-column" key={skillName}>
                             {/* <h2>{skillName}</h2> */}
+                            <img
+                                width={50}
+                                height={50}
+                                src={imgs[`${capitalize(skillName)}Path` as keyof typeof imgs]}
+                            />
 
                             {skillCol.map((skill) => {
                                 const skillId = skill.id as SkillId;
@@ -101,7 +106,7 @@ const Skills = () => {
             <div className="skill-detail">
                 {skillDetail ? (
                     <div>
-                        <h2>{skillDetail.name}</h2>
+                        <h2>{capitalize(skillDetail.name)}</h2>
                         <p>{skillDetail.description}</p>
 
                         <div style={{ paddingTop: "1rem", display: "flex", justifyContent: "center" }}>

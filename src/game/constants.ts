@@ -56,6 +56,10 @@ export const imgs = {
     Cannon: "/assets/imgs/cannon.webp",
     Poison: "/assets/imgs/poison.webp",
     Wizard: "/assets/imgs/wizard.webp",
+    ConstructorPath: "/assets/imgs/rune.webp",
+    MerchantPath: "/assets/imgs/crown.webp",
+    ChemistPath: "/assets/imgs/orb.webp",
+    BlacksmithPath: "/assets/imgs/sledge-hammer.webp",
 };
 
 // prettier-ignore
