@@ -1,3 +1,5 @@
--   tower previews
--   skill efx
--   more levels
+-   [ ] tower previews
+-   [ ] compute skills efx
+-   [ ] more levels
+-   [✔] enabling/disabling skill buttons
+-   [ ] camera

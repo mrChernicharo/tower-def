@@ -1,4 +1,5 @@
 import { ParabolaProjectile, StraightProjectile } from "./Projectile";
+import { defaultPlayerSkills } from "./constants";
 import { EnemyType, TargetingStrategy, TowerType, TrajectoryType } from "./enums";
 
 export type EnemyBluePrint = {
@@ -99,3 +100,5 @@ export type GlobalPlayerStats = {
 };
 
 export type GameSpeed = 1 | 2 | 4;
+
+export type SkillId = keyof typeof defaultPlayerSkills;

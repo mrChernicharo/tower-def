@@ -9,6 +9,33 @@ export const DRAW_FUTURE_GIZMO = false;
 export const DRAW_PROJECTILE_TRAJECTORIES = false;
 // export const DRAW_PROJECTILE_TRAJECTORIES = true;
 
+export const defaultPlayerSkills = {
+    "constructor-1": false,
+    "constructor-2": false,
+    "constructor-3": false,
+    "constructor-4": false,
+    "constructor-5": false,
+    "constructor-6": false,
+    "merchant-1": false,
+    "merchant-2": false,
+    "merchant-3": false,
+    "merchant-4": false,
+    "merchant-5": false,
+    "merchant-6": false,
+    "chemist-1": false,
+    "chemist-2": false,
+    "chemist-3": false,
+    "chemist-4": false,
+    "chemist-5": false,
+    "chemist-6": false,
+    "blacksmith-1": false,
+    "blacksmith-2": false,
+    "blacksmith-3": false,
+    "blacksmith-4": false,
+    "blacksmith-5": false,
+    "blacksmith-6": false,
+};
+
 export const allAreaLevels = {
     desert: [0, 1, 2, 3],
     forest: [4, 5, 6, 7],
@@ -34,7 +61,7 @@ export const imgs = {
 // prettier-ignore
 export const gameSkills: { [k in SkillPath]: Skill[] }  = {
     constructor: [
-        { id: "constructor-1", name: "masonry basics", description: "reduce 10% build cost of level 1 towers", starCost: 2 },
+        { id: "constructor-1", name: "masonry basics", description: "reduce 10% build cost of level 1 towers", starCost: 1 },
         { id: "constructor-2", name: "reinforced walls", description: "1 extra ❤️", starCost: 2 },
         { id: "constructor-3", name: "advanced tools", description: "reduce 10% upgrade cost of level 2 towers", starCost: 3 },
         { id: "constructor-4", name: "fortified walls", description: "3 extra ❤️", starCost: 3 },
@@ -42,7 +69,7 @@ export const gameSkills: { [k in SkillPath]: Skill[] }  = {
         { id: "constructor-6", name: "masonry mastery", description: "reduce 10% cost of all towers", starCost: 5 },
     ],
     merchant: [
-        { id: "merchant-1", name: "developing economy", description: "earn 10 gold every time you survive a wave", starCost: 2 },
+        { id: "merchant-1", name: "developing economy", description: "earn 10 gold every time you survive a wave", starCost: 1 },
         { id: "merchant-2", name: "trade with foreigners", description: "start with extra 50 gold", starCost: 2 },
         { id: "merchant-3", name: "oversees colony", description: "start with extra 100 gold", starCost: 3 },
         { id: "merchant-4", name: "bounty hunter", description: "earn 20 gold every time you survive a wave", starCost: 3 },
@@ -50,7 +77,7 @@ export const gameSkills: { [k in SkillPath]: Skill[] }  = {
         { id: "merchant-6", name: "advanced economy", description: "start with extra 150 gold", starCost: 5 },
     ],
     chemist: [
-        { id: "chemist-1", name: "basic chemistry", description: "poison towers deal 10% extra damage", starCost: 2 },
+        { id: "chemist-1", name: "basic chemistry", description: "poison towers deal 10% extra damage", starCost: 1 },
         { id: "chemist-2", name: "herbal lore", description: "wizard towers deal 10% extra damage", starCost: 2 },
         { id: "chemist-3", name: "philosophy stone", description: "poison damage increased by 1", starCost: 3 },
         { id: "chemist-4", name: "laboratory trinkets", description: "poison towers deal 20% extra damage", starCost: 3 },
@@ -58,7 +85,7 @@ export const gameSkills: { [k in SkillPath]: Skill[] }  = {
         { id: "chemist-6", name: "chemical mastery", description: "poison damage increased by 3", starCost: 5 },
     ],
     blacksmith: [
-        { id: "blacksmith-1", name: "basic smithery", description: "archer towers deal 10% extra damage", starCost: 2 },
+        { id: "blacksmith-1", name: "basic smithery", description: "archer towers deal 10% extra damage", starCost: 1 },
         { id: "blacksmith-2", name: "metal alloy", description: "ballista towers deal 10% extra damage", starCost: 2 },
         { id: "blacksmith-3", name: "gold hammer", description: "cannon towers deal 10% extra damage", starCost: 3 },
         { id: "blacksmith-4", name: "high temperature oven", description: "archer towers deal 20% extra damage", starCost: 3 },

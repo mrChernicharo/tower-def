@@ -116,3 +116,9 @@ export function getStarIcons(stars: LevelStarCount) {
 export function getUnlockedStages(stars: LevelStarMap) {
     return stars.filter((v) => v > 0).length;
 }
+
+export function getSkillInfo(skillId: string) {
+    const skillPath = skillId.split("-")[0];
+    const skillLevel = Number(skillId.split("-")[1]);
+    return { skillPath, skillLevel };
+}

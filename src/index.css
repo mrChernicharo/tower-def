@@ -187,9 +187,9 @@ progress::-webkit-progress-value {
 
 .skills-container {
     border: 1px solid;
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
+    display: grid;
+    border: 1px solid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
 }
 
 .skill-column {

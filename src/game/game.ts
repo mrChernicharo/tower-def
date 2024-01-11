@@ -403,7 +403,6 @@ function drawPath() {
     scene.add(pathMesh);
 }
 
-// BUG: THIS IS STARTING WITH THE GAME PAUSED
 function scheduleWaveEnemies(levelIdx: number, waveIdx: number) {
     console.log("scheduleWaveEnemies", { levelIdx, waveIdx, STAGE_WAVES_DATA });
     try {
@@ -521,6 +520,10 @@ function animate() {
     frameId = requestAnimationFrame(animate);
 }
 
+/****************************************/
+/**************** EVENTS ****************/
+/****************************************/
+
 function onMouseMove(e: MouseEvent) {
     const mousePos = new THREE.Vector2();
     mousePos.x = (e.offsetX / window.innerWidth) * 2 - 1;
@@ -541,16 +544,19 @@ function onModalClick(e: MouseEvent, el: THREE.Object3D, modal3D: CSS2DObject, m
     const tower = towers.find((t) => t.id === tower_id);
     // console.log(":::onModalClick::::", { e, el, modal3D, modalEl, tower_id, tower });
 
-    // TOWER BUILD
+    /******* TOWER BUILD *******/
     if (evTarget.classList.contains("tower-build-btn")) {
         towerToBuild = evTarget.id.split("-")[0] as TowerType;
         modalEl.innerHTML = modalTemplates.confirmTowerBuild(towerToBuild);
+        console.log("draw tower preview");
     }
     if (evTarget.classList.contains("cancel-tower-build-btn")) {
         modalEl.innerHTML = modalTemplates.towerBuild();
         towerToBuild = null;
+        console.log("remove tower preview");
     }
     if (evTarget.classList.contains("confirm-tower-build-btn")) {
+        console.log("remove tower preview");
         // console.log(`BUILD THIS GODAMN ${towerToBuild} TOWER`, { el });
 
         const towerPrice = TOWER_BLUEPRINTS[towerToBuild!][0].price;
@@ -580,7 +586,7 @@ function onModalClick(e: MouseEvent, el: THREE.Object3D, modal3D: CSS2DObject, m
         towerToBuild = null;
     }
 
-    // TOWER SELL
+    /******* TOWER SELL *******/
     if (evTarget.id === "tower-sell-btn") {
         modalEl.innerHTML = modalTemplates.confirmTowerSell(tower!);
     }
@@ -607,7 +613,7 @@ function onModalClick(e: MouseEvent, el: THREE.Object3D, modal3D: CSS2DObject, m
         // console.log({ towers, tower, scene });
     }
 
-    // TOWER INFO
+    /******* TOWER INFO *******/
     if (evTarget.id === "tower-info-btn") {
         // console.log("INFO", { el });
         modalEl.innerHTML = modalTemplates.towerInfo(tower!);
@@ -616,7 +622,7 @@ function onModalClick(e: MouseEvent, el: THREE.Object3D, modal3D: CSS2DObject, m
         modalEl.innerHTML = modalTemplates.towerDetails(tower!);
     }
 
-    // TOWER UPGRADE
+    /******* TOWER UPGRADE *******/
     if (evTarget.id === "tower-upgrade-btn") {
         // console.log("UPGRADE", { el });
         modalEl.innerHTML = modalTemplates.confirmTowerUpgrade(tower!);

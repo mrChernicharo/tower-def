@@ -30,7 +30,7 @@ const Game = () => {
         const skillsObj: Partial<PlayerSkills> = {};
         Object.entries(skills).forEach(([id, bool]) => {
             if (bool) {
-                skillsObj[id as keyof typeof skills] = true;
+                skillsObj[id as SkillId] = true;
             }
         });
         // console.log({ skillsObj });

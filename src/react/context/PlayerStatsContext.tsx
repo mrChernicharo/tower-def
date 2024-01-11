@@ -1,6 +1,14 @@
 import { ReactNode, createContext, useEffect, useState } from "react";
 import { getTotalStageCount, wait } from "../../game/helpers";
 import { GlobalPlayerStats, LevelStarCount, LevelStarMap, PlayerSkills, Skill } from "../../game/types";
+import { defaultPlayerSkills } from "../../game/constants";
+
+const defaultPlayerStats: GlobalPlayerStats = {
+    hp: 10,
+    gold: 250,
+    stars: Array(getTotalStageCount()).fill(0),
+    skills: defaultPlayerSkills,
+};
 
 export type PlayerStatsContextType = {
     hp: number;
@@ -10,40 +18,8 @@ export type PlayerStatsContextType = {
     skills: PlayerSkills;
     updateStars: (stage: number, starCount: LevelStarCount) => void;
     addSkill: (skill: Skill) => void;
-};
-
-const defaultPlayerSkills = {
-    "constructor-1": false,
-    "constructor-2": false,
-    "constructor-3": false,
-    "constructor-4": false,
-    "constructor-5": false,
-    "constructor-6": false,
-    "merchant-1": false,
-    "merchant-2": false,
-    "merchant-3": false,
-    "merchant-4": false,
-    "merchant-5": false,
-    "merchant-6": false,
-    "chemist-1": false,
-    "chemist-2": false,
-    "chemist-3": false,
-    "chemist-4": false,
-    "chemist-5": false,
-    "chemist-6": false,
-    "blacksmith-1": false,
-    "blacksmith-2": false,
-    "blacksmith-3": false,
-    "blacksmith-4": false,
-    "blacksmith-5": false,
-    "blacksmith-6": false,
-};
-
-const defaultPlayerStats: GlobalPlayerStats = {
-    hp: 10,
-    gold: 250,
-    stars: Array(getTotalStageCount()).fill(0),
-    skills: defaultPlayerSkills,
+    removeSkill: (skill: Skill) => void;
+    resetAllSkills: () => void;
 };
 
 export const PlayerStatsContext = createContext<PlayerStatsContextType>({
@@ -51,6 +27,8 @@ export const PlayerStatsContext = createContext<PlayerStatsContextType>({
     loaded: false,
     updateStars() {},
     addSkill() {},
+    removeSkill() {},
+    resetAllSkills: () => {},
 });
 
 export const PlayerStatsContextProvider = ({ children }: { children: ReactNode }) => {
@@ -98,6 +76,42 @@ export const PlayerStatsContextProvider = ({ children }: { children: ReactNode }
                 }
 
                 return { ...copy } as GlobalPlayerStats;
+            });
+        },
+        removeSkill(skill) {
+            setPlayerStats((prev) => {
+                const copy = { ...prev };
+
+                if (copy.skills) {
+                    // remove skill
+                    copy.skills[skill.id as keyof PlayerSkills] = false;
+
+                    // remove greater skills in the same column
+                    Object.entries(copy.skills).forEach(([id]) => {
+                        const skillId = id as keyof typeof copy.skills;
+                        const skillPath = skillId.split("-")[0];
+
+                        if (skillPath !== skill.id.split("-")[0]) return;
+
+                        const skillLevel = Number(skillId.split("-")[1]);
+
+                        if (skillLevel > Number(skill.id.split("-")[1])) {
+                            if (copy.skills && copy.skills[skillId]) {
+                                copy.skills[skillId] = false;
+                            }
+                        }
+                    });
+                    console.log("ha", copy.skills);
+                }
+
+                return { ...copy } as GlobalPlayerStats;
+            });
+        },
+        resetAllSkills() {
+            setPlayerStats((prev) => {
+                const copy = { ...prev };
+
+                return { ...copy, skills: {} } as GlobalPlayerStats;
             });
         },
     };
