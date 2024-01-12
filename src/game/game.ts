@@ -740,12 +740,6 @@ function onCanvasClick(e: MouseEvent) {
 
     if (clickedTowerBase) {
         console.log("CLICKED TOWER BASE", { clickedTowerBase, scene });
-        if (towerPreview) {
-            console.log("revert tower preview");
-            scene.remove(towerPreview.model);
-            scene.remove(towerPreview.rangeGizmo);
-            towerPreview = undefined;
-        }
         const modal3D = scene.getObjectByName(`${clickedTowerBase.object.name}-modal`)!;
         scene.traverse((obj) => {
             // HIDE previously open modal
@@ -757,16 +751,17 @@ function onCanvasClick(e: MouseEvent) {
                 obj.visible = true;
             }
         });
-        // SHOW current modal
-        modal3D.visible = true;
-    } else if (clickedTower) {
-        console.log("CLICKED TOWER", { clickedTower, scene });
         if (towerPreview) {
-            console.log("revert tower preview");
+            console.log("revert tower preview", { clickedTowerBase, towerPreview });
             scene.remove(towerPreview.model);
             scene.remove(towerPreview.rangeGizmo);
             towerPreview = undefined;
         }
+        // SHOW current modal
+        modal3D.visible = true;
+    } else if (clickedTower) {
+        console.log("CLICKED TOWER", { clickedTower, scene });
+
         // HIDE previously open modal
         let modal3D: THREE.Object3D | undefined;
         scene.traverse((obj) => {
@@ -783,6 +778,13 @@ function onCanvasClick(e: MouseEvent) {
                 obj.visible = true;
             }
         });
+
+        if (towerPreview) {
+            console.log("revert tower preview", { clickedTower, towerPreview });
+            scene.remove(towerPreview.model);
+            scene.remove(towerPreview.rangeGizmo);
+            towerPreview = undefined;
+        }
         // SHOW current modal
         if (modal3D) modal3D.visible = true;
     } else if (clickedModal) {
@@ -805,6 +807,7 @@ function onCanvasClick(e: MouseEvent) {
         });
 
         if (towerPreview) {
+            console.log("revert tower preview", { towerPreview });
             scene.remove(towerPreview.model);
             scene.remove(towerPreview.rangeGizmo);
             towerPreview = undefined;
@@ -1018,8 +1021,9 @@ export function revertCancelableModals(clickedModal: HTMLDivElement | undefined)
 
                             // console.log(":::::::::revertCancelableModals", { modalEl, towers, idx, tower });
                             if (tower) {
-                                console.log("open details modal", { tower });
-                                modalEl.innerHTML = modalTemplates.towerDetails(tower);
+                                // @TODO: DEBUG HERE
+                                console.log("back to details modal", { tower });
+                                // modalEl.innerHTML = modalTemplates.towerDetails(tower);
                             }
                         }
                         // console.log(":::::::::revertCancelableModals", { className, idx });
