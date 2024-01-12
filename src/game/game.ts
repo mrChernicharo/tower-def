@@ -18,14 +18,18 @@ import {
     DRAW_FUTURE_GIZMO,
     DRAW_PROJECTILE_TRAJECTORIES,
     ENEMY_BLUEPRINTS,
+    GAME_LEVELS,
     MATERIALS,
     STAGE_WAVES_DATA,
     TOWER_BLUEPRINTS,
+} from "./constants";
+
+import {
     // desertLevelPath,
     villageLevelPath,
-} from "./constants";
+} from "./levelPaths";
 import { AppLayers, EnemyChar, EnemyType, GameState, ModalType, TargetingStrategy, TowerType } from "./enums";
-import { EnemyBluePrint, Projectile, WaveEnemy, GameInitProps, GameSpeed } from "./types";
+import { EnemyBluePrint, Projectile, WaveEnemy, GameInitProps, GameSpeed, GameLevel } from "./types";
 import { cancelableModalNames, gameEndTemplates, modalTemplates, speedBtnsTemplate } from "./templates";
 import { Tower } from "./Tower";
 import { PlayerStats } from "./PlayerStats";
@@ -48,6 +52,7 @@ export let playerStats: PlayerStats;
 export let gameElapsedTime: number;
 export let loadingManager: THREE.LoadingManager;
 export let gameSpeed: GameSpeed;
+export let levelData: GameLevel;
 
 export let ambientLight: THREE.AmbientLight;
 export let pointLight: THREE.PointLight;
@@ -126,6 +131,9 @@ export async function initGame({ area, level, gold, hp, skills }: GameInitProps)
     levelIdx = level;
     levelArea = area;
 
+    levelData = GAME_LEVELS[level];
+    console.log({ levelData });
+
     console.log("initGame", {
         skills,
         levelArea,
@@ -195,9 +203,9 @@ async function gameSetup() {
     gameElapsedTime = 0;
 
     camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
-    camera.position.x = 18;
-    camera.position.y = 18;
-    camera.position.z = 62;
+    camera.position.x = levelData.initialCamPos[0];
+    camera.position.y = levelData.initialCamPos[1];
+    camera.position.z = levelData.initialCamPos[2];
     camera.layers.enableAll();
 
     orbit = new OrbitControls(camera, renderer.domElement);
@@ -213,7 +221,7 @@ async function gameSetup() {
     mouseRay.layers.enable(AppLayers.Tower);
     mouseRay.layers.enable(AppLayers.Modals);
 
-    // gui = new GUI({ closed: true });
+    // gui = new GUI({ closed: false });
 
     // const lightFolder = gui.addFolder("Light");
     // lightFolder.add(lightProbe, "intensity", 0, 100);
@@ -346,7 +354,7 @@ function _init2DModals() {
 }
 
 async function drawMap() {
-    const glb = await gltfLoader.loadAsync("/assets/glb/l2.village-level.glb");
+    const glb = await gltfLoader.loadAsync(levelData.mapURL);
     // const glb = await gltfLoader.loadAsync("/assets/glb/l1.desert-level.glb");
     const model = glb.scene;
 
@@ -359,11 +367,13 @@ async function drawMap() {
             if (mesh.name.includes("TowerBase")) {
                 mesh.material = MATERIALS.concrete();
                 obj.layers.set(AppLayers.TowerBase);
-            } else if (/desert|Plane/g.test(mesh.name)) {
-                mesh.material = MATERIALS.desert();
-                mesh.receiveShadow = true;
-            } else {
-                mesh.material = MATERIALS.desert();
+            }
+            //  else if (/desert|Plane/g.test(mesh.name)) {
+            //     mesh.material = MATERIALS[`${levelData.area}`]();
+            //     mesh.receiveShadow = true;
+            // }
+            else {
+                mesh.material = MATERIALS[`${levelData.area}`]();
                 mesh.receiveShadow = true;
             }
         }
@@ -373,14 +383,11 @@ async function drawMap() {
 }
 
 function drawPath() {
-    // console.log({ jsonCurve });
+    if (levelData.path === villageLevelPath) {
+        levelData.path.points.reverse();
+    }
     pathPoints = [];
-    // desertLevelPath.points.forEach((point) => {
-    //     pathPoints.push(new THREE.Vector3(point.x, point.y, point.z));
-    // });
-
-    villageLevelPath.points.reverse();
-    villageLevelPath.points.forEach((point) => {
+    levelData.path.points.forEach((point) => {
         pathPoints.push(new THREE.Vector3(point.x, point.y, point.z));
     });
 

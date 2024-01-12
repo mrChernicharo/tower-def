@@ -69,3 +69,10 @@ export enum SkillPath {
     Chemist = "chemist",
     Blacksmith = "blacksmith",
 }
+
+export enum GameArea {
+    Desert = "desert",
+    Forest = "forest",
+    Winter = "winter",
+    Lava = "lava",
+}

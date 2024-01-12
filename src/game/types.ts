@@ -1,6 +1,6 @@
 import { ParabolaProjectile, StraightProjectile } from "./Projectile";
 import { defaultPlayerSkills } from "./constants";
-import { EnemyType, TargetingStrategy, TowerType, TrajectoryType } from "./enums";
+import { EnemyType, GameArea, TargetingStrategy, TowerType, TrajectoryType } from "./enums";
 
 export type EnemyBluePrint = {
     name: EnemyType;
@@ -102,3 +102,20 @@ export type GlobalPlayerStats = {
 export type GameSpeed = 1 | 2 | 4;
 
 export type SkillId = keyof typeof defaultPlayerSkills;
+
+export type GameLevel = {
+    area: GameArea;
+    level: number;
+    initialGold: number;
+    mapURL: string;
+    path: {
+        points: {
+            x: number;
+            y: number;
+            z: number;
+        }[];
+        closed: boolean;
+    };
+    waves: [string, number, number][][];
+    initialCamPos: [number, number, number];
+};
