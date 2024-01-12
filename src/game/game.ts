@@ -600,6 +600,7 @@ function onModalClick(e: MouseEvent, el: THREE.Object3D, modal3D: CSS2DObject, m
         modal3D.userData["tower_id"] = tower.id;
 
         console.log("open details modal", { tower });
+        modalEl.dataset["tower_id"] = tower.id;
         modalEl.innerHTML = modalTemplates.towerDetails(tower!);
         modal3D.visible = false;
 
@@ -1002,45 +1003,21 @@ function onGameSpeedChange(e: MouseEvent) {
 export function revertCancelableModals(clickedModal: HTMLDivElement | undefined) {
     const allModals = Array.from(document.querySelectorAll<HTMLDivElement>(".modal2D"));
     // console.log("REVERT CANCELABLE MODALS");
-    // console.log(":::", { allModals, e, clickedTowerBase, clickedModal });
     allModals.forEach((modalEl) => {
         if (modalEl === clickedModal) return;
-        // console.log(":::", { modalEl });
+        console.log(":::", { modalEl, tower_id: modalEl.dataset["tower_id"] });
 
         for (const cancelableModalName of cancelableModalNames) {
             if (modalEl.children[0].classList.contains(cancelableModalName)) {
-                // console.log(":::: cancel this one!", { cancelableModalName, modalEl });
-
                 if (cancelableModalName === ModalType.ConfirmTowerBuild) {
                     modalEl.innerHTML = modalTemplates.towerBuild();
                 } else {
-                    for (const [, className] of modalEl.children[0].classList.entries()) {
-                        if (className in TowerType) {
-                            // const towerName = className as TowerType;
-                            const tower = towers.find((t) => t.model.userData.tower_id);
-
-                            // console.log(":::::::::revertCancelableModals", { modalEl, towers, idx, tower });
-                            if (tower) {
-                                // @TODO: DEBUG HERE
-                                console.log("back to details modal", { tower });
-                                // modalEl.innerHTML = modalTemplates.towerDetails(tower);
-                            }
-                        }
-                        // console.log(":::::::::revertCancelableModals", { className, idx });
+                    const tower = towers.find((t) => t.id === modalEl.dataset["tower_id"]);
+                    if (tower) {
+                        modalEl.innerHTML = modalTemplates.towerDetails(tower);
                     }
                 }
-                break;
             }
         }
     });
 }
-
-// function drawGrid() {
-//     // Sets a 12 by 12 gird helper
-//     const gridHelper = new THREE.GridHelper(12, 12);
-//     scene.add(gridHelper);
-
-//     // Sets the x, y, and z axes with each having a length of 4
-//     const axesHelper = new THREE.AxesHelper(14);
-//     scene.add(axesHelper);
-// }
