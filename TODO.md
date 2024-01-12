@@ -1,5 +1,6 @@
 -   [ ] tower previews
 -   [ ] compute skills efx
--   [ ] more levels
+-   [✔] more levels
 -   [✔] enabling/disabling skill buttons
 -   [ ] camera
+-   [ ] multiple paths

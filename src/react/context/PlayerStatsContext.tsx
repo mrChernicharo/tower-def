@@ -5,7 +5,7 @@ import { defaultPlayerSkills } from "../../game/constants";
 
 const defaultPlayerStats: GlobalPlayerStats = {
     hp: 10,
-    gold: 250,
+    gold: 350,
     stars: Array(getTotalStageCount()).fill(0),
     skills: defaultPlayerSkills,
 };

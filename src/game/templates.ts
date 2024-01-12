@@ -107,13 +107,14 @@ export const modalTemplates = {
             <h3>Upgrade ${capitalize(tower.towerName)} Tower</h3>
 
             <h2>Cost $${tower.blueprint.price}</h2>
-
+            
             <div>
                 <div>Level ${t.level} → ${t2.level}</div>
                 <div>Damage ${t.damage.join(" - ")} → ${t2.damage.join(" - ")}</div>
                 <div>FireRate ${t.fireRate} → ${t2.fireRate}</div>
                 <div>Range ${t.range} → ${t2.range}</div>
             </div>
+
 
             <div class="warning-msg-area"></div>
 

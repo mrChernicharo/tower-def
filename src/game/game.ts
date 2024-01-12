@@ -24,10 +24,7 @@ import {
     TOWER_BLUEPRINTS,
 } from "./constants";
 
-import {
-    // desertLevelPath,
-    villageLevelPath,
-} from "./levelPaths";
+import { villageLevelPath } from "./levelPaths";
 import { AppLayers, EnemyChar, EnemyType, GameArea, GameState, ModalType, TargetingStrategy, TowerType } from "./enums";
 import { EnemyBluePrint, Projectile, WaveEnemy, GameInitProps, GameSpeed, GameLevel } from "./types";
 import { cancelableModalNames, gameEndTemplates, modalTemplates, speedBtnsTemplate } from "./templates";
@@ -53,6 +50,7 @@ export let gameElapsedTime: number;
 export let loadingManager: THREE.LoadingManager;
 export let gameSpeed: GameSpeed;
 export let levelData: GameLevel;
+export let towerPreview: { model: THREE.Mesh; rangeGizmo: THREE.Mesh } | undefined;
 
 export let ambientLight: THREE.AmbientLight;
 export let pointLight: THREE.PointLight;
@@ -563,15 +561,28 @@ function onModalClick(e: MouseEvent, el: THREE.Object3D, modal3D: CSS2DObject, m
     if (evTarget.classList.contains("tower-build-btn")) {
         towerToBuild = evTarget.id.split("-")[0] as TowerType;
         modalEl.innerHTML = modalTemplates.confirmTowerBuild(towerToBuild);
-        console.log("draw tower preview");
+
+        const t = new Tower(towerToBuild!, el.position, modal3D.userData["tile_idx"]);
+        towerPreview = { model: t.model, rangeGizmo: t.rangeGizmo };
+        console.log("draw tower preview", towerPreview);
+        scene.add(towerPreview.model);
+        scene.add(towerPreview.rangeGizmo);
     }
     if (evTarget.classList.contains("cancel-tower-build-btn")) {
         modalEl.innerHTML = modalTemplates.towerBuild();
         towerToBuild = null;
-        console.log("remove tower preview");
+        if (towerPreview) {
+            console.log("remove tower preview");
+            scene.remove(towerPreview.model);
+            scene.remove(towerPreview.rangeGizmo);
+        }
     }
     if (evTarget.classList.contains("confirm-tower-build-btn")) {
-        console.log("remove tower preview");
+        if (towerPreview) {
+            console.log("remove tower preview");
+            scene.remove(towerPreview.model);
+            scene.remove(towerPreview.rangeGizmo);
+        }
         // console.log(`BUILD THIS GODAMN ${towerToBuild} TOWER`, { el });
 
         const towerPrice = TOWER_BLUEPRINTS[towerToBuild!][0].price;
@@ -641,9 +652,29 @@ function onModalClick(e: MouseEvent, el: THREE.Object3D, modal3D: CSS2DObject, m
     if (evTarget.id === "tower-upgrade-btn") {
         // console.log("UPGRADE", { el });
         modalEl.innerHTML = modalTemplates.confirmTowerUpgrade(tower!);
+
+        if (tower) {
+            const { model, rangeGizmo } = tower.getUpgradedPreview();
+            towerPreview = { model, rangeGizmo };
+            console.log("draw tower preview");
+            scene.add(towerPreview.model);
+            scene.add(towerPreview.rangeGizmo);
+            tower.model.visible = false;
+            tower.rangeGizmo.visible = false;
+        }
     }
     if (evTarget.classList.contains("cancel-tower-upgrade-btn")) {
         modalEl.innerHTML = modalTemplates.towerDetails(tower!);
+        if (towerPreview) {
+            console.log("revert tower preview");
+            scene.remove(towerPreview.model);
+            scene.remove(towerPreview.rangeGizmo);
+            towerPreview = undefined;
+        }
+        if (tower) {
+            tower.model.visible = true;
+            tower.rangeGizmo.visible = true;
+        }
     }
     if (evTarget.classList.contains("confirm-tower-upgrade-btn")) {
         const tower = towers.find((t) => t.id === tower_id);
@@ -659,6 +690,13 @@ function onModalClick(e: MouseEvent, el: THREE.Object3D, modal3D: CSS2DObject, m
                 return;
             }
             playerStats.spendGold(tower.blueprint.price);
+
+            if (towerPreview) {
+                console.log("revert tower preview");
+                scene.remove(towerPreview.model);
+                scene.remove(towerPreview.rangeGizmo);
+                towerPreview = undefined;
+            }
 
             scene.remove(tower.rangeGizmo);
             scene.remove(tower.model);
@@ -738,7 +776,23 @@ function onCanvasClick(e: MouseEvent) {
                     obj.visible = false;
                 }
             }
+
+            if ((obj as THREE.Mesh).isMesh && !obj.visible) {
+                // console.log(obj, clickedTower);
+                obj.visible = true;
+            }
         });
+
+        if (towerPreview) {
+            // const tower =
+            // if (tower) {
+            //     tower.model.visible = true;
+            //     tower.rangeGizmo.visible = true;
+            // }
+            scene.remove(towerPreview.model);
+            scene.remove(towerPreview.rangeGizmo);
+            towerPreview = undefined;
+        }
     }
 }
 

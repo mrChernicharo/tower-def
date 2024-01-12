@@ -52,6 +52,7 @@ export class Tower {
         const circleMesh = new THREE.Mesh(circleGeometry, circleMaterial);
         circleMesh.position.set(this.position.x, this.position.y + 0.5, this.position.z);
         circleMesh.rotation.x = -Math.PI * 0.5;
+        circleMesh.name = "rangeGizmo";
 
         this.rangeGizmo = circleMesh;
     }
@@ -73,6 +74,30 @@ export class Tower {
         this._setupRangeGizmo();
         // console.log("upgrade tower", { currLevel, nextLevel, desiredBlueprint, desiredModel });
         return this;
+    }
+
+    getUpgradedPreview() {
+        const currLevel = this.blueprint.level;
+        const nextLevel = currLevel + 1;
+        if (currLevel === 4) {
+            throw Error("MAX LEVEL REACHED");
+        }
+        const desiredBlueprint = { ...TOWER_BLUEPRINTS[this.towerName][currLevel] };
+        const desiredModel = TOWER_MODELS[this.towerName][`level-${nextLevel}`].clone() as THREE.Mesh;
+        desiredModel.layers.set(AppLayers.Tower);
+        desiredModel.material = MATERIALS.tower(towerTexture);
+        desiredModel.position.set(this.position.x, this.position.y, this.position.z);
+        const s = desiredBlueprint.modelScale;
+        desiredModel.scale.set(s, s, s);
+
+        const circleGeometry = new THREE.CircleGeometry(desiredBlueprint.range);
+        const circleMaterial = MATERIALS.towerRangeGizmo(desiredBlueprint.color);
+        const circleMesh = new THREE.Mesh(circleGeometry, circleMaterial);
+        circleMesh.position.set(this.position.x, this.position.y + 0.5, this.position.z);
+        circleMesh.rotation.x = -Math.PI * 0.5;
+        circleMesh.name = "rangeGizmo Preview";
+        // return new Tower(this.towerName, this.position, this.tileIdx);
+        return { model: desiredModel, rangeGizmo: circleMesh };
     }
 
     _setupModelData() {
