@@ -2,7 +2,7 @@
 import { EnemyChar, EnemyType, GameArea, SkillPath, TargetingStrategy, TowerType, TrajectoryType } from "./enums";
 import { EnemyBluePrint, GameLevel, ProjectileBluePrint, Skill, TowerBluePrint } from "./types";
 import { THREE } from "../three";
-import { desertLevelPath, villageLevelPath } from "./levelPaths";
+import { castleLevelPath, desertLevelPath, villageLevelPath } from "./levelPaths";
 
 export const DRAW_FUTURE_GIZMO = false;
 // export const DRAW_FUTURE_GIZMO = true;
@@ -52,10 +52,10 @@ export const allAreas = [
 ] as const;
 
 export const mapURLs = {
-    desert: "/assets/glb/l1.desert-level.glb",
-    forest: "/assets/glb/l2.village-level.glb",
-    winter: "/assets/glb/l2.village-level.glb",
-    lava: "/assets/glb/l2.village-level.glb",
+    desert: "/assets/glb/lv1.desert-level.glb",
+    forest: "/assets/glb/lv2.castle-level.glb",
+    winter: "/assets/glb/lv4.village-level.glb",
+    lava: "/assets/glb/lv4.village-level.glb",
 };
 
 export const imgs = {
@@ -750,7 +750,7 @@ export const STAGE_WAVES_DATA: [string, number, number][][][] = [
         // wave 2
         waveSegment(EnemyChar.Raptor, 4, 10, 0, []),
         // wave 3
-        [...waveSegment(EnemyChar.Soldier, 2), ...waveSegment(EnemyChar.Spider)],
+        [...waveSegment(EnemyChar.Soldier, 3.2, 7), ...waveSegment(EnemyChar.Spider)],
         // wave 4
         [...waveSegment(EnemyChar.Raptor, 2), ...waveSegment(EnemyChar.Spider, 0.8, 20)],
         // wave 5
@@ -1120,7 +1120,7 @@ export const GAME_LEVELS: GameLevel[] = [
         level: 4,
         initialGold: 250,
         mapURL: mapURLs.forest,
-        path: villageLevelPath,
+        path: castleLevelPath,
         waves: STAGE_WAVES_DATA[4],
         initialCamPos: [-22, 60, 96],
     },
@@ -1129,7 +1129,7 @@ export const GAME_LEVELS: GameLevel[] = [
         level: 5,
         initialGold: 250,
         mapURL: mapURLs.forest,
-        path: villageLevelPath,
+        path: castleLevelPath,
         waves: STAGE_WAVES_DATA[5],
         initialCamPos: [-22, 60, 96],
     },
@@ -1138,7 +1138,7 @@ export const GAME_LEVELS: GameLevel[] = [
         level: 6,
         initialGold: 250,
         mapURL: mapURLs.forest,
-        path: villageLevelPath,
+        path: castleLevelPath,
         waves: STAGE_WAVES_DATA[6],
         initialCamPos: [-22, 60, 96],
     },
@@ -1147,7 +1147,7 @@ export const GAME_LEVELS: GameLevel[] = [
         level: 7,
         initialGold: 250,
         mapURL: mapURLs.forest,
-        path: villageLevelPath,
+        path: castleLevelPath,
         waves: STAGE_WAVES_DATA[7],
         initialCamPos: [-22, 60, 96],
     },

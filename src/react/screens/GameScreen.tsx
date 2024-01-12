@@ -4,7 +4,7 @@ import { useParams } from "react-router-dom";
 import { destroyGame, initGame } from "../../game/game";
 import { Link } from "react-router-dom";
 import { usePlayerContext } from "../context/usePlayerContext";
-import { LevelStarCount, PlayerSkills } from "../../game/types";
+import { LevelStarCount, PlayerSkills, SkillId } from "../../game/types";
 
 const topBarStyles = {
     display: "flex",
