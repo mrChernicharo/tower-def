@@ -355,7 +355,6 @@ function _init2DModals() {
 
 async function drawMap() {
     const glb = await gltfLoader.loadAsync(levelData.mapURL);
-    // const glb = await gltfLoader.loadAsync("/assets/glb/l1.desert-level.glb");
     const model = glb.scene;
 
     console.log({ glb, model });
@@ -364,16 +363,16 @@ async function drawMap() {
         if ((obj as THREE.Mesh).isMesh) {
             const mesh = obj as THREE.Mesh;
 
+            console.log(mesh);
+
             if (mesh.name.includes("TowerBase")) {
                 mesh.material = MATERIALS.concrete;
                 obj.layers.set(AppLayers.TowerBase);
-            }
-            //  else if (/desert|Plane/g.test(mesh.name)) {
-            //     mesh.material = MATERIALS[`${levelData.area}`]();
-            //     mesh.receiveShadow = true;
-            // }
-            else {
+            } else if (/desert|Plane/g.test(mesh.name)) {
                 mesh.material = MATERIALS[`${levelData.area}`];
+                mesh.receiveShadow = true;
+            } else {
+                mesh.material = MATERIALS.concrete;
                 mesh.receiveShadow = true;
             }
         }
