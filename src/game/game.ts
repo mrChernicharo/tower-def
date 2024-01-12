@@ -361,8 +361,6 @@ async function drawMap() {
         if ((obj as THREE.Mesh).isMesh) {
             const mesh = obj as THREE.Mesh;
 
-            console.log(mesh);
-
             if (mesh.name.includes("TowerBase")) {
                 mesh.material = MATERIALS.concrete;
                 obj.layers.set(AppLayers.TowerBase);
@@ -601,6 +599,7 @@ function onModalClick(e: MouseEvent, el: THREE.Object3D, modal3D: CSS2DObject, m
         modal3D.userData["tower"] = towerToBuild;
         modal3D.userData["tower_id"] = tower.id;
 
+        console.log("open details modal", { tower });
         modalEl.innerHTML = modalTemplates.towerDetails(tower!);
         modal3D.visible = false;
 
@@ -617,6 +616,7 @@ function onModalClick(e: MouseEvent, el: THREE.Object3D, modal3D: CSS2DObject, m
         modalEl.innerHTML = modalTemplates.confirmTowerSell(tower!);
     }
     if (evTarget.classList.contains("cancel-tower-sell-btn")) {
+        console.log("open details modal", { tower });
         modalEl.innerHTML = modalTemplates.towerDetails(tower!);
     }
     if (evTarget.id === "confirm-tower-sell-btn") {
@@ -645,6 +645,7 @@ function onModalClick(e: MouseEvent, el: THREE.Object3D, modal3D: CSS2DObject, m
         modalEl.innerHTML = modalTemplates.towerInfo(tower!);
     }
     if (evTarget.classList.contains("cancel-tower-info-btn")) {
+        console.log("open details modal", { tower });
         modalEl.innerHTML = modalTemplates.towerDetails(tower!);
     }
 
@@ -664,6 +665,7 @@ function onModalClick(e: MouseEvent, el: THREE.Object3D, modal3D: CSS2DObject, m
         }
     }
     if (evTarget.classList.contains("cancel-tower-upgrade-btn")) {
+        console.log("open details modal", { tower });
         modalEl.innerHTML = modalTemplates.towerDetails(tower!);
         if (towerPreview) {
             console.log("revert tower preview");
@@ -708,6 +710,7 @@ function onModalClick(e: MouseEvent, el: THREE.Object3D, modal3D: CSS2DObject, m
             scene.add(upgradedTower.rangeGizmo);
 
             // console.log({ tower, towers });
+            console.log("open details modal", { tower });
             modalEl.innerHTML = modalTemplates.towerDetails(tower);
             upgradedTower.rangeGizmo.visible = false;
             modal3D.visible = false;
@@ -737,18 +740,33 @@ function onCanvasClick(e: MouseEvent) {
 
     if (clickedTowerBase) {
         console.log("CLICKED TOWER BASE", { clickedTowerBase, scene });
+        if (towerPreview) {
+            console.log("revert tower preview");
+            scene.remove(towerPreview.model);
+            scene.remove(towerPreview.rangeGizmo);
+            towerPreview = undefined;
+        }
         const modal3D = scene.getObjectByName(`${clickedTowerBase.object.name}-modal`)!;
-        // HIDE previously open modal
         scene.traverse((obj) => {
+            // HIDE previously open modal
             if ((obj as any).isCSS2DObject && obj.visible) {
                 obj.visible = false;
+            }
+
+            if ((obj as THREE.Mesh).isMesh && !obj.visible && obj.name !== "rangeGizmo") {
+                obj.visible = true;
             }
         });
         // SHOW current modal
         modal3D.visible = true;
     } else if (clickedTower) {
         console.log("CLICKED TOWER", { clickedTower, scene });
-
+        if (towerPreview) {
+            console.log("revert tower preview");
+            scene.remove(towerPreview.model);
+            scene.remove(towerPreview.rangeGizmo);
+            towerPreview = undefined;
+        }
         // HIDE previously open modal
         let modal3D: THREE.Object3D | undefined;
         scene.traverse((obj) => {
@@ -760,6 +778,9 @@ function onCanvasClick(e: MouseEvent) {
                 if (obj.visible) {
                     obj.visible = false;
                 }
+            }
+            if ((obj as THREE.Mesh).isMesh && !obj.visible && obj.name !== "rangeGizmo") {
+                obj.visible = true;
             }
         });
         // SHOW current modal
@@ -777,18 +798,13 @@ function onCanvasClick(e: MouseEvent) {
                 }
             }
 
-            if ((obj as THREE.Mesh).isMesh && !obj.visible) {
-                // console.log(obj, clickedTower);
+            if ((obj as THREE.Mesh).isMesh && !obj.visible && obj.name !== "rangeGizmo") {
+                console.log(obj);
                 obj.visible = true;
             }
         });
 
         if (towerPreview) {
-            // const tower =
-            // if (tower) {
-            //     tower.model.visible = true;
-            //     tower.rangeGizmo.visible = true;
-            // }
             scene.remove(towerPreview.model);
             scene.remove(towerPreview.rangeGizmo);
             towerPreview = undefined;
@@ -1002,6 +1018,7 @@ export function revertCancelableModals(clickedModal: HTMLDivElement | undefined)
 
                             // console.log(":::::::::revertCancelableModals", { modalEl, towers, idx, tower });
                             if (tower) {
+                                console.log("open details modal", { tower });
                                 modalEl.innerHTML = modalTemplates.towerDetails(tower);
                             }
                         }
