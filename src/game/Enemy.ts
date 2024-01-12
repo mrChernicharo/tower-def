@@ -38,9 +38,7 @@ export class Enemy {
         this.model.visible = false;
         // console.log(this.model);
         this.model.traverse((obj) => {
-            // if ((obj as any).isMesh && obj.type === "SkinnedMesh") {
             if ((obj as any).isMesh) {
-                console.log({ name: obj.name, obj });
                 this.originalMaterial.push({
                     meshName: obj.name,
                     material: ((obj as THREE.Mesh).material as THREE.Material).clone(),
@@ -180,22 +178,12 @@ export class Enemy {
             console.error({ error });
         } finally {
             setTimeout(() => {
-                // console.log({ originalMaterial: this.originalMaterial });
-                // enemyMesh.material = this.originalMaterial;
-                // this.model.traverse(obj => {
-
-                // })
-                // this.originalMaterial.forEach((entry) => {
-                //     const mesh = this.model.getObjectByName(entry.meshName);
-                //     (mesh as THREE.Mesh).material = entry.material;
-                // });
                 this.model.traverse((obj) => {
                     if ((obj as any).isMesh) {
                         const found = this.originalMaterial.find((entry) => entry.meshName === obj.name);
                         if (found) {
                             (obj as THREE.Mesh).material = found.material;
                         }
-                        // this.#_drawDamageEfx(obj as THREE.Mesh);
                     }
                 });
             }, 160);

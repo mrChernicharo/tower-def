@@ -28,7 +28,7 @@ import {
     // desertLevelPath,
     villageLevelPath,
 } from "./levelPaths";
-import { AppLayers, EnemyChar, EnemyType, GameState, ModalType, TargetingStrategy, TowerType } from "./enums";
+import { AppLayers, EnemyChar, EnemyType, GameArea, GameState, ModalType, TargetingStrategy, TowerType } from "./enums";
 import { EnemyBluePrint, Projectile, WaveEnemy, GameInitProps, GameSpeed, GameLevel } from "./types";
 import { cancelableModalNames, gameEndTemplates, modalTemplates, speedBtnsTemplate } from "./templates";
 import { Tower } from "./Tower";
@@ -391,9 +391,10 @@ function drawPath() {
         pathPoints.push(new THREE.Vector3(point.x, point.y, point.z));
     });
 
-    pathCurve = new THREE.CatmullRomCurve3(pathPoints, false, "chordal", 0.5);
+    pathCurve = new THREE.CatmullRomCurve3(pathPoints, false, "catmullrom", 0.5);
 
-    const [shapeW, shapeH] = [0.05, 0.05];
+    const [shapeW, shapeH] = levelData.area === GameArea.Forest ? [0.05, 0.2] : [0.05, 0.05];
+    // const [shapeW, shapeH] = [0.05, 0.05];
     // const [shapeW, shapeH] = [1, 0.05];
     // const [shapeW, shapeH] = [0.5, 0.05];
     // const [shapeW, shapeH] = [0.2, 0.05];
