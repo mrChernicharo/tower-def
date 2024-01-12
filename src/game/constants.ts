@@ -117,7 +117,7 @@ export const COLORS = {
     green: 0x34d4af,
     forest: 0x007900,
     purple: 0xb834d4,
-    lava: 0xb834d4,
+    lava: 0x7778c8,
     yellow: 0xfffc00,
     black: 0x000000,
     white: 0xffffff,
@@ -745,15 +745,13 @@ export const STAGE_WAVES_DATA: [string, number, number][][][] = [
     // stage 05
     [
         // wave 1
-        // waveSegment(EnemyChar.Spider),
+        waveSegment(EnemyChar.Spider),
         // wave 2
         waveSegment(EnemyChar.Raptor, 4, 10, 0, []),
         // wave 3
-        // [≈],
         // [...waveSegment(EnemyChar.Soldier, 3.2, 7), ...waveSegment(EnemyChar.Spider)],
-        // wave 4
         [...waveSegment(EnemyChar.Soldier, 4, 6), ...waveSegment(EnemyChar.Spider, 0.8, 20)],
-
+        // wave 4
         [...waveSegment(EnemyChar.Raptor2, 1, 1), ...waveSegment(EnemyChar.Spider, 1.5, 40)],
     ],
 
@@ -762,12 +760,12 @@ export const STAGE_WAVES_DATA: [string, number, number][][][] = [
         // wave 1
         waveSegment(EnemyChar.Spider),
         // wave 2
-        // waveSegment(EnemyChar.Soldier, 3.2, 5),
-        // // waveSegment(EnemyChar.Raptor, 2),
-        // // wave 3
-        // [...waveSegment(EnemyChar.Soldier, 3.2, 10), ...waveSegment(EnemyChar.Spider, 2, 20)],
-        // // wave 4
-        // [...waveSegment(EnemyChar.Raptor, 2), ...waveSegment(EnemyChar.Spider, 2.3, 24)],
+        waveSegment(EnemyChar.Soldier, 3.2, 5),
+        // waveSegment(EnemyChar.Raptor, 2),
+        // wave 3
+        [...waveSegment(EnemyChar.Soldier, 3.2, 10), ...waveSegment(EnemyChar.Spider, 2, 20)],
+        // wave 4
+        [...waveSegment(EnemyChar.Raptor, 2), ...waveSegment(EnemyChar.Spider, 2.3, 24)],
         // // wave 5
         // [
         //     ...waveSegment(EnemyChar.Brigand, 2),
@@ -793,17 +791,17 @@ export const STAGE_WAVES_DATA: [string, number, number][][][] = [
         // wave 1
         waveSegment(EnemyChar.Orc, 4),
         // wave 2
-        // waveSegment(EnemyChar.Raptor, 2),
-        // // wave 3
-        // [...waveSegment(EnemyChar.Soldier, 2), ...waveSegment(EnemyChar.Spider)],
-        // // wave 4
-        // [...waveSegment(EnemyChar.Raptor, 2), ...waveSegment(EnemyChar.Spider, 0.8, 20)],
-        // // wave 5
-        // [
-        //     ...waveSegment(EnemyChar.Brigand, 2),
-        //     ...waveSegment(EnemyChar.Soldier, 2, 10, 22),
-        //     ...waveSegment(EnemyChar.Spider, 0.8, 20),
-        // ],
+        waveSegment(EnemyChar.Raptor, 2),
+        // wave 3
+        [...waveSegment(EnemyChar.Soldier, 2), ...waveSegment(EnemyChar.Spider)],
+        // wave 4
+        [...waveSegment(EnemyChar.Raptor, 2), ...waveSegment(EnemyChar.Spider, 0.8, 20)],
+        // wave 5
+        [
+            ...waveSegment(EnemyChar.Brigand, 2),
+            ...waveSegment(EnemyChar.Soldier, 2, 10, 22),
+            ...waveSegment(EnemyChar.Spider, 0.8, 20),
+        ],
         // // wave 5
         // [
         //     ...waveSegment(EnemyChar.Brigand, 2),
@@ -900,13 +898,13 @@ export const STAGE_WAVES_DATA: [string, number, number][][][] = [
             ...waveSegment(EnemyChar.Warrior, 2, 10, 22),
             ...waveSegment(EnemyChar.Spider, 0.8, 50),
         ],
-        // wave 6
-        [
-            ...waveSegment(EnemyChar.Warrior, 2),
-            ...waveSegment(EnemyChar.Soldier, 2, 10, 22),
-            ...waveSegment(EnemyChar.Brigand, 2, 10, 44),
-            ...waveSegment(EnemyChar.Spider, 1.5, 100, 0, [-1, 1]),
-        ],
+        // // wave 6
+        // [
+        //     ...waveSegment(EnemyChar.Warrior, 2),
+        //     ...waveSegment(EnemyChar.Soldier, 2, 10, 22),
+        //     ...waveSegment(EnemyChar.Brigand, 2, 10, 44),
+        //     ...waveSegment(EnemyChar.Spider, 1.5, 100, 0, [-1, 1]),
+        // ],
     ],
     // stage 11
     [
@@ -930,13 +928,13 @@ export const STAGE_WAVES_DATA: [string, number, number][][][] = [
             ...waveSegment(EnemyChar.Warrior, 2, 10, 22),
             ...waveSegment(EnemyChar.Spider, 0.8, 50),
         ],
-        // wave 6
-        [
-            ...waveSegment(EnemyChar.Warrior, 2),
-            ...waveSegment(EnemyChar.Soldier, 2, 10, 22),
-            ...waveSegment(EnemyChar.Brigand, 2, 10, 44),
-            ...waveSegment(EnemyChar.Spider, 1.5, 100, 0, [-1, 1]),
-        ],
+        // // wave 6
+        // [
+        //     ...waveSegment(EnemyChar.Warrior, 2),
+        //     ...waveSegment(EnemyChar.Soldier, 2, 10, 22),
+        //     ...waveSegment(EnemyChar.Brigand, 2, 10, 44),
+        //     ...waveSegment(EnemyChar.Spider, 1.5, 100, 0, [-1, 1]),
+        // ],
     ],
     // stage 12
     [
@@ -1057,6 +1055,7 @@ export const STAGE_WAVES_DATA: [string, number, number][][][] = [
             ...waveSegment(EnemyChar.Brigand, 2, 10, 44),
             ...waveSegment(EnemyChar.Spider, 1.5, 100, 0, [-1, 1]),
         ],
+        [...waveSegment(EnemyChar.Raptor2, 1, 1), ...waveSegment(EnemyChar.Spider, 1.5, 40)],
     ],
 ];
 

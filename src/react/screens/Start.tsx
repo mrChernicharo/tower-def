@@ -10,7 +10,7 @@ export function Start() {
                 .filter((r) => r.path && !/\/./g.test(r.path))
                 .map((r) => (
                     <li key={r.path}>
-                        <Link to={r.path}>{r.path}</Link>
+                        <Link to={r.path}>{r.name}</Link>
                     </li>
                 ))}
         </div>
