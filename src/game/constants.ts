@@ -193,20 +193,20 @@ export const ENEMY_BLUEPRINTS: { [k in EnemyType]: EnemyBluePrint } = {
 } as const;
 
 export const MATERIALS = {
-    damageMaterialStd: () => new THREE.MeshStandardMaterial({ color: "red" }),
-    damageMaterialPhysical: () => new THREE.MeshStandardMaterial({ color: "red" }),
-    concrete: () => new THREE.MeshMatcapMaterial({ color: COLORS.concrete }),
-    desert: () => new THREE.MeshMatcapMaterial({ color: COLORS.desert }),
-    forest: () => new THREE.MeshMatcapMaterial({ color: COLORS.forest }),
-    winter: () => new THREE.MeshMatcapMaterial({ color: COLORS.winter }),
-    lava: () => new THREE.MeshMatcapMaterial({ color: COLORS.lava }),
-    path: () => new THREE.MeshMatcapMaterial({ color: COLORS.concrete }),
-    concreteTransparent: () =>
-        new THREE.MeshMatcapMaterial({
-            color: COLORS.concrete,
-            transparent: true,
-            opacity: 0.5,
-        }),
+    damageMaterialStd: new THREE.MeshStandardMaterial({ color: "red" }),
+    damageMaterialPhysical: new THREE.MeshStandardMaterial({ color: "red" }),
+    concrete: new THREE.MeshMatcapMaterial({ color: COLORS.concrete }),
+    desert: new THREE.MeshMatcapMaterial({ color: COLORS.desert }),
+    forest: new THREE.MeshMatcapMaterial({ color: COLORS.forest }),
+    winter: new THREE.MeshMatcapMaterial({ color: COLORS.winter }),
+    lava: new THREE.MeshMatcapMaterial({ color: COLORS.lava }),
+    path: new THREE.MeshMatcapMaterial({ color: COLORS.concrete }),
+    concreteTransparent: new THREE.MeshMatcapMaterial({
+        color: COLORS.concrete,
+        transparent: true,
+        opacity: 0.5,
+    }),
+    projectileGizmo: new THREE.MeshToonMaterial({ color: 0x00ffff }),
     tower: (towerTexture: THREE.Texture) =>
         new THREE.MeshBasicMaterial({
             color: 0xdba58c,
@@ -223,7 +223,6 @@ export const MATERIALS = {
             opacity: 0.15,
             color,
         }),
-    projectileGizmo: () => new THREE.MeshToonMaterial({ color: 0x00ffff }),
     projectile: (color: number, towerTexture: THREE.Texture) =>
         new THREE.MeshBasicMaterial({
             color,
@@ -746,33 +745,15 @@ export const STAGE_WAVES_DATA: [string, number, number][][][] = [
     // stage 05
     [
         // wave 1
-        waveSegment(EnemyChar.Spider),
+        // waveSegment(EnemyChar.Spider),
         // wave 2
         waveSegment(EnemyChar.Raptor, 4, 10, 0, []),
         // wave 3
-        [...waveSegment(EnemyChar.Soldier, 3.2, 7), ...waveSegment(EnemyChar.Spider)],
+        // [...waveSegment(EnemyChar.Soldier, 3.2, 7)],
+        // [...waveSegment(EnemyChar.Soldier, 3.2, 7), ...waveSegment(EnemyChar.Spider)],
         // wave 4
         [...waveSegment(EnemyChar.Raptor, 2), ...waveSegment(EnemyChar.Spider, 0.8, 20)],
-        // wave 5
-        [
-            ...waveSegment(EnemyChar.Brigand, 2),
-            ...waveSegment(EnemyChar.Soldier, 2, 10, 22),
-            ...waveSegment(EnemyChar.Spider, 0.8, 20),
-        ],
-        // wave 5
-        [
-            ...waveSegment(EnemyChar.Brigand, 2),
-            ...waveSegment(EnemyChar.Raptor, 2, 10, 22),
-            ...waveSegment(EnemyChar.Spider, 0.8, 50),
-        ],
-        // wave 6
-        [
-            ...waveSegment(EnemyChar.Raptor, 2),
-            ...waveSegment(EnemyChar.Soldier, 2, 10, 22),
-            ...waveSegment(EnemyChar.Brigand, 2, 10, 44),
-            ...waveSegment(EnemyChar.Spider, 1.5, 100, 0, [-1, 1]),
-        ],
-        // wave 7
+
         [...waveSegment(EnemyChar.Raptor2, 1, 1), ...waveSegment(EnemyChar.Spider, 1.5, 40)],
     ],
 
@@ -781,11 +762,12 @@ export const STAGE_WAVES_DATA: [string, number, number][][][] = [
         // wave 1
         waveSegment(EnemyChar.Spider),
         // wave 2
-        waveSegment(EnemyChar.Raptor, 2),
+        waveSegment(EnemyChar.Soldier, 3.2, 5),
+        // waveSegment(EnemyChar.Raptor, 2),
         // wave 3
-        [...waveSegment(EnemyChar.Soldier, 2), ...waveSegment(EnemyChar.Spider)],
+        [...waveSegment(EnemyChar.Soldier, 3.2, 10), ...waveSegment(EnemyChar.Spider, 2, 20)],
         // wave 4
-        [...waveSegment(EnemyChar.Raptor, 2), ...waveSegment(EnemyChar.Spider, 0.8, 20)],
+        [...waveSegment(EnemyChar.Raptor, 2), ...waveSegment(EnemyChar.Spider, 2.3, 24)],
         // wave 5
         [
             ...waveSegment(EnemyChar.Brigand, 2),

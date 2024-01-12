@@ -22,7 +22,7 @@ export class Enemy {
     timestamp = Date.now();
     hp: number;
     timeSinceSpawn!: number;
-    originalMaterial!: THREE.Material;
+    originalMaterial: { meshName: string; material: THREE.Material }[] = [];
 
     constructor(enemyType: EnemyType) {
         this.id = idMaker();
@@ -38,8 +38,13 @@ export class Enemy {
         this.model.visible = false;
         // console.log(this.model);
         this.model.traverse((obj) => {
-            if ((obj as any).isMesh && obj.type === "SkinnedMesh") {
-                this.originalMaterial = (obj as THREE.Mesh).material as THREE.Material;
+            // if ((obj as any).isMesh && obj.type === "SkinnedMesh") {
+            if ((obj as any).isMesh) {
+                console.log({ name: obj.name, obj });
+                this.originalMaterial.push({
+                    meshName: obj.name,
+                    material: ((obj as THREE.Mesh).material as THREE.Material).clone(),
+                });
                 return;
             }
         });
@@ -170,12 +175,29 @@ export class Enemy {
     #_drawDamageEfx(enemyMesh: THREE.Mesh) {
         // console.log("_drawDamageEfx", { enemyMesh, originalMaterial: this.originalMaterial });
         try {
-            enemyMesh.material = MATERIALS.damageMaterialStd();
+            enemyMesh.material = MATERIALS.damageMaterialStd;
         } catch (error) {
             console.error({ error });
         } finally {
             setTimeout(() => {
-                enemyMesh.material = this.originalMaterial;
+                // console.log({ originalMaterial: this.originalMaterial });
+                // enemyMesh.material = this.originalMaterial;
+                // this.model.traverse(obj => {
+
+                // })
+                // this.originalMaterial.forEach((entry) => {
+                //     const mesh = this.model.getObjectByName(entry.meshName);
+                //     (mesh as THREE.Mesh).material = entry.material;
+                // });
+                this.model.traverse((obj) => {
+                    if ((obj as any).isMesh) {
+                        const found = this.originalMaterial.find((entry) => entry.meshName === obj.name);
+                        if (found) {
+                            (obj as THREE.Mesh).material = found.material;
+                        }
+                        // this.#_drawDamageEfx(obj as THREE.Mesh);
+                    }
+                });
             }, 160);
         }
     }

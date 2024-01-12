@@ -365,7 +365,7 @@ async function drawMap() {
             const mesh = obj as THREE.Mesh;
 
             if (mesh.name.includes("TowerBase")) {
-                mesh.material = MATERIALS.concrete();
+                mesh.material = MATERIALS.concrete;
                 obj.layers.set(AppLayers.TowerBase);
             }
             //  else if (/desert|Plane/g.test(mesh.name)) {
@@ -373,7 +373,7 @@ async function drawMap() {
             //     mesh.receiveShadow = true;
             // }
             else {
-                mesh.material = MATERIALS[`${levelData.area}`]();
+                mesh.material = MATERIALS[`${levelData.area}`];
                 mesh.receiveShadow = true;
             }
         }
@@ -408,7 +408,7 @@ function drawPath() {
         steps: 200,
         extrudePath: pathCurve,
     });
-    const pathMesh = new THREE.Mesh(geometry, MATERIALS.path());
+    const pathMesh = new THREE.Mesh(geometry, MATERIALS.path);
     pathMesh.name = "Road";
     pathMesh.position.y = shapeH;
     console.log({ attributes: pathMesh.geometry.attributes, geometry });
@@ -754,11 +754,11 @@ function handleHoverOpacityEfx() {
         // keep track of current towerBase
         hoveredTowerBaseName = towerBaseMesh.name;
 
-        (towerBaseMesh as THREE.Mesh).material = MATERIALS.concreteTransparent();
+        (towerBaseMesh as THREE.Mesh).material = MATERIALS.concreteTransparent;
     } else {
         if (hoveredTowerBaseName) {
             const hoveredTowerBase = scene.getObjectByName(hoveredTowerBaseName) as THREE.Mesh;
-            hoveredTowerBase.material = MATERIALS.concrete();
+            hoveredTowerBase.material = MATERIALS.concrete;
 
             // remove memory of hovered towerBase
             hoveredTowerBaseName = null;
@@ -822,7 +822,7 @@ function onProjectile(e: any) {
     scene.add(projectile.model);
 
     if (DRAW_FUTURE_GIZMO) {
-        const futureGizmo = new THREE.Mesh(new THREE.SphereGeometry(0.35), MATERIALS.projectileGizmo());
+        const futureGizmo = new THREE.Mesh(new THREE.SphereGeometry(0.35), MATERIALS.projectileGizmo);
         const hitPosition = new THREE.Vector3().copy(projectile.destination);
         futureGizmo.position.set(hitPosition.x, hitPosition.y, hitPosition.z);
         futureGizmo.name = "FutureGizmo";
