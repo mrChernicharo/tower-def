@@ -21,7 +21,8 @@ import {
     MATERIALS,
     STAGE_WAVES_DATA,
     TOWER_BLUEPRINTS,
-    desertLevelPath as jsonCurve,
+    // desertLevelPath,
+    villageLevelPath,
 } from "./constants";
 import { AppLayers, EnemyChar, EnemyType, GameState, ModalType, TargetingStrategy, TowerType } from "./enums";
 import { EnemyBluePrint, Projectile, WaveEnemy, GameInitProps, GameSpeed } from "./types";
@@ -345,8 +346,8 @@ function _init2DModals() {
 }
 
 async function drawMap() {
-    // const glb = await gltfLoader.loadAsync("/assets/glb/village-level-000.glb");
-    const glb = await gltfLoader.loadAsync("/assets/glb/desert-level.0.glb");
+    const glb = await gltfLoader.loadAsync("/assets/glb/l2.village-level.glb");
+    // const glb = await gltfLoader.loadAsync("/assets/glb/l1.desert-level.glb");
     const model = glb.scene;
 
     console.log({ glb, model });
@@ -374,13 +375,19 @@ async function drawMap() {
 function drawPath() {
     // console.log({ jsonCurve });
     pathPoints = [];
-    jsonCurve.points.forEach((point) => {
+    // desertLevelPath.points.forEach((point) => {
+    //     pathPoints.push(new THREE.Vector3(point.x, point.y, point.z));
+    // });
+
+    villageLevelPath.points.reverse();
+    villageLevelPath.points.forEach((point) => {
         pathPoints.push(new THREE.Vector3(point.x, point.y, point.z));
     });
 
-    pathCurve = new THREE.CatmullRomCurve3(pathPoints, false, "catmullrom", 0.3);
+    pathCurve = new THREE.CatmullRomCurve3(pathPoints, false, "chordal", 0.5);
 
-    const [shapeW, shapeH] = [1, 0.05];
+    const [shapeW, shapeH] = [0.05, 0.05];
+    // const [shapeW, shapeH] = [1, 0.05];
     // const [shapeW, shapeH] = [0.5, 0.05];
     // const [shapeW, shapeH] = [0.2, 0.05];
     const shapePts = [
@@ -391,12 +398,13 @@ function drawPath() {
     ];
     const extrudeShape = new THREE.Shape(shapePts);
     const geometry = new THREE.ExtrudeGeometry(extrudeShape, {
-        steps: 100,
+        steps: 200,
         extrudePath: pathCurve,
     });
     const pathMesh = new THREE.Mesh(geometry, MATERIALS.path());
     pathMesh.name = "Road";
     pathMesh.position.y = shapeH;
+    console.log({ attributes: pathMesh.geometry.attributes, geometry });
 
     console.log({ pathCurve, pathMesh, pathPoints });
 
