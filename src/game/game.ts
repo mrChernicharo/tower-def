@@ -873,7 +873,7 @@ function onPlayPause() {
             scheduleWaveEnemies(levelIdx, currWaveIdx);
             gameState = GameState.Active;
             playPauseBtn.textContent = "Pause";
-            waveDisplay.innerHTML = `Wave ${currWaveIdx + 1}`;
+            waveDisplay.innerHTML = `Wave ${currWaveIdx + 1}/ ${STAGE_WAVES_DATA[levelIdx].length}`;
             break;
         case GameState.Active:
             gameState = GameState.Paused;

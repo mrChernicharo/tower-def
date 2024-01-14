@@ -13,6 +13,7 @@ const Skills = () => {
 
     const earnedStars = getEarnedStars(stars);
     const starsSpent = getSpentStars(skills);
+    const starsToSpend = earnedStars - starsSpent;
 
     const onSkillClick = useCallback((skill: Skill) => {
         setSkillDetail(skill);
@@ -57,7 +58,7 @@ const Skills = () => {
             <p>Skills</p>
 
             <div style={{ display: "flex", justifyContent: "space-between" }}>
-                <div>{earnedStars - starsSpent}★</div>
+                <div>{starsToSpend}★</div>
                 <div>
                     <button onClick={resetSkills}>↻</button>
                 </div>
@@ -110,7 +111,7 @@ const Skills = () => {
                                 skill={skillDetail}
                                 onPurchaseSkill={onPurchaseSkill}
                                 onRemoveSkill={onRemoveSkill}
-                                playerStars={earnedStars - starsSpent}
+                                playerStars={starsToSpend}
                             />
                         </div>
                     </div>

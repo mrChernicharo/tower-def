@@ -6,11 +6,6 @@ import { Link } from "react-router-dom";
 import { usePlayerContext } from "../context/usePlayerContext";
 import { LevelStarCount, PlayerSkills, SkillId } from "../../game/types";
 
-const topBarStyles = {
-    display: "flex",
-    justifyContent: "space-between",
-};
-
 const Game = () => {
     const { area, level } = useParams();
     const { gold, hp, skills, updateStars } = usePlayerContext();
@@ -59,14 +54,28 @@ const Game = () => {
 
     return (
         <>
-            <div style={topBarStyles}>
+            <div
+                style={{
+                    position: "fixed",
+                    top: 0,
+                    display: "flex",
+                    // border: "1px solid",
+                    width: "100%",
+                    justifyContent: "space-between",
+                }}
+            >
                 <Link to={`/area-selection`}>←</Link>
-                <div>
+                {/* <div>
                     {area} #{level}
+                </div> */}
+
+                <div>
+                    <div style={{ display: "flex" }}>
+                        <div id="gold-display">${gold}</div>
+                        <div id="hp-display">❤️{hp}</div>
+                    </div>
+                    <div id="wave-display"></div>
                 </div>
-                <div id="gold-display">${gold}</div>
-                <div id="hp-display">❤️{hp}</div>
-                <div id="wave-display"></div>
 
                 <div id="speed-btn"></div>
 
