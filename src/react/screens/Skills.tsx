@@ -4,21 +4,15 @@ import { usePlayerContext } from "../context/usePlayerContext";
 import { gameSkills, imgs } from "../../game/constants";
 import { useCallback, useEffect, useState } from "react";
 import { Skill, SkillId } from "../../game/types";
-import { capitalize, getSkillInfo } from "../../game/helpers";
+import { capitalize, getEarnedStars, getSkillInfo, getSpentStars } from "../../game/helpers";
 // import { useState } from "react";
 
 const Skills = () => {
     const { stars, skills, addSkill, removeSkill, resetAllSkills } = usePlayerContext();
     const [skillDetail, setSkillDetail] = useState<Skill | null>(null);
 
-    const earnedStars = (stars as number[]).reduce((acc, next) => acc + next, 0);
-    const starsSpent = Object.entries(skills)
-        .filter(([_id, bool]) => bool)
-        .reduce(
-            (acc, [id, _bool]) =>
-                acc + gameSkills[id.split("-")[0] as keyof typeof gameSkills].find((s) => s.id === id)!.starCost,
-            0
-        );
+    const earnedStars = getEarnedStars(stars);
+    const starsSpent = getSpentStars(skills);
 
     const onSkillClick = useCallback((skill: Skill) => {
         setSkillDetail(skill);
@@ -56,7 +50,9 @@ const Skills = () => {
 
     return (
         <>
-            <Link to="/">←</Link>
+            <Link to="/area-selection">
+                <button>←</button>
+            </Link>
 
             <p>Skills</p>
 

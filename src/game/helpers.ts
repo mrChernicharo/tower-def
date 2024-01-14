@@ -1,8 +1,9 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { EnemyChar, EnemyType, TowerType } from "./enums";
 import { THREE } from "../three";
 import { GLTF } from "three/examples/jsm/Addons.js";
-import { allAreaLevels } from "./constants";
-import { LevelStarCount, LevelStarMap } from "./types";
+import { allAreaLevels, gameSkills } from "./constants";
+import { LevelStarCount, LevelStarMap, PlayerSkills, Skill } from "./types";
 
 export function getEnemyTypeFromChar(char: EnemyChar): EnemyType {
     switch (char) {
@@ -141,4 +142,18 @@ export function getSkillInfo(skillId: string) {
     const skillPath = skillId.split("-")[0];
     const skillLevel = Number(skillId.split("-")[1]);
     return { skillPath, skillLevel };
+}
+
+export function getEarnedStars(stars: number[]) {
+    return stars.reduce((acc, next) => acc + next, 0);
+}
+
+export function getSpentStars(skills: PlayerSkills) {
+    return Object.entries(skills)
+        .filter(([_id, bool]) => bool)
+        .reduce(
+            (acc, [id, _bool]) =>
+                acc + gameSkills[id.split("-")[0] as keyof typeof gameSkills].find((s) => s.id === id)!.starCost,
+            0
+        );
 }

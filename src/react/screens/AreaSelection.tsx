@@ -3,11 +3,15 @@ import { imgs } from "../../game/constants";
 import { useEffect } from "react";
 // import { allAreaLevels, allAreas } from "../../game/constants";
 import { usePlayerContext } from "../context/usePlayerContext";
-import { getAreaByLevel, getUnlockedStages } from "../../game/helpers";
+import { getAreaByLevel, getEarnedStars, getSpentStars, getUnlockedStages } from "../../game/helpers";
 import { LevelStars } from "../components/levelStars";
 
 const AreaSelection = () => {
-    const { stars } = usePlayerContext();
+    const { stars, skills } = usePlayerContext();
+
+    const earnedStars = getEarnedStars(stars);
+    const starsSpent = getSpentStars(skills);
+    const starsToSpend = earnedStars - starsSpent;
 
     useEffect(() => {
         console.log(getUnlockedStages(stars));
@@ -63,6 +67,38 @@ const AreaSelection = () => {
                     );
                 })}
                 <img src={imgs.World} style={{ position: "absolute", maxWidth: "100%", height: "100%" }} />
+
+                <Link to="/skills">
+                    <button style={{ position: "fixed", bottom: 5, left: 5 }}>
+                        <span>Skills</span>
+                        {starsToSpend > 0 ? (
+                            <div style={{ position: "absolute", bottom: 18, left: 56, transform: "rotate(12deg)" }}>
+                                <span
+                                    style={{
+                                        position: "relative",
+                                        color: "orangered",
+                                        fontSize: 36,
+                                    }}
+                                >
+                                    ★
+                                    <span
+                                        style={{
+                                            position: "absolute",
+                                            left: "50%",
+                                            top: "52.5%",
+                                            transform: "translate(-50%,-50%) rotate(-12deg)",
+                                            color: "#fff",
+                                            fontSize: 12,
+                                            fontWeight: 900,
+                                        }}
+                                    >
+                                        {starsToSpend}
+                                    </span>
+                                </span>
+                            </div>
+                        ) : null}
+                    </button>
+                </Link>
             </div>
         </div>
     );
