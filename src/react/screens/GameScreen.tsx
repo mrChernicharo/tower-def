@@ -1,10 +1,12 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { useCallback, useEffect, useRef } from "react";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { destroyGame, initGame } from "../../game/game";
 import { usePlayerContext } from "../context/usePlayerContext";
 import { LevelStarCount, PlayerSkills, SkillId } from "../../game/types";
 import { GAME_LEVELS, imgs } from "../../game/constants";
+import { AiFillSound } from "react-icons/ai";
+import { FaMusic } from "react-icons/fa";
 
 const Game = () => {
     const { area, level } = useParams();
@@ -55,8 +57,6 @@ const Game = () => {
     return (
         <>
             <div id="game-screen-header">
-                {/* <Link to={`/area-selection`}>←</Link> */}
-
                 <div id="stats-displays-container">
                     <div className="top-line">
                         <div id="gold-display">
@@ -75,8 +75,8 @@ const Game = () => {
                     <div id="speed-btn"></div>
                 </div>
 
-                <button id="play-pause-btn">▶️</button>
-                {/* <button id="play-pause-btn">⏸️</button> */}
+                {/* <button id="play-pause-btn">▶️</button> */}
+                <button id="play-pause-btn">⏸️</button>
             </div>
 
             {/* GAME CANVAS */}
@@ -85,7 +85,29 @@ const Game = () => {
 
             <div id="game-screen-footer"></div>
 
+            {/* OVERLAY SCREENS */}
+            <div id="pause-game-screen" className="hidden">
+                <div id="pause-content">
+                    <h2>Pause</h2>
+                    <div>
+                        <button>
+                            <AiFillSound />
+                        </button>
+                        <button>
+                            <FaMusic />
+                        </button>
+                    </div>
+                    <div>
+                        <button id="resume-game-btn">Resume</button>
+                        <Link to={`/area-selection`}>
+                            <button>Quit</button>
+                        </Link>
+                    </div>
+                </div>
+            </div>
+
             <div id="end-game-screen" className="hidden"></div>
+
             <div id="loading-screen">
                 <div id="progress-bar-container">
                     <label htmlFor="progress-bar">Loading...</label>

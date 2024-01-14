@@ -72,10 +72,12 @@ export const PROJECTILE_MODELS = {} as { [k in TowerType]: { [k: `level-${number
 
 const canvasHeight = window.innerHeight;
 let canvas: HTMLCanvasElement;
-let playPauseBtn: HTMLButtonElement;
+let pauseGameBtn: HTMLButtonElement;
+let resumeGameBtn: HTMLButtonElement;
 let waveDisplay: HTMLDivElement;
 let endGameScreen: HTMLDivElement;
 let loadingScreen: HTMLDivElement;
+let pauseScreen: HTMLDivElement;
 let endGameBtn: HTMLButtonElement;
 let progressBar: HTMLProgressElement;
 let speedBtns: HTMLDivElement;
@@ -119,7 +121,8 @@ export async function destroyGame() {
     canvas.removeEventListener("mousemove", onMouseMove);
     canvas.removeEventListener("click", onCanvasClick);
     canvas.removeEventListener("mousedown", onMouseDown);
-    playPauseBtn.removeEventListener("click", onPlayPause);
+    pauseGameBtn.removeEventListener("click", onPlayPause);
+    resumeGameBtn.removeEventListener("click", onResumeGame);
     speedBtns.removeEventListener("click", onGameSpeedChange);
 }
 
@@ -158,7 +161,8 @@ export async function initGame({ area, level, gold, hp, skills }: GameInitProps)
     canvas.addEventListener("mousemove", onMouseMove);
     canvas.addEventListener("click", onCanvasClick);
     canvas.addEventListener("mousedown", onMouseDown);
-    playPauseBtn.addEventListener("click", onPlayPause);
+    pauseGameBtn.addEventListener("click", onPlayPause);
+    resumeGameBtn.addEventListener("click", onResumeGame);
     speedBtns.addEventListener("click", onGameSpeedChange);
 
     frameId = requestAnimationFrame(animate);
@@ -168,10 +172,12 @@ async function gameSetup() {
     loadingManager = new THREE.LoadingManager();
 
     canvas = document.querySelector("#game-canvas") as HTMLCanvasElement;
-    playPauseBtn = document.querySelector("#play-pause-btn") as HTMLButtonElement;
+    pauseGameBtn = document.querySelector("#play-pause-btn") as HTMLButtonElement;
+    resumeGameBtn = document.querySelector("#resume-game-btn") as HTMLButtonElement;
     waveDisplay = document.querySelector("#wave-display") as HTMLDivElement;
     endGameScreen = document.querySelector("#end-game-screen") as HTMLDivElement;
     loadingScreen = document.querySelector("#loading-screen") as HTMLDivElement;
+    pauseScreen = document.querySelector("#pause-game-screen") as HTMLDivElement;
     progressBar = document.querySelector("#progress-bar") as HTMLProgressElement;
     speedBtns = document.querySelector("#speed-btn") as HTMLDivElement;
 
@@ -451,7 +457,7 @@ function drawWaveCallBeacon() {
         console.log("<<< WAVE START >>>", { levelIdx, currWaveIdx });
         scheduleWaveEnemies(levelIdx, currWaveIdx);
         gameState = GameState.Active;
-        playPauseBtn.textContent = "⏸️";
+        pauseGameBtn.textContent = "⏸️";
         waveDisplay.innerHTML = `Wave ${currWaveIdx + 1}/${GAME_LEVELS[levelIdx!].waves.length}`;
         modalEl.remove();
     };
@@ -922,13 +928,19 @@ function onPlayPause() {
             break;
         case GameState.Active:
             gameState = GameState.Paused;
-            playPauseBtn.textContent = "▶️";
+            pauseScreen.classList.remove("hidden");
+            // pauseGameBtn.textContent = "▶️";
             break;
         case GameState.Paused:
-            gameState = GameState.Active;
-            playPauseBtn.textContent = "⏸️";
-            break;
+        // gameState = GameState.Active;
+        // pauseGameBtn.textContent = "⏸️";
+        // break;
     }
+}
+
+function onResumeGame() {
+    gameState = GameState.Active;
+    pauseScreen.classList.add("hidden");
 }
 
 function onProjectile(e: any) {
@@ -1023,7 +1035,7 @@ function onEnemyDestroyed(e: any) {
             endGameBtn.addEventListener("click", onEndGameConfirm);
         }
 
-        playPauseBtn.innerHTML = `Start Wave ${currWaveIdx + 1}`;
+        pauseGameBtn.innerHTML = `Start Wave ${currWaveIdx + 1}`;
     }
 }
 

@@ -177,6 +177,32 @@ button:focus-visible {
 }
 
 /**********************************************/
+/******************* PAUSE ********************/
+/**********************************************/
+
+#pause-game-screen {
+    position: fixed;
+    inset: 0px;
+    background: rgba(36, 36, 36, 0.365);
+    /* opacity: 0.5; */
+    /* transition: opacity 2s; */
+    /* pointer-events: none; */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+#pause-game-screen #pause-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    pointer-events: all;
+    opacity: 1;
+}
+
+/**********************************************/
 /****************** LOADING *******************/
 /**********************************************/
 

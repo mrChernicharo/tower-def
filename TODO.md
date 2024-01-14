@@ -1,6 +1,11 @@
--   [ ] tower previews
+-   [✔] tower previews
 -   [ ] compute skills efx
 -   [✔] more levels
 -   [✔] enabling/disabling skill buttons
 -   [ ] camera
 -   [ ] multiple paths
+-   [✔] world-map
+-   [✔] call wave beacon
+-   [ ] game UI
+-   [ ] pause UI
+-   [ ] specials (meteor, blizzard)
