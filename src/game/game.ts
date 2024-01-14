@@ -982,7 +982,7 @@ function onEnemyDestroyed(e: any) {
 }
 
 function onEndGameConfirm() {
-    location.assign("#/area");
+    location.assign("#/area-selection");
     endGameBtn.removeEventListener("click", onEndGameConfirm);
 }
 

@@ -60,7 +60,7 @@ const Game = () => {
     return (
         <>
             <div style={topBarStyles}>
-                <Link to={`/area/${area}`}>←</Link>
+                <Link to={`/area-selection`}>←</Link>
                 <div>
                     {area} #{level}
                 </div>

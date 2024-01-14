@@ -9,7 +9,7 @@ export function Start() {
 
             <img src={imgs.Splash} width={800} />
 
-            <Link to="area">
+            <Link to="/area-selection">
                 <button>Start</button>
             </Link>
 

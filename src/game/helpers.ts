@@ -99,18 +99,38 @@ export function calcEarnedStarsForGameWin(hp: number) {
     else return 1;
 }
 
+// export function getStarIcons(stars: LevelStarCount) {
+//     switch (stars) {
+//         case 1:
+//             return "★ ☆ ☆";
+//         case 2:
+//             return "★ ★ ☆";
+//         case 3:
+//             return "★ ★ ★";
+//         case 0:
+//         default:
+//             return "☆ ☆ ☆";
+//     }
+// }
+
 export function getStarIcons(stars: LevelStarCount) {
     switch (stars) {
         case 1:
-            return "★ ☆ ☆";
+            return "★";
         case 2:
-            return "★ ★ ☆";
+            return "★ ★";
         case 3:
             return "★ ★ ★";
         case 0:
         default:
-            return "☆ ☆ ☆";
+            return "";
     }
+}
+export function getAreaByLevel(level: number) {
+    if (level < 4) return "desert";
+    if (level > 3 && level < 8) return "forest";
+    if (level > 8 && level < 12) return "winter";
+    else return "lava";
 }
 
 export function getUnlockedStages(stars: LevelStarMap) {
