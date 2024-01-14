@@ -62,7 +62,10 @@ export const imgs = {
     Splash: "/assets/imgs/splash.png",
     World: "/assets/imgs/world-map.jpeg",
     Stage: "/assets/svg/stage.svg",
+    Settings: "/assets/svg/gear.svg",
     // Stage: "/assets/imgs/sword32.webp",
+    CallWave: "/assets/imgs/twin-swords.webp",
+    Coins: "/assets/svg/coins.svg",
     Archer: "/assets/imgs/archer.webp",
     Ballista: "/assets/imgs/ballista.webp",
     Cannon: "/assets/imgs/cannon.webp",
@@ -205,6 +208,7 @@ export const MATERIALS = {
     winter: new THREE.MeshMatcapMaterial({ color: COLORS.winter }),
     lava: new THREE.MeshMatcapMaterial({ color: COLORS.lava }),
     path: new THREE.MeshMatcapMaterial({ color: COLORS.concrete }),
+    beacon: new THREE.MeshMatcapMaterial({ color: COLORS.green }),
     concreteTransparent: new THREE.MeshMatcapMaterial({
         color: COLORS.concrete,
         transparent: true,

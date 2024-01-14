@@ -62,37 +62,61 @@ const AreaSelection = () => {
                 })}
                 <img src={imgs.World} style={{ position: "absolute", maxWidth: "100%", height: "100%" }} />
 
-                <Link to="/skills">
-                    <button style={{ position: "absolute", bottom: 5, left: 5 }}>
-                        <span>Skills</span>
-                        {starsToSpend > 0 ? (
-                            <div style={{ position: "absolute", bottom: 18, left: 56, transform: "rotate(12deg)" }}>
-                                <span
-                                    style={{
-                                        position: "relative",
-                                        color: "orangered",
-                                        fontSize: 36,
-                                    }}
+                <div
+                    style={{
+                        position: "absolute",
+                        bottom: 5,
+                        left: 5,
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "end",
+                        width: "calc(100% - 10px)",
+                        // border: "1px solid",
+                    }}
+                >
+                    <Link to="/skills">
+                        <button style={{ marginLeft: "5px" }}>
+                            {/* <button style={{ position: "absolute", bottom: 5, left: 5 }}> */}
+                            <span>Skills</span>
+                            {starsToSpend > 0 ? (
+                                <div
+                                    style={{ position: "absolute", bottom: 18, right: 32, transform: "rotate(12deg)" }}
                                 >
-                                    ★
                                     <span
                                         style={{
-                                            position: "absolute",
-                                            left: "50%",
-                                            top: "52.5%",
-                                            transform: "translate(-50%,-50%) rotate(-12deg)",
-                                            color: "#fff",
-                                            fontSize: 12,
-                                            fontWeight: 900,
+                                            position: "relative",
+                                            color: "orangered",
+                                            fontSize: 36,
                                         }}
                                     >
-                                        {starsToSpend}
+                                        ★
+                                        <span
+                                            style={{
+                                                position: "absolute",
+                                                left: "50%",
+                                                top: "52.5%",
+                                                transform: "translate(-50%,-50%) rotate(-12deg)",
+                                                color: "#fff",
+                                                fontSize: 12,
+                                                fontWeight: 900,
+                                            }}
+                                        >
+                                            {starsToSpend}
+                                        </span>
                                     </span>
-                                </span>
-                            </div>
-                        ) : null}
-                    </button>
-                </Link>
+                                </div>
+                            ) : null}
+                        </button>
+                    </Link>
+
+                    {/* <button>Achievements</button> */}
+
+                    <Link to="/settings">
+                        <button style={{ padding: "0.5rem", display: "flex", marginLeft: "5px" }}>
+                            <img src={imgs.Settings} width={24} height={24} />
+                        </button>
+                    </Link>
+                </div>
             </div>
         </div>
     );

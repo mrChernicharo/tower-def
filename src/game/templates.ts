@@ -126,6 +126,18 @@ export const modalTemplates = {
     },
 } as const;
 
+export const beaconTemplate = {
+    callWave: () => {
+        return `
+            <div id="call-wave-beacon">
+                <h4>Call Wave!</h4>
+                <img src="${imgs.CallWave}" width="65px" height="65px" />
+                <div id="arrow-down"></div>
+            </div>
+        `;
+    },
+};
+
 export const gameEndTemplates = {
     gameWin: (stars: LevelStarCount) => `
         <h2>You Win!</h2>
@@ -139,13 +151,13 @@ export const gameEndTemplates = {
 };
 
 export const speedBtnsTemplate = {
-    btns: () => `
-        <label for="speed-1x">1x</label>
-        <input type="radio" name="speed" id="speed-1x" />
-        <label for="speed-2x">2x</label>
-        <input type="radio" name="speed" id="speed-2x" />
-        <label for="speed-4x">4x</label>
-        <input type="radio" name="speed" id="speed-4x" />
+    speedBtns: () => `
+            <label for="speed-1x">1x</label>
+            <input type="radio" name="speed" id="speed-1x" />
+            <label for="speed-2x">2x</label>
+            <input type="radio" name="speed" id="speed-2x" />
+            <label for="speed-4x">4x</label>
+            <input type="radio" name="speed" id="speed-4x" />
     `,
 };
 

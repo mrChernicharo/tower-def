@@ -115,26 +115,33 @@ export class Enemy {
         this.model.position.copy(position);
 
         switch (this.enemyType) {
-            case "spider":
+            case "spider": {
                 this.model.lookAt(position.clone().sub(tangent));
                 break;
-            case "orc":
-                this.model.lookAt(position.clone().add(tangent));
+            }
+            case "orc": {
+                const zeroYTan = new THREE.Vector3(tangent.x, 0, tangent.z);
+                this.model.lookAt(position.clone().add(zeroYTan));
                 this.model.position.y += 3;
                 break;
+            }
             case "raptor":
-            case "raptor2":
+            case "raptor2": {
+                const zeroYTan = new THREE.Vector3(tangent.x, 0, tangent.z);
                 this.model.lookAt(
-                    position.clone().add(tangent.applyAxisAngle(this.model.up, -Math.PI * 0.5).add(tangent))
+                    position.clone().add(zeroYTan.applyAxisAngle(this.model.up, -Math.PI * 0.5).add(zeroYTan))
                 );
                 this.model.position.y += 0.1;
                 break;
+            }
             case "soldier":
             case "brigand":
-            case "warrior":
-                this.model.lookAt(position.clone().add(tangent));
+            case "warrior": {
+                const zeroYTan = new THREE.Vector3(tangent.x, 0, tangent.z);
+                this.model.lookAt(position.clone().add(zeroYTan));
                 this.model.position.y += 0.175;
                 break;
+            }
             default:
                 this.model.lookAt(position.clone().sub(tangent));
                 break;

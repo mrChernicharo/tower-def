@@ -1,0 +1,45 @@
+#game-screen-header {
+    position: fixed;
+    top: 0;
+    display: flex;
+    border: 1px solid;
+    width: 100%;
+    justify-content: space-between;
+}
+
+#game-screen-footer {
+    position: fixed;
+    bottom: 0;
+    display: flex;
+    /* border: 1px solid; */
+    width: 100%;
+    justify-content: space-between;
+}
+
+#stats-displays-container {
+    display: flex;
+    flex-direction: column;
+}
+
+#stats-displays-container .top-line,
+#stats-displays-container .bottom-line {
+    display: flex;
+    gap: 5px;
+}
+#stats-displays-container .top-line {
+    margin-bottom: 5px;
+}
+
+#stats-displays-container .top-line #gold-display,
+#stats-displays-container .top-line #hp-display,
+#stats-displays-container .bottom-line #wave-display {
+    background: rgba(0, 0, 0, 0.5);
+    padding-inline: 0.25rem;
+    width: 100%;
+    min-width: 50px;
+    border: 1px solid;
+    height: 24px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}

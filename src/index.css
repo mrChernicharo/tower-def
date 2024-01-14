@@ -27,9 +27,12 @@ a:hover {
     color: #535bf2;
 }
 
+html,
 body {
+    /* overflow: hidden; */
     min-width: 320px;
-    min-height: 100vh;
+    /* min-height: 100dvh; */
+    height: 100dvh;
 }
 
 h1 {
@@ -66,6 +69,7 @@ button:focus-visible {
 
 .hidden {
     opacity: 0 !important;
+    height: 0 !important;
 }
 
 @media (prefers-color-scheme: light) {
@@ -82,7 +86,7 @@ button:focus-visible {
 }
 
 /**********************************************/
-/******************** MODAL *******************/
+/***************** TOWER MODAL ****************/
 /**********************************************/
 
 .modal2D {
@@ -124,6 +128,52 @@ button:focus-visible {
     background-color: transparent;
     right: 0;
     position: absolute;
+}
+
+/**********************************************/
+/****************** BEACONS *******************/
+/**********************************************/
+
+#call-wave-beacon {
+    /* border: 1px solid; */
+    text-align: center;
+    transform: translateY(-90px);
+    cursor: pointer;
+
+    animation-name: bouncing;
+    animation-duration: 1.5s;
+    animation-iteration-count: infinite;
+    /* animation: name duration timing-function delay iteration-count direction fill-mode; */
+}
+
+#call-wave-beacon img {
+    border-radius: 1000px;
+}
+/* 
+#call-wave-beacon:hover img {
+    filter: drop-shadow(5px 5px 15px purple);
+} */
+#call-wave-beacon:hover * {
+    filter: drop-shadow(5px 5px 15px purple);
+}
+
+#call-wave-beacon #arrow-down {
+    background-image: linear-gradient(royalblue, purple);
+    height: 65px;
+    width: 100%;
+    clip-path: polygon(0% 1%, 28% 12%, 52% 18%, 74% 11%, 99% 0%, 50% 100%);
+}
+
+@keyframes bouncing {
+    0% {
+        transform: translateY(-90px);
+    }
+    20% {
+        transform: translateY(-90px);
+    }
+    60% {
+        transform: translateY(-120px);
+    }
 }
 
 /**********************************************/

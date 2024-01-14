@@ -26,7 +26,7 @@ import {
 
 import { AppLayers, EnemyChar, EnemyType, GameArea, GameState, ModalType, TargetingStrategy, TowerType } from "./enums";
 import { EnemyBluePrint, Projectile, WaveEnemy, GameInitProps, GameSpeed, GameLevel } from "./types";
-import { cancelableModalNames, gameEndTemplates, modalTemplates, speedBtnsTemplate } from "./templates";
+import { beaconTemplate, cancelableModalNames, gameEndTemplates, modalTemplates, speedBtnsTemplate } from "./templates";
 import { Tower } from "./Tower";
 import { PlayerStats } from "./PlayerStats";
 
@@ -70,7 +70,7 @@ export const ENEMY_MODELS = {} as { [k in EnemyType]: GLTF };
 export const TOWER_MODELS = {} as { [k in TowerType]: { [k: `level-${number}`]: THREE.Mesh } };
 export const PROJECTILE_MODELS = {} as { [k in TowerType]: { [k: `level-${number}`]: THREE.Mesh } };
 
-const canvasHeight = window.innerHeight - 64;
+const canvasHeight = window.innerHeight;
 let canvas: HTMLCanvasElement;
 let playPauseBtn: HTMLButtonElement;
 let waveDisplay: HTMLDivElement;
@@ -149,6 +149,7 @@ export async function initGame({ area, level, gold, hp, skills }: GameInitProps)
     await drawMap();
     drawPath();
     _init2DModals();
+    drawWaveCallBeacon();
 
     window.addEventListener("resize", onResize);
     window.addEventListener("projectile", onProjectile);
@@ -175,7 +176,7 @@ async function gameSetup() {
     speedBtns = document.querySelector("#speed-btn") as HTMLDivElement;
 
     endGameScreen.classList.add("hidden");
-    speedBtns.innerHTML = speedBtnsTemplate.btns();
+    speedBtns.innerHTML = speedBtnsTemplate.speedBtns();
     (speedBtns.children[1] as HTMLInputElement).checked = true;
     gameSpeed = 1;
 
@@ -190,7 +191,7 @@ async function gameSetup() {
     cssRenderer.setSize(window.innerWidth, canvasHeight);
     cssRenderer.domElement.id = "css2d-overlay";
     cssRenderer.domElement.style.position = "absolute";
-    cssRenderer.domElement.style.top = "40px";
+    cssRenderer.domElement.style.top = "0px";
     cssRenderer.domElement.style.pointerEvents = "none";
     canvas.appendChild(cssRenderer.domElement);
 
@@ -408,6 +409,52 @@ function drawPath() {
     console.log({ pathCurve, pathMesh, pathPoints });
 
     scene.add(pathMesh);
+}
+
+function drawWaveCallBeacon() {
+    const pos = new THREE.Vector3(pathPoints[0].x, pathPoints[0].y, pathPoints[0].z);
+
+    // const group = new THREE.Group();
+
+    // const geometry = new THREE.SphereGeometry();
+    // const material = MATERIALS.beacon;
+    // const beacon = new THREE.Mesh(geometry, material);
+
+    // group.add(beacon);
+    // group.position.set(pos.x, pos.y, pos.z);
+
+    // scene.add(group);
+
+    const callWaveModalContainer = document.createElement("div");
+    // callWaveModalContainer.className = "modal-container";
+
+    const modal2D = new CSS2DObject(callWaveModalContainer);
+    modal2D.position.set(pos.x, pos.y, pos.z);
+    modal2D.name = `call-wave-2D-modal`;
+    // modal2D.name = `${el.name}-modal`;
+    // modal2D.userData["tile_idx"] = tileIdx;
+    // modal2D.layers.set(AppLayers.Modals);
+    // modal2D.visible = false;
+    scene.add(modal2D);
+
+    const modalEl = document.createElement("div");
+    modalEl.id = `call-wave-modal`;
+    // modalEl.className = `modal2D tile_${tileIdx}`;
+    modalEl.style.pointerEvents = "all";
+    modalEl.style.opacity = "0.9";
+    callWaveModalContainer.append(modalEl);
+    modalEl.innerHTML = beaconTemplate.callWave();
+
+    modalEl.onclick = () => {
+        console.log("CALL WAVE!");
+        // WAVE START
+        console.log("<<< WAVE START >>>", { levelIdx, currWaveIdx });
+        scheduleWaveEnemies(levelIdx, currWaveIdx);
+        gameState = GameState.Active;
+        playPauseBtn.textContent = "⏸️";
+        waveDisplay.innerHTML = `Wave ${currWaveIdx + 1}/${GAME_LEVELS[levelIdx!].waves.length}`;
+        modalEl.remove();
+    };
 }
 
 function scheduleWaveEnemies(levelIdx: number, waveIdx: number) {
@@ -740,7 +787,7 @@ function onCanvasClick(e: MouseEvent) {
         const modal3D = scene.getObjectByName(`${clickedTowerBase.object.name}-modal`)!;
         scene.traverse((obj) => {
             // HIDE previously open modal
-            if ((obj as any).isCSS2DObject && obj.visible) {
+            if ((obj as any).isCSS2DObject && obj.visible && obj.name !== "call-wave-2D-modal") {
                 obj.visible = false;
             }
 
@@ -792,6 +839,10 @@ function onCanvasClick(e: MouseEvent) {
         // HIDE modal (3D)
         scene.traverse((obj) => {
             if ((obj as any).isCSS2DObject) {
+                // console.log(obj.name);
+
+                if (obj.name === "call-wave-2D-modal") return;
+
                 if (obj.visible) {
                     obj.visible = false;
                 }
@@ -868,20 +919,14 @@ function onResize() {
 function onPlayPause() {
     switch (gameState) {
         case GameState.Idle:
-            // WAVE START
-            console.log("<<< WAVE START >>>", { levelIdx, currWaveIdx });
-            scheduleWaveEnemies(levelIdx, currWaveIdx);
-            gameState = GameState.Active;
-            playPauseBtn.textContent = "Pause";
-            waveDisplay.innerHTML = `Wave ${currWaveIdx + 1}/ ${STAGE_WAVES_DATA[levelIdx].length}`;
             break;
         case GameState.Active:
             gameState = GameState.Paused;
-            playPauseBtn.textContent = "Resume";
+            playPauseBtn.textContent = "▶️";
             break;
         case GameState.Paused:
             gameState = GameState.Active;
-            playPauseBtn.textContent = "Pause";
+            playPauseBtn.textContent = "⏸️";
             break;
     }
 }
@@ -951,7 +996,7 @@ function onEnemyDestroyed(e: any) {
             gameLost = true;
         }
     } else {
-        console.log("enemy killed");
+        // console.log("enemy killed");
         playerStats.gainGold(enemy.bluePrint.reward);
         // @TODO: draw money gain effect
     }
@@ -964,6 +1009,7 @@ function onEnemyDestroyed(e: any) {
         gameState = GameState.Idle;
         currWaveIdx++;
         gameElapsedTime = 0;
+        drawWaveCallBeacon();
 
         const waveCount = STAGE_WAVES_DATA[levelIdx].length;
         if (currWaveIdx === waveCount) {

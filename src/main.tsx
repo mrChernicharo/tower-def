@@ -1,6 +1,7 @@
 import ReactDOM from "react-dom/client";
 import { Routes } from "./react/router.tsx";
 import "./index.css";
+import "./react/screens/screens.css";
 import { PlayerStatsContextProvider } from "./react/context/PlayerStatsContext.tsx";
 // import React from "react";
 

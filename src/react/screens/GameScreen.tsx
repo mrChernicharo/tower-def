@@ -2,9 +2,9 @@
 import { useCallback, useEffect, useRef } from "react";
 import { useParams } from "react-router-dom";
 import { destroyGame, initGame } from "../../game/game";
-import { Link } from "react-router-dom";
 import { usePlayerContext } from "../context/usePlayerContext";
 import { LevelStarCount, PlayerSkills, SkillId } from "../../game/types";
+import { GAME_LEVELS, imgs } from "../../game/constants";
 
 const Game = () => {
     const { area, level } = useParams();
@@ -54,35 +54,36 @@ const Game = () => {
 
     return (
         <>
-            <div
-                style={{
-                    position: "fixed",
-                    top: 0,
-                    display: "flex",
-                    // border: "1px solid",
-                    width: "100%",
-                    justifyContent: "space-between",
-                }}
-            >
-                <Link to={`/area-selection`}>←</Link>
-                {/* <div>
-                    {area} #{level}
-                </div> */}
+            <div id="game-screen-header">
+                {/* <Link to={`/area-selection`}>←</Link> */}
 
-                <div>
-                    <div style={{ display: "flex" }}>
-                        <div id="gold-display">${gold}</div>
+                <div id="stats-displays-container">
+                    <div className="top-line">
+                        <div id="gold-display">
+                            <img src={imgs.Coins} width={16} height={16} />
+                            {gold}
+                        </div>
                         <div id="hp-display">❤️{hp}</div>
                     </div>
-                    <div id="wave-display"></div>
+                    <div className="bottom-line">
+                        <div id="wave-display">Wave 1/{GAME_LEVELS[+level!].waves.length}</div>
+                    </div>
                 </div>
 
-                <div id="speed-btn"></div>
+                <div id="speed-btn-container">
+                    <h4>Game Speed</h4>
+                    <div id="speed-btn"></div>
+                </div>
 
-                <button id="play-pause-btn">Start Game</button>
+                <button id="play-pause-btn">▶️</button>
+                {/* <button id="play-pause-btn">⏸️</button> */}
             </div>
 
+            {/* GAME CANVAS */}
             <div id="game-canvas"></div>
+            {/* GAME CANVAS */}
+
+            <div id="game-screen-footer"></div>
 
             <div id="end-game-screen" className="hidden"></div>
             <div id="loading-screen">
