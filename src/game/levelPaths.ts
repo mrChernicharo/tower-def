@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-loss-of-precision */
-export const desertLevelPath = {
+const desertLevelPath = {
     points: [
         {
             x: 4.473023414611816,
@@ -2645,7 +2645,7 @@ export const desertLevelPath = {
     closed: false,
 };
 
-export const villageLevelPath = {
+const villageLevelPath = {
     points: [
         {
             x: -40.117225646972656,
@@ -10150,8 +10150,10 @@ export const villageLevelPath = {
     ],
     closed: false,
 };
+villageLevelPath.points.reverse()
 
-export const castleLevelPath = {
+
+const castleLevelPath = {
     points: [
         {
             x: -14.34967041015625,
@@ -11536,3 +11538,6 @@ export const castleLevelPath = {
     ],
     closed: false,
 };
+
+
+export {desertLevelPath, castleLevelPath, villageLevelPath};

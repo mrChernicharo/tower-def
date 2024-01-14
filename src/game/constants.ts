@@ -59,6 +59,10 @@ export const mapURLs = {
 };
 
 export const imgs = {
+    Splash: "/assets/imgs/splash.png",
+    World: "/assets/imgs/world-map.jpeg",
+    Stage: "/assets/svg/stage.svg",
+    // Stage: "/assets/imgs/sword32.webp",
     Archer: "/assets/imgs/archer.webp",
     Ballista: "/assets/imgs/ballista.webp",
     Cannon: "/assets/imgs/cannon.webp",

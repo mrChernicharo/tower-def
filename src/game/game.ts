@@ -24,7 +24,6 @@ import {
     TOWER_BLUEPRINTS,
 } from "./constants";
 
-import { villageLevelPath } from "./levelPaths";
 import { AppLayers, EnemyChar, EnemyType, GameArea, GameState, ModalType, TargetingStrategy, TowerType } from "./enums";
 import { EnemyBluePrint, Projectile, WaveEnemy, GameInitProps, GameSpeed, GameLevel } from "./types";
 import { cancelableModalNames, gameEndTemplates, modalTemplates, speedBtnsTemplate } from "./templates";
@@ -378,9 +377,6 @@ async function drawMap() {
 }
 
 function drawPath() {
-    if (levelData.path === villageLevelPath) {
-        levelData.path.points.reverse();
-    }
     pathPoints = [];
     levelData.path.points.forEach((point) => {
         pathPoints.push(new THREE.Vector3(point.x, point.y, point.z));
