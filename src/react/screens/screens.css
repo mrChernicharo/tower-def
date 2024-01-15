@@ -7,32 +7,23 @@
     justify-content: space-between;
 }
 
-#game-screen-footer {
-    position: fixed;
-    bottom: 0;
-    display: flex;
-    /* border: 1px solid; */
-    width: 100%;
-    justify-content: space-between;
-}
-
-#stats-displays-container {
+#game-screen-header #stats-displays-container {
     display: flex;
     flex-direction: column;
 }
 
-#stats-displays-container .top-line,
-#stats-displays-container .bottom-line {
+#game-screen-header #stats-displays-container .top-line,
+#game-screen-header #stats-displays-container .bottom-line {
     display: flex;
     gap: 5px;
 }
-#stats-displays-container .top-line {
+#game-screen-header #stats-displays-container .top-line {
     margin-bottom: 5px;
 }
 
-#stats-displays-container .top-line #gold-display,
-#stats-displays-container .top-line #hp-display,
-#stats-displays-container .bottom-line #wave-display {
+#game-screen-header #stats-displays-container .top-line #gold-display,
+#game-screen-header #stats-displays-container .top-line #hp-display,
+#game-screen-header #stats-displays-container .bottom-line #wave-display {
     background: rgba(0, 0, 0, 0.5);
     padding-inline: 0.25rem;
     width: 100%;
@@ -42,4 +33,28 @@
     display: flex;
     justify-content: center;
     align-items: center;
+}
+
+#game-screen-footer {
+    position: fixed;
+    bottom: 0;
+    display: flex;
+    /* border: 1px solid; */
+    width: 100%;
+    justify-content: space-between;
+}
+
+#game-screen-footer .action-btns {
+    border: 1px solid;
+}
+#game-screen-footer .action-btns button {
+    border-radius: 1000px;
+    height: 56px;
+    width: 56px;
+    padding: 5px;
+}
+#game-screen-footer .action-btns button img {
+    border-radius: 1000px;
+}
+#game-screen-footer {
 }

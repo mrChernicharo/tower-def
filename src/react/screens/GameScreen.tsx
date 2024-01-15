@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { useCallback, useEffect, useRef } from "react";
-import { Link, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { destroyGame, initGame } from "../../game/game";
 import { usePlayerContext } from "../context/usePlayerContext";
 import { LevelStarCount, PlayerSkills, SkillId } from "../../game/types";
@@ -75,15 +75,38 @@ const Game = () => {
                     <div id="speed-btn"></div>
                 </div>
 
-                {/* <button id="play-pause-btn">▶️</button> */}
-                <button id="play-pause-btn">⏸️</button>
+                <button id="play-pause-btn">⏸️ {/* ▶️ */}</button>
             </div>
 
-            {/* GAME CANVAS */}
+            {/* ******************* GAME CANVAS ******************* */}
             <div id="game-canvas"></div>
-            {/* GAME CANVAS */}
+            {/* ******************* GAME CANVAS ******************* */}
 
-            <div id="game-screen-footer"></div>
+            <div id="game-screen-footer">
+                <div className="action-btns">
+                    <button>
+                        <img src={imgs.Cannon} width={46} height={46} />
+                    </button>
+                    <button>
+                        <img src={imgs.Cannon} width={46} height={46} />
+                    </button>
+                    <button>
+                        <img src={imgs.Cannon} width={46} height={46} />
+                    </button>
+                </div>
+
+                <div className="action-btns">
+                    <button>
+                        <img src={imgs.Cannon} width={46} height={46} />
+                    </button>
+                    <button>
+                        <img src={imgs.Cannon} width={46} height={46} />
+                    </button>
+                    <button>
+                        <img src={imgs.Cannon} width={46} height={46} />
+                    </button>
+                </div>
+            </div>
 
             {/* OVERLAY SCREENS */}
             <div id="pause-game-screen" className="hidden">

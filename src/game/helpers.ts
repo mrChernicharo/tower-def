@@ -3,7 +3,7 @@ import { EnemyChar, EnemyType, TowerType } from "./enums";
 import { THREE } from "../three";
 import { GLTF } from "three/examples/jsm/Addons.js";
 import { allAreaLevels, gameSkills } from "./constants";
-import { LevelStarCount, LevelStarMap, PlayerSkills, Skill } from "./types";
+import { LevelStarCount, LevelStarMap, PlayerSkills } from "./types";
 
 export function getEnemyTypeFromChar(char: EnemyChar): EnemyType {
     switch (char) {
