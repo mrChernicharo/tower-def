@@ -7,8 +7,10 @@ import { CSS2DRenderer, CSS2DObject } from "three/examples/jsm/renderers/CSS2DRe
 import { THREE } from "../three";
 import { Enemy } from "./Enemy";
 import {
+    applyAreaDamage,
     calcEarnedStarsForGameWin,
     capitalize,
+    determineDamage,
     getEnemyTypeFromChar,
     getProjectileTowerName,
     handleModelGun,
@@ -30,6 +32,7 @@ import { beaconTemplate, cancelableModalNames, gameEndTemplates, modalTemplates,
 import { Tower } from "./Tower";
 import { PlayerStats } from "./PlayerStats";
 import { Meteor } from "./Meteor";
+import { MathUtils } from "three";
 
 // let pathPoints: THREE.Vector3[] = [];
 
@@ -613,15 +616,15 @@ function animate() {
         const removingExplosions = [];
         for (const [, explosion] of explosions.entries()) {
             const elapsed = Date.now() - explosion.userData.spawned_at;
-            const intensity = explosion.userData.intensity;
+            const explosionRadius = explosion.userData.radius;
             if (elapsed < 200) {
-                explosion.scale.x += intensity * 0.5;
-                explosion.scale.y += intensity * 0.5;
-                explosion.scale.z += intensity * 0.5;
+                explosion.scale.x += explosionRadius * 0.1;
+                explosion.scale.y += explosionRadius * 0.1;
+                explosion.scale.z += explosionRadius * 0.1;
             } else if (elapsed < 600) {
-                explosion.scale.x -= intensity * 0.25;
-                explosion.scale.y -= intensity * 0.25;
-                explosion.scale.z -= intensity * 0.25;
+                explosion.scale.x -= explosionRadius * 0.05;
+                explosion.scale.y -= explosionRadius * 0.05;
+                explosion.scale.z -= explosionRadius * 0.05;
             } else {
                 removingExplosions.push(explosion);
             }
@@ -1056,17 +1059,28 @@ function onProjectile(e: any) {
 
 function onProjectileExplode(e: any) {
     const projectile = e.detail as Projectile;
+    // console.log(projectile.type);
     const futureGizmo = futureGizmos.get(projectile.id)!;
     const targetEnemy = enemies.find((e) => e.id === projectile.targetEnemyId);
 
     const explosion = projectile.explosion as THREE.Mesh;
     explosion.userData["projectile_id"] = projectile.id;
     explosion.userData["spawned_at"] = Date.now();
-    explosion.userData["intensity"] = projectile.blueprint.explosionIntensity;
-    explosion.position.set(projectile.model.position.x, projectile.model.position.y, projectile.model.position.z);
+    explosion.userData["radius"] = projectile.blueprint.explosionRadius;
+
+    const pos = new THREE.Vector3(
+        projectile.model.position.x,
+        projectile.model.position.y,
+        projectile.model.position.z
+    );
+    explosion.position.set(pos.x, pos.y, pos.z);
 
     if (targetEnemy && targetEnemy.hp > 0) {
-        targetEnemy.takeDamage(projectile.damage);
+        if (projectile.type === TowerType.Cannon) {
+            applyAreaDamage(enemies, pos, explosion.userData.radius * 4.5, projectile.damage);
+        } else {
+            targetEnemy.takeDamage(projectile.damage);
+        }
     }
 
     // console.log("onProjectileExplode", { projectile, projectiles, towers, explosions, scene });
@@ -1085,12 +1099,14 @@ function onMeteorExplode(e: any) {
     console.log("onMeteorExplode", meteor.timeToTarget);
 
     const explosion = meteor.explosion as THREE.Mesh;
+    const pos = new THREE.Vector3(meteor.model.position.x, meteor.model.position.y, meteor.model.position.z);
     explosion.userData["meteor_id"] = meteor.id;
     explosion.userData["spawned_at"] = Date.now();
-    explosion.userData["intensity"] = 1;
-    explosion.position.set(meteor.model.position.x, meteor.model.position.y, meteor.model.position.z);
+    explosion.userData["radius"] = 10;
+    explosion.position.set(pos.x, pos.y, pos.z);
     explosions.set(meteor.id, explosion);
     scene.add(explosion);
+    applyAreaDamage(enemies, pos, explosion.userData.radius * 0.4, determineDamage([50, 200]));
 }
 
 function onEnemyDestroyed(e: any) {
@@ -1214,13 +1230,17 @@ function onMeteorFire(e: any) {
     console.log("onMeteorFire", e, pos);
     const meteorCount = 6;
     for (let i = 0; i < meteorCount; i++) {
-        const destination = new THREE.Vector3(pos.x, pos.y, pos.z);
+        const destination = new THREE.Vector3(
+            MathUtils.lerp(pos.x - 2.5, pos.x + 2.5, Math.random()),
+            pos.y,
+            MathUtils.lerp(pos.z - 2.5, pos.z + 2.5, Math.random())
+        );
 
         setTimeout(() => {
             const meteor = new Meteor(destination);
             meteors.set(meteor.id, meteor);
             scene.add(meteor.model);
-        }, i * 100);
+        }, i * 220);
     }
 }
 

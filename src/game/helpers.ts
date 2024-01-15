@@ -4,6 +4,7 @@ import { THREE } from "../three";
 import { GLTF } from "three/examples/jsm/Addons.js";
 import { allAreaLevels, gameSkills } from "./constants";
 import { LevelStarCount, LevelStarMap, PlayerSkills } from "./types";
+import { Enemy } from "./Enemy";
 
 export function getEnemyTypeFromChar(char: EnemyChar): EnemyType {
     switch (char) {
@@ -181,4 +182,26 @@ function polarToCartesian(radius: number, angleInDegrees: number) {
         x: radius + radius * Math.cos(radians),
         y: radius + radius * Math.sin(radians),
     };
+}
+
+export function applyAreaDamage(enemies: Enemy[], pos: THREE.Vector3, radius: number, damage: number) {
+    const enemiesHit = enemies.filter((e) => e.model.position.distanceTo(pos) < radius);
+
+    enemiesHit.forEach((e) => {
+        const dist = e.model.position.distanceTo(pos);
+        const percDist = (radius - dist) / radius;
+        const fullHit = percDist >= 0.65;
+        if (fullHit) {
+            e.takeDamage(damage);
+        } else {
+            e.takeDamage(damage / 2);
+        }
+
+        console.log(e.id, { dist, percDist, fullHit, damage });
+    });
+    // console.log("applyAreaDamage", { enemies, enemiesHit, pos, splashRadius, radius });
+}
+
+export function determineDamage(damage: [number, number]) {
+    return Math.round(THREE.MathUtils.lerp(damage[0], damage[1], Math.random()));
 }

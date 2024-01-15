@@ -34,7 +34,7 @@ export type ProjectileBluePrint = {
     speed: number;
     modelScale: number;
     explosionColor: string;
-    explosionIntensity: number;
+    explosionRadius: number;
     maxHeight?: number;
 };
 

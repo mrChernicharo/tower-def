@@ -520,7 +520,7 @@ export const PROJECTILE_BLUEPRINTS: { [k in TowerType]: ProjectileBluePrint[] } 
         {
             type: TowerType.Archer,
             level: 1,
-            explosionIntensity: 0.5,
+            explosionRadius: 0.25,
             explosionColor: "orangered",
             color: "blue",
             modelScale: 0.005,
@@ -530,7 +530,7 @@ export const PROJECTILE_BLUEPRINTS: { [k in TowerType]: ProjectileBluePrint[] } 
         {
             type: TowerType.Archer,
             level: 2,
-            explosionIntensity: 0.5,
+            explosionRadius: 0.25,
             explosionColor: "orangered",
             color: "blue",
             modelScale: 0.005,
@@ -540,7 +540,7 @@ export const PROJECTILE_BLUEPRINTS: { [k in TowerType]: ProjectileBluePrint[] } 
         {
             type: TowerType.Archer,
             level: 3,
-            explosionIntensity: 0.5,
+            explosionRadius: 0.25,
             explosionColor: "orangered",
             color: "blue",
             modelScale: 0.005,
@@ -550,7 +550,7 @@ export const PROJECTILE_BLUEPRINTS: { [k in TowerType]: ProjectileBluePrint[] } 
         {
             type: TowerType.Archer,
             level: 4,
-            explosionIntensity: 0.5,
+            explosionRadius: 0.25,
             explosionColor: "orangered",
             color: "blue",
             modelScale: 0.005,
@@ -562,7 +562,7 @@ export const PROJECTILE_BLUEPRINTS: { [k in TowerType]: ProjectileBluePrint[] } 
         {
             type: TowerType.Ballista,
             level: 1,
-            explosionIntensity: 0.5,
+            explosionRadius: 0.35,
             explosionColor: "orangered",
             color: "red",
             modelScale: 0.0075,
@@ -572,7 +572,7 @@ export const PROJECTILE_BLUEPRINTS: { [k in TowerType]: ProjectileBluePrint[] } 
         {
             type: TowerType.Ballista,
             level: 2,
-            explosionIntensity: 0.5,
+            explosionRadius: 0.35,
             explosionColor: "orangered",
             color: "red",
             modelScale: 0.0075,
@@ -582,7 +582,7 @@ export const PROJECTILE_BLUEPRINTS: { [k in TowerType]: ProjectileBluePrint[] } 
         {
             type: TowerType.Ballista,
             level: 3,
-            explosionIntensity: 0.5,
+            explosionRadius: 0.35,
             explosionColor: "orangered",
             color: "red",
             modelScale: 0.0075,
@@ -592,7 +592,7 @@ export const PROJECTILE_BLUEPRINTS: { [k in TowerType]: ProjectileBluePrint[] } 
         {
             type: TowerType.Ballista,
             level: 4,
-            explosionIntensity: 0.5,
+            explosionRadius: 0.35,
             explosionColor: "orangered",
             color: "red",
             modelScale: 0.0075,
@@ -604,7 +604,7 @@ export const PROJECTILE_BLUEPRINTS: { [k in TowerType]: ProjectileBluePrint[] } 
         {
             type: TowerType.Cannon,
             level: 1,
-            explosionIntensity: 2,
+            explosionRadius: 1.5,
             explosionColor: "yellow",
             color: "black",
             modelScale: 0.0065,
@@ -614,7 +614,7 @@ export const PROJECTILE_BLUEPRINTS: { [k in TowerType]: ProjectileBluePrint[] } 
         {
             type: TowerType.Cannon,
             level: 2,
-            explosionIntensity: 2,
+            explosionRadius: 1.5,
             explosionColor: "yellow",
             color: "black",
             modelScale: 0.01,
@@ -624,7 +624,7 @@ export const PROJECTILE_BLUEPRINTS: { [k in TowerType]: ProjectileBluePrint[] } 
         {
             type: TowerType.Cannon,
             level: 3,
-            explosionIntensity: 2,
+            explosionRadius: 1.5,
             explosionColor: "yellow",
             color: "black",
             modelScale: 0.012,
@@ -634,7 +634,7 @@ export const PROJECTILE_BLUEPRINTS: { [k in TowerType]: ProjectileBluePrint[] } 
         {
             type: TowerType.Cannon,
             level: 4,
-            explosionIntensity: 2,
+            explosionRadius: 1.5,
             explosionColor: "yellow",
             color: "black",
             modelScale: 0.015,
@@ -646,7 +646,7 @@ export const PROJECTILE_BLUEPRINTS: { [k in TowerType]: ProjectileBluePrint[] } 
         {
             type: TowerType.Wizard,
             level: 1,
-            explosionIntensity: 1,
+            explosionRadius: 0.6,
             explosionColor: "purple",
             color: "purple",
             modelScale: 0.005,
@@ -656,7 +656,7 @@ export const PROJECTILE_BLUEPRINTS: { [k in TowerType]: ProjectileBluePrint[] } 
         {
             type: TowerType.Wizard,
             level: 2,
-            explosionIntensity: 1,
+            explosionRadius: 0.6,
             explosionColor: "purple",
             color: "purple",
             modelScale: 0.0055,
@@ -666,7 +666,7 @@ export const PROJECTILE_BLUEPRINTS: { [k in TowerType]: ProjectileBluePrint[] } 
         {
             type: TowerType.Wizard,
             level: 3,
-            explosionIntensity: 1,
+            explosionRadius: 0.6,
             explosionColor: "purple",
             color: "purple",
             modelScale: 0.006,
@@ -676,7 +676,7 @@ export const PROJECTILE_BLUEPRINTS: { [k in TowerType]: ProjectileBluePrint[] } 
         {
             type: TowerType.Wizard,
             level: 4,
-            explosionIntensity: 1,
+            explosionRadius: 0.6,
             explosionColor: "purple",
             color: "purple",
             modelScale: 0.0065,
@@ -688,7 +688,7 @@ export const PROJECTILE_BLUEPRINTS: { [k in TowerType]: ProjectileBluePrint[] } 
         {
             type: TowerType.Poison,
             level: 1,
-            explosionIntensity: 1,
+            explosionRadius: 0.45,
             explosionColor: "green",
             color: "green",
             modelScale: 0.005,
@@ -698,7 +698,7 @@ export const PROJECTILE_BLUEPRINTS: { [k in TowerType]: ProjectileBluePrint[] } 
         {
             type: TowerType.Poison,
             level: 2,
-            explosionIntensity: 1,
+            explosionRadius: 0.45,
             explosionColor: "green",
             color: "green",
             modelScale: 0.0055,
@@ -708,7 +708,7 @@ export const PROJECTILE_BLUEPRINTS: { [k in TowerType]: ProjectileBluePrint[] } 
         {
             type: TowerType.Poison,
             level: 3,
-            explosionIntensity: 1,
+            explosionRadius: 0.45,
             explosionColor: "green",
             color: "green",
             modelScale: 0.006,
@@ -718,7 +718,7 @@ export const PROJECTILE_BLUEPRINTS: { [k in TowerType]: ProjectileBluePrint[] } 
         {
             type: TowerType.Poison,
             level: 4,
-            explosionIntensity: 1,
+            explosionRadius: 0.45,
             explosionColor: "green",
             color: "green",
             modelScale: 0.0065,

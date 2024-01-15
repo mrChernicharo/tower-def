@@ -1,7 +1,7 @@
 import { THREE } from "../three";
 import { AppLayers, TowerType } from "./enums";
 import { PROJECTILE_MODELS, towerTexture } from "./game";
-import { idMaker } from "./helpers";
+import { determineDamage, idMaker } from "./helpers";
 import { ProjectileBluePrint } from "./types";
 import { COLORS, MATERIALS, PROJECTILE_BLUEPRINTS } from "./constants";
 import { Tower } from "./Tower";
@@ -29,9 +29,8 @@ class ProjectileBase {
         this.model = PROJECTILE_MODELS[this.type][`level-${this.level}`].clone();
 
         this.timeSinceSpawn = 0;
-        this.damage = Math.round(
-            THREE.MathUtils.lerp(tower.blueprint.damage[0], tower.blueprint.damage[1], Math.random())
-        );
+        this.damage = determineDamage(tower.blueprint.damage);
+
         this.destination = new THREE.Vector3(destination.x, destination.y, destination.z);
         this.originPos = new THREE.Vector3(
             tower.position.x,
@@ -53,7 +52,7 @@ class ProjectileBase {
         this.model.layers.set(AppLayers.Projectile);
 
         // SETUP EXPLOSION
-        const explosionGeometry = new THREE.SphereGeometry(0.1);
+        const explosionGeometry = new THREE.SphereGeometry(this.blueprint.explosionRadius);
         const explosionMaterial = MATERIALS.explosion(COLORS[this.blueprint.explosionColor as keyof typeof COLORS]);
         this.explosion = new THREE.Mesh(explosionGeometry, explosionMaterial);
     }
