@@ -9,4 +9,8 @@
 -   [✔] game UI
 -   [✔] pause UI
 -   [✔] specials/items buttons (meteor, blizzard, ...)
--   [ ] debug: strange paths (prod mobile); lava paths
+-   [✔] debug: strange paths (prod mobile); lava paths
+-   [✔] meteors
+-   [ ] meteor cancel btn
+-   [ ] meteor gizmo
+-   [ ] blizzard

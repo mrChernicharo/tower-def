@@ -134,7 +134,6 @@ export async function destroyGame() {
     window.removeEventListener("projectile", onProjectile);
     window.removeEventListener("projectile-explode", onProjectileExplode);
     window.removeEventListener("meteor-explode", onMeteorExplode);
-    window.removeEventListener("target-meteor", onTargetMeteor);
     window.removeEventListener("meteor-fire", onMeteorFire);
     window.removeEventListener("enemy-destroyed", onEnemyDestroyed);
     canvas.removeEventListener("mousemove", onMouseMove);
@@ -143,7 +142,7 @@ export async function destroyGame() {
     pauseGameBtn.removeEventListener("click", onPauseGame);
     resumeGameBtn.removeEventListener("click", onResumeGame);
     speedBtns.removeEventListener("click", onGameSpeedChange);
-    meteorBtn.removeEventListener("click", onMeteorSelected);
+    meteorBtn.removeEventListener("click", onMeteorBtnClick);
     blizzardBtn.removeEventListener("click", onBizzard);
 }
 
@@ -179,7 +178,6 @@ export async function initGame({ area, level, hp, skills }: GameInitProps) {
     window.addEventListener("projectile", onProjectile);
     window.addEventListener("projectile-explode", onProjectileExplode);
     window.addEventListener("meteor-explode", onMeteorExplode);
-    window.addEventListener("target-meteor", onTargetMeteor);
     window.addEventListener("meteor-fire", onMeteorFire);
     window.addEventListener("enemy-destroyed", onEnemyDestroyed);
     canvas.addEventListener("mousemove", onMouseMove);
@@ -188,7 +186,7 @@ export async function initGame({ area, level, hp, skills }: GameInitProps) {
     pauseGameBtn.addEventListener("click", onPauseGame);
     resumeGameBtn.addEventListener("click", onResumeGame);
     speedBtns.addEventListener("click", onGameSpeedChange);
-    meteorBtn.addEventListener("click", onMeteorSelected);
+    meteorBtn.addEventListener("click", onMeteorBtnClick);
     blizzardBtn.addEventListener("click", onBizzard);
 
     frameId = requestAnimationFrame(animate);
@@ -552,17 +550,6 @@ function animate() {
         // SPECIALS COOLDOWN
         playerStats.tick(delta);
 
-        // METEORS
-        for (const [meteorId, meteor] of meteors.entries()) {
-            if (meteor.destination.distanceTo(meteor.model.position) < 0.5) {
-                meteor.explode();
-                scene.remove(meteor.model);
-                meteors.delete(meteorId);
-            }
-
-            meteor.tick(delta);
-        }
-
         // console.log(playerStats.meteorCooldown);
     }
 
@@ -634,6 +621,17 @@ function animate() {
             explosions.delete(ex.userData.projectile_id);
             scene.remove(ex);
         });
+
+        // METEORS
+        for (const [meteorId, meteor] of meteors.entries()) {
+            if (meteor.destination.distanceTo(meteor.model.position) < 0.5) {
+                meteor.explode();
+                scene.remove(meteor.model);
+                meteors.delete(meteorId);
+            }
+
+            meteor.tick(delta);
+        }
 
         // WAVE SPAWNING
         const spawningEnemyIdx = currWave.findIndex((e) => e.spawnAt < gameElapsedTime);
@@ -858,7 +856,11 @@ function onCanvasClick(e: MouseEvent) {
         const pos = new THREE.Vector3();
         const mouseRayIntersects = mouseRay.intersectObjects(scene.children);
 
-        if (mouseRayIntersects.length < 1) return;
+        if (mouseRayIntersects.length < 1) {
+            console.log("cancel meteor");
+            clearMeteorTargeting();
+            return;
+        }
 
         mouseRayIntersects.forEach((ch) => {
             if (ch.object.name === "Plane") {
@@ -871,7 +873,6 @@ function onCanvasClick(e: MouseEvent) {
             }
         });
 
-        readyToFireMeteor = false;
         window.dispatchEvent(new CustomEvent("meteor-fire", { detail: pos }));
         return;
     } else if (clickedTowerBase) {
@@ -1107,6 +1108,17 @@ function onMeteorExplode(e: any) {
     explosions.set(meteor.id, explosion);
     scene.add(explosion);
     applyAreaDamage(enemies, pos, explosion.userData.radius * 0.4, determineDamage([50, 200]));
+
+    // WHY THE ERROR???
+    try {
+        scene.traverse((obj) => {
+            if (obj.userData.id === `meteor-gizmo-${meteor.id}`) {
+                scene.remove(obj);
+            }
+        });
+    } catch (err) {
+        console.warn(err);
+    }
 }
 
 function onEnemyDestroyed(e: any) {
@@ -1208,25 +1220,22 @@ export function revertCancelableModals(clickedModal: HTMLDivElement | undefined)
     });
 }
 
-function onMeteorSelected() {
+function onMeteorBtnClick() {
     if (gameState === GameState.Active && playerStats.readyToMeteor()) {
-        window.dispatchEvent(new CustomEvent("target-meteor"));
+        document.body.style.cursor = "crosshair";
+        readyToFireMeteor = true;
     } else {
-        console.log("meteor not ready");
+        console.log("meteor target not ready!");
     }
-}
-
-function onTargetMeteor() {
-    console.log("target meteor");
-    document.body.style.cursor = "crosshair";
-    readyToFireMeteor = true;
 }
 
 function onMeteorFire(e: any) {
     playerStats.fireMeteor();
-    document.body.style.cursor = "default";
+
+    clearMeteorTargeting();
 
     const pos = e.detail as THREE.Vector3;
+
     console.log("onMeteorFire", e, pos);
     const meteorCount = 6;
     for (let i = 0; i < meteorCount; i++) {
@@ -1240,8 +1249,18 @@ function onMeteorFire(e: any) {
             const meteor = new Meteor(destination);
             meteors.set(meteor.id, meteor);
             scene.add(meteor.model);
+
+            const gizmo = new THREE.Mesh(new THREE.CylinderGeometry(0.5, 0.5, 0.3), MATERIALS.concrete);
+            gizmo.position.set(destination.x, destination.y, destination.z);
+            gizmo.userData["id"] = `meteor-gizmo-${meteor.id}`;
+            scene.add(gizmo);
         }, i * 220);
     }
+}
+
+function clearMeteorTargeting() {
+    readyToFireMeteor = false;
+    document.body.style.cursor = "default";
 }
 
 function onBizzard() {

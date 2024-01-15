@@ -91,8 +91,8 @@ const Game = () => {
                     {/* <button>
                         <img src={imgs.Plague} width={42} height={42} />
                     </button> */}
-                    <button id="blizzard-action-btn">
-                        <img src={imgs.Blizzard} width={42} height={42} />
+                    <button id="meteor-action-btn">
+                        <img src={imgs.Meteor} width={42} height={42} />
                         <svg>
                             <g className="cooldown-arc">
                                 <path className="filled" />
@@ -100,8 +100,9 @@ const Game = () => {
                             </g>
                         </svg>
                     </button>
-                    <button id="meteor-action-btn">
-                        <img src={imgs.Meteor} width={42} height={42} />
+                    {/* HIDDEN FOR NOW... */}
+                    <button id="blizzard-action-btn" className="hidden">
+                        <img src={imgs.Blizzard} width={42} height={42} />
                         <svg>
                             <g className="cooldown-arc">
                                 <path className="filled" />
