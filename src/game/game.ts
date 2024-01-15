@@ -41,7 +41,7 @@ export let gameClock: THREE.Clock;
 export let orbit: OrbitControls;
 export let camera: THREE.PerspectiveCamera;
 export let gameState = GameState.Idle;
-export const pathCurves: THREE.CatmullRomCurve3[] = [];
+export let pathCurves: THREE.CatmullRomCurve3[] = [];
 export let mouseRay: THREE.Raycaster;
 export let towerTexture: THREE.Texture;
 export let playerStats: PlayerStats;
@@ -98,7 +98,10 @@ let gameLost = false;
 export async function destroyGame() {
     console.log("destroy", { scene });
     cancelAnimationFrame(frameId);
+    gameState = GameState.Idle;
     currWaveIdx = 0;
+    levelArea = "";
+    levelIdx = 0;
     frameId = 0;
     gui?.destroy();
     gameClock.stop();
@@ -109,11 +112,12 @@ export async function destroyGame() {
     renderer.dispose();
     enemies = [];
     towers = [];
-    currWave = [];
     projectiles.clear();
     futureGizmos.clear();
     explosions.clear();
-    gameState = GameState.Idle;
+    currWave = [];
+    callWaveBeaconContainers = [];
+    pathCurves = [];
 
     window.removeEventListener("resize", onResize);
     window.removeEventListener("visibilitychange", onVisibilityChange);
@@ -131,7 +135,7 @@ export async function destroyGame() {
 export async function initGame({ area, level, hp, skills }: GameInitProps) {
     levelIdx = level;
     levelArea = area;
-    levelData = GAME_LEVELS[level];
+    levelData = GAME_LEVELS[levelIdx];
     console.log({ levelData });
     playerStats = new PlayerStats({ hp, gold: levelData.initialGold });
 
@@ -151,7 +155,7 @@ export async function initGame({ area, level, hp, skills }: GameInitProps) {
     await _initEnemyModels();
     await _initTowerModels();
     await drawMap();
-    drawPath();
+    drawPaths();
     _init2DModals();
     drawWaveCallBeacon();
 
@@ -385,7 +389,9 @@ async function drawMap() {
     scene.add(model);
 }
 
-function drawPath() {
+function drawPaths() {
+    console.log("drawPaths", { levelData });
+
     levelData.paths.forEach((path) => {
         const pathPoints: THREE.Vector3[] = [];
         path.points.forEach((point) => {
@@ -395,7 +401,8 @@ function drawPath() {
         const pathCurve = new THREE.CatmullRomCurve3(pathPoints, false, "catmullrom", 0.5);
         pathCurves.push(pathCurve);
 
-        const [shapeW, shapeH] = levelData.area === GameArea.Forest ? [0.05, 0.2] : [0.05, 0.05];
+        const [shapeW, shapeH] =
+            levelData.area === GameArea.Forest || levelData.area === GameArea.Lava ? [0.05, 0.2] : [0.05, 0.05];
         // const [shapeW, shapeH] = [0.05, 0.05];
         // const [shapeW, shapeH] = [1, 0.05];
         // const [shapeW, shapeH] = [0.5, 0.05];
@@ -423,8 +430,14 @@ function drawPath() {
 }
 
 function drawWaveCallBeacon() {
-    const currentWave = levelData.waves[currWaveIdx];
-    const differentEnemyPaths = [...new Set(currentWave.map((waveData) => waveData[1]))];
+    currWave = levelData.waves[currWaveIdx].map((wEnemy) => ({
+        enemyType: getEnemyTypeFromChar(wEnemy[0] as EnemyChar),
+        pathIdx: wEnemy[1],
+        spawnAt: wEnemy[2],
+        xOffset: wEnemy[3],
+    }));
+
+    const differentEnemyPaths = [...new Set(currWave.map((waveData) => waveData.pathIdx))];
 
     const beaconsPositions: THREE.Vector3[] = [];
     differentEnemyPaths.forEach((pathIdx) => {
@@ -446,16 +459,15 @@ function drawWaveCallBeacon() {
         }
     });
 
-    // console.log("drawWaveCallBeacon", {
-    //     currWave,
-    //     currentWave,
-    //     currWaveIdx,
-    //     pathCurves,
-    //     beaconsPositions,
-    //     pathPoints,
-    //     levelData,
-    //     differentEnemyPaths,
-    // });
+    console.log("drawWaveCallBeacon", {
+        currWave,
+        currWaveIdx,
+        pathCurves,
+        beaconsPositions,
+        levelData,
+        differentEnemyPaths,
+    });
+
     callWaveBeaconContainers = [];
     beaconsPositions.forEach((pos) => {
         const callWaveModalContainer = document.createElement("div");
@@ -477,7 +489,7 @@ function drawWaveCallBeacon() {
             console.log("CALL WAVE!", currWaveIdx + 1);
             // WAVE START
             console.log("<<< WAVE START >>>", { levelIdx, currWaveIdx });
-            scheduleWaveEnemies(levelIdx, currWaveIdx);
+            // scheduleWaveEnemies(levelIdx, currWaveIdx);
             gameState = GameState.Active;
             pauseGameBtn.textContent = "⏸️";
             waveDisplay.innerHTML = `Wave ${currWaveIdx + 1}/${GAME_LEVELS[levelIdx!].waves.length}`;
@@ -519,20 +531,20 @@ function drawWaveCallBeacon() {
     // };
 }
 
-function scheduleWaveEnemies(levelIdx: number, waveIdx: number) {
-    console.log("scheduleWaveEnemies", { levelIdx, waveIdx, levelData });
-    try {
-        currWave = levelData.waves[waveIdx].map((wEnemy) => ({
-            enemyType: getEnemyTypeFromChar(wEnemy[0] as EnemyChar),
-            pathIdx: wEnemy[1],
-            spawnAt: wEnemy[2],
-            xOffset: wEnemy[3],
-        }));
-    } catch (err) {
-        console.error({ err, levelData });
-        throw Error(`couldn't find wave ${waveIdx} of level ${levelIdx} at the STAGE_WAVES_DATA object`);
-    }
-}
+// function scheduleWaveEnemies(levelIdx: number, waveIdx: number) {
+//     console.log("scheduleWaveEnemies", { levelIdx, waveIdx, levelData });
+//     try {
+//         // currWave.map((wEnemy) => ({
+//         //     enemyType: getEnemyTypeFromChar(wEnemy[0] as EnemyChar),
+//         //     pathIdx: wEnemy[1],
+//         //     spawnAt: wEnemy[2],
+//         //     xOffset: wEnemy[3],
+//         // }));
+//     } catch (err) {
+//         console.error({ err, levelData });
+//         throw Error(`couldn't find wave ${waveIdx} of level ${levelIdx} at the STAGE_WAVES_DATA object`);
+//     }
+// }
 
 function spawnEnemy(enemyType: EnemyType, pathIdx = 0) {
     // console.log("spawnEnemy", { enemyType, currWave });

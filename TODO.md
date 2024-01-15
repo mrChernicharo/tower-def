@@ -8,4 +8,5 @@
 -   [✔] call wave beacon
 -   [✔] game UI
 -   [✔] pause UI
--   [ ] specials/items buttons (meteor, blizzard, ...)
+-   [✔] specials/items buttons (meteor, blizzard, ...)
+-   [ ] debug: strange paths (prod mobile); lava paths
