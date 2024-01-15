@@ -74,6 +74,8 @@ const canvasHeight = window.innerHeight;
 let canvas: HTMLCanvasElement;
 let pauseGameBtn: HTMLButtonElement;
 let resumeGameBtn: HTMLButtonElement;
+let blizzardBtn: HTMLButtonElement;
+let meteorBtn: HTMLButtonElement;
 let waveDisplay: HTMLDivElement;
 let endGameScreen: HTMLDivElement;
 let loadingScreen: HTMLDivElement;
@@ -130,6 +132,8 @@ export async function destroyGame() {
     pauseGameBtn.removeEventListener("click", onPauseGame);
     resumeGameBtn.removeEventListener("click", onResumeGame);
     speedBtns.removeEventListener("click", onGameSpeedChange);
+    meteorBtn.removeEventListener("click", onMeteor);
+    blizzardBtn.removeEventListener("click", onBizzard);
 }
 
 export async function initGame({ area, level, hp, skills }: GameInitProps) {
@@ -170,6 +174,8 @@ export async function initGame({ area, level, hp, skills }: GameInitProps) {
     pauseGameBtn.addEventListener("click", onPauseGame);
     resumeGameBtn.addEventListener("click", onResumeGame);
     speedBtns.addEventListener("click", onGameSpeedChange);
+    meteorBtn.addEventListener("click", onMeteor);
+    blizzardBtn.addEventListener("click", onBizzard);
 
     frameId = requestAnimationFrame(animate);
 }
@@ -186,6 +192,8 @@ async function gameSetup() {
     pauseScreen = document.querySelector("#pause-game-screen") as HTMLDivElement;
     progressBar = document.querySelector("#progress-bar") as HTMLProgressElement;
     speedBtns = document.querySelector("#speed-btn") as HTMLDivElement;
+    blizzardBtn = document.querySelector("#blizzard-action-btn") as HTMLButtonElement;
+    meteorBtn = document.querySelector("#meteor-action-btn") as HTMLButtonElement;
 
     endGameScreen.classList.add("hidden");
     speedBtns.innerHTML = speedBtnsTemplate.speedBtns();
@@ -521,6 +529,11 @@ function animate() {
 
     if (gameState === GameState.Active) {
         gameElapsedTime += delta;
+
+        // SPECIALS COOLDOWN
+        playerStats.tick(delta);
+
+        // console.log(playerStats.meteorCooldown);
     }
 
     if (gameState === GameState.Active || gameState === GameState.Idle) {
@@ -1117,4 +1130,12 @@ export function revertCancelableModals(clickedModal: HTMLDivElement | undefined)
             }
         }
     });
+}
+
+function onMeteor() {
+    playerStats.fireMeteor();
+}
+
+function onBizzard() {
+    playerStats.fireBlizzard();
 }

@@ -59,11 +59,16 @@
 }
 
 #game-screen-footer .action-btns button {
+    position: relative;
     border-radius: 1000px;
     height: 56px;
     width: 56px;
     padding: 5px;
     margin-right: 5px;
+    filter: brightness(0.5);
+}
+#game-screen-footer .action-btns button.ready {
+    filter: brightness(1);
 }
 #game-screen-footer .action-btns button:last-child {
     margin-right: 0;
@@ -71,4 +76,20 @@
 
 #game-screen-footer .action-btns button img {
     border-radius: 1000px;
+}
+
+#game-screen-footer .action-btns button svg {
+    position: absolute;
+    width: 54px;
+    height: 54px;
+    top: 4px;
+    left: 4px;
+}
+
+#game-screen-footer .action-btns button .cooldown-arc path.filled {
+    fill: transparent;
+}
+
+#game-screen-footer .action-btns button .cooldown-arc path.empty {
+    fill: rgba(0, 0, 0, 0.5);
 }

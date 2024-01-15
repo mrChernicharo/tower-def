@@ -88,27 +88,39 @@ const Game = () => {
 
             <div id="game-screen-footer">
                 <div className="action-btns">
-                    <button>
+                    {/* <button>
                         <img src={imgs.Plague} width={42} height={42} />
-                    </button>
-                    <button>
+                    </button> */}
+                    <button id="blizzard-action-btn">
                         <img src={imgs.Blizzard} width={42} height={42} />
+                        <svg>
+                            <g className="cooldown-arc">
+                                <path className="filled" />
+                                <path className="empty" />
+                            </g>
+                        </svg>
                     </button>
-                    <button>
+                    <button id="meteor-action-btn">
                         <img src={imgs.Meteor} width={42} height={42} />
+                        <svg>
+                            <g className="cooldown-arc">
+                                <path className="filled" />
+                                <path className="empty" />
+                            </g>
+                        </svg>
                     </button>
                 </div>
 
                 <div className="action-btns">
-                    <button>
+                    {/* <button>
                         <img src={imgs.Trap} width={42} height={42} />
-                    </button>
-                    <button>
+                    </button> */}
+                    {/* <button>
                         <img src={imgs.Rune} width={42} height={42} />
-                    </button>
-                    <button>
+                    </button> */}
+                    {/* <button>
                         <img src={imgs.Potion} width={42} height={42} />
-                    </button>
+                    </button> */}
                 </div>
             </div>
 
