@@ -45,14 +45,20 @@
 }
 
 #game-screen-footer .action-btns {
-    border: 1px solid;
+    /* border: 1px solid; */
+    padding: 1rem;
 }
 #game-screen-footer .action-btns button {
     border-radius: 1000px;
     height: 56px;
     width: 56px;
     padding: 5px;
+    margin-right: 5px;
 }
+#game-screen-footer .action-btns button:last-child {
+    margin-right: 0;
+}
+
 #game-screen-footer .action-btns button img {
     border-radius: 1000px;
 }

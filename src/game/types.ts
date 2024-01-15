@@ -103,19 +103,21 @@ export type GameSpeed = 1 | 2 | 4;
 
 export type SkillId = keyof typeof defaultPlayerSkills;
 
+export type JSONPath = {
+    points: {
+        x: number;
+        y: number;
+        z: number;
+    }[];
+    closed: boolean;
+};
+
 export type GameLevel = {
     area: GameArea;
     level: number;
     initialGold: number;
     mapURL: string;
-    path: {
-        points: {
-            x: number;
-            y: number;
-            z: number;
-        }[];
-        closed: boolean;
-    };
+    paths: JSONPath[];
     waves: [string, number, number][][];
     initialCamPos: [number, number, number];
 };

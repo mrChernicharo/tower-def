@@ -10150,10 +10150,9 @@ const villageLevelPath = {
     ],
     closed: false,
 };
-villageLevelPath.points.reverse()
+villageLevelPath.points.reverse();
 
-
-const castleLevelPath = {
+const forestLevelPath = {
     points: [
         {
             x: -14.34967041015625,
@@ -11539,5 +11538,4 @@ const castleLevelPath = {
     closed: false,
 };
 
-
-export {desertLevelPath, castleLevelPath, villageLevelPath};
+export { desertLevelPath, forestLevelPath, villageLevelPath };

@@ -388,7 +388,7 @@ async function drawMap() {
 
 function drawPath() {
     pathPoints = [];
-    levelData.path.points.forEach((point) => {
+    levelData.paths[0].points.forEach((point) => {
         pathPoints.push(new THREE.Vector3(point.x, point.y, point.z));
     });
 

@@ -85,25 +85,25 @@ const Game = () => {
             <div id="game-screen-footer">
                 <div className="action-btns">
                     <button>
-                        <img src={imgs.Cannon} width={46} height={46} />
+                        <img src={imgs.Plague} width={46} height={46} />
                     </button>
                     <button>
-                        <img src={imgs.Cannon} width={46} height={46} />
+                        <img src={imgs.Blizzard} width={46} height={46} />
                     </button>
                     <button>
-                        <img src={imgs.Cannon} width={46} height={46} />
+                        <img src={imgs.Meteor} width={46} height={46} />
                     </button>
                 </div>
 
                 <div className="action-btns">
                     <button>
-                        <img src={imgs.Cannon} width={46} height={46} />
+                        <img src={imgs.Trap} width={46} height={46} />
                     </button>
                     <button>
-                        <img src={imgs.Cannon} width={46} height={46} />
+                        <img src={imgs.Rune} width={46} height={46} />
                     </button>
                     <button>
-                        <img src={imgs.Cannon} width={46} height={46} />
+                        <img src={imgs.Potion} width={46} height={46} />
                     </button>
                 </div>
             </div>
