@@ -116,6 +116,7 @@ export async function destroyGame() {
     gameState = GameState.Idle;
 
     window.removeEventListener("resize", onResize);
+    window.removeEventListener("visibilitychange", onVisibilityChange);
     window.removeEventListener("projectile", onProjectile);
     window.removeEventListener("projectile-explode", onProjectileExplode);
     window.removeEventListener("enemy-destroyed", onEnemyDestroyed);
@@ -156,6 +157,7 @@ export async function initGame({ area, level, gold, hp, skills }: GameInitProps)
     drawWaveCallBeacon();
 
     window.addEventListener("resize", onResize);
+    window.addEventListener("visibilitychange", onVisibilityChange);
     window.addEventListener("projectile", onProjectile);
     window.addEventListener("projectile-explode", onProjectileExplode);
     window.addEventListener("enemy-destroyed", onEnemyDestroyed);
@@ -1047,6 +1049,15 @@ function onGameSpeedChange(e: MouseEvent) {
         const speed = Number(speedStr[0]);
         gameSpeed = speed as GameSpeed;
         console.log("onGameSpeedChange", { gameSpeed });
+    }
+}
+
+function onVisibilityChange() {
+    if (document.visibilityState === "visible") {
+        // backgroundMusic.play();
+    } else {
+        onPauseGame();
+        // backgroundMusic.pause();
     }
 }
 
