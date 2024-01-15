@@ -3,6 +3,7 @@ import { imgs } from "../../game/constants";
 import { usePlayerContext } from "../context/usePlayerContext";
 import { getAreaByLevel, getEarnedStars, getSpentStars, getUnlockedStages } from "../../game/helpers";
 import { LevelStars } from "../components/levelStars";
+import { FaArrowLeft } from "react-icons/fa";
 
 const levelIconsPositions = [
     // desert
@@ -40,7 +41,9 @@ const AreaSelection = () => {
             <div className="world-map-container" style={{ position: "relative", height: "670px" }}>
                 <div style={{ position: "fixed", zIndex: 200 }}>
                     <Link to="/">
-                        <button>←</button>
+                        <button>
+                            <FaArrowLeft />
+                        </button>
                     </Link>
                 </div>
                 {levelIconsPositions.map((pos, i) => {

@@ -126,6 +126,7 @@ export const COLORS = {
     bg: 0x333355,
     desert: 0xdd6600,
     concrete: 0xacacac,
+    concrete2: 0x8a8a8a,
     blue: 0x3484d4,
     red: 0xd43434,
     orange: 0xd47f34,
@@ -212,6 +213,7 @@ export const MATERIALS = {
     damageMaterialStd: new THREE.MeshStandardMaterial({ color: "red" }),
     damageMaterialPhysical: new THREE.MeshStandardMaterial({ color: "red" }),
     concrete: new THREE.MeshMatcapMaterial({ color: COLORS.concrete }),
+    concrete2: new THREE.MeshMatcapMaterial({ color: COLORS.concrete2 }),
     desert: new THREE.MeshMatcapMaterial({ color: COLORS.desert }),
     forest: new THREE.MeshMatcapMaterial({ color: COLORS.forest }),
     winter: new THREE.MeshMatcapMaterial({ color: COLORS.winter }),
@@ -1229,4 +1231,4 @@ function waveSegment(
     ]);
 }
 
-console.log(STAGE_WAVES_DATA);
+// console.log(STAGE_WAVES_DATA);

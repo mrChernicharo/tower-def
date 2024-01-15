@@ -5,7 +5,7 @@ import { gameSkills, imgs } from "../../game/constants";
 import { useCallback, useEffect, useState } from "react";
 import { Skill, SkillId } from "../../game/types";
 import { capitalize, getEarnedStars, getSkillInfo, getSpentStars } from "../../game/helpers";
-// import { useState } from "react";
+import { FaArrowLeft } from "react-icons/fa";
 
 const Skills = () => {
     const { stars, skills, addSkill, removeSkill, resetAllSkills } = usePlayerContext();
@@ -52,7 +52,9 @@ const Skills = () => {
     return (
         <>
             <Link to="/area-selection">
-                <button>←</button>
+                <button>
+                    <FaArrowLeft />
+                </button>
             </Link>
 
             <p>Skills</p>
