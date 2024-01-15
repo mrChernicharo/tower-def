@@ -212,6 +212,7 @@ export const ENEMY_BLUEPRINTS: { [k in EnemyType]: EnemyBluePrint } = {
 export const MATERIALS = {
     damageMaterialStd: new THREE.MeshStandardMaterial({ color: "red" }),
     damageMaterialPhysical: new THREE.MeshStandardMaterial({ color: "red" }),
+    meteor: new THREE.MeshMatcapMaterial({ color: COLORS.red }),
     concrete: new THREE.MeshMatcapMaterial({ color: COLORS.concrete }),
     concrete2: new THREE.MeshMatcapMaterial({ color: COLORS.concrete2 }),
     desert: new THREE.MeshMatcapMaterial({ color: COLORS.desert }),

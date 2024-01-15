@@ -18,8 +18,8 @@ export class PlayerStats {
         this.hpDisplay = document.querySelector("#hp-display")!;
         this.goldDisplay = document.querySelector("#gold-display > #gold")!;
         this.goldDisplay.innerHTML = `${this.gold}`;
-        this.meteorCooldown = METEOR_COOLDOWN;
-        this.blizzardCooldown = BLIZZARD_COOLDOWN;
+        this.meteorCooldown = 0;
+        this.blizzardCooldown = 0;
         this.blizzardCooldownArc = document.querySelector("#blizzard-action-btn > svg > .cooldown-arc") as SVGGElement;
         this.meteorCooldownArc = document.querySelector("#meteor-action-btn > svg > .cooldown-arc") as SVGGElement;
     }
@@ -88,8 +88,6 @@ export class PlayerStats {
     _updateCooldownUI(arcs: HTMLCollection, time: number, cooldown: number) {
         const cooldownPerc = (time - cooldown) / time;
         const cooldownDeg = cooldownPerc * 360;
-
-        console.log({ cooldownDeg, cooldownPerc });
 
         // const d1 = getD(22, 0, cooldownDeg);
         const d2 = getD(22, cooldownDeg, 360);

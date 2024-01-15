@@ -65,10 +65,10 @@
     width: 56px;
     padding: 5px;
     margin-right: 5px;
-    filter: brightness(0.5);
+    filter: brightness(0.75);
 }
 #game-screen-footer .action-btns button.ready {
-    filter: brightness(1);
+    filter: brightness(1.1);
 }
 #game-screen-footer .action-btns button:last-child {
     margin-right: 0;

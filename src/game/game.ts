@@ -29,6 +29,7 @@ import { EnemyBluePrint, Projectile, WaveEnemy, GameInitProps, GameSpeed, GameLe
 import { beaconTemplate, cancelableModalNames, gameEndTemplates, modalTemplates, speedBtnsTemplate } from "./templates";
 import { Tower } from "./Tower";
 import { PlayerStats } from "./PlayerStats";
+import { Meteor } from "./Meteor";
 
 // let pathPoints: THREE.Vector3[] = [];
 
@@ -57,6 +58,7 @@ export let lightProbe: THREE.LightProbe;
 
 export let enemies: Enemy[] = [];
 export let towers: Tower[] = [];
+export let meteors: Map<string, Meteor>;
 export let projectiles: Map<string, Projectile>;
 export let explosions: Map<string, THREE.Mesh>;
 export let futureGizmos: Map<string, THREE.Mesh>;
@@ -117,6 +119,7 @@ export async function destroyGame() {
     projectiles.clear();
     futureGizmos.clear();
     explosions.clear();
+    meteors.clear();
     currWave = [];
     callWaveBeaconContainers = [];
     pathCurves = [];
@@ -125,6 +128,7 @@ export async function destroyGame() {
     window.removeEventListener("visibilitychange", onVisibilityChange);
     window.removeEventListener("projectile", onProjectile);
     window.removeEventListener("projectile-explode", onProjectileExplode);
+    window.removeEventListener("meteor-explode", onMeteorExplode);
     window.removeEventListener("enemy-destroyed", onEnemyDestroyed);
     canvas.removeEventListener("mousemove", onMouseMove);
     canvas.removeEventListener("click", onCanvasClick);
@@ -167,6 +171,7 @@ export async function initGame({ area, level, hp, skills }: GameInitProps) {
     window.addEventListener("visibilitychange", onVisibilityChange);
     window.addEventListener("projectile", onProjectile);
     window.addEventListener("projectile-explode", onProjectileExplode);
+    window.addEventListener("meteor-explode", onMeteorExplode);
     window.addEventListener("enemy-destroyed", onEnemyDestroyed);
     canvas.addEventListener("mousemove", onMouseMove);
     canvas.addEventListener("click", onCanvasClick);
@@ -194,6 +199,11 @@ async function gameSetup() {
     speedBtns = document.querySelector("#speed-btn") as HTMLDivElement;
     blizzardBtn = document.querySelector("#blizzard-action-btn") as HTMLButtonElement;
     meteorBtn = document.querySelector("#meteor-action-btn") as HTMLButtonElement;
+
+    projectiles = new Map();
+    futureGizmos = new Map();
+    explosions = new Map();
+    meteors = new Map();
 
     endGameScreen.classList.add("hidden");
     speedBtns.innerHTML = speedBtnsTemplate.speedBtns();
@@ -254,10 +264,6 @@ async function gameSetup() {
 
     // projectileFolder = gui.addFolder("Projectile Rotation");
     // projectileFolder.add(projRotation, "x", -Math.PI * 2, Math.PI * 2, 0.1);
-
-    projectiles = new Map();
-    futureGizmos = new Map();
-    explosions = new Map();
 }
 
 function _wireUpLoadingManager() {
@@ -532,6 +538,17 @@ function animate() {
 
         // SPECIALS COOLDOWN
         playerStats.tick(delta);
+
+        // METEORS
+        for (const [meteorId, meteor] of meteors.entries()) {
+            if (meteor.destination.distanceTo(meteor.model.position) < 0.5) {
+                meteor.explode();
+                scene.remove(meteor.model);
+                meteors.delete(meteorId);
+            }
+
+            meteor.tick(delta);
+        }
 
         // console.log(playerStats.meteorCooldown);
     }
@@ -1033,6 +1050,18 @@ function onProjectileExplode(e: any) {
     scene.add(explosion);
 }
 
+function onMeteorExplode(e: any) {
+    const meteor = e.detail as Meteor;
+
+    const explosion = meteor.explosion as THREE.Mesh;
+    explosion.userData["meteor_id"] = meteor.id;
+    explosion.userData["spawned_at"] = Date.now();
+    explosion.userData["intensity"] = 1;
+    explosion.position.set(meteor.model.position.x, meteor.model.position.y, meteor.model.position.z);
+    explosions.set(meteor.id, explosion);
+    scene.add(explosion);
+}
+
 function onEnemyDestroyed(e: any) {
     const data = e.detail;
     // console.log("enemy destroy", { data });
@@ -1134,6 +1163,17 @@ export function revertCancelableModals(clickedModal: HTMLDivElement | undefined)
 
 function onMeteor() {
     playerStats.fireMeteor();
+
+    const meteorCount = 6;
+    for (let i = 0; i < meteorCount; i++) {
+        const destination = new THREE.Vector3(i, 0, i);
+
+        setTimeout(() => {
+            const meteor = new Meteor(destination);
+            meteors.set(meteor.id, meteor);
+            scene.add(meteor.model);
+        }, i * 100);
+    }
 }
 
 function onBizzard() {
