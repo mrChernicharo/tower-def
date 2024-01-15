@@ -4,7 +4,7 @@ import { idMaker } from "./helpers";
 
 const size = 0.5;
 const speed = 25;
-const spawnHeight = 40;
+const spawnHeight = 80;
 const meteorGeometry = new THREE.SphereGeometry(size);
 
 export class Meteor {
@@ -13,6 +13,7 @@ export class Meteor {
     initialPos: THREE.Vector3;
     model: THREE.Mesh;
     explosion: THREE.Mesh;
+    timeToTarget = Infinity;
     constructor(destination: THREE.Vector3) {
         this.id = idMaker();
         this.destination = destination;
@@ -26,6 +27,9 @@ export class Meteor {
         const explosionGeometry = new THREE.SphereGeometry(0.15);
         const explosionMaterial = MATERIALS.explosion(COLORS.orangered);
         this.explosion = new THREE.Mesh(explosionGeometry, explosionMaterial);
+
+        const distanceToTarget = this.initialPos.distanceTo(this.destination);
+        this.timeToTarget = distanceToTarget / speed;
     }
 
     tick(delta: number) {

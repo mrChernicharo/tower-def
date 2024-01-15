@@ -29,11 +29,12 @@ export enum GameState {
 }
 
 export enum AppLayers {
-    Default = 0,
+    Terrain = 0,
     TowerBase = 1,
     Tower = 2,
     Modals = 3,
     Projectile = 4,
+    Buildings = 5,
 }
 
 export enum TowerType {
