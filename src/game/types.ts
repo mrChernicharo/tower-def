@@ -87,9 +87,9 @@ export type Skill = {
 export type GameInitProps = {
     area: string;
     level: number;
-    gold: number;
     hp: number;
     skills: Partial<PlayerSkills>;
+    // gold: number;
     // skills: Skill[];
 };
 

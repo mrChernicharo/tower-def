@@ -128,13 +128,12 @@ export async function destroyGame() {
     speedBtns.removeEventListener("click", onGameSpeedChange);
 }
 
-export async function initGame({ area, level, gold, hp, skills }: GameInitProps) {
-    playerStats = new PlayerStats({ gold, hp });
+export async function initGame({ area, level, hp, skills }: GameInitProps) {
     levelIdx = level;
     levelArea = area;
-
     levelData = GAME_LEVELS[level];
     console.log({ levelData });
+    playerStats = new PlayerStats({ hp, gold: levelData.initialGold });
 
     console.log("initGame", {
         skills,
@@ -424,9 +423,7 @@ function drawPath() {
 }
 
 function drawWaveCallBeacon() {
-    const pathPoints = pathCurves[0].points;
     const currentWave = levelData.waves[currWaveIdx];
-
     const differentEnemyPaths = [...new Set(currentWave.map((waveData) => waveData[1]))];
 
     const beaconsPositions: THREE.Vector3[] = [];
@@ -449,16 +446,16 @@ function drawWaveCallBeacon() {
         }
     });
 
-    console.log("drawWaveCallBeacon", {
-        currWave,
-        currentWave,
-        currWaveIdx,
-        pathCurves,
-        beaconsPositions,
-        pathPoints,
-        levelData,
-        differentEnemyPaths,
-    });
+    // console.log("drawWaveCallBeacon", {
+    //     currWave,
+    //     currentWave,
+    //     currWaveIdx,
+    //     pathCurves,
+    //     beaconsPositions,
+    //     pathPoints,
+    //     levelData,
+    //     differentEnemyPaths,
+    // });
     callWaveBeaconContainers = [];
     beaconsPositions.forEach((pos) => {
         const callWaveModalContainer = document.createElement("div");
@@ -525,16 +522,6 @@ function drawWaveCallBeacon() {
 function scheduleWaveEnemies(levelIdx: number, waveIdx: number) {
     console.log("scheduleWaveEnemies", { levelIdx, waveIdx, levelData });
     try {
-        // currWave = STAGE_WAVES_DATA[levelIdx][waveIdx].map(
-        //     (wEnemy) =>
-        //         ({
-        //             enemyType: getEnemyTypeFromChar(wEnemy[0] as EnemyChar),
-        //             pathIdx: wEnemy[1],
-        //             spawnAt: wEnemy[2],
-        //             xOffset: wEnemy[3],
-        //         } as WaveEnemy)
-        // );
-
         currWave = levelData.waves[waveIdx].map((wEnemy) => ({
             enemyType: getEnemyTypeFromChar(wEnemy[0] as EnemyChar),
             pathIdx: wEnemy[1],
@@ -860,7 +847,8 @@ function onCanvasClick(e: MouseEvent) {
         const modal3D = scene.getObjectByName(`${clickedTowerBase.object.name}-modal`)!;
         scene.traverse((obj) => {
             // HIDE previously open modal
-            if ((obj as any).isCSS2DObject && obj.visible && obj.name !== "call-wave-2D-modal") {
+            if ((obj as any).isCSS2DObject && obj.visible) {
+                if (obj.name === "call-wave-2D-modal") return;
                 obj.visible = false;
             }
 
@@ -888,6 +876,7 @@ function onCanvasClick(e: MouseEvent) {
                 }
 
                 if (obj.visible) {
+                    if (obj.name === "call-wave-2D-modal") return;
                     obj.visible = false;
                 }
             }
@@ -911,18 +900,13 @@ function onCanvasClick(e: MouseEvent) {
 
         // HIDE modal (3D)
         scene.traverse((obj) => {
-            if ((obj as any).isCSS2DObject) {
-                // console.log(obj.name);
-
+            if ((obj as any).isCSS2DObject && obj.visible) {
                 if (obj.name === "call-wave-2D-modal") return;
-
-                if (obj.visible) {
-                    obj.visible = false;
-                }
+                obj.visible = false;
             }
 
             if ((obj as THREE.Mesh).isMesh && !obj.visible && obj.name !== "rangeGizmo") {
-                console.log(obj);
+                // console.log(obj);
                 obj.visible = true;
             }
         });
@@ -972,11 +956,14 @@ function handleHoverOpacityEfx() {
     } else {
         if (hoveredTowerId) {
             const hoveredTower = towers.find((t) => t.id === hoveredTowerId);
-            // console.log({ scene, hoveredTowerId, hoveredTower });
             if (!hoveredTower) return;
 
             hoveredTower.model.material = MATERIALS.tower(towerTexture);
-            hoveredTower.rangeGizmo.visible = false;
+            towers
+                .filter((t) => t.rangeGizmo.visible)
+                .forEach((t) => {
+                    t.rangeGizmo.visible = false;
+                });
         }
         hoveredTowerId = null;
     }

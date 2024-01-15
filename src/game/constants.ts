@@ -1095,7 +1095,7 @@ export const GAME_LEVELS: GameLevel[] = [
     {
         area: GameArea.Desert,
         level: 3,
-        initialGold: 250,
+        initialGold: 280,
         mapURL: mapURLs.desert,
         paths: [desertLevelPath],
         waves: STAGE_WAVES_DATA[3],
@@ -1104,7 +1104,7 @@ export const GAME_LEVELS: GameLevel[] = [
     {
         area: GameArea.Forest,
         level: 4,
-        initialGold: 250,
+        initialGold: 290,
         mapURL: mapURLs.forest,
         paths: forestLevelPaths,
         waves: STAGE_WAVES_DATA[4],
@@ -1113,7 +1113,7 @@ export const GAME_LEVELS: GameLevel[] = [
     {
         area: GameArea.Forest,
         level: 5,
-        initialGold: 250,
+        initialGold: 300,
         mapURL: mapURLs.forest,
         paths: forestLevelPaths,
         waves: STAGE_WAVES_DATA[5],
@@ -1122,7 +1122,7 @@ export const GAME_LEVELS: GameLevel[] = [
     {
         area: GameArea.Forest,
         level: 6,
-        initialGold: 250,
+        initialGold: 310,
         mapURL: mapURLs.forest,
         paths: forestLevelPaths,
         waves: STAGE_WAVES_DATA[6],
@@ -1131,7 +1131,7 @@ export const GAME_LEVELS: GameLevel[] = [
     {
         area: GameArea.Forest,
         level: 7,
-        initialGold: 250,
+        initialGold: 320,
         mapURL: mapURLs.forest,
         paths: forestLevelPaths,
         waves: STAGE_WAVES_DATA[7],
@@ -1140,7 +1140,7 @@ export const GAME_LEVELS: GameLevel[] = [
     {
         area: GameArea.Winter,
         level: 8,
-        initialGold: 250,
+        initialGold: 330,
         mapURL: mapURLs.winter,
         paths: [villageLevelPath],
         waves: STAGE_WAVES_DATA[8],
@@ -1149,7 +1149,7 @@ export const GAME_LEVELS: GameLevel[] = [
     {
         area: GameArea.Winter,
         level: 9,
-        initialGold: 250,
+        initialGold: 340,
         mapURL: mapURLs.winter,
         paths: [villageLevelPath],
         waves: STAGE_WAVES_DATA[9],
@@ -1158,7 +1158,7 @@ export const GAME_LEVELS: GameLevel[] = [
     {
         area: GameArea.Winter,
         level: 10,
-        initialGold: 250,
+        initialGold: 350,
         mapURL: mapURLs.winter,
         paths: [villageLevelPath],
         waves: STAGE_WAVES_DATA[10],
@@ -1167,7 +1167,7 @@ export const GAME_LEVELS: GameLevel[] = [
     {
         area: GameArea.Winter,
         level: 11,
-        initialGold: 250,
+        initialGold: 360,
         mapURL: mapURLs.winter,
         paths: [villageLevelPath],
         waves: STAGE_WAVES_DATA[11],
@@ -1176,7 +1176,7 @@ export const GAME_LEVELS: GameLevel[] = [
     {
         area: GameArea.Lava,
         level: 12,
-        initialGold: 250,
+        initialGold: 370,
         mapURL: mapURLs.forest,
         paths: forestLevelPaths,
         waves: STAGE_WAVES_DATA[12],
@@ -1185,7 +1185,7 @@ export const GAME_LEVELS: GameLevel[] = [
     {
         area: GameArea.Lava,
         level: 13,
-        initialGold: 250,
+        initialGold: 380,
         mapURL: mapURLs.forest,
         paths: forestLevelPaths,
         waves: STAGE_WAVES_DATA[13],
@@ -1194,7 +1194,7 @@ export const GAME_LEVELS: GameLevel[] = [
     {
         area: GameArea.Lava,
         level: 14,
-        initialGold: 250,
+        initialGold: 390,
         mapURL: mapURLs.forest,
         paths: forestLevelPaths,
         waves: STAGE_WAVES_DATA[14],
@@ -1203,7 +1203,7 @@ export const GAME_LEVELS: GameLevel[] = [
     {
         area: GameArea.Lava,
         level: 15,
-        initialGold: 250,
+        initialGold: 400,
         mapURL: mapURLs.forest,
         paths: forestLevelPaths,
         waves: STAGE_WAVES_DATA[15],

@@ -33,7 +33,6 @@ const Game = () => {
         // console.log({ skillsObj });
 
         initGame({
-            gold,
             hp,
             area,
             level: +level,
@@ -61,7 +60,7 @@ const Game = () => {
                     <div className="top-line">
                         <div id="gold-display">
                             <img src={imgs.Coins} width={16} height={16} />
-                            {gold}
+                            <span id="gold">{gold}</span>
                         </div>
                         <div id="hp-display">❤️{hp}</div>
                     </div>
