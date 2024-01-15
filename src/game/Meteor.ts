@@ -4,7 +4,7 @@ import { idMaker } from "./helpers";
 
 const size = 0.5;
 const speed = 25;
-const spawnHeight = 80;
+const spawnHeight = 40;
 const meteorGeometry = new THREE.SphereGeometry(size);
 
 export class Meteor {

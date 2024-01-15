@@ -95,6 +95,14 @@ export class PlayerStats {
         arcs[1].setAttribute("d", d2);
     }
 
+    readyToMeteor() {
+        return this.meteorCooldown <= 0;
+    }
+
+    readyToBlizzard() {
+        return this.meteorCooldown <= 0;
+    }
+
     fireBlizzard() {
         this.blizzardCooldown = BLIZZARD_COOLDOWN;
     }

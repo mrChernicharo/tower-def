@@ -852,10 +852,12 @@ function onCanvasClick(e: MouseEvent) {
     revertCancelableModals(clickedModal as HTMLDivElement | undefined);
 
     if (readyToFireMeteor) {
-        // mouseRay.intersectObject()
         const pos = new THREE.Vector3();
-        mouseRay.intersectObjects(scene.children).forEach((ch) => {
-            console.log(ch.object.name);
+        const mouseRayIntersects = mouseRay.intersectObjects(scene.children);
+
+        if (mouseRayIntersects.length < 1) return;
+
+        mouseRayIntersects.forEach((ch) => {
             if (ch.object.name === "Plane") {
                 if (!pos.x) pos.x = ch.point.x;
                 if (!pos.y) pos.z = ch.point.z;
@@ -866,11 +868,10 @@ function onCanvasClick(e: MouseEvent) {
             }
         });
 
+        readyToFireMeteor = false;
         window.dispatchEvent(new CustomEvent("meteor-fire", { detail: pos }));
         return;
-    }
-
-    if (clickedTowerBase) {
+    } else if (clickedTowerBase) {
         console.log("CLICKED TOWER BASE", { clickedTowerBase, scene });
         const modal3D = scene.getObjectByName(`${clickedTowerBase.object.name}-modal`)!;
         scene.traverse((obj) => {
@@ -1192,17 +1193,22 @@ export function revertCancelableModals(clickedModal: HTMLDivElement | undefined)
 }
 
 function onMeteorSelected() {
-    window.dispatchEvent(new CustomEvent("target-meteor"));
+    if (gameState === GameState.Active && playerStats.readyToMeteor()) {
+        window.dispatchEvent(new CustomEvent("target-meteor"));
+    } else {
+        console.log("meteor not ready");
+    }
 }
 
 function onTargetMeteor() {
+    console.log("target meteor");
     document.body.style.cursor = "crosshair";
     readyToFireMeteor = true;
-    console.log("target meteor");
 }
 
 function onMeteorFire(e: any) {
     playerStats.fireMeteor();
+    document.body.style.cursor = "default";
 
     const pos = e.detail as THREE.Vector3;
     console.log("onMeteorFire", e, pos);
