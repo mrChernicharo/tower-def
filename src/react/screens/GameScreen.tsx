@@ -99,9 +99,15 @@ const Game = () => {
                     </div>
                     <div>
                         <button id="resume-game-btn">Resume</button>
-                        <Link to={`/area-selection`}>
-                            <button>Quit</button>
-                        </Link>
+                        {/* <Link to={`/area-selection`}> */}
+                        <button
+                            onClick={() => {
+                                if (confirm("Are you sure you want to quit?")) location.assign("#/area-selection");
+                            }}
+                        >
+                            Quit
+                        </button>
+                        {/* </Link> */}
                     </div>
                 </div>
             </div>

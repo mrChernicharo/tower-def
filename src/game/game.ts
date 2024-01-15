@@ -81,6 +81,7 @@ let pauseScreen: HTMLDivElement;
 let endGameBtn: HTMLButtonElement;
 let progressBar: HTMLProgressElement;
 let speedBtns: HTMLDivElement;
+let callWaveModalContainer: HTMLDivElement | null;
 
 let frameId = 0;
 let clickTimestamp = 0;
@@ -121,7 +122,7 @@ export async function destroyGame() {
     canvas.removeEventListener("mousemove", onMouseMove);
     canvas.removeEventListener("click", onCanvasClick);
     canvas.removeEventListener("mousedown", onMouseDown);
-    pauseGameBtn.removeEventListener("click", onPlayPause);
+    pauseGameBtn.removeEventListener("click", onPauseGame);
     resumeGameBtn.removeEventListener("click", onResumeGame);
     speedBtns.removeEventListener("click", onGameSpeedChange);
 }
@@ -161,7 +162,7 @@ export async function initGame({ area, level, gold, hp, skills }: GameInitProps)
     canvas.addEventListener("mousemove", onMouseMove);
     canvas.addEventListener("click", onCanvasClick);
     canvas.addEventListener("mousedown", onMouseDown);
-    pauseGameBtn.addEventListener("click", onPlayPause);
+    pauseGameBtn.addEventListener("click", onPauseGame);
     resumeGameBtn.addEventListener("click", onResumeGame);
     speedBtns.addEventListener("click", onGameSpeedChange);
 
@@ -420,32 +421,15 @@ function drawPath() {
 function drawWaveCallBeacon() {
     const pos = new THREE.Vector3(pathPoints[0].x, pathPoints[0].y, pathPoints[0].z);
 
-    // const group = new THREE.Group();
-
-    // const geometry = new THREE.SphereGeometry();
-    // const material = MATERIALS.beacon;
-    // const beacon = new THREE.Mesh(geometry, material);
-
-    // group.add(beacon);
-    // group.position.set(pos.x, pos.y, pos.z);
-
-    // scene.add(group);
-
-    const callWaveModalContainer = document.createElement("div");
-    // callWaveModalContainer.className = "modal-container";
+    callWaveModalContainer = document.createElement("div");
 
     const modal2D = new CSS2DObject(callWaveModalContainer);
     modal2D.position.set(pos.x, pos.y, pos.z);
     modal2D.name = `call-wave-2D-modal`;
-    // modal2D.name = `${el.name}-modal`;
-    // modal2D.userData["tile_idx"] = tileIdx;
-    // modal2D.layers.set(AppLayers.Modals);
-    // modal2D.visible = false;
     scene.add(modal2D);
 
     const modalEl = document.createElement("div");
     modalEl.id = `call-wave-modal`;
-    // modalEl.className = `modal2D tile_${tileIdx}`;
     modalEl.style.pointerEvents = "all";
     modalEl.style.opacity = "0.9";
     callWaveModalContainer.append(modalEl);
@@ -459,6 +443,7 @@ function drawWaveCallBeacon() {
         gameState = GameState.Active;
         pauseGameBtn.textContent = "⏸️";
         waveDisplay.innerHTML = `Wave ${currWaveIdx + 1}/${GAME_LEVELS[levelIdx!].waves.length}`;
+        callWaveModalContainer = null;
         modalEl.remove();
     };
 }
@@ -922,25 +907,31 @@ function onResize() {
     cssRenderer.setSize(window.innerWidth, canvasHeight);
 }
 
-function onPlayPause() {
-    switch (gameState) {
-        case GameState.Idle:
-            break;
-        case GameState.Active:
-            gameState = GameState.Paused;
-            pauseScreen.classList.remove("hidden");
-            // pauseGameBtn.textContent = "▶️";
-            break;
-        case GameState.Paused:
-        // gameState = GameState.Active;
-        // pauseGameBtn.textContent = "⏸️";
-        // break;
+function onPauseGame() {
+    console.log("onPauseGame", callWaveModalContainer);
+
+    pauseScreen.classList.remove("hidden");
+
+    if (gameState === GameState.Active) {
+        gameState = GameState.Paused;
+    }
+
+    if (callWaveModalContainer) {
+        callWaveModalContainer.style.opacity = "0";
     }
 }
 
 function onResumeGame() {
-    gameState = GameState.Active;
+    console.log("onResumeGame", callWaveModalContainer);
+
+    if (gameState === GameState.Paused) {
+        gameState = GameState.Active;
+    }
     pauseScreen.classList.add("hidden");
+
+    if (callWaveModalContainer) {
+        callWaveModalContainer.style.opacity = "1";
+    }
 }
 
 function onProjectile(e: any) {
@@ -1021,9 +1012,11 @@ function onEnemyDestroyed(e: any) {
         gameState = GameState.Idle;
         currWaveIdx++;
         gameElapsedTime = 0;
-        drawWaveCallBeacon();
 
         const waveCount = STAGE_WAVES_DATA[levelIdx].length;
+        if (currWaveIdx < waveCount) {
+            drawWaveCallBeacon();
+        }
         if (currWaveIdx === waveCount) {
             console.log("GAME END ... WIN!");
             const stars = calcEarnedStarsForGameWin(playerStats.hp);
@@ -1046,6 +1039,7 @@ function onEndGameConfirm() {
 
 function onGameSpeedChange(e: MouseEvent) {
     const elTarget = e.target as HTMLElement;
+    // e.preventDefault();
     if (elTarget.tagName === "INPUT") {
         const speedStr = elTarget.id.split("-")[1];
         const speed = Number(speedStr[0]);
