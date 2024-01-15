@@ -436,7 +436,7 @@ function drawWaveCallBeacon() {
     modalEl.innerHTML = beaconTemplate.callWave();
 
     modalEl.onclick = () => {
-        console.log("CALL WAVE!");
+        console.log("CALL WAVE!", currWaveIdx + 1);
         // WAVE START
         console.log("<<< WAVE START >>>", { levelIdx, currWaveIdx });
         scheduleWaveEnemies(levelIdx, currWaveIdx);
@@ -1012,6 +1012,8 @@ function onEnemyDestroyed(e: any) {
         gameState = GameState.Idle;
         currWaveIdx++;
         gameElapsedTime = 0;
+        (speedBtns.children[1] as HTMLInputElement).checked = true;
+        gameSpeed = 1;
 
         const waveCount = STAGE_WAVES_DATA[levelIdx].length;
         if (currWaveIdx < waveCount) {
