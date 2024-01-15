@@ -130,7 +130,7 @@ export const beaconTemplate = {
     callWave: () => {
         return `
             <div id="call-wave-beacon">
-                <h4>Call Wave!</h4>
+                <!-- <h4>Call Wave!</h4> -->
                 <img src="${imgs.CallWave}" width="65px" height="65px" />
                 <div id="arrow-down"></div>
             </div>

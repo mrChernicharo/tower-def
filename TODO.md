@@ -6,6 +6,6 @@
 -   [ ] multiple paths
 -   [✔] world-map
 -   [✔] call wave beacon
--   [ ] game UI
--   [ ] pause UI
--   [ ] specials (meteor, blizzard)
+-   [✔] game UI
+-   [✔] pause UI
+-   [ ] specials/items buttons (meteor, blizzard, ...)

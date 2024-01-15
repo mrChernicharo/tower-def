@@ -2,7 +2,7 @@
     position: fixed;
     top: 0;
     display: flex;
-    border: 1px solid;
+    /* border: 1px solid; */
     width: 100%;
     justify-content: space-between;
 }
@@ -28,11 +28,15 @@
     padding-inline: 0.25rem;
     width: 100%;
     min-width: 50px;
-    border: 1px solid;
     height: 24px;
     display: flex;
     justify-content: center;
     align-items: center;
+}
+
+#game-screen-header #stage-num-container {
+    /* border: 1px solid; */
+    text-align: center;
 }
 
 #game-screen-footer {
@@ -48,6 +52,12 @@
     /* border: 1px solid; */
     padding: 1rem;
 }
+@media screen and (max-width: 500px) {
+    #game-screen-footer .action-btns {
+        padding: 0 0 1rem 0;
+    }
+}
+
 #game-screen-footer .action-btns button {
     border-radius: 1000px;
     height: 56px;
@@ -61,6 +71,4 @@
 
 #game-screen-footer .action-btns button img {
     border-radius: 1000px;
-}
-#game-screen-footer {
 }

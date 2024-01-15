@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { GLTF } from "three/examples/jsm/Addons.js";
-import { ENEMY_MODELS, pathCurve } from "./game";
+import { ENEMY_MODELS, pathCurves } from "./game";
 import { THREE } from "../three";
 import * as SkeletonUtils from "three/examples/jsm/utils/SkeletonUtils.js";
 import { EnemyType } from "./enums";
@@ -23,13 +23,14 @@ export class Enemy {
     hp: number;
     timeSinceSpawn!: number;
     originalMaterial: { meshName: string; material: THREE.Material }[] = [];
+    path: THREE.CatmullRomCurve3;
 
-    constructor(enemyType: EnemyType) {
+    constructor(enemyType: EnemyType, pathIdx = 0) {
         this.id = idMaker();
         this.enemyType = enemyType;
         this.bluePrint = { ...ENEMY_BLUEPRINTS[this.enemyType] };
         this.hp = this.bluePrint.maxHp;
-
+        this.path = pathCurves[pathIdx];
         this.#_init();
     }
 
@@ -100,7 +101,7 @@ export class Enemy {
 
     getFuturePosition(timeInSecs: number) {
         const t = this.getPercDist(timeInSecs);
-        return pathCurve.getPointAt(t);
+        return this.path.getPointAt(t);
     }
 
     ready() {
@@ -109,8 +110,8 @@ export class Enemy {
 
     handleEnemyMovement() {
         const t = this.getPercDist();
-        const position = pathCurve.getPointAt(t);
-        const tangent = pathCurve.getTangentAt(t);
+        const position = this.path.getPointAt(t);
+        const tangent = this.path.getTangentAt(t);
 
         this.model.position.copy(position);
 
@@ -149,7 +150,7 @@ export class Enemy {
     }
 
     getPercDist(timeInSecs = 0) {
-        const pathLen = pathCurve.getLength();
+        const pathLen = this.path.getLength();
         const distCovered = this.bluePrint.speed * (this.timeSinceSpawn + timeInSecs);
         const distPerc = distCovered / pathLen;
 

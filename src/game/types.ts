@@ -42,6 +42,7 @@ export type Projectile = ParabolaProjectile | StraightProjectile;
 
 export type WaveEnemy = {
     enemyType: EnemyType;
+    pathIdx: number;
     spawnAt: number;
     xOffset: number;
 };
@@ -118,6 +119,6 @@ export type GameLevel = {
     initialGold: number;
     mapURL: string;
     paths: JSONPath[];
-    waves: [string, number, number][][];
+    waves: [string, number, number, number][][];
     initialCamPos: [number, number, number];
 };

@@ -70,6 +70,11 @@ const Game = () => {
                     </div>
                 </div>
 
+                <div id="stage-num-container">
+                    <div>stage</div>
+                    <div style={{ fontWeight: "bold" }}>{level && +level + 1}</div>
+                </div>
+
                 <div id="speed-btn-container">
                     <h4>Game Speed</h4>
                     <div id="speed-btn"></div>
@@ -85,25 +90,25 @@ const Game = () => {
             <div id="game-screen-footer">
                 <div className="action-btns">
                     <button>
-                        <img src={imgs.Plague} width={46} height={46} />
+                        <img src={imgs.Plague} width={42} height={42} />
                     </button>
                     <button>
-                        <img src={imgs.Blizzard} width={46} height={46} />
+                        <img src={imgs.Blizzard} width={42} height={42} />
                     </button>
                     <button>
-                        <img src={imgs.Meteor} width={46} height={46} />
+                        <img src={imgs.Meteor} width={42} height={42} />
                     </button>
                 </div>
 
                 <div className="action-btns">
                     <button>
-                        <img src={imgs.Trap} width={46} height={46} />
+                        <img src={imgs.Trap} width={42} height={42} />
                     </button>
                     <button>
-                        <img src={imgs.Rune} width={46} height={46} />
+                        <img src={imgs.Rune} width={42} height={42} />
                     </button>
                     <button>
-                        <img src={imgs.Potion} width={46} height={46} />
+                        <img src={imgs.Potion} width={42} height={42} />
                     </button>
                 </div>
             </div>
