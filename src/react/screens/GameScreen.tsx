@@ -7,6 +7,7 @@ import { LevelStarCount, PlayerSkills, SkillId } from "../../game/types";
 import { GAME_LEVELS, imgs } from "../../game/constants";
 import { AiFillSound } from "react-icons/ai";
 import { FaMusic } from "react-icons/fa";
+import { RiCloseCircleFill } from "react-icons/ri";
 
 const Game = () => {
     const { area, level } = useParams();
@@ -92,6 +93,9 @@ const Game = () => {
                         <img src={imgs.Plague} width={42} height={42} />
                     </button> */}
                     <button id="meteor-action-btn">
+                        <div className="cancel-badge">
+                            <RiCloseCircleFill />
+                        </div>
                         <img src={imgs.Meteor} width={42} height={42} />
                         <svg>
                             <g className="cooldown-arc">
@@ -100,8 +104,12 @@ const Game = () => {
                             </g>
                         </svg>
                     </button>
+
                     {/* HIDDEN FOR NOW... */}
                     <button id="blizzard-action-btn" className="hidden">
+                        <div className="cancel-badge hidden">
+                            <RiCloseCircleFill />
+                        </div>
                         <img src={imgs.Blizzard} width={42} height={42} />
                         <svg>
                             <g className="cooldown-arc">

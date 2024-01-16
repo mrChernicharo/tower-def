@@ -674,6 +674,11 @@ function onMouseMove(e: MouseEvent) {
         mouseTargetMesh.position.x = pos.x;
         mouseTargetMesh.position.y = pos.y;
         mouseTargetMesh.position.z = pos.z;
+
+        // make targeting ring disappear if mouse is outside map
+        if (pos.x === 0 && pos.y === 0 && pos.z === 0) {
+            mouseTargetMesh.visible = false;
+        }
     }
 }
 
@@ -1200,7 +1205,7 @@ function onVisibilityChange() {
     }
 }
 
-export function revertCancelableModals(clickedModal: HTMLDivElement | undefined) {
+function revertCancelableModals(clickedModal: HTMLDivElement | undefined) {
     const allModals = Array.from(document.querySelectorAll<HTMLDivElement>(".modal2D"));
     // console.log("REVERT CANCELABLE MODALS");
     allModals.forEach((modalEl) => {
@@ -1222,10 +1227,21 @@ export function revertCancelableModals(clickedModal: HTMLDivElement | undefined)
     });
 }
 
-function onMeteorBtnClick() {
-    if (gameState === GameState.Active && playerStats.readyToMeteor()) {
+/****************************************/
+/*************** SPECIALS ***************/
+/****************************************/
+
+function onMeteorBtnClick(e: MouseEvent) {
+    if (gameState === GameState.Active && meteorBtn.classList.contains("cancel-action")) {
+        console.log("onMeteorBtnClick! cancel meteor");
+        clearMeteorTargeting();
+    } else if (gameState === GameState.Active && playerStats.readyToMeteor()) {
+        console.log("onMeteorBtnClick! meteor targeting on");
+
         document.body.style.cursor = "crosshair";
         readyToFireMeteor = true;
+        meteorBtn.classList.add("cancel-action");
+        console.log({ meteorBtn, e });
     } else {
         console.log("meteor target not ready!");
     }
@@ -1235,8 +1251,7 @@ function onMeteorFire() {
     playerStats.fireMeteor();
 
     clearMeteorTargeting();
-
-    console.log("onMeteorFire", meteorTargetPos);
+    // console.log("onMeteorFire", meteorTargetPos);
 
     const meteorCount = 6;
     for (let i = 0; i < meteorCount; i++) {
@@ -1271,6 +1286,9 @@ function clearMeteorTargeting() {
     readyToFireMeteor = false;
     document.body.style.cursor = "default";
     mouseTargetMesh.visible = false;
+    if (meteorBtn.classList.contains("cancel-action")) {
+        meteorBtn.classList.remove("cancel-action");
+    }
 }
 
 function onBizzard() {

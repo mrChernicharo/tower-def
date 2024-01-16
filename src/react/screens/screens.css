@@ -1,3 +1,7 @@
+/************************************************/
+/************** GAME SCREEN HEADER **************/
+/************************************************/
+
 #game-screen-header {
     position: fixed;
     top: 0;
@@ -39,6 +43,10 @@
     text-align: center;
 }
 
+/************************************************/
+/************** GAME SCREEN FOOTER **************/
+/************************************************/
+
 #game-screen-footer {
     position: fixed;
     bottom: 0;
@@ -67,11 +75,25 @@
     margin-right: 5px;
     filter: brightness(0.75);
 }
+
 #game-screen-footer .action-btns button.ready {
     filter: brightness(1.1);
 }
 #game-screen-footer .action-btns button:last-child {
     margin-right: 0;
+}
+
+#game-screen-footer .action-btns button.cancel-action .cancel-badge > svg {
+    position: absolute;
+    fill: red;
+    width: 32px;
+    height: 32px;
+    opacity: 1;
+    top: -8px;
+    left: 24px;
+}
+#game-screen-footer .action-btns :not(button.cancel-action) .cancel-badge > svg {
+    opacity: 0;
 }
 
 #game-screen-footer .action-btns button img {

@@ -12,5 +12,5 @@
 -   [✔] debug: strange paths (prod mobile); lava paths
 -   [✔] meteors
 -   [ ] meteor cancel btn
--   [ ] meteor gizmo
+-   [✔] meteor gizmo
 -   [ ] blizzard
