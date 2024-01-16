@@ -4,6 +4,35 @@ import { usePlayerContext } from "../context/usePlayerContext";
 import { getAreaByLevel, getEarnedStars, getSpentStars, getUnlockedStages } from "../../game/helpers";
 import { LevelStars } from "../components/levelStars";
 import { FaArrowLeft } from "react-icons/fa";
+import { useCallback, useEffect, useState } from "react";
+
+const topBarStyles = {
+    position: "fixed",
+    zIndex: 200,
+    border: "1px solid green",
+    width: "100%",
+} as React.CSSProperties;
+
+const bottomBarStyles = {
+    position: "fixed",
+    bottom: 5,
+    left: 5,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "end",
+    width: "calc(100% - 10px)",
+    border: "1px solid green",
+} as React.CSSProperties;
+
+const starsBadgeStyles = {
+    position: "absolute",
+    left: "50%",
+    top: "52.5%",
+    transform: "translate(-50%,-50%) rotate(-12deg)",
+    color: "#fff",
+    fontSize: 12,
+    fontWeight: 900,
+} as React.CSSProperties;
 
 const levelIconsPositions = [
     // desert
@@ -30,22 +59,39 @@ const levelIconsPositions = [
 
 const AreaSelection = () => {
     const { stars, skills } = usePlayerContext();
+    const [, rerender] = useState(0);
 
     const earnedStars = getEarnedStars(stars);
     const starsSpent = getSpentStars(skills);
     const starsToSpend = earnedStars - starsSpent;
 
+    const onResize = useCallback(() => {
+        const worldImg = document.querySelector("#world-img") as HTMLImageElement;
+        const worldMapContainer = document.querySelector(".world-map-container") as HTMLDivElement;
+        worldImg.width = window.innerWidth;
+        worldImg.height = window.innerHeight;
+        worldMapContainer.style.height = window.innerHeight + "px";
+        rerender((p) => p + 1);
+    }, [rerender]);
+
+    useEffect(() => {
+        onResize();
+        window.addEventListener("resize", onResize);
+        return () => {
+            window.removeEventListener("resize", onResize);
+        };
+    }, [onResize]);
+
     return (
-        <div style={{ margin: "0 auto", width: "360px", border: "1px solid" }}>
-            {/* <div style={{ margin: "0 auto", width: "360px", border: "1px solid" }}> */}
-            <div className="world-map-container" style={{ position: "relative", height: "670px" }}>
-                <div style={{ position: "fixed", zIndex: 200 }}>
-                    <Link to="/">
-                        <button>
-                            <FaArrowLeft />
-                        </button>
-                    </Link>
-                </div>
+        <div style={{ margin: "0 auto", border: "1px solid" }}>
+            <div style={topBarStyles}>
+                <Link to="/">
+                    <button>
+                        <FaArrowLeft />
+                    </button>
+                </Link>
+            </div>
+            <div className="world-map-container" style={{ position: "relative", border: "1px solid red" }}>
                 {levelIconsPositions.map((pos, i) => {
                     return (
                         <div
@@ -63,20 +109,10 @@ const AreaSelection = () => {
                         </div>
                     );
                 })}
-                <img src={imgs.World} style={{ position: "absolute", maxWidth: "100%", height: "100%" }} />
 
-                <div
-                    style={{
-                        position: "absolute",
-                        bottom: 5,
-                        left: 5,
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "end",
-                        width: "calc(100% - 10px)",
-                        // border: "1px solid",
-                    }}
-                >
+                <img id="world-img" src={imgs.World} style={{ position: "absolute" }} />
+
+                <div style={bottomBarStyles}>
                     <Link to="/skills">
                         <button style={{ marginLeft: "5px" }}>
                             {/* <button style={{ position: "absolute", bottom: 5, left: 5 }}> */}
@@ -92,20 +128,7 @@ const AreaSelection = () => {
                                             fontSize: 36,
                                         }}
                                     >
-                                        ★
-                                        <span
-                                            style={{
-                                                position: "absolute",
-                                                left: "50%",
-                                                top: "52.5%",
-                                                transform: "translate(-50%,-50%) rotate(-12deg)",
-                                                color: "#fff",
-                                                fontSize: 12,
-                                                fontWeight: 900,
-                                            }}
-                                        >
-                                            {starsToSpend}
-                                        </span>
+                                        ★<span style={starsBadgeStyles}>{starsToSpend}</span>
                                     </span>
                                 </div>
                             ) : null}
