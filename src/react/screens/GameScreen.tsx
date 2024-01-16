@@ -105,8 +105,7 @@ const Game = () => {
                         </svg>
                     </button>
 
-                    {/* HIDDEN FOR NOW... */}
-                    <button id="blizzard-action-btn" className="hidden">
+                    <button id="blizzard-action-btn">
                         <div className="cancel-badge hidden">
                             <RiCloseCircleFill />
                         </div>
@@ -136,8 +135,9 @@ const Game = () => {
             {/* OVERLAY SCREENS */}
             <div id="pause-game-screen" className="hidden">
                 <div id="pause-content">
-                    <h2>Pause</h2>
-                    <div>
+                    <h2 style={{ marginBottom: 10 }}>Pause</h2>
+
+                    <div className="btn-row">
                         <button>
                             <AiFillSound />
                         </button>
@@ -145,9 +145,9 @@ const Game = () => {
                             <FaMusic />
                         </button>
                     </div>
-                    <div>
+
+                    <div className="btn-row">
                         <button id="resume-game-btn">Resume</button>
-                        {/* <Link to={`/area-selection`}> */}
                         <button
                             onClick={() => {
                                 if (confirm("Are you sure you want to quit?")) location.assign("#/area-selection");
@@ -155,7 +155,6 @@ const Game = () => {
                         >
                             Quit
                         </button>
-                        {/* </Link> */}
                     </div>
                 </div>
             </div>

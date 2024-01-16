@@ -264,7 +264,7 @@ async function gameSetup() {
     const mouseTargetMeshGeometry = new THREE.TorusGeometry(3);
     mouseTargetMeshGeometry.rotateX(-Math.PI / 2);
     mouseTargetMesh = new THREE.Mesh(mouseTargetMeshGeometry, MATERIALS.beacon);
-    mouseTargetMesh.name = "mouseTargetTorus";
+    mouseTargetMesh.name = "pointerTargetCircle";
     mouseTargetMesh.position.set(0, 0, 0);
     scene.add(mouseTargetMesh);
     mouseTargetMesh.visible = false;
@@ -894,7 +894,7 @@ function onCanvasClick(e: MouseEvent) {
         console.log("CLICKED TOWER BASE", { clickedTowerBase, scene });
         const modal3D = scene.getObjectByName(`${clickedTowerBase.object.name}-modal`)!;
         scene.traverse((obj) => {
-            if (obj.name === "mouseTargetTorus") return;
+            if (obj.name === "pointerTargetCircle") return;
             // HIDE previously open modal
             if ((obj as any).isCSS2DObject && obj.visible) {
                 if (obj.name === "call-wave-2D-modal") return;
@@ -929,7 +929,12 @@ function onCanvasClick(e: MouseEvent) {
                     obj.visible = false;
                 }
             }
-            if ((obj as THREE.Mesh).isMesh && !obj.visible && obj.name !== "rangeGizmo") {
+            if (
+                (obj as THREE.Mesh).isMesh &&
+                !obj.visible &&
+                obj.name !== "rangeGizmo" &&
+                obj.name !== "pointerTargetCircle"
+            ) {
                 obj.visible = true;
             }
         });
@@ -949,7 +954,7 @@ function onCanvasClick(e: MouseEvent) {
 
         // HIDE modal (3D)
         scene.traverse((obj) => {
-            if (obj.name === "mouseTargetTorus") return;
+            if (obj.name === "pointerTargetCircle") return;
 
             if ((obj as any).isCSS2DObject && obj.visible) {
                 if (obj.name === "call-wave-2D-modal") return;

@@ -1,9 +1,9 @@
--   [✔] tower previews
 -   [ ] compute skills efx
+-   [ ] camera
+-   [✔] tower previews
 -   [✔] more levels
 -   [✔] enabling/disabling skill buttons
--   [ ] camera
--   [ ] multiple paths
+-   [✔] multiple paths
 -   [✔] world-map
 -   [✔] call wave beacon
 -   [✔] game UI
@@ -11,6 +11,7 @@
 -   [✔] specials/items buttons (meteor, blizzard, ...)
 -   [✔] debug: strange paths (prod mobile); lava paths
 -   [✔] meteors
--   [ ] meteor cancel btn
+-   [✔] meteor cancel btn
 -   [✔] meteor gizmo
 -   [ ] blizzard
+-   [ ] slow & poison
