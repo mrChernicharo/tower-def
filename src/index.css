@@ -1,3 +1,8 @@
+@font-face {
+    font-family: "Game";
+    src: url(/assets/fonts/VT323-Regular.ttf);
+}
+
 * {
     margin: 0;
     padding: 0;

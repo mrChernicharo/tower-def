@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { useCallback, useEffect, useRef } from "react";
 import { useParams } from "react-router-dom";
-import { destroyGame, initGame } from "../../game/game";
 import { usePlayerContext } from "../context/usePlayerContext";
 import { LevelStarCount, PlayerSkills, SkillId } from "../../game/types";
 import { GAME_LEVELS, imgs } from "../../game/constants";
@@ -31,19 +30,22 @@ const Game = () => {
                 skillsObj[id as SkillId] = true;
             }
         });
-        // console.log({ skillsObj });
 
-        initGame({
-            hp,
-            area,
-            level: +level,
-            skills: skillsObj,
+        import("../../game/game").then(({ initGame }) => {
+            initGame({
+                hp,
+                area,
+                level: +level,
+                skills: skillsObj,
+            });
+            gameRunning.current = true;
         });
-        gameRunning.current = true;
 
         return () => {
-            destroyGame();
-            gameRunning.current = false;
+            import("../../game/game").then(({ destroyGame }) => {
+                destroyGame();
+                gameRunning.current = false;
+            });
         };
     }, [area, gold, hp, level, skills]);
 

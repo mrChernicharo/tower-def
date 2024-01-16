@@ -1081,23 +1081,22 @@ export const STAGE_WAVES_DATA: [string, number, number, number][][][] = [
 const smallBounds = {
     left: -15,
     right: 15,
-    top: 10,
-    bottom: 70,
+    top: -5,
+    bottom: 85,
 };
-
 const mediumBounds = {
     left: -20,
     right: 20,
     top: 0,
     bottom: 80,
 };
-
 const largeBounds = {
     left: -30,
     right: 30,
     top: 0,
     bottom: 110,
 };
+
 export const GAME_LEVELS: GameLevel[] = [
     {
         area: GameArea.Desert,
@@ -1146,7 +1145,7 @@ export const GAME_LEVELS: GameLevel[] = [
         mapURL: mapURLs.forest,
         paths: forestLevelPaths,
         waves: STAGE_WAVES_DATA[4],
-        initialCamPos: [-22, 60, 96],
+        initialCamPos: [0, 60, 60],
         cameraBounds: smallBounds,
     },
     {
@@ -1156,7 +1155,7 @@ export const GAME_LEVELS: GameLevel[] = [
         mapURL: mapURLs.forest,
         paths: forestLevelPaths,
         waves: STAGE_WAVES_DATA[5],
-        initialCamPos: [-22, 60, 96],
+        initialCamPos: [0, 60, 60],
         cameraBounds: smallBounds,
     },
     {
@@ -1166,7 +1165,7 @@ export const GAME_LEVELS: GameLevel[] = [
         mapURL: mapURLs.forest,
         paths: forestLevelPaths,
         waves: STAGE_WAVES_DATA[6],
-        initialCamPos: [-22, 60, 96],
+        initialCamPos: [0, 60, 60],
         cameraBounds: smallBounds,
     },
     {
@@ -1176,7 +1175,7 @@ export const GAME_LEVELS: GameLevel[] = [
         mapURL: mapURLs.forest,
         paths: forestLevelPaths,
         waves: STAGE_WAVES_DATA[7],
-        initialCamPos: [-22, 60, 96],
+        initialCamPos: [0, 60, 60],
         cameraBounds: smallBounds,
     },
     {
@@ -1186,7 +1185,7 @@ export const GAME_LEVELS: GameLevel[] = [
         mapURL: mapURLs.winter,
         paths: [villageLevelPath],
         waves: STAGE_WAVES_DATA[8],
-        initialCamPos: [-22, 60, 96],
+        initialCamPos: [0, 60, 60],
         cameraBounds: largeBounds,
     },
     {
@@ -1196,7 +1195,7 @@ export const GAME_LEVELS: GameLevel[] = [
         mapURL: mapURLs.winter,
         paths: [villageLevelPath],
         waves: STAGE_WAVES_DATA[9],
-        initialCamPos: [-22, 60, 96],
+        initialCamPos: [0, 60, 60],
         cameraBounds: largeBounds,
     },
     {
@@ -1206,7 +1205,7 @@ export const GAME_LEVELS: GameLevel[] = [
         mapURL: mapURLs.winter,
         paths: [villageLevelPath],
         waves: STAGE_WAVES_DATA[10],
-        initialCamPos: [-22, 60, 96],
+        initialCamPos: [0, 60, 60],
         cameraBounds: largeBounds,
     },
     {
@@ -1216,7 +1215,7 @@ export const GAME_LEVELS: GameLevel[] = [
         mapURL: mapURLs.winter,
         paths: [villageLevelPath],
         waves: STAGE_WAVES_DATA[11],
-        initialCamPos: [-22, 60, 96],
+        initialCamPos: [0, 60, 60],
         cameraBounds: largeBounds,
     },
     {
@@ -1226,7 +1225,7 @@ export const GAME_LEVELS: GameLevel[] = [
         mapURL: mapURLs.forest,
         paths: forestLevelPaths,
         waves: STAGE_WAVES_DATA[12],
-        initialCamPos: [-22, 60, 96],
+        initialCamPos: [0, 60, 60],
         cameraBounds: smallBounds,
     },
     {
@@ -1236,7 +1235,7 @@ export const GAME_LEVELS: GameLevel[] = [
         mapURL: mapURLs.forest,
         paths: forestLevelPaths,
         waves: STAGE_WAVES_DATA[13],
-        initialCamPos: [-22, 60, 96],
+        initialCamPos: [0, 60, 60],
         cameraBounds: smallBounds,
     },
     {
@@ -1246,7 +1245,7 @@ export const GAME_LEVELS: GameLevel[] = [
         mapURL: mapURLs.forest,
         paths: forestLevelPaths,
         waves: STAGE_WAVES_DATA[14],
-        initialCamPos: [-22, 60, 96],
+        initialCamPos: [0, 60, 60],
         cameraBounds: smallBounds,
     },
     {
@@ -1256,7 +1255,7 @@ export const GAME_LEVELS: GameLevel[] = [
         mapURL: mapURLs.forest,
         paths: forestLevelPaths,
         waves: STAGE_WAVES_DATA[15],
-        initialCamPos: [-22, 60, 96],
+        initialCamPos: [0, 60, 60],
         cameraBounds: smallBounds,
     },
 ];

@@ -1,12 +1,13 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { GLTF, GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
+import { THREE } from "../three";
 import { GUI } from "dat.gui";
+import { GLTF, GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import { FBXLoader } from "three/examples/jsm/loaders/FBXLoader.js";
+// import { TextGeometry } from "three/addons/geometries/TextGeometry.js";
+// import { FontLoader } from "three/examples/jsm/Addons.js";
 // import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 // import { DragControls } from "three/examples/jsm/controls/DragControls.js";
-
 import { CSS2DRenderer, CSS2DObject } from "three/examples/jsm/renderers/CSS2DRenderer.js";
-import { THREE } from "../three";
 import { Enemy } from "./Enemy";
 import {
     applyAreaDamage,
@@ -17,6 +18,7 @@ import {
     getEnemyTypeFromChar,
     getProjectileTowerName,
     handleModelGun,
+    idMaker,
 } from "./helpers";
 import {
     BLIZZARD_EFFECT_DURATION,
@@ -43,43 +45,40 @@ import { Blizzard } from "./Blizzard";
 
 // let pathPoints: THREE.Vector3[] = [];
 
-export let scene: THREE.Scene;
-export let gltfLoader: GLTFLoader;
-export let fbxLoader: FBXLoader;
-export let renderer: THREE.WebGLRenderer;
-export let cssRenderer: CSS2DRenderer;
-export let gameClock: THREE.Clock;
-// export let orbit: OrbitControls;
-export let camera: THREE.PerspectiveCamera;
-export let gameState = GameState.Idle;
+let gltfLoader: GLTFLoader;
+let fbxLoader: FBXLoader;
+// let fontLoader: FontLoader;
+
+let scene: THREE.Scene;
+let renderer: THREE.WebGLRenderer;
+let cssRenderer: CSS2DRenderer;
+let gameClock: THREE.Clock;
+//  let orbit: OrbitControls;
+let camera: THREE.PerspectiveCamera;
+let gameState = GameState.Idle;
+
 export let pathCurves: THREE.CatmullRomCurve3[] = [];
-export let mouseRay: THREE.Raycaster;
+let mouseRay: THREE.Raycaster;
 export let towerTexture: THREE.Texture;
-export let playerStats: PlayerStats;
-export let gameElapsedTime: number;
-export let loadingManager: THREE.LoadingManager;
-export let gameSpeed: GameSpeed;
-export let levelData: GameLevel;
-export let towerPreview: { model: THREE.Mesh; rangeGizmo: THREE.Mesh } | undefined;
+let playerStats: PlayerStats;
+let gameElapsedTime: number;
+let loadingManager: THREE.LoadingManager;
+let gameSpeed: GameSpeed;
+let levelData: GameLevel;
+let towerPreview: { model: THREE.Mesh; rangeGizmo: THREE.Mesh } | undefined;
 
-export let ambientLight: THREE.AmbientLight;
-export let pointLight: THREE.PointLight;
-export let lightProbe: THREE.LightProbe;
+let ambientLight: THREE.AmbientLight;
 
-export let enemies: Enemy[] = [];
-export let towers: Tower[] = [];
-export let meteors: Map<string, Meteor>;
-export let blizzards: Map<string, Blizzard>;
+let enemies: Enemy[] = [];
+let towers: Tower[] = [];
+let meteors: Map<string, Meteor>;
+let blizzards: Map<string, Blizzard>;
+let nums: Map<string, CSS2DObject>;
 
-export let projectiles: Map<string, Projectile>;
-export let explosions: Map<string, THREE.Mesh>;
-export let poisonEntries: Map<string, PoisonEntry>;
-export let futureGizmos: Map<string, THREE.Mesh>;
-
-export let projectileFolder: any;
-export const projRotation = { x: 0 };
-
-export let gui: GUI;
+let projectiles: Map<string, Projectile>;
+let explosions: Map<string, THREE.Mesh>;
+let poisonEntries: Map<string, PoisonEntry>;
+let futureGizmos: Map<string, THREE.Mesh>;
 
 export const ENEMY_MODELS = {} as { [k in EnemyType]: GLTF };
 export const TOWER_MODELS = {} as { [k in TowerType]: { [k: `level-${number}`]: THREE.Mesh } };
@@ -87,6 +86,9 @@ export const PROJECTILE_MODELS = {} as { [k in TowerType]: { [k: `level-${number
 
 const canvasWidth = window.innerWidth;
 const canvasHeight = window.innerHeight;
+
+let gui: GUI;
+
 let canvas: HTMLCanvasElement;
 let pauseGameBtn: HTMLButtonElement;
 let resumeGameBtn: HTMLButtonElement;
@@ -212,6 +214,19 @@ export async function initGame({ area, level, hp, skills }: GameInitProps) {
     blizzardBtn.addEventListener("click", onBlizzardBtnClick);
 
     frameId = requestAnimationFrame(animate);
+
+    // fontLoader.load("/assets/fonts/font.json", (font) => {
+    //     console.log({ font });
+    //     const geometry = new TextGeometry("Hello three.js!", {
+    //         font: font,
+    //         size: 4,
+    //         height: 2,
+    //         curveSegments: 12,
+    //     });
+
+    //     const textMesh = new THREE.Mesh(geometry, MATERIALS.beacon);
+    //     scene.add(textMesh);
+    // });
 }
 
 async function gameSetup() {
@@ -234,6 +249,7 @@ async function gameSetup() {
     explosions = new Map();
     meteors = new Map();
     blizzards = new Map();
+    nums = new Map();
     poisonEntries = new Map();
 
     endGameScreen.classList.add("hidden");
@@ -259,6 +275,7 @@ async function gameSetup() {
 
     gltfLoader = new GLTFLoader(loadingManager);
     fbxLoader = new FBXLoader(loadingManager);
+    // fontLoader = new FontLoader(loadingManager);
     gameClock = new THREE.Clock();
     gameElapsedTime = 0;
 
@@ -671,6 +688,16 @@ function animate() {
                 }
             }
             blizzard.tick(delta);
+        }
+
+        for (const [id, num3D] of nums.entries()) {
+            num3D.position.y += 0.01;
+
+            if (gameElapsedTime - num3D.userData.spawned_at > 2) {
+                num3D.userData.container_el.remove();
+                scene.remove(num3D);
+                nums.delete(id);
+            }
         }
 
         // WAVE SPAWNING
@@ -1330,11 +1357,27 @@ function onEnemyDestroyed(e: any) {
     } else {
         // console.log("enemy killed");
         playerStats.gainGold(enemy.bluePrint.reward);
-        // @TODO: draw money gain effect
 
         if (enemy.isPoisoned) {
             poisonEntries.delete(enemy.id);
         }
+
+        // DRAW GOLD GAIN EFX
+        const numContainer = document.createElement("div");
+        const numEl = document.createElement("div");
+        const num3D = new CSS2DObject(numContainer);
+
+        numContainer.className = "num-container";
+        num3D.userData["id"] = idMaker();
+        num3D.userData["spawned_at"] = gameElapsedTime;
+        num3D.userData["container_el"] = numContainer;
+        num3D.position.set(enemy.model.position.x, enemy.model.position.y, enemy.model.position.z);
+
+        scene.add(num3D);
+        numContainer.append(numEl);
+        numEl.innerHTML = `+${enemy.bluePrint.reward} <small>🟡</small>`;
+
+        nums.set(num3D.userData["id"], num3D);
     }
 
     enemies = enemies.filter((e) => e.id !== enemy.id);
@@ -1507,7 +1550,7 @@ function onPoisonEntryDamage(e: any) {
     if (enemy) {
         enemy.takeDamage(4);
     }
-    console.log("onPoisonEntryDamage", { poisonEntries, poison, enemy });
+    // console.log("onPoisonEntryDamage", { poisonEntries, poison, enemy });
 }
 
 function onPoisonEntryExpired(e: any) {
@@ -1516,6 +1559,6 @@ function onPoisonEntryExpired(e: any) {
     if (enemy) {
         enemy.healPoison();
     }
-    console.log("onPoisonEntryExpired", { poisonEntries, poison, enemy });
+    // console.log("onPoisonEntryExpired", { poisonEntries, poison, enemy });
     poisonEntries.delete(poison.enemyId);
 }
