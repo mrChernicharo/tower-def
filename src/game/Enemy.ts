@@ -104,7 +104,7 @@ export class Enemy {
         this.slowBeacon.visible = false;
         this.slowBeacon.position.y = ypos;
         model.add(this.slowBeacon);
-        console.log(this.slowBeacon);
+        // console.log(this.slowBeacon);
 
         return model;
     }

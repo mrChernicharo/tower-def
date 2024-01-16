@@ -163,6 +163,7 @@ export async function destroyGame() {
     window.removeEventListener("resize", onResize);
     window.removeEventListener("visibilitychange", onVisibilityChange);
     window.removeEventListener("wheel", onZoom);
+    canvas.removeEventListener("gestureend", onMobileZoom);
     canvas.removeEventListener("pointermove", onPointerMove);
     canvas.removeEventListener("click", onCanvasClick);
     canvas.removeEventListener("pointerdown", onMouseDown);
@@ -204,6 +205,7 @@ export async function initGame({ area, level, hp, skills }: GameInitProps) {
     window.addEventListener("resize", onResize);
     window.addEventListener("visibilitychange", onVisibilityChange);
     window.addEventListener("wheel", onZoom);
+    canvas.addEventListener("gestureend", onMobileZoom);
     canvas.addEventListener("pointermove", onPointerMove);
     canvas.addEventListener("click", onCanvasClick);
     canvas.addEventListener("pointerdown", onMouseDown);
@@ -1072,6 +1074,15 @@ function onZoom(e: WheelEvent) {
         camera.fov += e.deltaY * 0.02;
     }
     camera.updateProjectionMatrix();
+}
+
+function onMobileZoom(e: any) {
+    console.log("onMobileZoom", e);
+
+    // if ((e.deltaY > 0 && camera.fov < 80) || (e.deltaY < 0 && camera.fov > 20)) {
+    //     camera.fov += e.deltaY * 0.02;
+    // }
+    // camera.updateProjectionMatrix();
 }
 
 function onVisibilityChange() {
