@@ -8,6 +8,10 @@ import { AiFillSound } from "react-icons/ai";
 import { FaMusic } from "react-icons/fa";
 import { RiCloseCircleFill } from "react-icons/ri";
 
+// import { IoMdClose } from "react-icons/io";
+// <IoMdClose />
+// ←
+
 const Game = () => {
     const { area, level } = useParams();
     const { gold, hp, skills, updateStars } = usePlayerContext();

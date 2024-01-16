@@ -166,7 +166,7 @@ export async function destroyGame() {
     window.removeEventListener("resize", onResize);
     window.removeEventListener("visibilitychange", onVisibilityChange);
     window.removeEventListener("wheel", onZoom);
-    window.removeEventListener("gesturechange", onMobileZoom);
+    // window.removeEventListener("gesturechange", onMobileZoom);
     canvas.removeEventListener("pointermove", onPointerMove);
     canvas.removeEventListener("click", onCanvasClick);
     canvas.removeEventListener("pointerdown", onMouseDown);
@@ -208,7 +208,7 @@ export async function initGame({ area, level, hp, skills }: GameInitProps) {
     window.addEventListener("resize", onResize);
     window.addEventListener("visibilitychange", onVisibilityChange);
     window.addEventListener("wheel", onZoom);
-    window.addEventListener("gesturechange", onMobileZoom);
+    // window.addEventListener("gesturechange", onMobileZoom);
     canvas.addEventListener("pointermove", onPointerMove);
     canvas.addEventListener("click", onCanvasClick);
     canvas.addEventListener("pointerdown", onMouseDown);
@@ -1099,16 +1099,21 @@ function onZoom(e: WheelEvent) {
 }
 
 function onMobileZoom(e: any) {
-    console.log("onMobileZoom", e);
     prevPinchDist = pinchDist;
     pinchDist = Math.hypot(e.touches[0].pageX - e.touches[1].pageX, e.touches[0].pageY - e.touches[1].pageY);
     const diff = pinchDist - prevPinchDist;
-    console.log("pinch", pinchDist, prevPinchDist, diff, e);
+    const discard = diff > 40 || diff < -40;
+    // console.log("onMobileZoom", pinchDist, prevPinchDist, diff, discard, e);
 
-    // if ((e.deltaY > 0 && camera.fov < 80) || (e.deltaY < 0 && camera.fov > 20)) {
-    //     camera.fov += e.deltaY * 0.02;
-    // }
-    // camera.updateProjectionMatrix();
+    if (discard) return;
+
+    if ((diff > 0 && camera.fov > 20) || (diff < 0 && camera.fov < 80)) {
+        camera.fov -= diff * 0.15;
+    }
+
+    if (camera.fov < 20) camera.fov = 20;
+    if (camera.fov > 80) camera.fov = 80;
+    camera.updateProjectionMatrix();
 }
 
 function onVisibilityChange() {
