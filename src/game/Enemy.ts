@@ -181,15 +181,16 @@ export class Enemy {
     getPercDist(timeInSecs = 0) {
         const pathLen = this.path.getLength();
         const distCovered = this.bluePrint.speed * (this.timeSinceSpawn + timeInSecs);
-        const distPerc = distCovered / pathLen;
+        let distPerc = distCovered / pathLen;
 
         if (distPerc > 1 && !this.#endReached) {
+            distPerc = 1;
             this.#endReached = true;
             this.destroy(true);
         }
 
         // console.log({ pathLen, distCovered, distPerc });
-        return distPerc % 1;
+        return distPerc;
     }
 
     takeDamage(dmg: number) {
