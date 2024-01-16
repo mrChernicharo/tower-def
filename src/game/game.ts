@@ -148,8 +148,6 @@ export async function destroyGame() {
     pathCurves = [];
     callWaveBeaconContainers = [];
 
-    window.removeEventListener("resize", onResize);
-    window.removeEventListener("visibilitychange", onVisibilityChange);
     window.removeEventListener("projectile", onProjectile);
     window.removeEventListener("projectile-explode", onProjectileExplode);
     window.removeEventListener("meteor-explode", onMeteorExplode);
@@ -159,9 +157,12 @@ export async function destroyGame() {
     window.removeEventListener("enemy-destroyed", onEnemyDestroyed);
     window.removeEventListener("poison-entry-expired", onPoisonEntryExpired);
     window.removeEventListener("poison-entry-damage", onPoisonEntryDamage);
+
+    window.removeEventListener("resize", onResize);
+    window.removeEventListener("visibilitychange", onVisibilityChange);
+    window.removeEventListener("wheel", onZoom);
     canvas.removeEventListener("pointermove", onPointerMove);
     canvas.removeEventListener("click", onCanvasClick);
-    window.removeEventListener("wheel", onZoom);
     canvas.removeEventListener("pointerdown", onMouseDown);
     pauseGameBtn.removeEventListener("click", onPauseGame);
     resumeGameBtn.removeEventListener("click", onResumeGame);
@@ -177,16 +178,7 @@ export async function initGame({ area, level, hp, skills }: GameInitProps) {
     console.log({ levelData });
     playerStats = new PlayerStats({ hp, gold: levelData.initialGold });
 
-    console.log("initGame", {
-        skills,
-        levelArea,
-        levelIdx,
-        COLORS,
-        DRAW_FUTURE_GIZMO,
-        ENEMY_BLUEPRINTS,
-        STAGE_WAVES_DATA,
-        TOWER_BLUEPRINTS,
-    });
+    console.log("initGame", { skills, levelArea, levelIdx, levelData, PlayerStats });
 
     await gameSetup();
     _wireUpLoadingManager();
@@ -197,8 +189,6 @@ export async function initGame({ area, level, hp, skills }: GameInitProps) {
     _init2DModals();
     drawWaveCallBeacon();
 
-    window.addEventListener("resize", onResize);
-    window.addEventListener("visibilitychange", onVisibilityChange);
     window.addEventListener("projectile", onProjectile);
     window.addEventListener("projectile-explode", onProjectileExplode);
     window.addEventListener("meteor-explode", onMeteorExplode);
@@ -208,6 +198,9 @@ export async function initGame({ area, level, hp, skills }: GameInitProps) {
     window.addEventListener("enemy-destroyed", onEnemyDestroyed);
     window.addEventListener("poison-entry-expired", onPoisonEntryExpired);
     window.addEventListener("poison-entry-damage", onPoisonEntryDamage);
+
+    window.addEventListener("resize", onResize);
+    window.addEventListener("visibilitychange", onVisibilityChange);
     window.addEventListener("wheel", onZoom);
     canvas.addEventListener("pointermove", onPointerMove);
     canvas.addEventListener("click", onCanvasClick);
@@ -563,13 +556,6 @@ function drawWaveCallBeacon() {
     });
 }
 
-function spawnEnemy(enemyType: EnemyType, pathIdx = 0) {
-    // console.log("spawnEnemy", { enemyType, currWave });
-    const enemy = new Enemy(enemyType, pathIdx);
-    enemies.push(enemy);
-    scene.add(enemy.model);
-}
-
 function animate() {
     const delta = gameClock.getDelta() * gameSpeed;
     // const elapsed = gameClock.getElapsedTime();
@@ -699,7 +685,7 @@ function animate() {
 }
 
 /****************************************/
-/**************** EVENTS ****************/
+/************** DOM EVENTS **************/
 /****************************************/
 
 function onPointerMove(e: PointerEvent) {
@@ -724,18 +710,7 @@ function onPointerMove(e: PointerEvent) {
     }
 
     if (e.buttons === 1) {
-        if ((e.movementX > 0 && camera.position.x > -20) || (e.movementX < 0 && camera.position.x < 20)) {
-            camera.position.x -= e.movementX * 0.2;
-        }
-
-        if ((e.movementY > 0 && camera.position.z > 0) || (e.movementY < 0 && camera.position.z < 80)) {
-            camera.position.z -= e.movementY * 0.2;
-        }
-
-        // console.log("isDragging", e.buttons, e.movementX, e.movementY);
-
-        const camTarget = new THREE.Vector3(camera.position.x, camera.position.y - 40, camera.position.z - 50);
-        camera.lookAt(camTarget);
+        handleCameraMovement(e);
     } else {
         // console.log("no drag", e.buttons);
     }
@@ -1057,6 +1032,131 @@ function onCanvasClick(e: MouseEvent) {
     }
 }
 
+function onResize() {
+    camera.aspect = canvasWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(canvasWidth, canvasHeight);
+    cssRenderer.setSize(canvasWidth, canvasHeight);
+}
+
+function onZoom(e: WheelEvent) {
+    // console.log(e, e.deltaX, e.deltaY, e.deltaZ);
+    if ((e.deltaY > 0 && camera.fov < 80) || (e.deltaY < 0 && camera.fov > 20)) {
+        camera.fov += e.deltaY * 0.02;
+    }
+    camera.updateProjectionMatrix();
+}
+
+function onVisibilityChange() {
+    if (document.visibilityState === "visible") {
+        // backgroundMusic.play();
+    } else {
+        onPauseGame();
+        // backgroundMusic.pause();
+    }
+}
+
+/****************************************/
+/************** GAME EVENTS *************/
+/****************************************/
+
+function onPauseGame() {
+    console.log("onPauseGame", callWaveBeaconContainers);
+
+    pauseScreen.classList.remove("hidden");
+
+    if (gameState === GameState.Active) {
+        gameState = GameState.Paused;
+    }
+
+    callWaveBeaconContainers.forEach((container) => {
+        container.style.opacity = "0";
+    });
+
+    // const openedModal = document.querySelector(".modal-content");
+
+    // hide modal on pause
+    scene.traverse((obj) => {
+        if (
+            // openedModal &&
+            (obj as any).isCSS2DObject &&
+            obj.visible &&
+            obj.name.includes("-modal") && // is a modal
+            obj.name !== "call-wave-2D-modal" && // but not the callWaveBeacon
+            obj.name !== "slowBeacon"
+        ) {
+            obj.visible = false;
+
+            revertCancelableModals(undefined);
+            // const isConfirmTowerUpgradeModal = openedModal.classList.contains(ModalType.ConfirmTowerUpgrade);
+            // console.log({ obj, openedModal, classList: openedModal.classList, isConfirmTowerUpgradeModal });
+        }
+    });
+}
+
+function onResumeGame() {
+    console.log("onResumeGame", callWaveBeaconContainers);
+
+    if (gameState === GameState.Paused) {
+        gameState = GameState.Active;
+    }
+    pauseScreen.classList.add("hidden");
+
+    callWaveBeaconContainers.forEach((container) => {
+        container.style.opacity = "1";
+    });
+
+    if (towerPreview) {
+        console.log("remove tower preview");
+        scene.remove(towerPreview.model);
+        scene.remove(towerPreview.rangeGizmo);
+    }
+
+    scene.traverse((obj) => {
+        // paused with confirmUpgrade modal open? line below will ensure the tower mesh gets back to its original state on resume
+        if ((obj as any).isMesh && obj.name.includes("-Tower") && !obj.visible) {
+            obj.visible = true;
+        }
+    });
+}
+
+function onEndGameConfirm() {
+    location.assign("#/area-selection");
+    endGameBtn.removeEventListener("click", onEndGameConfirm);
+}
+
+function onGameSpeedChange(e: MouseEvent) {
+    const elTarget = e.target as HTMLElement;
+    // e.preventDefault();
+    if (elTarget.tagName === "INPUT") {
+        const speedStr = elTarget.id.split("-")[1];
+        const speed = Number(speedStr[0]);
+        gameSpeed = speed as GameSpeed;
+        console.log("onGameSpeedChange", { gameSpeed });
+    }
+}
+
+function handleCameraMovement(e: PointerEvent) {
+    if (
+        (e.movementX > 0 && camera.position.x > levelData.cameraBounds.left) ||
+        (e.movementX < 0 && camera.position.x < levelData.cameraBounds.right)
+    ) {
+        camera.position.x -= e.movementX * 0.2;
+    }
+
+    if (
+        (e.movementY > 0 && camera.position.z > levelData.cameraBounds.top) ||
+        (e.movementY < 0 && camera.position.z < levelData.cameraBounds.bottom)
+    ) {
+        camera.position.z -= e.movementY * 0.2;
+    }
+
+    // console.log("isDragging", e.buttons, e.movementX, e.movementY);
+
+    const camTarget = new THREE.Vector3(camera.position.x, camera.position.y - 40, camera.position.z - 50);
+    camera.lookAt(camTarget);
+}
+
 function handleHoverOpacityEfx() {
     const hoveredTower = mouseRay.intersectObjects(scene.children).find((ch) => ch.object.name.includes("-Tower"));
     const hoveredTowerBase = mouseRay
@@ -1106,97 +1206,6 @@ function handleHoverOpacityEfx() {
     }
 }
 
-function onResize() {
-    camera.aspect = canvasWidth / window.innerHeight;
-    camera.updateProjectionMatrix();
-    renderer.setSize(canvasWidth, canvasHeight);
-    cssRenderer.setSize(canvasWidth, canvasHeight);
-}
-
-function onPauseGame() {
-    console.log("onPauseGame", callWaveBeaconContainers);
-
-    pauseScreen.classList.remove("hidden");
-
-    if (gameState === GameState.Active) {
-        gameState = GameState.Paused;
-    }
-
-    callWaveBeaconContainers.forEach((container) => {
-        container.style.opacity = "0";
-    });
-
-    // const openedModal = document.querySelector(".modal-content");
-
-    // hide modal on pause
-    scene.traverse((obj) => {
-        if (
-            // openedModal &&
-            (obj as any).isCSS2DObject &&
-            obj.visible &&
-            obj.name.includes("-modal") && // is a modal
-            obj.name !== "call-wave-2D-modal" && // but not the callWaveBeacon
-            obj.name !== "slowBeacon"
-        ) {
-            obj.visible = false;
-
-            revertCancelableModals(undefined);
-            // const isConfirmTowerUpgradeModal = openedModal.classList.contains(ModalType.ConfirmTowerUpgrade);
-            // console.log({ obj, openedModal, classList: openedModal.classList, isConfirmTowerUpgradeModal });
-        }
-    });
-}
-
-function onZoom(e: WheelEvent) {
-    // console.log(e, e.deltaX, e.deltaY, e.deltaZ);
-    if ((e.deltaY > 0 && camera.fov < 80) || (e.deltaY < 0 && camera.fov > 20)) {
-        camera.fov += e.deltaY * 0.02;
-    }
-    camera.updateProjectionMatrix();
-}
-
-function onResumeGame() {
-    console.log("onResumeGame", callWaveBeaconContainers);
-
-    if (gameState === GameState.Paused) {
-        gameState = GameState.Active;
-    }
-    pauseScreen.classList.add("hidden");
-
-    callWaveBeaconContainers.forEach((container) => {
-        container.style.opacity = "1";
-    });
-
-    if (towerPreview) {
-        console.log("remove tower preview");
-        scene.remove(towerPreview.model);
-        scene.remove(towerPreview.rangeGizmo);
-    }
-
-    scene.traverse((obj) => {
-        // paused with confirmUpgrade modal open? line below will ensure the tower mesh gets back to its original state on resume
-        if ((obj as any).isMesh && obj.name.includes("-Tower") && !obj.visible) {
-            obj.visible = true;
-        }
-    });
-}
-
-function onEndGameConfirm() {
-    location.assign("#/area-selection");
-    endGameBtn.removeEventListener("click", onEndGameConfirm);
-}
-
-function onGameSpeedChange(e: MouseEvent) {
-    const elTarget = e.target as HTMLElement;
-    // e.preventDefault();
-    if (elTarget.tagName === "INPUT") {
-        const speedStr = elTarget.id.split("-")[1];
-        const speed = Number(speedStr[0]);
-        gameSpeed = speed as GameSpeed;
-        console.log("onGameSpeedChange", { gameSpeed });
-    }
-}
-
 function revertCancelableModals(clickedModal: HTMLDivElement | undefined) {
     const allModals = Array.from(document.querySelectorAll<HTMLDivElement>(".modal2D"));
     // console.log("REVERT CANCELABLE MODALS");
@@ -1219,14 +1228,9 @@ function revertCancelableModals(clickedModal: HTMLDivElement | undefined) {
     });
 }
 
-function onVisibilityChange() {
-    if (document.visibilityState === "visible") {
-        // backgroundMusic.play();
-    } else {
-        onPauseGame();
-        // backgroundMusic.pause();
-    }
-}
+/****************************************/
+/************* GAME OBJECTS *************/
+/****************************************/
 
 function onProjectile(e: any) {
     const projectile = e.detail as Projectile;
@@ -1298,6 +1302,13 @@ function onProjectileExplode(e: any) {
     explosions.set(projectile.id, explosion);
     scene.add(explosion);
     // console.log("onProjectileExplode", { poisonEntries });
+}
+
+function spawnEnemy(enemyType: EnemyType, pathIdx = 0) {
+    // console.log("spawnEnemy", { enemyType, currWave });
+    const enemy = new Enemy(enemyType, pathIdx);
+    enemies.push(enemy);
+    scene.add(enemy.model);
 }
 
 function onEnemyDestroyed(e: any) {

@@ -121,4 +121,5 @@ export type GameLevel = {
     paths: JSONPath[];
     waves: [string, number, number, number][][];
     initialCamPos: [number, number, number];
+    cameraBounds: { left: number; right: number; top: number; bottom: number };
 };
