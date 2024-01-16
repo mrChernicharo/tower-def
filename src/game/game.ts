@@ -1065,8 +1065,6 @@ function onResize() {
 function onPauseGame() {
     console.log("onPauseGame", callWaveBeaconContainers);
 
-    // closeAllOpenModals();
-
     pauseScreen.classList.remove("hidden");
 
     if (gameState === GameState.Active) {
@@ -1077,21 +1075,22 @@ function onPauseGame() {
         container.style.opacity = "0";
     });
 
+    // const openedModal = document.querySelector(".modal-content");
+
     // hide modal on pause
     scene.traverse((obj) => {
         if (
+            // openedModal &&
             (obj as any).isCSS2DObject &&
             obj.visible &&
             obj.name.includes("-modal") && // is a modal
             obj.name !== "call-wave-2D-modal" // but not the callWaveBeacon
         ) {
             obj.visible = false;
+
             revertCancelableModals(undefined);
-            if (towerPreview) {
-                console.log("remove tower preview");
-                scene.remove(towerPreview.model);
-                scene.remove(towerPreview.rangeGizmo);
-            }
+            // const isConfirmTowerUpgradeModal = openedModal.classList.contains(ModalType.ConfirmTowerUpgrade);
+            // console.log({ obj, openedModal, classList: openedModal.classList, isConfirmTowerUpgradeModal });
         }
     });
 }
@@ -1106,6 +1105,19 @@ function onResumeGame() {
 
     callWaveBeaconContainers.forEach((container) => {
         container.style.opacity = "1";
+    });
+
+    if (towerPreview) {
+        console.log("remove tower preview");
+        scene.remove(towerPreview.model);
+        scene.remove(towerPreview.rangeGizmo);
+    }
+
+    scene.traverse((obj) => {
+        // paused with confirmUpgrade modal open? line below will ensure the tower mesh gets back to its original state on resume
+        if ((obj as any).isMesh && obj.name.includes("-Tower") && !obj.visible) {
+            obj.visible = true;
+        }
     });
 }
 
