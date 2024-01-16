@@ -105,6 +105,10 @@ let gameLost = false;
 
 let readyToFireMeteor = false;
 let meteorTargetPos = new THREE.Vector3();
+
+let readyToFireBlizzard = false;
+let blizzardTargetPos = new THREE.Vector3();
+
 let mouseTargetMesh: THREE.Mesh;
 
 export async function destroyGame() {
@@ -138,6 +142,7 @@ export async function destroyGame() {
     window.removeEventListener("projectile-explode", onProjectileExplode);
     window.removeEventListener("meteor-explode", onMeteorExplode);
     window.removeEventListener("meteor-fire", onMeteorFire);
+    window.removeEventListener("blizzard-fire", onBlizzardFire);
     window.removeEventListener("enemy-destroyed", onEnemyDestroyed);
     canvas.removeEventListener("mousemove", onMouseMove);
     canvas.removeEventListener("click", onCanvasClick);
@@ -146,7 +151,7 @@ export async function destroyGame() {
     resumeGameBtn.removeEventListener("click", onResumeGame);
     speedBtns.removeEventListener("click", onGameSpeedChange);
     meteorBtn.removeEventListener("click", onMeteorBtnClick);
-    blizzardBtn.removeEventListener("click", onBizzard);
+    blizzardBtn.removeEventListener("click", onBlizzardBtnClick);
 }
 
 export async function initGame({ area, level, hp, skills }: GameInitProps) {
@@ -182,6 +187,7 @@ export async function initGame({ area, level, hp, skills }: GameInitProps) {
     window.addEventListener("projectile-explode", onProjectileExplode);
     window.addEventListener("meteor-explode", onMeteorExplode);
     window.addEventListener("meteor-fire", onMeteorFire);
+    window.addEventListener("blizzard-fire", onBlizzardFire);
     window.addEventListener("enemy-destroyed", onEnemyDestroyed);
     canvas.addEventListener("mousemove", onMouseMove);
     canvas.addEventListener("click", onCanvasClick);
@@ -190,7 +196,7 @@ export async function initGame({ area, level, hp, skills }: GameInitProps) {
     resumeGameBtn.addEventListener("click", onResumeGame);
     speedBtns.addEventListener("click", onGameSpeedChange);
     meteorBtn.addEventListener("click", onMeteorBtnClick);
-    blizzardBtn.addEventListener("click", onBizzard);
+    blizzardBtn.addEventListener("click", onBlizzardBtnClick);
 
     frameId = requestAnimationFrame(animate);
 }
@@ -667,7 +673,7 @@ function onMouseMove(e: MouseEvent) {
     mouseRay.setFromCamera(mousePos, camera);
     handleHoverOpacityEfx();
 
-    if (readyToFireMeteor) {
+    if (readyToFireMeteor || readyToFireBlizzard) {
         if (!mouseTargetMesh.visible) mouseTargetMesh.visible = true;
 
         const pos = mousePosToWorldPos(mouseRay, scene);
@@ -873,7 +879,7 @@ function onCanvasClick(e: MouseEvent) {
         .intersectObjects(scene.children)
         .find((ch) => ch.object.name.includes("TowerBase"));
 
-    // console.log({ rayIntersects: mouseRay.intersectObjects(scene.children), clickedTower, clickedTowerBase });
+    // console.log('onCanvasClick',{ rayIntersects: mouseRay.intersectObjects(scene.children), clickedTower, clickedTowerBase });
 
     revertCancelableModals(clickedModal as HTMLDivElement | undefined);
 
@@ -889,6 +895,20 @@ function onCanvasClick(e: MouseEvent) {
         const pos = mousePosToWorldPos(mouseRay, scene);
         meteorTargetPos = new THREE.Vector3(pos.x, pos.y, pos.z);
         window.dispatchEvent(new CustomEvent("meteor-fire"));
+        return;
+    } else if (readyToFireBlizzard) {
+        const mouseRayIntersects = mouseRay.intersectObjects(scene.children);
+
+        if (mouseRayIntersects.length < 1) {
+            console.log("cancel blizzard");
+            clearBlizzardTargeting();
+            return;
+        }
+
+        const pos = mousePosToWorldPos(mouseRay, scene);
+        blizzardTargetPos = new THREE.Vector3(pos.x, pos.y, pos.z);
+        console.log("will dispatch blizzard-fire", { pos, blizzardTargetPos });
+        window.dispatchEvent(new CustomEvent("blizzard-fire"));
         return;
     } else if (clickedTowerBase) {
         console.log("CLICKED TOWER BASE", { clickedTowerBase, scene });
@@ -1271,12 +1291,26 @@ function onMeteorBtnClick(e: MouseEvent) {
         console.log("meteor target not ready!");
     }
 }
+function onBlizzardBtnClick(e: MouseEvent) {
+    if (gameState === GameState.Active && blizzardBtn.classList.contains("cancel-action")) {
+        console.log("onBlizzardBtnClick! cancel blizzard");
+        clearBlizzardTargeting();
+    } else if (gameState === GameState.Active && playerStats.readyToBlizzard()) {
+        console.log("onBlizzardBtnClick! blizzard targeting on");
+
+        document.body.style.cursor = "crosshair";
+        readyToFireBlizzard = true;
+        blizzardBtn.classList.add("cancel-action");
+        console.log({ blizzardBtn, e });
+    } else {
+        console.log("blizzard target not ready!");
+    }
+}
 
 function onMeteorFire() {
     playerStats.fireMeteor();
 
     clearMeteorTargeting();
-    // console.log("onMeteorFire", meteorTargetPos);
 
     const meteorCount = 6;
     for (let i = 0; i < meteorCount; i++) {
@@ -1306,6 +1340,22 @@ function onMeteorFire() {
         }, i * 220);
     }
 }
+function onBlizzardFire() {
+    playerStats.fireBlizzard();
+
+    clearBlizzardTargeting();
+
+    const destination = new THREE.Vector3(
+        THREE.MathUtils.lerp(blizzardTargetPos.x - 2.5, blizzardTargetPos.x + 2.5, Math.random()),
+        blizzardTargetPos.y,
+        THREE.MathUtils.lerp(blizzardTargetPos.z - 2.5, blizzardTargetPos.z + 2.5, Math.random())
+    );
+
+    console.log("fire Blizzard", destination);
+    const blizzard = new Meteor(destination, COLORS.blue);
+    meteors.set(blizzard.id, blizzard);
+    scene.add(blizzard.model);
+}
 
 function clearMeteorTargeting() {
     readyToFireMeteor = false;
@@ -1315,7 +1365,11 @@ function clearMeteorTargeting() {
         meteorBtn.classList.remove("cancel-action");
     }
 }
-
-function onBizzard() {
-    playerStats.fireBlizzard();
+function clearBlizzardTargeting() {
+    readyToFireBlizzard = false;
+    document.body.style.cursor = "default";
+    mouseTargetMesh.visible = false;
+    if (blizzardBtn.classList.contains("cancel-action")) {
+        blizzardBtn.classList.remove("cancel-action");
+    }
 }

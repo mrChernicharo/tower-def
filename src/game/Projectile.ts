@@ -144,7 +144,8 @@ export class ParabolaProjectile extends ProjectileBase {
     }
 
     handleMovement() {
-        const t = getPercDist(this.curve, this.blueprint.speed, this.timeSinceSpawn);
+        let t = getPercDist(this.curve, this.blueprint.speed, this.timeSinceSpawn);
+        if (t > 1) t = 1;
 
         const position = this.curve.getPointAt(t);
         const direction = this.curve.getPointAt(t > 0.95 ? 1 : t + 0.04);

@@ -100,13 +100,14 @@ export class PlayerStats {
     }
 
     readyToBlizzard() {
-        return this.meteorCooldown <= 0;
+        return this.blizzardCooldown <= 0;
+    }
+
+    fireMeteor() {
+        this.meteorCooldown = METEOR_COOLDOWN;
     }
 
     fireBlizzard() {
         this.blizzardCooldown = BLIZZARD_COOLDOWN;
-    }
-    fireMeteor() {
-        this.meteorCooldown = METEOR_COOLDOWN;
     }
 }

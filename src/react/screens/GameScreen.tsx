@@ -106,7 +106,7 @@ const Game = () => {
                     </button>
 
                     <button id="blizzard-action-btn">
-                        <div className="cancel-badge hidden">
+                        <div className="cancel-badge">
                             <RiCloseCircleFill />
                         </div>
                         <img src={imgs.Blizzard} width={42} height={42} />
