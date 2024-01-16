@@ -141,6 +141,7 @@ export const COLORS = {
     black: 0x000000,
     white: 0xffffff,
     winter: 0xffffff,
+    poisonGreen: 0x6ee400,
 } as const;
 
 export const ENEMY_BLUEPRINTS: { [k in EnemyType]: EnemyBluePrint } = {
@@ -213,7 +214,9 @@ export const ENEMY_BLUEPRINTS: { [k in EnemyType]: EnemyBluePrint } = {
 
 export const MATERIALS = {
     damageMaterialStd: new THREE.MeshStandardMaterial({ color: "red" }),
+    poisonDmgMaterialStd: new THREE.MeshStandardMaterial({ color: COLORS.poisonGreen }),
     damageMaterialPhysical: new THREE.MeshStandardMaterial({ color: "red" }),
+    poisonDmgMaterialPhysical: new THREE.MeshStandardMaterial({ color: "green" }),
     meteor: new THREE.MeshMatcapMaterial({ color: COLORS.red }),
     concrete: new THREE.MeshMatcapMaterial({ color: COLORS.concrete }),
     concrete2: new THREE.MeshMatcapMaterial({ color: COLORS.concrete2 }),
@@ -418,7 +421,7 @@ export const TOWER_BLUEPRINTS: { [k in TowerType]: TowerBluePrint[] } = {
     Poison: [
         {
             name: TowerType.Poison,
-            defaultStrategy: TargetingStrategy.FirstInLine,
+            defaultStrategy: TargetingStrategy.LastInLine,
             firePointY: 8,
             level: 1,
             damage: [4, 7],
@@ -430,7 +433,7 @@ export const TOWER_BLUEPRINTS: { [k in TowerType]: TowerBluePrint[] } = {
         },
         {
             name: TowerType.Poison,
-            defaultStrategy: TargetingStrategy.FirstInLine,
+            defaultStrategy: TargetingStrategy.LastInLine,
             firePointY: 8.5,
             level: 2,
             damage: [11, 22],
@@ -442,7 +445,7 @@ export const TOWER_BLUEPRINTS: { [k in TowerType]: TowerBluePrint[] } = {
         },
         {
             name: TowerType.Poison,
-            defaultStrategy: TargetingStrategy.FirstInLine,
+            defaultStrategy: TargetingStrategy.LastInLine,
             firePointY: 9,
             level: 3,
             damage: [21, 37],
@@ -454,7 +457,7 @@ export const TOWER_BLUEPRINTS: { [k in TowerType]: TowerBluePrint[] } = {
         },
         {
             name: TowerType.Poison,
-            defaultStrategy: TargetingStrategy.FirstInLine,
+            defaultStrategy: TargetingStrategy.LastInLine,
             firePointY: 10,
             level: 4,
             damage: [33, 60],

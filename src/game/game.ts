@@ -34,6 +34,7 @@ import { beaconTemplate, cancelableModalNames, gameEndTemplates, modalTemplates,
 import { Tower } from "./Tower";
 import { PlayerStats } from "./PlayerStats";
 import { Meteor } from "./Meteor";
+import { PoisonEntry } from "./PoisonEntry";
 
 // let pathPoints: THREE.Vector3[] = [];
 
@@ -65,6 +66,7 @@ export let towers: Tower[] = [];
 export let meteors: Map<string, Meteor>;
 export let projectiles: Map<string, Projectile>;
 export let explosions: Map<string, THREE.Mesh>;
+export let poisonEntries: Map<string, PoisonEntry>;
 export let futureGizmos: Map<string, THREE.Mesh>;
 
 export let projectileFolder: any;
@@ -132,9 +134,10 @@ export async function destroyGame() {
     futureGizmos.clear();
     explosions.clear();
     meteors.clear();
+    poisonEntries.clear();
     currWave = [];
-    callWaveBeaconContainers = [];
     pathCurves = [];
+    callWaveBeaconContainers = [];
 
     window.removeEventListener("resize", onResize);
     window.removeEventListener("visibilitychange", onVisibilityChange);
@@ -144,6 +147,8 @@ export async function destroyGame() {
     window.removeEventListener("meteor-fire", onMeteorFire);
     window.removeEventListener("blizzard-fire", onBlizzardFire);
     window.removeEventListener("enemy-destroyed", onEnemyDestroyed);
+    window.removeEventListener("poison-entry-expired", onPoisonEntryExpired);
+    window.removeEventListener("poison-entry-damage", onPoisonEntryDamage);
     canvas.removeEventListener("mousemove", onMouseMove);
     canvas.removeEventListener("click", onCanvasClick);
     canvas.removeEventListener("mousedown", onMouseDown);
@@ -189,6 +194,8 @@ export async function initGame({ area, level, hp, skills }: GameInitProps) {
     window.addEventListener("meteor-fire", onMeteorFire);
     window.addEventListener("blizzard-fire", onBlizzardFire);
     window.addEventListener("enemy-destroyed", onEnemyDestroyed);
+    window.addEventListener("poison-entry-expired", onPoisonEntryExpired);
+    window.addEventListener("poison-entry-damage", onPoisonEntryDamage);
     canvas.addEventListener("mousemove", onMouseMove);
     canvas.addEventListener("click", onCanvasClick);
     canvas.addEventListener("mousedown", onMouseDown);
@@ -220,6 +227,7 @@ async function gameSetup() {
     futureGizmos = new Map();
     explosions = new Map();
     meteors = new Map();
+    poisonEntries = new Map();
 
     endGameScreen.classList.add("hidden");
     speedBtns.innerHTML = speedBtnsTemplate.speedBtns();
@@ -567,7 +575,9 @@ function animate() {
         // SPECIALS COOLDOWN
         playerStats.tick(delta);
 
-        // console.log(playerStats.meteorCooldown);
+        for (const [, poison] of poisonEntries.entries()) {
+            poison.tick(delta);
+        }
     }
 
     if (gameState === GameState.Active || gameState === GameState.Idle) {
@@ -1190,11 +1200,23 @@ function onProjectileExplode(e: any) {
         if (projectile.type === TowerType.Cannon) {
             applyAreaDamage(enemies, pos, explosion.userData.radius * 4.5, projectile.damage);
         } else {
+            if (projectile.type === TowerType.Poison) {
+                const poison = new PoisonEntry(targetEnemy.id);
+                if (!targetEnemy.isPoisoned) {
+                    targetEnemy.setPoisoned();
+                }
+
+                if (poisonEntries.has(poison.enemyId)) {
+                    poison.cooldown = poisonEntries.get(poison.enemyId)!.cooldown;
+                    poisonEntries.set(poison.enemyId, poison);
+                } else {
+                    poisonEntries.set(poison.enemyId, poison);
+                }
+            }
+
             targetEnemy.takeDamage(projectile.damage);
         }
     }
-
-    // console.log("onProjectileExplode", { projectile, projectiles, towers, explosions, scene });
 
     futureGizmos.delete(projectile.id);
     projectiles.delete(projectile.id);
@@ -1203,6 +1225,7 @@ function onProjectileExplode(e: any) {
 
     explosions.set(projectile.id, explosion);
     scene.add(explosion);
+    // console.log("onProjectileExplode", { poisonEntries });
 }
 
 function onMeteorExplode(e: any) {
@@ -1240,6 +1263,10 @@ function onEnemyDestroyed(e: any) {
         // console.log("enemy killed");
         playerStats.gainGold(enemy.bluePrint.reward);
         // @TODO: draw money gain effect
+
+        if (enemy.isPoisoned) {
+            poisonEntries.delete(enemy.id);
+        }
     }
 
     enemies = enemies.filter((e) => e.id !== enemy.id);
@@ -1372,4 +1399,27 @@ function clearBlizzardTargeting() {
     if (blizzardBtn.classList.contains("cancel-action")) {
         blizzardBtn.classList.remove("cancel-action");
     }
+}
+
+/****************************************/
+/*************** STATUSES ***************/
+/****************************************/
+
+function onPoisonEntryDamage(e: any) {
+    const poison = e.detail as PoisonEntry;
+    const enemy = enemies.find((e) => e.id === poison.enemyId);
+    if (enemy) {
+        enemy.takeDamage(4);
+    }
+    console.log("onPoisonEntryDamage", { poisonEntries, poison, enemy });
+}
+
+function onPoisonEntryExpired(e: any) {
+    const poison = e.detail as PoisonEntry;
+    const enemy = enemies.find((e) => e.id === poison.enemyId);
+    if (enemy) {
+        enemy.heal();
+    }
+    console.log("onPoisonEntryExpired", { poisonEntries, poison, enemy });
+    poisonEntries.delete(poison.enemyId);
 }

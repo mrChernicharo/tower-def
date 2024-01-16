@@ -23,7 +23,9 @@ export class Enemy {
     hp: number;
     timeSinceSpawn!: number;
     originalMaterial: { meshName: string; material: THREE.Material }[] = [];
+    poisonMaterial: { meshName: string; material: THREE.Material }[] = [];
     path: THREE.CatmullRomCurve3;
+    isPoisoned = false;
 
     constructor(enemyType: EnemyType, pathIdx = 0) {
         this.id = idMaker();
@@ -43,6 +45,10 @@ export class Enemy {
                 this.originalMaterial.push({
                     meshName: obj.name,
                     material: ((obj as THREE.Mesh).material as THREE.Material).clone(),
+                });
+                this.poisonMaterial.push({
+                    meshName: obj.name,
+                    material: MATERIALS.poisonDmgMaterialStd,
                 });
                 return;
             }
@@ -178,6 +184,30 @@ export class Enemy {
         if (this.hp <= 0) this.destroy(false);
     }
 
+    setPoisoned() {
+        this.isPoisoned = true;
+        this.model.traverse((obj) => {
+            if ((obj as any).isMesh) {
+                const found = this.poisonMaterial.find((entry) => entry.meshName === obj.name);
+                if (found) {
+                    (obj as THREE.Mesh).material = found.material;
+                }
+            }
+        });
+    }
+
+    heal() {
+        this.isPoisoned = false;
+        this.model.traverse((obj) => {
+            if ((obj as any).isMesh) {
+                const found = this.originalMaterial.find((entry) => entry.meshName === obj.name);
+                if (found) {
+                    (obj as THREE.Mesh).material = found.material;
+                }
+            }
+        });
+    }
+
     #_drawDamageEfx(enemyMesh: THREE.Mesh) {
         // console.log("_drawDamageEfx", { enemyMesh, originalMaterial: this.originalMaterial });
         try {
@@ -188,7 +218,9 @@ export class Enemy {
             setTimeout(() => {
                 this.model.traverse((obj) => {
                     if ((obj as any).isMesh) {
-                        const found = this.originalMaterial.find((entry) => entry.meshName === obj.name);
+                        const found = this.isPoisoned
+                            ? this.poisonMaterial.find((entry) => entry.meshName === obj.name)
+                            : this.originalMaterial.find((entry) => entry.meshName === obj.name);
                         if (found) {
                             (obj as THREE.Mesh).material = found.material;
                         }

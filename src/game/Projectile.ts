@@ -144,20 +144,21 @@ export class ParabolaProjectile extends ProjectileBase {
     }
 
     handleMovement() {
-        let t = getPercDist(this.curve, this.blueprint.speed, this.timeSinceSpawn);
-        if (t > 1) t = 1;
+        try {
+            let t = getPercDist(this.curve, this.blueprint.speed, this.timeSinceSpawn);
+            if (t > 1) t = 1;
 
-        const position = this.curve.getPointAt(t);
-        const direction = this.curve.getPointAt(t > 0.95 ? 1 : t + 0.04);
+            const position = this.curve.getPointAt(t);
+            const direction = this.curve.getPointAt(t > 0.95 ? 1 : t + 0.04);
 
-        this.model.position.copy(position);
-        this.model.lookAt(
-            direction
-            // tangent,
-            // position.clone().add(tangent.applyAxisAngle(new THREE.Vector3(1, 0, 0), -Math.PI * 0.5).add(tangent))
-        );
+            this.model.position.copy(position);
+            this.model.lookAt(direction);
 
-        return position.distanceTo(new THREE.Vector3().copy(this.destination));
+            return position.distanceTo(new THREE.Vector3().copy(this.destination));
+        } catch (err) {
+            console.error("i could use some love!!!", { err });
+            return 1.6;
+        }
     }
 
     explode() {
