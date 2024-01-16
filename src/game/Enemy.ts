@@ -8,6 +8,11 @@ import { EnemyBluePrint } from "./types";
 import { ENEMY_BLUEPRINTS, MATERIALS } from "./constants";
 import { idMaker } from "./helpers";
 
+const beaconSize = {
+    raptor: 20,
+    default: 0.005,
+};
+
 export class Enemy {
     #ready = false;
     #endReached = false;
@@ -86,11 +91,15 @@ export class Enemy {
             }
         });
 
-        const slowBeaconGeometry = new THREE.SphereGeometry(0.005);
+        const size = this.enemyType === EnemyType.Raptor ? beaconSize.raptor : beaconSize.default;
+        const ypos = this.enemyType === EnemyType.Raptor ? 200 : 0.02;
+
+        const slowBeaconGeometry = new THREE.SphereGeometry(size);
         this.slowBeacon = new THREE.Mesh(slowBeaconGeometry, MATERIALS.winter);
         this.slowBeacon.name = "slowBeacon";
         this.slowBeacon.visible = false;
-        this.slowBeacon.position.y = 0.02;
+        // this.slowBeacon.position.y = 0.02;
+        this.slowBeacon.position.y = ypos;
         model.add(this.slowBeacon);
         console.log(this.slowBeacon);
 
