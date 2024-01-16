@@ -27,6 +27,7 @@ export class Enemy {
     path: THREE.CatmullRomCurve3;
     isPoisoned = false;
     isSlowed = false;
+    timeSinceSlowed = 0;
     slowBeacon!: THREE.Mesh;
     constructor(enemyType: EnemyType, pathIdx = 0) {
         this.id = idMaker();
@@ -105,10 +106,12 @@ export class Enemy {
 
         if (this.isSlowed) {
             this.timeSinceSpawn += delta / 2;
+            this.mixer.update(delta / 2);
+            this.timeSinceSlowed += delta;
         } else {
             this.timeSinceSpawn += delta;
+            this.mixer.update(delta);
         }
-        this.mixer.update(delta);
 
         this.handleEnemyMovement();
     }
@@ -214,10 +217,12 @@ export class Enemy {
     setSlowed() {
         this.isSlowed = true;
         this.slowBeacon.visible = true;
+        this.timeSinceSlowed = 0;
     }
     healSlow() {
         this.isSlowed = false;
         this.slowBeacon.visible = false;
+        this.timeSinceSlowed = 0;
     }
 
     #_drawDamageEfx() {

@@ -593,6 +593,12 @@ function animate() {
         // ENEMIES
         for (const enemy of enemies) {
             enemy.tick(delta);
+
+            if (enemy.isSlowed) {
+                if (enemy.timeSinceSlowed > BLIZZARD_SLOW_DURATION) {
+                    enemy.healSlow();
+                }
+            }
         }
 
         // TOWERS
@@ -671,17 +677,12 @@ function animate() {
 
         // BLIZZARDS
         for (const [, blizzard] of blizzards.entries()) {
-            const hitEnemies = enemies.filter(
-                (e) => e.model.position.distanceTo(blizzard.initialPos) < blizzard.radius
-            );
-
-            hitEnemies.forEach((e) => {
-                e.setSlowed();
-                setTimeout(() => {
-                    if (e) e.healSlow();
-                }, BLIZZARD_SLOW_DURATION);
-            });
-
+            for (const e of enemies) {
+                const distance = e.model.position.distanceTo(blizzard.initialPos);
+                if (distance < blizzard.radius) {
+                    e.setSlowed();
+                }
+            }
             blizzard.tick(delta);
         }
 
