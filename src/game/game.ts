@@ -2,7 +2,9 @@
 import { GLTF, GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import { GUI } from "dat.gui";
 import { FBXLoader } from "three/examples/jsm/loaders/FBXLoader.js";
-import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
+// import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
+// import { DragControls } from "three/examples/jsm/controls/DragControls.js";
+
 import { CSS2DRenderer, CSS2DObject } from "three/examples/jsm/renderers/CSS2DRenderer.js";
 import { THREE } from "../three";
 import { Enemy } from "./Enemy";
@@ -47,7 +49,7 @@ export let fbxLoader: FBXLoader;
 export let renderer: THREE.WebGLRenderer;
 export let cssRenderer: CSS2DRenderer;
 export let gameClock: THREE.Clock;
-export let orbit: OrbitControls;
+// export let orbit: OrbitControls;
 export let camera: THREE.PerspectiveCamera;
 export let gameState = GameState.Idle;
 export let pathCurves: THREE.CatmullRomCurve3[] = [];
@@ -130,7 +132,7 @@ export async function destroyGame() {
     gameClock.stop();
     scene.clear();
     camera.clear();
-    orbit.dispose();
+    // orbit.dispose();
     ambientLight.dispose();
     renderer.dispose();
     enemies = [];
@@ -156,9 +158,9 @@ export async function destroyGame() {
     window.removeEventListener("enemy-destroyed", onEnemyDestroyed);
     window.removeEventListener("poison-entry-expired", onPoisonEntryExpired);
     window.removeEventListener("poison-entry-damage", onPoisonEntryDamage);
-    canvas.removeEventListener("mousemove", onMouseMove);
+    canvas.removeEventListener("pointermove", onPointerMove);
     canvas.removeEventListener("click", onCanvasClick);
-    canvas.removeEventListener("mousedown", onMouseDown);
+    canvas.removeEventListener("pointerdown", onMouseDown);
     pauseGameBtn.removeEventListener("click", onPauseGame);
     resumeGameBtn.removeEventListener("click", onResumeGame);
     speedBtns.removeEventListener("click", onGameSpeedChange);
@@ -204,9 +206,9 @@ export async function initGame({ area, level, hp, skills }: GameInitProps) {
     window.addEventListener("enemy-destroyed", onEnemyDestroyed);
     window.addEventListener("poison-entry-expired", onPoisonEntryExpired);
     window.addEventListener("poison-entry-damage", onPoisonEntryDamage);
-    canvas.addEventListener("mousemove", onMouseMove);
+    canvas.addEventListener("pointermove", onPointerMove);
     canvas.addEventListener("click", onCanvasClick);
-    canvas.addEventListener("mousedown", onMouseDown);
+    canvas.addEventListener("pointerdown", onMouseDown);
     pauseGameBtn.addEventListener("click", onPauseGame);
     resumeGameBtn.addEventListener("click", onResumeGame);
     speedBtns.addEventListener("click", onGameSpeedChange);
@@ -248,6 +250,7 @@ async function gameSetup() {
     renderer = new THREE.WebGLRenderer({ antialias: true });
     renderer.setSize(window.innerWidth, canvasHeight);
     renderer.setClearColor(COLORS.bg); // Sets the color of the background
+    canvas.style.touchAction = "none";
     canvas.appendChild(renderer.domElement);
 
     cssRenderer = new CSS2DRenderer();
@@ -268,12 +271,14 @@ async function gameSetup() {
     camera.position.y = levelData.initialCamPos[1];
     camera.position.z = levelData.initialCamPos[2];
     camera.layers.enableAll();
+    scene = new THREE.Scene();
+    const camTarget = new THREE.Vector3(camera.position.x, camera.position.y - 40, camera.position.z - 50);
+    camera.lookAt(camTarget);
 
-    orbit = new OrbitControls(camera, renderer.domElement);
-    orbit.maxPolarAngle = Math.PI * 0.48;
+    // orbit = new OrbitControls(camera, renderer.domElement);
+    // orbit.maxPolarAngle = Math.PI * 0.48;
 
     ambientLight = new THREE.AmbientLight(0xefefef, 1.5);
-    scene = new THREE.Scene();
     scene.add(ambientLight);
 
     mouseRay = new THREE.Raycaster();
@@ -576,7 +581,7 @@ function animate() {
     cssRenderer.render(scene, camera);
     renderer.render(scene, camera);
 
-    orbit.update();
+    // orbit.update();
 
     if (gameState === GameState.Active) {
         gameElapsedTime += delta;
@@ -701,7 +706,7 @@ function animate() {
 /**************** EVENTS ****************/
 /****************************************/
 
-function onMouseMove(e: MouseEvent) {
+function onPointerMove(e: MouseEvent) {
     const mousePos = new THREE.Vector2();
     mousePos.x = (e.offsetX / window.innerWidth) * 2 - 1;
     mousePos.y = -(e.offsetY / canvasHeight) * 2 + 1;
@@ -720,6 +725,23 @@ function onMouseMove(e: MouseEvent) {
         }
     } else {
         handleHoverOpacityEfx();
+    }
+
+    if (e.buttons === 1) {
+        if ((e.movementX > 0 && camera.position.x > -20) || (e.movementX < 0 && camera.position.x < 20)) {
+            camera.position.x -= e.movementX * 0.2;
+        }
+
+        if ((e.movementY > 0 && camera.position.z > 0) || (e.movementY < 0 && camera.position.z < 80)) {
+            camera.position.z -= e.movementY * 0.2;
+        }
+
+        console.log("isDragging", e.buttons, e.movementX, e.movementY);
+
+        const camTarget = new THREE.Vector3(camera.position.x, camera.position.y - 40, camera.position.z - 50);
+        camera.lookAt(camTarget);
+    } else {
+        // console.log("no drag", e.buttons);
     }
 }
 

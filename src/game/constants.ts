@@ -1085,7 +1085,7 @@ export const GAME_LEVELS: GameLevel[] = [
         mapURL: mapURLs.desert,
         paths: [desertLevelPath],
         waves: STAGE_WAVES_DATA[0],
-        initialCamPos: [18, 18, 62],
+        initialCamPos: [0, 40, 62],
     },
     {
         area: GameArea.Desert,
@@ -1094,7 +1094,7 @@ export const GAME_LEVELS: GameLevel[] = [
         mapURL: mapURLs.desert,
         paths: [desertLevelPath],
         waves: STAGE_WAVES_DATA[1],
-        initialCamPos: [18, 18, 62],
+        initialCamPos: [0, 40, 62],
     },
     {
         area: GameArea.Desert,
@@ -1103,7 +1103,7 @@ export const GAME_LEVELS: GameLevel[] = [
         mapURL: mapURLs.desert,
         paths: [desertLevelPath],
         waves: STAGE_WAVES_DATA[2],
-        initialCamPos: [18, 18, 62],
+        initialCamPos: [0, 40, 62],
     },
     {
         area: GameArea.Desert,
@@ -1112,7 +1112,7 @@ export const GAME_LEVELS: GameLevel[] = [
         mapURL: mapURLs.desert,
         paths: [desertLevelPath],
         waves: STAGE_WAVES_DATA[3],
-        initialCamPos: [18, 18, 62],
+        initialCamPos: [0, 40, 62],
     },
     {
         area: GameArea.Forest,
