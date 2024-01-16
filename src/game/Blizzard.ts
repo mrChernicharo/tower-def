@@ -3,7 +3,8 @@ import { MATERIALS } from "./constants";
 import { idMaker } from "./helpers";
 
 const speed = 4;
-const icicleGeometry = new THREE.CylinderGeometry(0.01, 0.5, 4);
+const radius = 5;
+const icicleGeometry = new THREE.CylinderGeometry(0.01, 0.5, radius);
 const icicles = Array(12)
     .fill(0)
     .map(() => new THREE.Mesh(icicleGeometry, MATERIALS.icicle));
@@ -11,12 +12,14 @@ const icicles = Array(12)
 export class Blizzard {
     id: string;
     initialPos: THREE.Vector3;
+    radius: number;
     model: THREE.Group;
     timeSinceSpawn = 0;
     constructor(position: THREE.Vector3) {
         this.id = idMaker();
         this.initialPos = new THREE.Vector3(position.x, position.y, position.z);
         this.model = new THREE.Group();
+        this.radius = radius;
 
         for (const icicle of icicles) {
             const pos = new THREE.Vector3(
@@ -44,7 +47,7 @@ export class Blizzard {
 
     tick(delta: number) {
         this.timeSinceSpawn += delta;
-        // this.model.position.y += speed * delta;
+
         this.model.traverse((obj) => {
             if ((obj as THREE.Mesh).isMesh && obj.name === "icicle") {
                 obj.position.y += obj.userData.speed * delta;

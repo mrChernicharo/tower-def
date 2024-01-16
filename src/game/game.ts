@@ -17,6 +17,8 @@ import {
     handleModelGun,
 } from "./helpers";
 import {
+    BLIZZARD_EFFECT_DURATION,
+    BLIZZARD_SLOW_DURATION,
     COLORS,
     DRAW_FUTURE_GIZMO,
     DRAW_METEOR_GIZMOS,
@@ -669,11 +671,16 @@ function animate() {
 
         // BLIZZARDS
         for (const [, blizzard] of blizzards.entries()) {
-            // if (blizzard.initialPos.distanceTo(blizzard.model.position) < 0.5) {
-            //     blizzard.explode();
-            //     scene.remove(blizzard.model);
-            //     blizzards.delete(blizzardId);
-            // }
+            const hitEnemies = enemies.filter(
+                (e) => e.model.position.distanceTo(blizzard.initialPos) < blizzard.radius
+            );
+
+            hitEnemies.forEach((e) => {
+                e.setSlowed();
+                setTimeout(() => {
+                    if (e) e.healSlow();
+                }, BLIZZARD_SLOW_DURATION);
+            });
 
             blizzard.tick(delta);
         }
@@ -949,7 +956,7 @@ function onCanvasClick(e: MouseEvent) {
                 obj.visible = false;
             }
 
-            if ((obj as THREE.Mesh).isMesh && !obj.visible && obj.name !== "rangeGizmo") {
+            if ((obj as THREE.Mesh).isMesh && !obj.visible && obj.name !== "rangeGizmo" && obj.name !== "slowBeacon") {
                 obj.visible = true;
             }
         });
@@ -981,7 +988,8 @@ function onCanvasClick(e: MouseEvent) {
                 (obj as THREE.Mesh).isMesh &&
                 !obj.visible &&
                 obj.name !== "rangeGizmo" &&
-                obj.name !== "mouseTargetRing"
+                obj.name !== "mouseTargetRing" &&
+                obj.name !== "slowBeacon"
             ) {
                 obj.visible = true;
             }
@@ -1009,7 +1017,7 @@ function onCanvasClick(e: MouseEvent) {
                 obj.visible = false;
             }
 
-            if ((obj as THREE.Mesh).isMesh && !obj.visible && obj.name !== "rangeGizmo") {
+            if ((obj as THREE.Mesh).isMesh && !obj.visible && obj.name !== "rangeGizmo" && obj.name !== "slowBeacon") {
                 // console.log(obj);
                 obj.visible = true;
             }
@@ -1102,7 +1110,8 @@ function onPauseGame() {
             (obj as any).isCSS2DObject &&
             obj.visible &&
             obj.name.includes("-modal") && // is a modal
-            obj.name !== "call-wave-2D-modal" // but not the callWaveBeacon
+            obj.name !== "call-wave-2D-modal" && // but not the callWaveBeacon
+            obj.name !== "slowBeacon"
         ) {
             obj.visible = false;
 
@@ -1396,7 +1405,7 @@ function onBlizzardFire() {
 
     setTimeout(() => {
         blizzard.finish();
-    }, 1000);
+    }, BLIZZARD_EFFECT_DURATION);
 }
 
 function clearMeteorTargeting() {
@@ -1453,7 +1462,7 @@ function onPoisonEntryExpired(e: any) {
     const poison = e.detail as PoisonEntry;
     const enemy = enemies.find((e) => e.id === poison.enemyId);
     if (enemy) {
-        enemy.heal();
+        enemy.healPoison();
     }
     console.log("onPoisonEntryExpired", { poisonEntries, poison, enemy });
     poisonEntries.delete(poison.enemyId);

@@ -12,6 +12,8 @@ export const DRAW_PROJECTILE_TRAJECTORIES = false;
 
 export const DRAW_METEOR_GIZMOS = true;
 
+export const BLIZZARD_SLOW_DURATION = 6000;
+export const BLIZZARD_EFFECT_DURATION = 1200;
 export const defaultPlayerSkills = {
     "constructor-1": false,
     "constructor-2": false,

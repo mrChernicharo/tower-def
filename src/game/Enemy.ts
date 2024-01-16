@@ -26,7 +26,8 @@ export class Enemy {
     poisonMaterial: { meshName: string; material: THREE.Material }[] = [];
     path: THREE.CatmullRomCurve3;
     isPoisoned = false;
-
+    isSlowed = false;
+    slowBeacon!: THREE.Mesh;
     constructor(enemyType: EnemyType, pathIdx = 0) {
         this.id = idMaker();
         this.enemyType = enemyType;
@@ -84,6 +85,14 @@ export class Enemy {
             }
         });
 
+        const slowBeaconGeometry = new THREE.SphereGeometry(0.005);
+        this.slowBeacon = new THREE.Mesh(slowBeaconGeometry, MATERIALS.winter);
+        this.slowBeacon.name = "slowBeacon";
+        this.slowBeacon.visible = false;
+        this.slowBeacon.position.y = 0.02;
+        model.add(this.slowBeacon);
+        console.log(this.slowBeacon);
+
         return model;
     }
 
@@ -94,15 +103,14 @@ export class Enemy {
             this.model.visible = true;
         }
 
-        this.timeSinceSpawn += delta;
+        if (this.isSlowed) {
+            this.timeSinceSpawn += delta / 2;
+        } else {
+            this.timeSinceSpawn += delta;
+        }
         this.mixer.update(delta);
 
         this.handleEnemyMovement();
-
-        // if (DRAW_FUTURE_GIZMO) {
-        //     if (!this.futureGizmo.visible) this.futureGizmo.visible = true;
-        //     this._drawFuturePosition(1);
-        // }
     }
 
     getFuturePosition(timeInSecs: number) {
@@ -174,12 +182,7 @@ export class Enemy {
 
         // console.log("takeDamage", dmg, this.hp);
 
-        if (this.model && this.hp > 0)
-            this.model.traverse((obj) => {
-                if ((obj as any).isMesh) {
-                    this.#_drawDamageEfx(obj as THREE.Mesh);
-                }
-            });
+        if (this.model && this.hp > 0) this.#_drawDamageEfx();
 
         if (this.hp <= 0) this.destroy(false);
     }
@@ -187,7 +190,7 @@ export class Enemy {
     setPoisoned() {
         this.isPoisoned = true;
         this.model.traverse((obj) => {
-            if ((obj as any).isMesh) {
+            if ((obj as any).isMesh && obj.name !== "slowBeacon") {
                 const found = this.poisonMaterial.find((entry) => entry.meshName === obj.name);
                 if (found) {
                     (obj as THREE.Mesh).material = found.material;
@@ -196,10 +199,10 @@ export class Enemy {
         });
     }
 
-    heal() {
+    healPoison() {
         this.isPoisoned = false;
         this.model.traverse((obj) => {
-            if ((obj as any).isMesh) {
+            if ((obj as any).isMesh && obj.name !== "slowBeacon") {
                 const found = this.originalMaterial.find((entry) => entry.meshName === obj.name);
                 if (found) {
                     (obj as THREE.Mesh).material = found.material;
@@ -208,16 +211,30 @@ export class Enemy {
         });
     }
 
-    #_drawDamageEfx(enemyMesh: THREE.Mesh) {
+    setSlowed() {
+        this.isSlowed = true;
+        this.slowBeacon.visible = true;
+    }
+    healSlow() {
+        this.isSlowed = false;
+        this.slowBeacon.visible = false;
+    }
+
+    #_drawDamageEfx() {
         // console.log("_drawDamageEfx", { enemyMesh, originalMaterial: this.originalMaterial });
         try {
-            enemyMesh.material = MATERIALS.damageMaterialStd;
+            // enemyMesh.material = MATERIALS.damageMaterialStd;
+            this.model.traverse((obj) => {
+                if ((obj as any).isMesh && obj.name !== "slowBeacon") {
+                    (obj as THREE.Mesh).material = MATERIALS.damageMaterialStd;
+                }
+            });
         } catch (error) {
             console.error({ error });
         } finally {
             setTimeout(() => {
                 this.model.traverse((obj) => {
-                    if ((obj as any).isMesh) {
+                    if ((obj as any).isMesh && obj.name !== "slowBeacon") {
                         const found = this.isPoisoned
                             ? this.poisonMaterial.find((entry) => entry.meshName === obj.name)
                             : this.originalMaterial.find((entry) => entry.meshName === obj.name);
