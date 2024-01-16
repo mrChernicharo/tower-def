@@ -9,7 +9,7 @@ export const modalTemplates = {
     towerBuild: () => `
         <div class="${ModalType.TowerBuild} modal-content">
             <h3>Build Tower</h3>
-            <div class="modal-content-row">
+            <div class="modal-content-row btn-row">
                 <button id="${TowerType.Archer}-tower-build-btn" class="tower-build-btn">
                     <img width="50" height="50" src="${imgs.Archer}" />
                 </button>
@@ -17,7 +17,7 @@ export const modalTemplates = {
                     <img width="50" height="50" src="${imgs.Ballista}" />
                 </button>
             </div>
-            <div>
+            <div class="btn-row">
                 <button id="${TowerType.Cannon}-tower-build-btn" class="tower-build-btn">
                     <img width="50" height="50" src="${imgs.Cannon}" />
                 </button>

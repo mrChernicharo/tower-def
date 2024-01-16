@@ -1035,6 +1035,8 @@ function onResize() {
 function onPauseGame() {
     console.log("onPauseGame", callWaveBeaconContainers);
 
+    // closeAllOpenModals();
+
     pauseScreen.classList.remove("hidden");
 
     if (gameState === GameState.Active) {
@@ -1043,6 +1045,24 @@ function onPauseGame() {
 
     callWaveBeaconContainers.forEach((container) => {
         container.style.opacity = "0";
+    });
+
+    // hide modal on pause
+    scene.traverse((obj) => {
+        if (
+            (obj as any).isCSS2DObject &&
+            obj.visible &&
+            obj.name.includes("-modal") && // is a modal
+            obj.name !== "call-wave-2D-modal" // but not the callWaveBeacon
+        ) {
+            obj.visible = false;
+            revertCancelableModals(undefined);
+            if (towerPreview) {
+                console.log("remove tower preview");
+                scene.remove(towerPreview.model);
+                scene.remove(towerPreview.rangeGizmo);
+            }
+        }
     });
 }
 
@@ -1057,6 +1077,53 @@ function onResumeGame() {
     callWaveBeaconContainers.forEach((container) => {
         container.style.opacity = "1";
     });
+}
+
+function onEndGameConfirm() {
+    location.assign("#/area-selection");
+    endGameBtn.removeEventListener("click", onEndGameConfirm);
+}
+
+function onGameSpeedChange(e: MouseEvent) {
+    const elTarget = e.target as HTMLElement;
+    // e.preventDefault();
+    if (elTarget.tagName === "INPUT") {
+        const speedStr = elTarget.id.split("-")[1];
+        const speed = Number(speedStr[0]);
+        gameSpeed = speed as GameSpeed;
+        console.log("onGameSpeedChange", { gameSpeed });
+    }
+}
+
+function revertCancelableModals(clickedModal: HTMLDivElement | undefined) {
+    const allModals = Array.from(document.querySelectorAll<HTMLDivElement>(".modal2D"));
+    // console.log("REVERT CANCELABLE MODALS");
+    allModals.forEach((modalEl) => {
+        if (modalEl === clickedModal) return;
+        // console.log(":::", { modalEl, tower_id: modalEl.dataset["tower_id"] });
+
+        for (const cancelableModalName of cancelableModalNames) {
+            if (modalEl.children[0].classList.contains(cancelableModalName)) {
+                if (cancelableModalName === ModalType.ConfirmTowerBuild) {
+                    modalEl.innerHTML = modalTemplates.towerBuild();
+                } else {
+                    const tower = towers.find((t) => t.id === modalEl.dataset["tower_id"]);
+                    if (tower) {
+                        modalEl.innerHTML = modalTemplates.towerDetails(tower);
+                    }
+                }
+            }
+        }
+    });
+}
+
+function onVisibilityChange() {
+    if (document.visibilityState === "visible") {
+        // backgroundMusic.play();
+    } else {
+        onPauseGame();
+        // backgroundMusic.pause();
+    }
 }
 
 function onProjectile(e: any) {
@@ -1183,53 +1250,6 @@ function onEnemyDestroyed(e: any) {
 
         // pauseGameBtn.innerHTML = `Start Wave ${currWaveIdx + 1}`;
     }
-}
-
-function onEndGameConfirm() {
-    location.assign("#/area-selection");
-    endGameBtn.removeEventListener("click", onEndGameConfirm);
-}
-
-function onGameSpeedChange(e: MouseEvent) {
-    const elTarget = e.target as HTMLElement;
-    // e.preventDefault();
-    if (elTarget.tagName === "INPUT") {
-        const speedStr = elTarget.id.split("-")[1];
-        const speed = Number(speedStr[0]);
-        gameSpeed = speed as GameSpeed;
-        console.log("onGameSpeedChange", { gameSpeed });
-    }
-}
-
-function onVisibilityChange() {
-    if (document.visibilityState === "visible") {
-        // backgroundMusic.play();
-    } else {
-        onPauseGame();
-        // backgroundMusic.pause();
-    }
-}
-
-function revertCancelableModals(clickedModal: HTMLDivElement | undefined) {
-    const allModals = Array.from(document.querySelectorAll<HTMLDivElement>(".modal2D"));
-    // console.log("REVERT CANCELABLE MODALS");
-    allModals.forEach((modalEl) => {
-        if (modalEl === clickedModal) return;
-        // console.log(":::", { modalEl, tower_id: modalEl.dataset["tower_id"] });
-
-        for (const cancelableModalName of cancelableModalNames) {
-            if (modalEl.children[0].classList.contains(cancelableModalName)) {
-                if (cancelableModalName === ModalType.ConfirmTowerBuild) {
-                    modalEl.innerHTML = modalTemplates.towerBuild();
-                } else {
-                    const tower = towers.find((t) => t.id === modalEl.dataset["tower_id"]);
-                    if (tower) {
-                        modalEl.innerHTML = modalTemplates.towerDetails(tower);
-                    }
-                }
-            }
-        }
-    });
 }
 
 /****************************************/
