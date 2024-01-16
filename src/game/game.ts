@@ -707,20 +707,19 @@ function onMouseMove(e: MouseEvent) {
     mousePos.y = -(e.offsetY / canvasHeight) * 2 + 1;
 
     mouseRay.setFromCamera(mousePos, camera);
-    handleHoverOpacityEfx();
 
     if (readyToFireMeteor || readyToFireBlizzard) {
         if (!mouseTargetRing.visible) mouseTargetRing.visible = true;
 
         const pos = mousePosToWorldPos(mouseRay, scene);
-        mouseTargetRing.position.x = pos.x;
-        mouseTargetRing.position.y = pos.y;
-        mouseTargetRing.position.z = pos.z;
+        mouseTargetRing.position.set(pos.x, pos.y, pos.z);
 
         // make targeting ring disappear if mouse is outside map
         if (pos.x === 0 && pos.y === 0 && pos.z === 0) {
             mouseTargetRing.visible = false;
         }
+    } else {
+        handleHoverOpacityEfx();
     }
 }
 

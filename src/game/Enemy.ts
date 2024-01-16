@@ -3,7 +3,7 @@ import { GLTF } from "three/examples/jsm/Addons.js";
 import { ENEMY_MODELS, pathCurves } from "./game";
 import { THREE } from "../three";
 import * as SkeletonUtils from "three/examples/jsm/utils/SkeletonUtils.js";
-import { EnemyType } from "./enums";
+import { AppLayers, EnemyType } from "./enums";
 import { EnemyBluePrint } from "./types";
 import { ENEMY_BLUEPRINTS, MATERIALS } from "./constants";
 import { idMaker } from "./helpers";
@@ -84,10 +84,14 @@ export class Enemy {
 
         const s = this.bluePrint.modelScale;
         model.scale.set(s, s, s);
+        model.layers.disableAll();
+        model.layers.enable(AppLayers.Enemy);
 
         model.traverse((obj) => {
             if ((obj as any).isMesh) {
                 obj.castShadow = true;
+                obj.layers.disableAll();
+                obj.layers.enable(AppLayers.Enemy);
             }
         });
 
@@ -98,7 +102,6 @@ export class Enemy {
         this.slowBeacon = new THREE.Mesh(slowBeaconGeometry, MATERIALS.winter);
         this.slowBeacon.name = "slowBeacon";
         this.slowBeacon.visible = false;
-        // this.slowBeacon.position.y = 0.02;
         this.slowBeacon.position.y = ypos;
         model.add(this.slowBeacon);
         console.log(this.slowBeacon);
@@ -210,7 +213,6 @@ export class Enemy {
             }
         });
     }
-
     healPoison() {
         this.isPoisoned = false;
         this.model.traverse((obj) => {

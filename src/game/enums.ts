@@ -35,6 +35,7 @@ export enum AppLayers {
     Modals = 3,
     Projectile = 4,
     Buildings = 5,
+    Enemy = 6,
 }
 
 export enum TowerType {
