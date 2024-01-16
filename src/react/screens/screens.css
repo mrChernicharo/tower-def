@@ -54,6 +54,7 @@
     /* border: 1px solid; */
     width: 100%;
     justify-content: space-between;
+    pointer-events: none;
 }
 
 #game-screen-footer .action-btns {
@@ -74,6 +75,7 @@
     padding: 5px;
     margin-right: 5px;
     filter: brightness(0.75);
+    pointer-events: all;
 }
 
 #game-screen-footer .action-btns button.ready {

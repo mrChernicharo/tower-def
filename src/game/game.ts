@@ -85,6 +85,7 @@ export const ENEMY_MODELS = {} as { [k in EnemyType]: GLTF };
 export const TOWER_MODELS = {} as { [k in TowerType]: { [k: `level-${number}`]: THREE.Mesh } };
 export const PROJECTILE_MODELS = {} as { [k in TowerType]: { [k: `level-${number}`]: THREE.Mesh } };
 
+const canvasWidth = window.innerWidth;
 const canvasHeight = window.innerHeight;
 let canvas: HTMLCanvasElement;
 let pauseGameBtn: HTMLButtonElement;
@@ -160,6 +161,7 @@ export async function destroyGame() {
     window.removeEventListener("poison-entry-damage", onPoisonEntryDamage);
     canvas.removeEventListener("pointermove", onPointerMove);
     canvas.removeEventListener("click", onCanvasClick);
+    window.removeEventListener("wheel", onZoom);
     canvas.removeEventListener("pointerdown", onMouseDown);
     pauseGameBtn.removeEventListener("click", onPauseGame);
     resumeGameBtn.removeEventListener("click", onResumeGame);
@@ -206,6 +208,7 @@ export async function initGame({ area, level, hp, skills }: GameInitProps) {
     window.addEventListener("enemy-destroyed", onEnemyDestroyed);
     window.addEventListener("poison-entry-expired", onPoisonEntryExpired);
     window.addEventListener("poison-entry-damage", onPoisonEntryDamage);
+    window.addEventListener("wheel", onZoom);
     canvas.addEventListener("pointermove", onPointerMove);
     canvas.addEventListener("click", onCanvasClick);
     canvas.addEventListener("pointerdown", onMouseDown);
@@ -248,13 +251,13 @@ async function gameSetup() {
     canvas.innerHTML = "";
 
     renderer = new THREE.WebGLRenderer({ antialias: true });
-    renderer.setSize(window.innerWidth, canvasHeight);
+    renderer.setSize(canvasWidth, canvasHeight);
     renderer.setClearColor(COLORS.bg); // Sets the color of the background
     canvas.style.touchAction = "none";
     canvas.appendChild(renderer.domElement);
 
     cssRenderer = new CSS2DRenderer();
-    cssRenderer.setSize(window.innerWidth, canvasHeight);
+    cssRenderer.setSize(canvasWidth, canvasHeight);
     cssRenderer.domElement.id = "css2d-overlay";
     cssRenderer.domElement.style.position = "absolute";
     cssRenderer.domElement.style.top = "0px";
@@ -266,7 +269,7 @@ async function gameSetup() {
     gameClock = new THREE.Clock();
     gameElapsedTime = 0;
 
-    camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
+    camera = new THREE.PerspectiveCamera(45, canvasWidth / window.innerHeight, 0.1, 1000);
     camera.position.x = levelData.initialCamPos[0];
     camera.position.y = levelData.initialCamPos[1];
     camera.position.z = levelData.initialCamPos[2];
@@ -524,14 +527,7 @@ function drawWaveCallBeacon() {
         }
     });
 
-    console.log("drawWaveCallBeacon", {
-        currWave,
-        currWaveIdx,
-        pathCurves,
-        beaconsPositions,
-        levelData,
-        differentEnemyPaths,
-    });
+    // console.log("drawWaveCallBeacon", { pathCurves, beaconsPositions, levelData, differentEnemyPaths });
 
     callWaveBeaconContainers = [];
     beaconsPositions.forEach((pos) => {
@@ -706,10 +702,10 @@ function animate() {
 /**************** EVENTS ****************/
 /****************************************/
 
-function onPointerMove(e: MouseEvent) {
+function onPointerMove(e: PointerEvent) {
     const mousePos = new THREE.Vector2();
-    mousePos.x = (e.offsetX / window.innerWidth) * 2 - 1;
-    mousePos.y = -(e.offsetY / canvasHeight) * 2 + 1;
+    mousePos.x = (e.clientX / canvasWidth) * 2 - 1;
+    mousePos.y = -(e.clientY / canvasHeight) * 2 + 1;
 
     mouseRay.setFromCamera(mousePos, camera);
 
@@ -736,7 +732,7 @@ function onPointerMove(e: MouseEvent) {
             camera.position.z -= e.movementY * 0.2;
         }
 
-        console.log("isDragging", e.buttons, e.movementX, e.movementY);
+        // console.log("isDragging", e.buttons, e.movementX, e.movementY);
 
         const camTarget = new THREE.Vector3(camera.position.x, camera.position.y - 40, camera.position.z - 50);
         camera.lookAt(camTarget);
@@ -771,14 +767,14 @@ function onModalClick(e: MouseEvent, el: THREE.Object3D, modal3D: CSS2DObject, m
         modalEl.innerHTML = modalTemplates.towerBuild();
         towerToBuild = null;
         if (towerPreview) {
-            console.log("remove tower preview");
+            // console.log("remove tower preview");
             scene.remove(towerPreview.model);
             scene.remove(towerPreview.rangeGizmo);
         }
     }
     if (evTarget.classList.contains("confirm-tower-build-btn")) {
         if (towerPreview) {
-            console.log("remove tower preview");
+            // console.log("remove tower preview");
             scene.remove(towerPreview.model);
             scene.remove(towerPreview.rangeGizmo);
         }
@@ -927,16 +923,23 @@ function onCanvasClick(e: MouseEvent) {
     }
 
     const mousePos = new THREE.Vector2();
-    mousePos.x = (e.offsetX / window.innerWidth) * 2 - 1;
-    mousePos.y = -(e.offsetY / canvasHeight) * 2 + 1;
+    mousePos.x = (e.clientX / canvasWidth) * 2 - 1;
+    mousePos.y = -(e.clientY / canvasHeight) * 2 + 1;
+    mouseRay.setFromCamera(mousePos, camera);
 
     const clickedModal = [...e.composedPath()].find((el) => (el as HTMLElement)?.classList?.contains("modal2D"));
-    const clickedTower = mouseRay.intersectObjects(scene.children).find((ch) => ch.object.name.includes("-Tower"));
-    const clickedTowerBase = mouseRay
-        .intersectObjects(scene.children)
-        .find((ch) => ch.object.name.includes("TowerBase"));
+    let clickedTower: THREE.Intersection | undefined;
+    let clickedTowerBase: THREE.Intersection | undefined;
 
-    // console.log('onCanvasClick',{ rayIntersects: mouseRay.intersectObjects(scene.children), clickedTower, clickedTowerBase });
+    const rayIntersects = mouseRay.intersectObjects(scene.children);
+    rayIntersects.forEach((ch) => {
+        if (ch.object.name.includes("TowerBase")) {
+            clickedTowerBase = ch;
+        }
+        if (ch.object.name.includes("-Tower")) {
+            clickedTower = ch;
+        }
+    });
 
     revertCancelableModals(clickedModal as HTMLDivElement | undefined);
 
@@ -997,7 +1000,7 @@ function onCanvasClick(e: MouseEvent) {
         let modal3D: THREE.Object3D | undefined;
         scene.traverse((obj) => {
             if ((obj as any).isCSS2DObject) {
-                if (obj.userData.tile_idx === clickedTower.object.userData.tile_idx) {
+                if (obj.userData.tile_idx === clickedTower!.object.userData.tile_idx) {
                     modal3D = obj;
                 }
 
@@ -1104,10 +1107,10 @@ function handleHoverOpacityEfx() {
 }
 
 function onResize() {
-    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.aspect = canvasWidth / window.innerHeight;
     camera.updateProjectionMatrix();
-    renderer.setSize(window.innerWidth, canvasHeight);
-    cssRenderer.setSize(window.innerWidth, canvasHeight);
+    renderer.setSize(canvasWidth, canvasHeight);
+    cssRenderer.setSize(canvasWidth, canvasHeight);
 }
 
 function onPauseGame() {
@@ -1142,6 +1145,14 @@ function onPauseGame() {
             // console.log({ obj, openedModal, classList: openedModal.classList, isConfirmTowerUpgradeModal });
         }
     });
+}
+
+function onZoom(e: WheelEvent) {
+    // console.log(e, e.deltaX, e.deltaY, e.deltaZ);
+    if ((e.deltaY > 0 && camera.fov < 80) || (e.deltaY < 0 && camera.fov > 20)) {
+        camera.fov += e.deltaY * 0.02;
+    }
+    camera.updateProjectionMatrix();
 }
 
 function onResumeGame() {
@@ -1349,7 +1360,7 @@ function onEnemyDestroyed(e: any) {
 /*************** SPECIALS ***************/
 /****************************************/
 
-function onMeteorBtnClick(e: MouseEvent) {
+function onMeteorBtnClick() {
     if (gameState === GameState.Active && meteorBtn.classList.contains("cancel-action")) {
         console.log("onMeteorBtnClick! cancel meteor");
         clearMeteorTargeting();
@@ -1359,12 +1370,16 @@ function onMeteorBtnClick(e: MouseEvent) {
         document.body.style.cursor = "crosshair";
         readyToFireMeteor = true;
         meteorBtn.classList.add("cancel-action");
-        console.log({ meteorBtn, e });
+
+        if (readyToFireBlizzard) {
+            readyToFireBlizzard = false;
+            blizzardBtn.classList.remove("cancel-action");
+        }
     } else {
         console.log("meteor target not ready!");
     }
 }
-function onBlizzardBtnClick(e: MouseEvent) {
+function onBlizzardBtnClick() {
     if (gameState === GameState.Active && blizzardBtn.classList.contains("cancel-action")) {
         console.log("onBlizzardBtnClick! cancel blizzard");
         clearBlizzardTargeting();
@@ -1374,7 +1389,11 @@ function onBlizzardBtnClick(e: MouseEvent) {
         document.body.style.cursor = "crosshair";
         readyToFireBlizzard = true;
         blizzardBtn.classList.add("cancel-action");
-        console.log({ blizzardBtn, e });
+
+        if (readyToFireMeteor) {
+            readyToFireMeteor = false;
+            meteorBtn.classList.remove("cancel-action");
+        }
     } else {
         console.log("blizzard target not ready!");
     }
@@ -1449,7 +1468,7 @@ function clearBlizzardTargeting() {
 
 function onMeteorExplode(e: any) {
     const meteor = e.detail as Meteor;
-    console.log("onMeteorExplode", meteor.timeToTarget);
+    // console.log("onMeteorExplode", meteor.timeToTarget);
 
     const explosion = meteor.explosion as THREE.Mesh;
     const pos = new THREE.Vector3(meteor.model.position.x, meteor.model.position.y, meteor.model.position.z);
