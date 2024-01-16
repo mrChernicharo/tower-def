@@ -1,25 +1,20 @@
 import { Link } from "react-router-dom";
-// import { appRoutes } from "../utils/appRoutes";
 import { imgs } from "../../game/constants";
 
 export function Start() {
     return (
-        <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+        <div id="start-screen">
             <h1>Tower Defense</h1>
 
-            <img src={imgs.Splash} width={800} />
+            <div id="splash-container">
+                <img id="splash-img" src={imgs.Splash} />
+            </div>
 
-            <Link to="/area-selection">
-                <button>Start</button>
-            </Link>
-
-            {/* {appRoutes
-                .filter((r) => r.path && !/\/./g.test(r.path))
-                .map((r) => (
-                    <li key={r.path}>
-                        <Link to={r.path}>{r.name}</Link>
-                    </li>
-                ))} */}
+            <div id="start-btn-container">
+                <Link to="/area-selection">
+                    <button>Start Game</button>
+                </Link>
+            </div>
         </div>
     );
 }

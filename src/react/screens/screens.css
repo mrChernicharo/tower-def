@@ -1,3 +1,39 @@
+#start-screen {
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+}
+
+#start-screen h1 {
+    margin-top: 12px;
+    text-align: center;
+}
+
+#start-screen #splash-container {
+    /* border: 1px solid red; */
+    text-align: center;
+    margin: 0 auto;
+    width: calc(100% - 10px);
+    min-height: 270px;
+}
+
+#start-screen #splash-img {
+    max-width: 1000px;
+    max-height: 600px;
+    width: 100%;
+}
+
+#start-screen #start-btn-container {
+    /* border: 1px solid red; */
+    text-align: center;
+}
+
+#start-screen #start-btn-container button {
+    font-size: 24px;
+    font-weight: bold;
+    width: min(60vw, 300px);
+}
+
 /************************************************/
 /************** GAME SCREEN HEADER **************/
 /************************************************/
