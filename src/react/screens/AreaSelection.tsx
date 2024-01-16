@@ -9,19 +9,25 @@ import { useCallback, useEffect, useState } from "react";
 const topBarStyles = {
     position: "fixed",
     zIndex: 200,
-    border: "1px solid green",
     width: "100%",
+    // border: "1px solid green",
 } as React.CSSProperties;
 
 const bottomBarStyles = {
-    position: "fixed",
+    position: "absolute",
     bottom: 5,
     left: 5,
     display: "flex",
     alignItems: "center",
     justifyContent: "end",
     width: "calc(100% - 10px)",
-    border: "1px solid green",
+    // border: "1px solid green",
+} as React.CSSProperties;
+
+const worldMapContainerStyles = {
+    position: "relative",
+    margin: "0 auto",
+    // border: "1px solid red",
 } as React.CSSProperties;
 
 const starsBadgeStyles = {
@@ -68,9 +74,12 @@ const AreaSelection = () => {
     const onResize = useCallback(() => {
         const worldImg = document.querySelector("#world-img") as HTMLImageElement;
         const worldMapContainer = document.querySelector(".world-map-container") as HTMLDivElement;
-        worldImg.width = window.innerWidth;
-        worldImg.height = window.innerHeight;
-        worldMapContainer.style.height = window.innerHeight + "px";
+        const w = window.screen.availWidth > 800 ? 800 : window.screen.availWidth;
+        const h = window.screen.availHeight > 800 ? 800 : window.screen.availHeight;
+        worldImg.width = w;
+        worldImg.height = h;
+        worldMapContainer.style.width = w + "px";
+        worldMapContainer.style.height = h + "px";
         rerender((p) => p + 1);
     }, [rerender]);
 
@@ -83,15 +92,15 @@ const AreaSelection = () => {
     }, [onResize]);
 
     return (
-        <div style={{ margin: "0 auto", border: "1px solid" }}>
-            <div style={topBarStyles}>
-                <Link to="/">
-                    <button>
-                        <FaArrowLeft />
-                    </button>
-                </Link>
-            </div>
-            <div className="world-map-container" style={{ position: "relative", border: "1px solid red" }}>
+        <div>
+            <div className="world-map-container" style={worldMapContainerStyles}>
+                <div style={topBarStyles}>
+                    <Link to="/">
+                        <button style={{ marginLeft: "5px", marginTop: "5px" }}>
+                            <FaArrowLeft />
+                        </button>
+                    </Link>
+                </div>
                 {levelIconsPositions.map((pos, i) => {
                     return (
                         <div
@@ -115,7 +124,6 @@ const AreaSelection = () => {
                 <div style={bottomBarStyles}>
                     <Link to="/skills">
                         <button style={{ marginLeft: "5px" }}>
-                            {/* <button style={{ position: "absolute", bottom: 5, left: 5 }}> */}
                             <span>Skills</span>
                             {starsToSpend > 0 ? (
                                 <div
