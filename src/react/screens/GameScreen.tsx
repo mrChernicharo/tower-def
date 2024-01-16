@@ -148,6 +148,17 @@ const Game = () => {
 
                     <div className="btn-row">
                         <button id="resume-game-btn">Resume</button>
+                    </div>
+
+                    <div className="btn-row">
+                        <button
+                            id="restart-game-btn"
+                            onClick={() => {
+                                if (confirm("Are you sure you want to restart?")) location.reload();
+                            }}
+                        >
+                            Restart
+                        </button>
                         <button
                             onClick={() => {
                                 if (confirm("Are you sure you want to quit?")) location.assign("#/area-selection");

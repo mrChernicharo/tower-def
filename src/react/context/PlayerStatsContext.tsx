@@ -1,5 +1,5 @@
 import { ReactNode, createContext, useEffect, useState } from "react";
-import { getTotalStageCount, wait } from "../../game/helpers";
+import { getTotalStageCount } from "../../game/helpers";
 import { GlobalPlayerStats, LevelStarCount, LevelStarMap, PlayerSkills, Skill } from "../../game/types";
 import { defaultPlayerSkills } from "../../game/constants";
 
@@ -125,8 +125,6 @@ async function loadUserStats() {
         : defaultPlayerStats;
 
     console.log("set initial playerStats", { stats });
-
-    await wait(1000);
 
     return Promise.resolve(stats);
 }

@@ -137,15 +137,20 @@ button:focus-visible {
     position: absolute;
 }
 
+#pause-game-screen .btn-row button#resume-game-btn {
+    width: 169px;
+}
+
 #pause-game-screen .btn-row,
 .modal-content .btn-row {
     display: flex;
     justify-content: center;
     gap: 5px;
-}
-#pause-game-screen .btn-row:first-of-type,
-.modal-content .btn-row:first-of-type {
     margin-bottom: 5px;
+}
+#pause-game-screen .btn-row:last-of-type,
+.modal-content .btn-row:last-of-type {
+    margin-bottom: 0;
 }
 #pause-game-screen .btn-row:last-of-type button,
 .modal-content .btn-row:last-of-type button {
