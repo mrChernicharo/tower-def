@@ -123,6 +123,9 @@ let blizzardTargetPos = new THREE.Vector3();
 
 let mouseTargetRing: THREE.Mesh;
 
+let scaling = false;
+let prevPinchDist = 0;
+let pinchDist = 0;
 export async function destroyGame() {
     console.log("destroy", { scene });
     cancelAnimationFrame(frameId);
@@ -163,7 +166,7 @@ export async function destroyGame() {
     window.removeEventListener("resize", onResize);
     window.removeEventListener("visibilitychange", onVisibilityChange);
     window.removeEventListener("wheel", onZoom);
-    canvas.removeEventListener("gestureend", onMobileZoom);
+    window.removeEventListener("gesturechange", onMobileZoom);
     canvas.removeEventListener("pointermove", onPointerMove);
     canvas.removeEventListener("click", onCanvasClick);
     canvas.removeEventListener("pointerdown", onMouseDown);
@@ -205,7 +208,7 @@ export async function initGame({ area, level, hp, skills }: GameInitProps) {
     window.addEventListener("resize", onResize);
     window.addEventListener("visibilitychange", onVisibilityChange);
     window.addEventListener("wheel", onZoom);
-    canvas.addEventListener("gestureend", onMobileZoom);
+    window.addEventListener("gesturechange", onMobileZoom);
     canvas.addEventListener("pointermove", onPointerMove);
     canvas.addEventListener("click", onCanvasClick);
     canvas.addEventListener("pointerdown", onMouseDown);
@@ -229,6 +232,25 @@ export async function initGame({ area, level, hp, skills }: GameInitProps) {
     //     const textMesh = new THREE.Mesh(geometry, MATERIALS.beacon);
     //     scene.add(textMesh);
     // });
+
+    window.ontouchstart = (e) => {
+        console.log("ontouchstart", e);
+        if (e.touches.length === 2) {
+            scaling = true;
+        }
+    };
+    window.ontouchmove = (e) => {
+        // console.log("ontouchmove", scaling);
+        if (scaling) {
+            onMobileZoom(e);
+        }
+    };
+    window.ontouchend = (e) => {
+        console.log("ontouchend", e);
+        if (scaling) {
+            scaling = false;
+        }
+    };
 }
 
 async function gameSetup() {
@@ -1078,6 +1100,10 @@ function onZoom(e: WheelEvent) {
 
 function onMobileZoom(e: any) {
     console.log("onMobileZoom", e);
+    prevPinchDist = pinchDist;
+    pinchDist = Math.hypot(e.touches[0].pageX - e.touches[1].pageX, e.touches[0].pageY - e.touches[1].pageY);
+    const diff = pinchDist - prevPinchDist;
+    console.log("pinch", pinchDist, prevPinchDist, diff, e);
 
     // if ((e.deltaY > 0 && camera.fov < 80) || (e.deltaY < 0 && camera.fov > 20)) {
     //     camera.fov += e.deltaY * 0.02;
