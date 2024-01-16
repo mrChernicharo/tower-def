@@ -228,6 +228,7 @@ export const MATERIALS = {
     lava: new THREE.MeshMatcapMaterial({ color: COLORS.lava }),
     path: new THREE.MeshMatcapMaterial({ color: COLORS.concrete }),
     beacon: new THREE.MeshMatcapMaterial({ color: COLORS.green }),
+    icicle: new THREE.MeshMatcapMaterial({ color: "dodgerblue", transparent: true, opacity: 0.5 }),
     concreteTransparent: new THREE.MeshMatcapMaterial({
         color: COLORS.concrete,
         transparent: true,

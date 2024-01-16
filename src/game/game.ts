@@ -35,6 +35,7 @@ import { Tower } from "./Tower";
 import { PlayerStats } from "./PlayerStats";
 import { Meteor } from "./Meteor";
 import { PoisonEntry } from "./PoisonEntry";
+import { Blizzard } from "./Blizzard";
 
 // let pathPoints: THREE.Vector3[] = [];
 
@@ -64,6 +65,8 @@ export let lightProbe: THREE.LightProbe;
 export let enemies: Enemy[] = [];
 export let towers: Tower[] = [];
 export let meteors: Map<string, Meteor>;
+export let blizzards: Map<string, Blizzard>;
+
 export let projectiles: Map<string, Projectile>;
 export let explosions: Map<string, THREE.Mesh>;
 export let poisonEntries: Map<string, PoisonEntry>;
@@ -111,7 +114,7 @@ let meteorTargetPos = new THREE.Vector3();
 let readyToFireBlizzard = false;
 let blizzardTargetPos = new THREE.Vector3();
 
-let mouseTargetMesh: THREE.Mesh;
+let mouseTargetRing: THREE.Mesh;
 
 export async function destroyGame() {
     console.log("destroy", { scene });
@@ -134,6 +137,7 @@ export async function destroyGame() {
     futureGizmos.clear();
     explosions.clear();
     meteors.clear();
+    blizzards.clear();
     poisonEntries.clear();
     currWave = [];
     pathCurves = [];
@@ -146,6 +150,7 @@ export async function destroyGame() {
     window.removeEventListener("meteor-explode", onMeteorExplode);
     window.removeEventListener("meteor-fire", onMeteorFire);
     window.removeEventListener("blizzard-fire", onBlizzardFire);
+    window.removeEventListener("blizzard-finish", onBlizzardFinish);
     window.removeEventListener("enemy-destroyed", onEnemyDestroyed);
     window.removeEventListener("poison-entry-expired", onPoisonEntryExpired);
     window.removeEventListener("poison-entry-damage", onPoisonEntryDamage);
@@ -193,6 +198,7 @@ export async function initGame({ area, level, hp, skills }: GameInitProps) {
     window.addEventListener("meteor-explode", onMeteorExplode);
     window.addEventListener("meteor-fire", onMeteorFire);
     window.addEventListener("blizzard-fire", onBlizzardFire);
+    window.addEventListener("blizzard-finish", onBlizzardFinish);
     window.addEventListener("enemy-destroyed", onEnemyDestroyed);
     window.addEventListener("poison-entry-expired", onPoisonEntryExpired);
     window.addEventListener("poison-entry-damage", onPoisonEntryDamage);
@@ -227,6 +233,7 @@ async function gameSetup() {
     futureGizmos = new Map();
     explosions = new Map();
     meteors = new Map();
+    blizzards = new Map();
     poisonEntries = new Map();
 
     endGameScreen.classList.add("hidden");
@@ -275,13 +282,13 @@ async function gameSetup() {
     mouseRay.layers.enable(AppLayers.Modals);
     mouseRay.layers.enable(AppLayers.Buildings);
 
-    const mouseTargetMeshGeometry = new THREE.TorusGeometry(3);
-    mouseTargetMeshGeometry.rotateX(-Math.PI / 2);
-    mouseTargetMesh = new THREE.Mesh(mouseTargetMeshGeometry, MATERIALS.beacon);
-    mouseTargetMesh.name = "pointerTargetCircle";
-    mouseTargetMesh.position.set(0, 0, 0);
-    scene.add(mouseTargetMesh);
-    mouseTargetMesh.visible = false;
+    const mouseTargetRingGeometry = new THREE.TorusGeometry(3);
+    mouseTargetRingGeometry.rotateX(-Math.PI / 2);
+    mouseTargetRing = new THREE.Mesh(mouseTargetRingGeometry, MATERIALS.beacon);
+    mouseTargetRing.name = "mouseTargetRing";
+    mouseTargetRing.position.set(0, 0, 0);
+    scene.add(mouseTargetRing);
+    mouseTargetRing.visible = false;
 
     // gui = new GUI({ closed: false });
 
@@ -660,6 +667,17 @@ function animate() {
             meteor.tick(delta);
         }
 
+        // BLIZZARDS
+        for (const [, blizzard] of blizzards.entries()) {
+            // if (blizzard.initialPos.distanceTo(blizzard.model.position) < 0.5) {
+            //     blizzard.explode();
+            //     scene.remove(blizzard.model);
+            //     blizzards.delete(blizzardId);
+            // }
+
+            blizzard.tick(delta);
+        }
+
         // WAVE SPAWNING
         const spawningEnemyIdx = currWave.findIndex((e) => e.spawnAt < gameElapsedTime);
         if (spawningEnemyIdx > -1) {
@@ -684,16 +702,16 @@ function onMouseMove(e: MouseEvent) {
     handleHoverOpacityEfx();
 
     if (readyToFireMeteor || readyToFireBlizzard) {
-        if (!mouseTargetMesh.visible) mouseTargetMesh.visible = true;
+        if (!mouseTargetRing.visible) mouseTargetRing.visible = true;
 
         const pos = mousePosToWorldPos(mouseRay, scene);
-        mouseTargetMesh.position.x = pos.x;
-        mouseTargetMesh.position.y = pos.y;
-        mouseTargetMesh.position.z = pos.z;
+        mouseTargetRing.position.x = pos.x;
+        mouseTargetRing.position.y = pos.y;
+        mouseTargetRing.position.z = pos.z;
 
         // make targeting ring disappear if mouse is outside map
         if (pos.x === 0 && pos.y === 0 && pos.z === 0) {
-            mouseTargetMesh.visible = false;
+            mouseTargetRing.visible = false;
         }
     }
 }
@@ -924,7 +942,7 @@ function onCanvasClick(e: MouseEvent) {
         console.log("CLICKED TOWER BASE", { clickedTowerBase, scene });
         const modal3D = scene.getObjectByName(`${clickedTowerBase.object.name}-modal`)!;
         scene.traverse((obj) => {
-            if (obj.name === "pointerTargetCircle") return;
+            if (obj.name === "mouseTargetRing") return;
             // HIDE previously open modal
             if ((obj as any).isCSS2DObject && obj.visible) {
                 if (obj.name === "call-wave-2D-modal") return;
@@ -963,7 +981,7 @@ function onCanvasClick(e: MouseEvent) {
                 (obj as THREE.Mesh).isMesh &&
                 !obj.visible &&
                 obj.name !== "rangeGizmo" &&
-                obj.name !== "pointerTargetCircle"
+                obj.name !== "mouseTargetRing"
             ) {
                 obj.visible = true;
             }
@@ -984,7 +1002,7 @@ function onCanvasClick(e: MouseEvent) {
 
         // HIDE modal (3D)
         scene.traverse((obj) => {
-            if (obj.name === "pointerTargetCircle") return;
+            if (obj.name === "mouseTargetRing") return;
 
             if ((obj as any).isCSS2DObject && obj.visible) {
                 if (obj.name === "call-wave-2D-modal") return;
@@ -1240,21 +1258,6 @@ function onProjectileExplode(e: any) {
     // console.log("onProjectileExplode", { poisonEntries });
 }
 
-function onMeteorExplode(e: any) {
-    const meteor = e.detail as Meteor;
-    console.log("onMeteorExplode", meteor.timeToTarget);
-
-    const explosion = meteor.explosion as THREE.Mesh;
-    const pos = new THREE.Vector3(meteor.model.position.x, meteor.model.position.y, meteor.model.position.z);
-    explosion.userData["meteor_id"] = meteor.id;
-    explosion.userData["spawned_at"] = Date.now();
-    explosion.userData["radius"] = 10;
-    explosion.position.set(pos.x, pos.y, pos.z);
-    explosions.set(meteor.id, explosion);
-    scene.add(explosion);
-    applyAreaDamage(enemies, pos, explosion.userData.radius * 0.4, determineDamage([50, 200]));
-}
-
 function onEnemyDestroyed(e: any) {
     const data = e.detail;
     // console.log("enemy destroy", { data });
@@ -1384,22 +1387,22 @@ function onBlizzardFire() {
 
     clearBlizzardTargeting();
 
-    const destination = new THREE.Vector3(
-        THREE.MathUtils.lerp(blizzardTargetPos.x - 2.5, blizzardTargetPos.x + 2.5, Math.random()),
-        blizzardTargetPos.y,
-        THREE.MathUtils.lerp(blizzardTargetPos.z - 2.5, blizzardTargetPos.z + 2.5, Math.random())
-    );
+    const position = new THREE.Vector3(blizzardTargetPos.x, blizzardTargetPos.y, blizzardTargetPos.z);
+    console.log("fire Blizzard", position);
 
-    console.log("fire Blizzard", destination);
-    const blizzard = new Meteor(destination, COLORS.blue);
-    meteors.set(blizzard.id, blizzard);
+    const blizzard = new Blizzard(position);
+    blizzards.set(blizzard.id, blizzard);
     scene.add(blizzard.model);
+
+    setTimeout(() => {
+        blizzard.finish();
+    }, 1000);
 }
 
 function clearMeteorTargeting() {
     readyToFireMeteor = false;
     document.body.style.cursor = "default";
-    mouseTargetMesh.visible = false;
+    mouseTargetRing.visible = false;
     if (meteorBtn.classList.contains("cancel-action")) {
         meteorBtn.classList.remove("cancel-action");
     }
@@ -1407,12 +1410,32 @@ function clearMeteorTargeting() {
 function clearBlizzardTargeting() {
     readyToFireBlizzard = false;
     document.body.style.cursor = "default";
-    mouseTargetMesh.visible = false;
+    mouseTargetRing.visible = false;
     if (blizzardBtn.classList.contains("cancel-action")) {
         blizzardBtn.classList.remove("cancel-action");
     }
 }
 
+function onMeteorExplode(e: any) {
+    const meteor = e.detail as Meteor;
+    console.log("onMeteorExplode", meteor.timeToTarget);
+
+    const explosion = meteor.explosion as THREE.Mesh;
+    const pos = new THREE.Vector3(meteor.model.position.x, meteor.model.position.y, meteor.model.position.z);
+    explosion.userData["meteor_id"] = meteor.id;
+    explosion.userData["spawned_at"] = Date.now();
+    explosion.userData["radius"] = 10;
+    explosion.position.set(pos.x, pos.y, pos.z);
+    explosions.set(meteor.id, explosion);
+    scene.add(explosion);
+    applyAreaDamage(enemies, pos, explosion.userData.radius * 0.4, determineDamage([50, 200]));
+}
+function onBlizzardFinish(e: any) {
+    const blizzard = e.detail as Blizzard;
+    console.log("onBlizzardFinish", blizzard);
+    scene.remove(blizzard.model);
+    blizzards.delete(blizzard.id);
+}
 /****************************************/
 /*************** STATUSES ***************/
 /****************************************/

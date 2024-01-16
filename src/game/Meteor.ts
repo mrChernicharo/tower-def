@@ -37,7 +37,6 @@ export class Meteor {
     }
 
     explode() {
-        // draw efx here
         window.dispatchEvent(new CustomEvent("meteor-explode", { detail: this }));
     }
 }
