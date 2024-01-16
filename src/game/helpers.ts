@@ -205,3 +205,19 @@ export function applyAreaDamage(enemies: Enemy[], pos: THREE.Vector3, radius: nu
 export function determineDamage(damage: [number, number]) {
     return Math.round(THREE.MathUtils.lerp(damage[0], damage[1], Math.random()));
 }
+
+export function mousePosToWorldPos(mouseRay: THREE.Raycaster, scene: THREE.Scene) {
+    const pos = new THREE.Vector3();
+    mouseRay.intersectObjects(scene.children).forEach((ch) => {
+        if (ch.object.name === "Plane") {
+            if (!pos.x) pos.x = ch.point.x;
+            if (!pos.y) pos.z = ch.point.z;
+        } else {
+            pos.y = ch.point.y;
+            pos.x = ch.point.x;
+            pos.z = ch.point.z;
+        }
+    });
+    // console.log("mousePosToWorldPos", pos);
+    return pos;
+}

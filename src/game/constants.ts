@@ -10,6 +10,8 @@ export const DRAW_FUTURE_GIZMO = false;
 export const DRAW_PROJECTILE_TRAJECTORIES = false;
 // export const DRAW_PROJECTILE_TRAJECTORIES = true;
 
+export const DRAW_METEOR_GIZMOS = true;
+
 export const defaultPlayerSkills = {
     "constructor-1": false,
     "constructor-2": false,
@@ -215,6 +217,8 @@ export const MATERIALS = {
     meteor: new THREE.MeshMatcapMaterial({ color: COLORS.red }),
     concrete: new THREE.MeshMatcapMaterial({ color: COLORS.concrete }),
     concrete2: new THREE.MeshMatcapMaterial({ color: COLORS.concrete2 }),
+    black: new THREE.MeshMatcapMaterial({ color: COLORS.black }),
+    transparentBlack: new THREE.MeshMatcapMaterial({ color: COLORS.black, transparent: true, opacity: 0.5 }),
     desert: new THREE.MeshMatcapMaterial({ color: COLORS.desert }),
     forest: new THREE.MeshMatcapMaterial({ color: COLORS.forest }),
     winter: new THREE.MeshMatcapMaterial({ color: COLORS.winter }),

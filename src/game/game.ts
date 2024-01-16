@@ -11,6 +11,7 @@ import {
     calcEarnedStarsForGameWin,
     capitalize,
     determineDamage,
+    mousePosToWorldPos,
     getEnemyTypeFromChar,
     getProjectileTowerName,
     handleModelGun,
@@ -18,6 +19,7 @@ import {
 import {
     COLORS,
     DRAW_FUTURE_GIZMO,
+    DRAW_METEOR_GIZMOS,
     DRAW_PROJECTILE_TRAJECTORIES,
     ENEMY_BLUEPRINTS,
     GAME_LEVELS,
@@ -32,7 +34,6 @@ import { beaconTemplate, cancelableModalNames, gameEndTemplates, modalTemplates,
 import { Tower } from "./Tower";
 import { PlayerStats } from "./PlayerStats";
 import { Meteor } from "./Meteor";
-import { MathUtils } from "three";
 
 // let pathPoints: THREE.Vector3[] = [];
 
@@ -103,6 +104,8 @@ let currWaveIdx = 0;
 let gameLost = false;
 
 let readyToFireMeteor = false;
+let meteorTargetPos = new THREE.Vector3();
+let mouseTargetMesh: THREE.Mesh;
 
 export async function destroyGame() {
     console.log("destroy", { scene });
@@ -257,6 +260,14 @@ async function gameSetup() {
     mouseRay.layers.enable(AppLayers.Tower);
     mouseRay.layers.enable(AppLayers.Modals);
     mouseRay.layers.enable(AppLayers.Buildings);
+
+    const mouseTargetMeshGeometry = new THREE.TorusGeometry(3);
+    mouseTargetMeshGeometry.rotateX(-Math.PI / 2);
+    mouseTargetMesh = new THREE.Mesh(mouseTargetMeshGeometry, MATERIALS.beacon);
+    mouseTargetMesh.name = "mouseTargetTorus";
+    mouseTargetMesh.position.set(0, 0, 0);
+    scene.add(mouseTargetMesh);
+    mouseTargetMesh.visible = false;
 
     // gui = new GUI({ closed: false });
 
@@ -655,6 +666,15 @@ function onMouseMove(e: MouseEvent) {
 
     mouseRay.setFromCamera(mousePos, camera);
     handleHoverOpacityEfx();
+
+    if (readyToFireMeteor) {
+        if (!mouseTargetMesh.visible) mouseTargetMesh.visible = true;
+
+        const pos = mousePosToWorldPos(mouseRay, scene);
+        mouseTargetMesh.position.x = pos.x;
+        mouseTargetMesh.position.y = pos.y;
+        mouseTargetMesh.position.z = pos.z;
+    }
 }
 
 function onMouseDown() {
@@ -853,7 +873,6 @@ function onCanvasClick(e: MouseEvent) {
     revertCancelableModals(clickedModal as HTMLDivElement | undefined);
 
     if (readyToFireMeteor) {
-        const pos = new THREE.Vector3();
         const mouseRayIntersects = mouseRay.intersectObjects(scene.children);
 
         if (mouseRayIntersects.length < 1) {
@@ -862,23 +881,15 @@ function onCanvasClick(e: MouseEvent) {
             return;
         }
 
-        mouseRayIntersects.forEach((ch) => {
-            if (ch.object.name === "Plane") {
-                if (!pos.x) pos.x = ch.point.x;
-                if (!pos.y) pos.z = ch.point.z;
-            } else {
-                pos.y = ch.point.y;
-                pos.x = ch.point.x;
-                pos.z = ch.point.z;
-            }
-        });
-
-        window.dispatchEvent(new CustomEvent("meteor-fire", { detail: pos }));
+        const pos = mousePosToWorldPos(mouseRay, scene);
+        meteorTargetPos = new THREE.Vector3(pos.x, pos.y, pos.z);
+        window.dispatchEvent(new CustomEvent("meteor-fire"));
         return;
     } else if (clickedTowerBase) {
         console.log("CLICKED TOWER BASE", { clickedTowerBase, scene });
         const modal3D = scene.getObjectByName(`${clickedTowerBase.object.name}-modal`)!;
         scene.traverse((obj) => {
+            if (obj.name === "mouseTargetTorus") return;
             // HIDE previously open modal
             if ((obj as any).isCSS2DObject && obj.visible) {
                 if (obj.name === "call-wave-2D-modal") return;
@@ -933,6 +944,8 @@ function onCanvasClick(e: MouseEvent) {
 
         // HIDE modal (3D)
         scene.traverse((obj) => {
+            if (obj.name === "mouseTargetTorus") return;
+
             if ((obj as any).isCSS2DObject && obj.visible) {
                 if (obj.name === "call-wave-2D-modal") return;
                 obj.visible = false;
@@ -1108,17 +1121,6 @@ function onMeteorExplode(e: any) {
     explosions.set(meteor.id, explosion);
     scene.add(explosion);
     applyAreaDamage(enemies, pos, explosion.userData.radius * 0.4, determineDamage([50, 200]));
-
-    // WHY THE ERROR???
-    try {
-        scene.traverse((obj) => {
-            if (obj.userData.id === `meteor-gizmo-${meteor.id}`) {
-                scene.remove(obj);
-            }
-        });
-    } catch (err) {
-        console.warn(err);
-    }
 }
 
 function onEnemyDestroyed(e: any) {
@@ -1203,7 +1205,7 @@ export function revertCancelableModals(clickedModal: HTMLDivElement | undefined)
     // console.log("REVERT CANCELABLE MODALS");
     allModals.forEach((modalEl) => {
         if (modalEl === clickedModal) return;
-        console.log(":::", { modalEl, tower_id: modalEl.dataset["tower_id"] });
+        // console.log(":::", { modalEl, tower_id: modalEl.dataset["tower_id"] });
 
         for (const cancelableModalName of cancelableModalNames) {
             if (modalEl.children[0].classList.contains(cancelableModalName)) {
@@ -1229,20 +1231,19 @@ function onMeteorBtnClick() {
     }
 }
 
-function onMeteorFire(e: any) {
+function onMeteorFire() {
     playerStats.fireMeteor();
 
     clearMeteorTargeting();
 
-    const pos = e.detail as THREE.Vector3;
+    console.log("onMeteorFire", meteorTargetPos);
 
-    console.log("onMeteorFire", e, pos);
     const meteorCount = 6;
     for (let i = 0; i < meteorCount; i++) {
         const destination = new THREE.Vector3(
-            MathUtils.lerp(pos.x - 2.5, pos.x + 2.5, Math.random()),
-            pos.y,
-            MathUtils.lerp(pos.z - 2.5, pos.z + 2.5, Math.random())
+            THREE.MathUtils.lerp(meteorTargetPos.x - 2.5, meteorTargetPos.x + 2.5, Math.random()),
+            meteorTargetPos.y,
+            THREE.MathUtils.lerp(meteorTargetPos.z - 2.5, meteorTargetPos.z + 2.5, Math.random())
         );
 
         setTimeout(() => {
@@ -1250,10 +1251,18 @@ function onMeteorFire(e: any) {
             meteors.set(meteor.id, meteor);
             scene.add(meteor.model);
 
-            const gizmo = new THREE.Mesh(new THREE.CylinderGeometry(0.5, 0.5, 0.3), MATERIALS.concrete);
-            gizmo.position.set(destination.x, destination.y, destination.z);
-            gizmo.userData["id"] = `meteor-gizmo-${meteor.id}`;
-            scene.add(gizmo);
+            if (DRAW_METEOR_GIZMOS) {
+                const meteorGizmo = new THREE.Mesh(
+                    new THREE.CylinderGeometry(0.5, 0.5, 0.25),
+                    MATERIALS.transparentBlack
+                );
+                meteorGizmo.position.set(destination.x, destination.y + 0.25, destination.z);
+                scene.add(meteorGizmo);
+
+                setTimeout(() => {
+                    scene.remove(meteorGizmo);
+                }, meteor.timeToTarget * 1000);
+            }
         }, i * 220);
     }
 }
@@ -1261,6 +1270,7 @@ function onMeteorFire(e: any) {
 function clearMeteorTargeting() {
     readyToFireMeteor = false;
     document.body.style.cursor = "default";
+    mouseTargetMesh.visible = false;
 }
 
 function onBizzard() {
