@@ -924,13 +924,15 @@ function onModalClick(e: MouseEvent, el: THREE.Object3D, modal3D: CSS2DObject, m
         // console.log("tower upgrade", { e, el, modal3D, modalEl, tower_id, tower });
         // if (towerIdx >= 0)
         if (tower) {
-            if (playerStats.gold < tower.blueprint.price) {
+            const t2 = TOWER_BLUEPRINTS[tower.towerName][tower.blueprint.level];
+
+            if (playerStats.gold < t2.price) {
                 console.warn("not enough money");
                 const msgArea = document.querySelector(".warning-msg-area")!;
                 msgArea.innerHTML = "not enough money!";
                 return;
             }
-            playerStats.spendGold(tower.blueprint.price);
+            playerStats.spendGold(t2.price);
 
             if (towerPreview) {
                 console.log("revert tower preview");

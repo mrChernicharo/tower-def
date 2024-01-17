@@ -330,7 +330,7 @@ export const TOWER_BLUEPRINTS: { [k in TowerType]: TowerBluePrint[] } = {
             fireRate: 2,
             color: "red",
             price: 100,
-            range: 8,
+            range: 10,
             modelScale: 0.005,
         },
         {
@@ -342,7 +342,7 @@ export const TOWER_BLUEPRINTS: { [k in TowerType]: TowerBluePrint[] } = {
             fireRate: 2.25,
             color: "red",
             price: 160,
-            range: 9,
+            range: 10.5,
             modelScale: 0.0055,
         },
         {
@@ -355,7 +355,7 @@ export const TOWER_BLUEPRINTS: { [k in TowerType]: TowerBluePrint[] } = {
             color: "red",
             price: 220,
             modelScale: 0.006,
-            range: 10,
+            range: 11,
         },
         {
             name: TowerType.Ballista,
@@ -367,7 +367,7 @@ export const TOWER_BLUEPRINTS: { [k in TowerType]: TowerBluePrint[] } = {
             color: "red",
             price: 380,
             modelScale: 0.0065,
-            range: 10,
+            range: 12,
             skills: [],
         },
     ],

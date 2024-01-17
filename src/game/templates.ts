@@ -47,7 +47,7 @@ export const modalTemplates = {
     `,
     towerDetails: (tower: Tower) => {
         const t = tower.blueprint;
-        // const t2 = TOWER_BLUEPRINTS[tower.towerName][tower.blueprint.level];
+        const t2 = TOWER_BLUEPRINTS[tower.towerName][tower.blueprint.level];
 
         return `
         <div class="${ModalType.TowerDetails} ${tower.towerName} modal-content">
@@ -63,7 +63,7 @@ export const modalTemplates = {
             <div class="btn-row">
             ${
                 tower.blueprint.level < 4
-                    ? `<button id="tower-upgrade-btn" class="tower-details-btn">Upgrade $${t.price}</button>`
+                    ? `<button id="tower-upgrade-btn" class="tower-details-btn">Upgrade $${t2.price}</button>`
                     : `<span>SKILLS</span>`
             }
            </div>
@@ -109,7 +109,7 @@ export const modalTemplates = {
 
             <h3>Upgrade ${capitalize(tower.towerName)} Tower</h3>
 
-            <h2>Cost $${tower.blueprint.price}</h2>
+            <h2>Cost $${t2.price}</h2>
             
             <div>
                 <div>Level ${t.level} → ${t2.level}</div>

@@ -5,7 +5,7 @@ import { THREE } from "../three";
 import * as SkeletonUtils from "three/examples/jsm/utils/SkeletonUtils.js";
 import { AppLayers, EnemyType } from "./enums";
 import { EnemyBluePrint } from "./types";
-import { ENEMY_BLUEPRINTS /*, MATERIALS*/ } from "./constants";
+import { ENEMY_BLUEPRINTS /*, MATERIALS*/, MATERIALS } from "./constants";
 import { idMaker } from "./helpers";
 import { SkinnedMesh } from "three";
 
@@ -181,9 +181,9 @@ export class Enemy {
         this.hp -= dmg;
 
         // console.log("takeDamage", dmg, this.hp);
-        // if (this.model && this.hp > 0) {
-        //     this.#_drawDamageEfx();
-        // }
+        if (this.model && this.hp > 0) {
+            this.#_drawDamageEfx();
+        }
 
         if (this.hp <= 0) this.destroy(false);
     }
@@ -228,22 +228,22 @@ export class Enemy {
         this.timeSinceSlowed = 0;
     }
 
-    // #_drawDamageEfx() {
-    //     // console.log("_drawDamageEfx", { enemyMesh, originalMaterial: this.originalMaterial });
-    //     try {
-    //         this.skinnedMeshes.forEach((obj) => {
-    //             (obj as THREE.Mesh).material = MATERIALS.damageMaterialStd;
-    //         });
-    //     } catch (error) {
-    //         console.error({ error });
-    //     } finally {
-    //         setTimeout(() => {
-    //             this.skinnedMeshes.forEach((obj) => {
-    //                 (obj as THREE.Mesh).material = this.originalMaterial;
-    //             });
-    //         }, 160);
-    //     }
-    // }
+    #_drawDamageEfx() {
+        // console.log("_drawDamageEfx", { enemyMesh, originalMaterial: this.originalMaterial });
+        try {
+            this.skinnedMeshes.forEach((obj) => {
+                (obj as THREE.Mesh).material = MATERIALS.damageMaterialStd;
+            });
+        } catch (error) {
+            console.error({ error });
+        } finally {
+            setTimeout(() => {
+                this.skinnedMeshes.forEach((obj) => {
+                    (obj as THREE.Mesh).material = this.originalMaterial;
+                });
+            }, 160);
+        }
+    }
 
     destroy(endReached: boolean) {
         window.dispatchEvent(new CustomEvent("enemy-destroyed", { detail: { enemy: this, endReached } }));
