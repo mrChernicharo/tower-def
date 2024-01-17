@@ -68,18 +68,12 @@ const Skills = () => {
 
             <div className="skills-container">
                 {Object.entries(gameSkills).map(([skillName, playerSkills]) => {
-                    const skillCol = [...playerSkills].reverse();
-
                     return (
-                        <ul className="skill-column" key={skillName}>
+                        <ul className="skill-row" key={skillName}>
                             {/* <h2>{skillName}</h2> */}
-                            <img
-                                width={50}
-                                height={50}
-                                src={imgs[`${capitalize(skillName)}Path` as keyof typeof imgs]}
-                            />
+                            <img width={50} height={50} src={imgs[capitalize(skillName) as keyof typeof imgs]} />
 
-                            {skillCol.map((skill) => {
+                            {playerSkills.map((skill) => {
                                 const skillId = skill.id as SkillId;
                                 const purchased = skills[skillId];
 

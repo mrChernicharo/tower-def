@@ -19,6 +19,20 @@ const Settings = () => {
             <button>
                 <FaMusic />
             </button>
+
+            <div id="clear-saved-data-btn-container">
+                <button
+                    onClick={() => {
+                        if (confirm("All your progress will be erased! Are you sure you want to continue?")) {
+                            localStorage.clear();
+                            location.reload();
+                            alert("all data has been cleared");
+                        }
+                    }}
+                >
+                    Reset Progress
+                </button>
+            </div>
         </>
     );
 };

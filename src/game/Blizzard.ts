@@ -48,13 +48,15 @@ export class Blizzard {
     tick(delta: number) {
         this.timeSinceSpawn += delta;
 
-        this.model.traverse((obj) => {
-            if ((obj as THREE.Mesh).isMesh && obj.name === "icicle") {
-                obj.position.y += obj.userData.speed * delta;
-                obj.scale.set(1, 0.2 + this.timeSinceSpawn * (obj.userData.speed * 0.5), 1);
-            } else if ((obj as THREE.Mesh).isMesh && obj.name === "blizzardEffectRing") {
-                (obj as THREE.Mesh).scale.set(1 + this.timeSinceSpawn * 3, 1, 1 + this.timeSinceSpawn * 3);
-                // console.log(obj);
+        this.model.traverse((o) => {
+            const obj = o as THREE.Mesh;
+            if (obj.isMesh && obj.name === "icicle") {
+                if (obj.name === "icicle") {
+                    obj.position.y += obj.userData.speed * delta;
+                    obj.scale.set(1, 0.2 + this.timeSinceSpawn * (obj.userData.speed * 0.5), 1);
+                } else if (obj.name === "blizzardEffectRing") {
+                    obj.scale.set(1 + this.timeSinceSpawn * 3, 1, 1 + this.timeSinceSpawn * 3);
+                }
             }
         });
     }

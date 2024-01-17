@@ -66,10 +66,13 @@ export enum TargetingStrategy {
 }
 
 export enum SkillPath {
-    Constructor = "constructor",
-    Merchant = "merchant",
-    Chemist = "chemist",
-    Blacksmith = "blacksmith",
+    Archer = "archer",
+    Ballista = "ballista",
+    Cannon = "cannon",
+    Poison = "poison",
+    Wizard = "wizard",
+    Meteor = "meteor",
+    Blizzard = "blizzard",
 }
 
 export enum GameArea {

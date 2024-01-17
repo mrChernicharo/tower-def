@@ -300,13 +300,25 @@ progress::-webkit-progress-value {
     border: 1px solid;
     display: grid;
     border: 1px solid;
-    grid-template-columns: 1fr 1fr 1fr 1fr;
+    grid-template-rows: repeat(6, 1fr);
 }
 
-.skill-column {
+.skill-row {
     border: 1px solid;
     display: flex;
-    flex-direction: column;
+    /* flex-direction: column; */
     justify-content: center;
     align-items: center;
+}
+
+.skill-detail {
+    text-align: center;
+}
+
+.skill-detail h2 {
+    margin-top: 1rem;
+}
+
+.skill-detail p {
+    padding: 1rem;
 }
