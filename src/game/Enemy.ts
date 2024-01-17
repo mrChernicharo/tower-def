@@ -198,21 +198,23 @@ export class Enemy {
 
         // console.log("takeDamage", dmg, this.hp);
 
-        if (this.model && this.hp > 0) this.#_drawDamageEfx();
+        // if (this.model && this.hp > 0) {
+        //     this.#_drawDamageEfx();
+        // }
 
         if (this.hp <= 0) this.destroy(false);
     }
 
     setPoisoned() {
         this.isPoisoned = true;
-        this.model.traverse((obj) => {
-            if ((obj as any).isMesh && obj.name !== "slowBeacon") {
-                const found = this.poisonMaterial.find((entry) => entry.meshName === obj.name);
-                if (found) {
-                    (obj as THREE.Mesh).material = found.material;
-                }
-            }
-        });
+        // this.model.traverse((obj) => {
+        //     if ((obj as any).isMesh && obj.name !== "slowBeacon") {
+        //         const found = this.poisonMaterial.find((entry) => entry.meshName === obj.name);
+        //         if (found) {
+        //             (obj as THREE.Mesh).material = found.material;
+        //         }
+        //     }
+        // });
     }
     healPoison() {
         this.isPoisoned = false;
@@ -237,32 +239,32 @@ export class Enemy {
         this.timeSinceSlowed = 0;
     }
 
-    #_drawDamageEfx() {
-        // console.log("_drawDamageEfx", { enemyMesh, originalMaterial: this.originalMaterial });
-        try {
-            // enemyMesh.material = MATERIALS.damageMaterialStd;
-            this.model.traverse((obj) => {
-                if ((obj as any).isMesh && obj.name !== "slowBeacon") {
-                    (obj as THREE.Mesh).material = MATERIALS.damageMaterialStd;
-                }
-            });
-        } catch (error) {
-            console.error({ error });
-        } finally {
-            setTimeout(() => {
-                this.model.traverse((obj) => {
-                    if ((obj as any).isMesh && obj.name !== "slowBeacon") {
-                        const found = this.isPoisoned
-                            ? this.poisonMaterial.find((entry) => entry.meshName === obj.name)
-                            : this.originalMaterial.find((entry) => entry.meshName === obj.name);
-                        if (found) {
-                            (obj as THREE.Mesh).material = found.material;
-                        }
-                    }
-                });
-            }, 160);
-        }
-    }
+    // #_drawDamageEfx() {
+    //     // console.log("_drawDamageEfx", { enemyMesh, originalMaterial: this.originalMaterial });
+    //     try {
+    //         // enemyMesh.material = MATERIALS.damageMaterialStd;
+    //         this.model.traverse((obj) => {
+    //             if ((obj as any).isMesh && obj.name !== "slowBeacon") {
+    //                 (obj as THREE.Mesh).material = MATERIALS.damageMaterialStd;
+    //             }
+    //         });
+    //     } catch (error) {
+    //         console.error({ error });
+    //     } finally {
+    //         setTimeout(() => {
+    //             this.model.traverse((obj) => {
+    //                 if ((obj as any).isMesh && obj.name !== "slowBeacon") {
+    //                     const found = this.isPoisoned
+    //                         ? this.poisonMaterial.find((entry) => entry.meshName === obj.name)
+    //                         : this.originalMaterial.find((entry) => entry.meshName === obj.name);
+    //                     if (found) {
+    //                         (obj as THREE.Mesh).material = found.material;
+    //                     }
+    //                 }
+    //             });
+    //         }, 160);
+    //     }
+    // }
 
     destroy(endReached: boolean) {
         window.dispatchEvent(new CustomEvent("enemy-destroyed", { detail: { enemy: this, endReached } }));
