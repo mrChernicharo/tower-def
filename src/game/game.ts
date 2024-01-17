@@ -111,14 +111,12 @@ let speedBtns: HTMLDivElement;
 let callWaveBeaconContainers: HTMLDivElement[] = [];
 
 let composer: EffectComposer;
-let outlinePass: OutlinePass;
+export let outlinePass: OutlinePass;
 let effectFXAA: ShaderPass;
 
 let frameId = 0;
 let clickTimestamp = 0;
 let towerToBuild: TowerType | null = null;
-// let hoveredTowerBaseName: string | null = null;
-// let hoveredTowerId: string | null = null;
 
 let levelArea: string;
 let levelIdx: number;
@@ -149,6 +147,7 @@ export async function destroyGame() {
     gameClock.stop();
     scene.clear();
     camera.clear();
+    composer.dispose();
     // orbit.dispose();
     ambientLight.dispose();
     renderer.dispose();
@@ -189,6 +188,8 @@ export async function destroyGame() {
     speedBtns.removeEventListener("click", onGameSpeedChange);
     meteorBtn.removeEventListener("click", onMeteorBtnClick);
     blizzardBtn.removeEventListener("click", onBlizzardBtnClick);
+
+    // location.reload();
 }
 
 export async function initGame({ area, level, hp, skills }: GameInitProps) {
@@ -754,20 +755,6 @@ function onPointerMove(e: PointerEvent) {
 
     mouseRay.setFromCamera(mousePos, camera);
 
-    const rayIntersects = mouseRay.intersectObjects(scene.children);
-    let highlight = false;
-    rayIntersects.forEach((ch) => {
-        const mesh = ch.object as THREE.Mesh;
-        if (mesh.name.includes("TowerBase")) {
-            outlinePass.selectedObjects = [mesh];
-            highlight = true;
-        }
-    });
-
-    if (!highlight) {
-        outlinePass.selectedObjects = [];
-    }
-
     if (readyToFireMeteor || readyToFireBlizzard) {
         if (!mouseTargetRing.visible) mouseTargetRing.visible = true;
 
@@ -778,10 +765,9 @@ function onPointerMove(e: PointerEvent) {
         if (pos.x === 0 && pos.y === 0 && pos.z === 0) {
             mouseTargetRing.visible = false;
         }
+    } else {
+        handleHoverEfx();
     }
-    //  else {
-    //     handleHoverOpacityEfx();
-    // }
 
     if (e.buttons === 1) {
         handleCameraMovement(e);
@@ -1267,54 +1253,37 @@ function handleCameraMovement(e: PointerEvent) {
     camera.lookAt(camTarget);
 }
 
-// function handleHoverOpacityEfx() {
-//     const hoveredTower = mouseRay.intersectObjects(scene.children).find((ch) => ch.object.name.includes("-Tower"));
-//     const hoveredTowerBase = mouseRay
-//         .intersectObjects(scene.children)
-//         .find((ch) => (ch.object as THREE.Mesh).isMesh && ch.object.name.includes("TowerBase"));
-//     // console.log({ scene, hoveredTowerBase });
+let prevHiglightedMesh: THREE.Mesh | null = null;
+function handleHoverEfx() {
+    const rayIntersects = mouseRay.intersectObjects(scene.children);
+    let foundHighlightTarget = false;
+    for (const ch of rayIntersects) {
+        const mesh = ch.object as THREE.Mesh;
+        if (mesh.isMesh && (mesh.name.includes("-Tower") || mesh.name.includes("TowerBase"))) {
+            const oldMeshIdx = outlinePass.selectedObjects.findIndex((o) => o === prevHiglightedMesh);
+            outlinePass.selectedObjects.splice(oldMeshIdx, 1, mesh);
+            prevHiglightedMesh = mesh;
+            foundHighlightTarget = true;
+            break;
+        }
+    }
 
-//     if (hoveredTowerBase) {
-//         const towerBaseMesh = hoveredTowerBase.object;
-//         // keep track of current towerBase
-//         hoveredTowerBaseName = towerBaseMesh.name;
-
-//         (towerBaseMesh as THREE.Mesh).material = MATERIALS.concreteTransparent;
-//     } else {
-//         if (hoveredTowerBaseName) {
-//             const hoveredTowerBase = scene.getObjectByName(hoveredTowerBaseName) as THREE.Mesh;
-//             hoveredTowerBase.material = MATERIALS.concrete;
-
-//             // remove memory of hovered towerBase
-//             hoveredTowerBaseName = null;
-//         }
-//     }
-
-//     if (hoveredTower) {
-//         const towerMesh = hoveredTower.object as THREE.Mesh;
-//         // console.log({ towerMesh, hoveredTower });
-//         const tower = towers.find((t) => t.id === hoveredTower.object.userData["tower_id"]);
-//         if (!tower) return;
-
-//         hoveredTowerId = tower.id;
-
-//         towerMesh.material = MATERIALS.towerHighlight(towerTexture);
-//         tower.rangeGizmo.visible = true;
-//     } else {
-//         if (hoveredTowerId) {
-//             const hoveredTower = towers.find((t) => t.id === hoveredTowerId);
-//             if (!hoveredTower) return;
-
-//             hoveredTower.model.material = MATERIALS.tower(towerTexture);
-//             towers
-//                 .filter((t) => t.rangeGizmo.visible)
-//                 .forEach((t) => {
-//                     t.rangeGizmo.visible = false;
-//                 });
-//         }
-//         hoveredTowerId = null;
-//     }
-// }
+    if (!foundHighlightTarget) {
+        outlinePass.selectedObjects = outlinePass.selectedObjects.filter((o) => o !== prevHiglightedMesh);
+        prevHiglightedMesh = null;
+    }
+    /**
+     *
+     * for each obj
+     *      if obj is tower or towerBase
+     *          remove prev tower/towerBase
+     *          add tower/towerBase
+     *               break
+     *  if no tower or towerBase
+     *      remove prev tower/towerBase
+     *
+     */
+}
 
 function revertCancelableModals(clickedModal: HTMLDivElement | undefined) {
     const allModals = Array.from(document.querySelectorAll<HTMLDivElement>(".modal2D"));
