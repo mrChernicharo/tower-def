@@ -296,19 +296,43 @@ progress::-webkit-progress-value {
 /******************* SKILLS *******************/
 /**********************************************/
 
+.skills-top .top-line {
+    text-align: center;
+    position: relative;
+}
+.skills-top .top-line button {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+}
+.skills-top .bottom-line {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-inline: 5px;
+    margin-block: 1rem;
+}
+
 .skills-container {
-    border: 1px solid;
+    /* border: 1px solid; */
     display: grid;
-    border: 1px solid;
     grid-template-rows: repeat(6, 1fr);
 }
 
 .skill-row {
-    border: 1px solid;
+    /* border: 1px solid; */
     display: flex;
-    /* flex-direction: column; */
     justify-content: center;
     align-items: center;
+    margin-bottom: 5px;
+}
+
+.skill-row > img {
+    margin-right: 5px;
+}
+
+.skill-row .skill-item:not(:last-of-type) {
+    margin-right: 5px;
 }
 
 .skill-detail {

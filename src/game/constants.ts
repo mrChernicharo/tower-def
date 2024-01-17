@@ -210,7 +210,7 @@ export const ENEMY_BLUEPRINTS: { [k in EnemyType]: EnemyBluePrint } = {
         reward: 100,
         modelURL: "/assets/glb/raptoid.glb",
         speed: 2,
-        maxHp: 1500,
+        maxHp: 1400,
         modelScale: 0.04,
         walkAnimationName: "Running",
     },
@@ -351,7 +351,7 @@ export const TOWER_BLUEPRINTS: { [k in TowerType]: TowerBluePrint[] } = {
     Ballista: [
         {
             name: TowerType.Ballista,
-            defaultStrategy: TargetingStrategy.LastInLine,
+            defaultStrategy: TargetingStrategy.FirstInLine,
             firePointY: 6,
             level: 1,
             damage: [10, 20],
@@ -363,7 +363,7 @@ export const TOWER_BLUEPRINTS: { [k in TowerType]: TowerBluePrint[] } = {
         },
         {
             name: TowerType.Ballista,
-            defaultStrategy: TargetingStrategy.LastInLine,
+            defaultStrategy: TargetingStrategy.FirstInLine,
             firePointY: 6.5,
             level: 2,
             damage: [20, 38],
@@ -375,7 +375,7 @@ export const TOWER_BLUEPRINTS: { [k in TowerType]: TowerBluePrint[] } = {
         },
         {
             name: TowerType.Ballista,
-            defaultStrategy: TargetingStrategy.LastInLine,
+            defaultStrategy: TargetingStrategy.FirstInLine,
             firePointY: 7,
             level: 3,
             damage: [34, 55],
@@ -387,7 +387,7 @@ export const TOWER_BLUEPRINTS: { [k in TowerType]: TowerBluePrint[] } = {
         },
         {
             name: TowerType.Ballista,
-            defaultStrategy: TargetingStrategy.LastInLine,
+            defaultStrategy: TargetingStrategy.FirstInLine,
             firePointY: 7.5,
             level: 4,
             damage: [51, 76],
@@ -402,7 +402,7 @@ export const TOWER_BLUEPRINTS: { [k in TowerType]: TowerBluePrint[] } = {
     Cannon: [
         {
             name: TowerType.Cannon,
-            defaultStrategy: TargetingStrategy.LastInLine,
+            defaultStrategy: TargetingStrategy.FirstInLine,
             firePointY: 8,
             level: 1,
             damage: [18, 36],
@@ -414,7 +414,7 @@ export const TOWER_BLUEPRINTS: { [k in TowerType]: TowerBluePrint[] } = {
         },
         {
             name: TowerType.Cannon,
-            defaultStrategy: TargetingStrategy.LastInLine,
+            defaultStrategy: TargetingStrategy.FirstInLine,
             firePointY: 8.5,
             level: 2,
             damage: [29, 54],
@@ -426,7 +426,7 @@ export const TOWER_BLUEPRINTS: { [k in TowerType]: TowerBluePrint[] } = {
         },
         {
             name: TowerType.Cannon,
-            defaultStrategy: TargetingStrategy.LastInLine,
+            defaultStrategy: TargetingStrategy.FirstInLine,
             firePointY: 9,
             level: 3,
             damage: [48, 86],
@@ -438,7 +438,7 @@ export const TOWER_BLUEPRINTS: { [k in TowerType]: TowerBluePrint[] } = {
         },
         {
             name: TowerType.Ballista,
-            defaultStrategy: TargetingStrategy.LastInLine,
+            defaultStrategy: TargetingStrategy.FirstInLine,
             firePointY: 9.5,
             level: 4,
             damage: [60, 100],
@@ -453,7 +453,7 @@ export const TOWER_BLUEPRINTS: { [k in TowerType]: TowerBluePrint[] } = {
     Poison: [
         {
             name: TowerType.Poison,
-            defaultStrategy: TargetingStrategy.LastInLine,
+            defaultStrategy: TargetingStrategy.FirstInLine,
             firePointY: 8,
             level: 1,
             damage: [4, 7],
@@ -465,7 +465,7 @@ export const TOWER_BLUEPRINTS: { [k in TowerType]: TowerBluePrint[] } = {
         },
         {
             name: TowerType.Poison,
-            defaultStrategy: TargetingStrategy.LastInLine,
+            defaultStrategy: TargetingStrategy.FirstInLine,
             firePointY: 8.5,
             level: 2,
             damage: [11, 22],
@@ -477,7 +477,7 @@ export const TOWER_BLUEPRINTS: { [k in TowerType]: TowerBluePrint[] } = {
         },
         {
             name: TowerType.Poison,
-            defaultStrategy: TargetingStrategy.LastInLine,
+            defaultStrategy: TargetingStrategy.FirstInLine,
             firePointY: 9,
             level: 3,
             damage: [21, 37],
@@ -489,7 +489,7 @@ export const TOWER_BLUEPRINTS: { [k in TowerType]: TowerBluePrint[] } = {
         },
         {
             name: TowerType.Poison,
-            defaultStrategy: TargetingStrategy.LastInLine,
+            defaultStrategy: TargetingStrategy.FirstInLine,
             firePointY: 10,
             level: 4,
             damage: [33, 60],
@@ -819,20 +819,20 @@ export const STAGE_WAVES_DATA: [string, number, number, number][][][] = [
     // stage 06 - FOREST
     [
         // wave 1
-        waveSegment(EnemyChar.Spider),
+        waveSegment(EnemyChar.Spider, 1.4, 30, 0, 3),
         // wave 2
+        [...waveSegment(EnemyChar.Soldier, 3.2, 7), ...waveSegment(EnemyChar.Spider)],
+        // wave 3
         [
-            ...waveSegment(EnemyChar.Raptor, 8, 2, 0, 1, []),
-            ...waveSegment(EnemyChar.Raptor, 8, 2, 6, 1, []),
-            ...waveSegment(EnemyChar.Raptor, 8, 2, 12, 2),
-            ...waveSegment(EnemyChar.Raptor, 8, 2, 18, 3),
+            ...waveSegment(EnemyChar.Raptor, 8, 2, 0, 2, []),
+            ...waveSegment(EnemyChar.Raptor, 8, 2, 6, 0, []),
+            ...waveSegment(EnemyChar.Raptor, 8, 2, 12, 3),
+            ...waveSegment(EnemyChar.Raptor, 8, 2, 18, 1),
             ...waveSegment(EnemyChar.Spider, 2, 8, 0, 0),
             ...waveSegment(EnemyChar.Spider, 2, 8, 8, 1),
             ...waveSegment(EnemyChar.Spider, 2, 8, 16, 2),
             ...waveSegment(EnemyChar.Spider, 2, 8, 24, 3),
         ],
-        // wave 3
-        // [...waveSegment(EnemyChar.Soldier, 3.2, 7), ...waveSegment(EnemyChar.Spider)],
         [...waveSegment(EnemyChar.Soldier, 4, 6, 0, 3), ...waveSegment(EnemyChar.Spider, 0.8, 20, 10, 1)],
         // wave 4
         [...waveSegment(EnemyChar.Raptor2, 1, 1, 0, 2), ...waveSegment(EnemyChar.Spider, 1.5, 40, 0, 0)],
@@ -841,19 +841,19 @@ export const STAGE_WAVES_DATA: [string, number, number, number][][][] = [
     // stage 07 - FOREST
     [
         // wave 1
-        waveSegment(EnemyChar.Spider),
+        waveSegment(EnemyChar.Spider, 1.4, 30, 0, 3),
         // wave 2
-        [...waveSegment(EnemyChar.Soldier, 3.2, 5), ...waveSegment(EnemyChar.Spider)],
+        [...waveSegment(EnemyChar.Soldier, 3.2, 7), ...waveSegment(EnemyChar.Spider)],
         // wave 3
         [
-            ...waveSegment(EnemyChar.Raptor, 8, 2, 0, 1, []),
-            ...waveSegment(EnemyChar.Raptor, 8, 2, 7, 1, []),
-            ...waveSegment(EnemyChar.Raptor, 8, 2, 14, 2),
-            ...waveSegment(EnemyChar.Raptor, 8, 2, 21, 3),
-            ...waveSegment(EnemyChar.Spider, 2.2, 8, 0, 0),
-            ...waveSegment(EnemyChar.Spider, 2.2, 8, 8, 1),
-            ...waveSegment(EnemyChar.Spider, 2.2, 8, 16, 2),
-            ...waveSegment(EnemyChar.Spider, 2.2, 8, 24, 3),
+            ...waveSegment(EnemyChar.Raptor, 8, 2, 0, 2, []),
+            ...waveSegment(EnemyChar.Raptor, 8, 2, 6, 0, []),
+            ...waveSegment(EnemyChar.Raptor, 8, 2, 12, 3),
+            ...waveSegment(EnemyChar.Raptor, 8, 2, 18, 1),
+            ...waveSegment(EnemyChar.Spider, 2, 8, 0, 0),
+            ...waveSegment(EnemyChar.Spider, 2, 8, 8, 1),
+            ...waveSegment(EnemyChar.Spider, 2, 8, 16, 2),
+            ...waveSegment(EnemyChar.Spider, 2, 8, 24, 3),
         ],
         [...waveSegment(EnemyChar.Soldier, 4, 6, 0, 3), ...waveSegment(EnemyChar.Spider, 0.8, 20, 10, 1)],
         // wave 4

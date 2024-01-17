@@ -139,13 +139,20 @@ export class Enemy {
                 this.model.position.y += 3;
                 break;
             }
-            case "raptor":
-            case "raptor2": {
+            case "raptor": {
                 const zeroYTan = new THREE.Vector3(tangent.x, 0, tangent.z);
                 this.model.lookAt(
                     position.clone().add(zeroYTan.applyAxisAngle(this.model.up, -Math.PI * 0.5).add(zeroYTan))
                 );
                 this.model.position.y += 0.1;
+                break;
+            }
+            case "raptor2": {
+                const zeroYTan = new THREE.Vector3(tangent.x, 0, tangent.z);
+                this.model.lookAt(
+                    position.clone().add(zeroYTan.applyAxisAngle(this.model.up, -Math.PI * 0.5).add(zeroYTan))
+                );
+                this.model.position.y += 0.6;
                 break;
             }
             case "soldier":

@@ -51,17 +51,18 @@ const Skills = () => {
 
     return (
         <>
-            <Link to="/area-selection">
-                <button>
-                    <FaArrowLeft />
-                </button>
-            </Link>
+            <div className="skills-top">
+                <div className="top-line">
+                    <h2>Skills</h2>
+                    <Link to="/area-selection">
+                        <button>
+                            <FaArrowLeft />
+                        </button>
+                    </Link>
+                </div>
 
-            <p>Skills</p>
-
-            <div style={{ display: "flex", justifyContent: "space-between" }}>
-                <div>{starsToSpend}★</div>
-                <div>
+                <div className="bottom-line">
+                    <div>{starsToSpend}★</div>
                     <button onClick={resetSkills}>↻</button>
                 </div>
             </div>
@@ -80,7 +81,7 @@ const Skills = () => {
                                 return (
                                     <li className="skill-item" key={skill.name}>
                                         <button
-                                            style={{ background: purchased ? "green" : "" }}
+                                            style={{ background: purchased ? "dodgerblue" : "" }}
                                             onClick={() => onSkillClick(skill)}
                                         >
                                             <span>lv {skill.id.split("-")[1]} </span>
