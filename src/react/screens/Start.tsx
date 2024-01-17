@@ -4,7 +4,9 @@ import { imgs } from "../../game/constants";
 export function Start() {
     return (
         <div id="start-screen">
-            <h1>Tower Defense</h1>
+            <div id="top-section">
+                <h1>Tower Defense</h1>
+            </div>
 
             <div id="splash-container">
                 <img id="splash-img" src={imgs.Splash} />
@@ -14,6 +16,14 @@ export function Start() {
                 <Link to="/area-selection">
                     <button>Start Game</button>
                 </Link>
+            </div>
+
+            <div id="bottom-container">
+                <button>
+                    <Link to="/settings">
+                        <img src={imgs.Settings} width={24} height={24} />
+                    </Link>
+                </button>
             </div>
         </div>
     );
