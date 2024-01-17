@@ -5,8 +5,9 @@ import { THREE } from "../three";
 import * as SkeletonUtils from "three/examples/jsm/utils/SkeletonUtils.js";
 import { AppLayers, EnemyType } from "./enums";
 import { EnemyBluePrint } from "./types";
-import { ENEMY_BLUEPRINTS, MATERIALS } from "./constants";
+import { ENEMY_BLUEPRINTS /*, MATERIALS*/ } from "./constants";
 import { idMaker } from "./helpers";
+import { SkinnedMesh } from "three";
 
 export class Enemy {
     #ready = false;
@@ -22,12 +23,12 @@ export class Enemy {
     timestamp = Date.now();
     hp: number;
     timeSinceSpawn!: number;
-    originalMaterial: { meshName: string; material: THREE.Material }[] = [];
-    poisonMaterial: { meshName: string; material: THREE.Material }[] = [];
+    originalMaterial!: THREE.Material;
     path: THREE.CatmullRomCurve3;
     isPoisoned = false;
     isSlowed = false;
     timeSinceSlowed = 0;
+    skinnedMeshes: THREE.SkinnedMesh[] = [];
     constructor(enemyType: EnemyType, pathIdx = 0) {
         this.id = idMaker();
         this.enemyType = enemyType;
@@ -40,21 +41,6 @@ export class Enemy {
     #_init() {
         this.model = this.#_setupModel();
         this.model.visible = false;
-        // console.log(this.model);
-        this.model.traverse((obj) => {
-            if ((obj as any).isMesh) {
-                this.originalMaterial.push({
-                    meshName: obj.name,
-                    material: ((obj as THREE.Mesh).material as THREE.Material).clone(),
-                });
-                this.poisonMaterial.push({
-                    meshName: obj.name,
-                    material: MATERIALS.poisonDmgMaterialStd,
-                });
-                return;
-            }
-        });
-
         this.mixer = new THREE.AnimationMixer(this.model);
 
         if (this.enemyType === EnemyType.Raptor2) {
@@ -83,9 +69,18 @@ export class Enemy {
 
         model.traverse((obj) => {
             if ((obj as any).isMesh) {
-                obj.castShadow = true;
                 obj.layers.disableAll();
                 obj.layers.enable(AppLayers.Enemy);
+
+                if (obj.type === "SkinnedMesh") {
+                    const mesh = obj as SkinnedMesh;
+                    mesh.castShadow = true;
+
+                    this.skinnedMeshes.push(mesh);
+                    if (!this.originalMaterial) {
+                        this.originalMaterial = mesh.material as THREE.Material;
+                    }
+                }
             }
         });
 
@@ -180,43 +175,37 @@ export class Enemy {
         this.hp -= dmg;
 
         // console.log("takeDamage", dmg, this.hp);
-        if (this.model && this.hp > 0) {
-            this.#_drawDamageEfx();
-        }
+        // if (this.model && this.hp > 0) {
+        //     this.#_drawDamageEfx();
+        // }
 
         if (this.hp <= 0) this.destroy(false);
     }
 
     setPoisoned() {
         if (!this.isPoisoned) {
-            this.model.traverse((obj) => {
-                if ((obj as any).isMesh && obj.type === "SkinnedMesh") {
-                    poisonOutlinePass.selectedObjects.push(obj);
-                    console.log("setSlowed", obj.uuid);
-                }
+            this.skinnedMeshes.forEach((obj) => {
+                poisonOutlinePass.selectedObjects.push(obj);
+                console.log("setSlowed", obj.uuid);
             });
         }
         this.isPoisoned = true;
     }
     healPoison() {
         this.isPoisoned = false;
-        this.model.traverse((obj) => {
-            if ((obj as any).isMesh && obj.type === "SkinnedMesh") {
-                const outlineObjIdx = poisonOutlinePass.selectedObjects.findIndex((o) => o.uuid === obj.uuid);
-                if (outlineObjIdx > -1) {
-                    poisonOutlinePass.selectedObjects.splice(outlineObjIdx, 1);
-                }
+        this.skinnedMeshes.forEach((obj) => {
+            const outlineObjIdx = poisonOutlinePass.selectedObjects.findIndex((o) => o.uuid === obj.uuid);
+            if (outlineObjIdx > -1) {
+                poisonOutlinePass.selectedObjects.splice(outlineObjIdx, 1);
             }
         });
     }
 
     setSlowed() {
         if (!this.isSlowed) {
-            this.model.traverse((obj) => {
-                if ((obj as any).isMesh && obj.type === "SkinnedMesh") {
-                    slowOutlinePass.selectedObjects.push(obj);
-                    console.log("setSlowed", obj.uuid);
-                }
+            this.skinnedMeshes.forEach((obj) => {
+                slowOutlinePass.selectedObjects.push(obj);
+                // console.log("setSlowed", obj.uuid);
             });
         }
         this.isSlowed = true;
@@ -224,40 +213,31 @@ export class Enemy {
     }
     healSlow() {
         this.isSlowed = false;
-        this.model.traverse((obj) => {
-            if ((obj as any).isMesh && obj.type === "SkinnedMesh") {
-                const outlineObjIdx = slowOutlinePass.selectedObjects.findIndex((o) => o.uuid === obj.uuid);
-                if (outlineObjIdx > -1) {
-                    slowOutlinePass.selectedObjects.splice(outlineObjIdx, 1);
-                }
+        this.skinnedMeshes.forEach((obj) => {
+            const outlineObjIdx = slowOutlinePass.selectedObjects.findIndex((o) => o.uuid === obj.uuid);
+            if (outlineObjIdx > -1) {
+                slowOutlinePass.selectedObjects.splice(outlineObjIdx, 1);
             }
         });
         this.timeSinceSlowed = 0;
     }
 
-    #_drawDamageEfx() {
-        // console.log("_drawDamageEfx", { enemyMesh, originalMaterial: this.originalMaterial });
-        try {
-            this.model.traverse((obj) => {
-                if ((obj as any).isMesh && obj.type === "SkinnedMesh") {
-                    (obj as THREE.Mesh).material = MATERIALS.damageMaterialStd;
-                }
-            });
-        } catch (error) {
-            console.error({ error });
-        } finally {
-            setTimeout(() => {
-                this.model.traverse((obj) => {
-                    if ((obj as any).isMesh && obj.type === "SkinnedMesh") {
-                        const found = this.originalMaterial.find((entry) => entry.meshName === obj.name);
-                        if (found) {
-                            (obj as THREE.Mesh).material = found.material;
-                        }
-                    }
-                });
-            }, 160);
-        }
-    }
+    // #_drawDamageEfx() {
+    //     // console.log("_drawDamageEfx", { enemyMesh, originalMaterial: this.originalMaterial });
+    //     try {
+    //         this.skinnedMeshes.forEach((obj) => {
+    //             (obj as THREE.Mesh).material = MATERIALS.damageMaterialStd;
+    //         });
+    //     } catch (error) {
+    //         console.error({ error });
+    //     } finally {
+    //         setTimeout(() => {
+    //             this.skinnedMeshes.forEach((obj) => {
+    //                 (obj as THREE.Mesh).material = this.originalMaterial;
+    //             });
+    //         }, 160);
+    //     }
+    // }
 
     destroy(endReached: boolean) {
         window.dispatchEvent(new CustomEvent("enemy-destroyed", { detail: { enemy: this, endReached } }));

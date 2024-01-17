@@ -726,21 +726,23 @@ function animate() {
             blizzard.tick(delta);
         }
 
-        for (const [id, num3D] of nums.entries()) {
-            num3D.position.y += 0.01;
-
-            if (gameElapsedTime - num3D.userData.spawned_at > 2) {
-                num3D.userData.container_el.remove();
-                scene.remove(num3D);
-                nums.delete(id);
-            }
-        }
-
         // WAVE SPAWNING
         const spawningEnemyIdx = currWave.findIndex((e) => e.spawnAt < gameElapsedTime);
         if (spawningEnemyIdx > -1) {
             const [spawningEnemy] = currWave.splice(spawningEnemyIdx, 1);
             spawnEnemy(spawningEnemy.enemyType, spawningEnemy.pathIdx);
+        }
+    }
+
+    if (gameState === GameState.Active || gameState === GameState.Idle || gameState === GameState.Paused) {
+        for (const [id, num3D] of nums.entries()) {
+            num3D.position.y += 0.01;
+
+            if (gameClock.elapsedTime - num3D.userData.spawned_at > 4) {
+                num3D.userData.container_el.remove();
+                scene.remove(num3D);
+                nums.delete(id);
+            }
         }
     }
 
