@@ -153,7 +153,7 @@ export const ENEMY_BLUEPRINTS: { [k in EnemyType]: EnemyBluePrint } = {
         reward: 5,
         modelURL: "/assets/glb/spider.glb",
         // speed: 10,
-        speed: 3.5,
+        speed: 3,
         maxHp: 40,
         modelScale: 80,
         walkAnimationName: "Wolf Spider Armature|Spider running",
@@ -172,7 +172,7 @@ export const ENEMY_BLUEPRINTS: { [k in EnemyType]: EnemyBluePrint } = {
         name: EnemyType.Raptor,
         reward: 10,
         modelURL: "/assets/glb/raptoid.glb",
-        speed: 6,
+        speed: 4,
         maxHp: 100,
         modelScale: 0.02,
         walkAnimationName: "Running",
@@ -181,7 +181,7 @@ export const ENEMY_BLUEPRINTS: { [k in EnemyType]: EnemyBluePrint } = {
         name: EnemyType.Raptor2,
         reward: 100,
         modelURL: "/assets/glb/raptoid.glb",
-        speed: 3,
+        speed: 2,
         maxHp: 1500,
         modelScale: 0.04,
         walkAnimationName: "Running",
@@ -750,7 +750,7 @@ export const STAGE_WAVES_DATA: [string, number, number, number][][][] = [
     // stage 02
     [
         // wave 1
-        waveSegment(EnemyChar.Spider, 1),
+        waveSegment(EnemyChar.Spider, 2),
         // wave 2
         waveSegment(EnemyChar.Raptor, 4),
     ],
@@ -758,24 +758,34 @@ export const STAGE_WAVES_DATA: [string, number, number, number][][][] = [
     // stage 03
     [
         // wave 1
+        waveSegment(EnemyChar.Spider, 2),
+        // wave 1
         waveSegment(EnemyChar.Raptor, 4),
     ],
 
     // stage 04
     [
         // wave 1
-        [...waveSegment(EnemyChar.Spider, 1), ...waveSegment(EnemyChar.Raptor, 4)],
-        // // wave 2
+        waveSegment(EnemyChar.Spider, 2),
+        // wave 2
+        [
+            ...waveSegment(EnemyChar.Spider, 1),
+            ...waveSegment(EnemyChar.Raptor, 4, 5),
+            ...waveSegment(EnemyChar.Spider, 1, 10, 20),
+        ],
     ],
 
     // stage 05 - FOREST
     [
         // wave 1
         [...waveSegment(EnemyChar.Spider, 3, 13, 0, 0), ...waveSegment(EnemyChar.Spider, 3, 11, 6, 2)],
-    ],
-    [
-        // wave 1
-        [...waveSegment(EnemyChar.Spider, 3, 13, 0, 1), ...waveSegment(EnemyChar.Spider, 3, 11, 6, 3)],
+        // wave 2
+        [
+            ...waveSegment(EnemyChar.Spider, 3, 13, 0, 1),
+            ...waveSegment(EnemyChar.Spider, 3, 11, 8, 3),
+            ...waveSegment(EnemyChar.Spider, 3, 11, 16, 2),
+            ...waveSegment(EnemyChar.Spider, 3, 11, 24, 2),
+        ],
     ],
 
     // stage 06 - FOREST
@@ -784,14 +794,14 @@ export const STAGE_WAVES_DATA: [string, number, number, number][][][] = [
         waveSegment(EnemyChar.Spider),
         // wave 2
         [
-            ...waveSegment(EnemyChar.Raptor, 8, 3, 0, 1, []),
-            ...waveSegment(EnemyChar.Raptor, 8, 3, 6, 1, []),
-            ...waveSegment(EnemyChar.Raptor, 8, 3, 12, 2),
-            ...waveSegment(EnemyChar.Raptor, 8, 3, 18, 3),
-            ...waveSegment(EnemyChar.Spider, 2, 10, 0, 0),
-            ...waveSegment(EnemyChar.Spider, 2, 10, 8, 1),
-            ...waveSegment(EnemyChar.Spider, 2, 10, 16, 2),
-            ...waveSegment(EnemyChar.Spider, 2, 10, 24, 3),
+            ...waveSegment(EnemyChar.Raptor, 8, 2, 0, 1, []),
+            ...waveSegment(EnemyChar.Raptor, 8, 2, 6, 1, []),
+            ...waveSegment(EnemyChar.Raptor, 8, 2, 12, 2),
+            ...waveSegment(EnemyChar.Raptor, 8, 2, 18, 3),
+            ...waveSegment(EnemyChar.Spider, 2, 8, 0, 0),
+            ...waveSegment(EnemyChar.Spider, 2, 8, 8, 1),
+            ...waveSegment(EnemyChar.Spider, 2, 8, 16, 2),
+            ...waveSegment(EnemyChar.Spider, 2, 8, 24, 3),
         ],
         // wave 3
         // [...waveSegment(EnemyChar.Soldier, 3.2, 7), ...waveSegment(EnemyChar.Spider)],

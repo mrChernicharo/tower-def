@@ -51,6 +51,12 @@ export class Enemy {
         const walkAction = this.mixer.clipAction(walkClip);
         walkAction.play();
 
+        if (this.enemyType === EnemyType.Raptor || this.enemyType === EnemyType.Raptor2) {
+            const idleClip = this.glb.animations.find((anim) => anim.name === "Idling")!;
+            const idleAction = this.mixer.clipAction(idleClip);
+            idleAction.play();
+        }
+
         this.timeSinceSpawn = 0;
         this.#ready = true;
 
@@ -186,7 +192,7 @@ export class Enemy {
         if (!this.isPoisoned) {
             this.skinnedMeshes.forEach((obj) => {
                 poisonOutlinePass.selectedObjects.push(obj);
-                console.log("setSlowed", obj.uuid);
+                // console.log("setSlowed", obj.uuid);
             });
         }
         this.isPoisoned = true;

@@ -735,6 +735,7 @@ function animate() {
     }
 
     if (gameState === GameState.Active || gameState === GameState.Idle || gameState === GameState.Paused) {
+        // NUMS
         for (const [id, num3D] of nums.entries()) {
             num3D.position.y += 0.01;
 
