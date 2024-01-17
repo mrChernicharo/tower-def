@@ -72,7 +72,8 @@ let gameState = GameState.Idle;
 
 let mouseRay: THREE.Raycaster;
 let playerStats: PlayerStats;
-let gameElapsedTime: number;
+let totalGameTime: number;
+let activeGameTime: number;
 let loadingManager: THREE.LoadingManager;
 let gameSpeed: GameSpeed;
 let levelData: GameLevel;
@@ -289,7 +290,8 @@ async function gameSetup() {
     fbxLoader = new FBXLoader(loadingManager);
     // fontLoader = new FontLoader(loadingManager);
     gameClock = new THREE.Clock();
-    gameElapsedTime = 0;
+    activeGameTime = 0;
+    totalGameTime = 0;
 
     camera = new THREE.PerspectiveCamera(45, canvasWidth / window.innerHeight, 0.1, 1000);
     camera.position.x = levelData.initialCamPos[0];
@@ -610,6 +612,8 @@ function drawWaveCallBeacon() {
 
 function animate() {
     const delta = gameClock.getDelta() * gameSpeed;
+    totalGameTime += delta;
+
     // const elapsed = gameClock.getElapsedTime();
 
     cssRenderer.render(scene, camera);
@@ -619,7 +623,7 @@ function animate() {
     // orbit.update();
 
     if (gameState === GameState.Active) {
-        gameElapsedTime += delta;
+        activeGameTime += delta;
 
         // SPECIALS COOLDOWN
         playerStats.tick(delta);
@@ -684,17 +688,21 @@ function animate() {
         // EXPLOSIONS
         const removingExplosions = [];
         for (const [, explosion] of explosions.entries()) {
-            const elapsed = Date.now() - explosion.userData.spawned_at;
+            // if (gameState === GameState.Idle) {
+
+            // }
+
+            const elapsed = totalGameTime - explosion.userData.spawned_at;
             const explosionRadius = explosion.userData.radius;
-            if (elapsed < 200) {
-                explosion.scale.x += explosionRadius * 0.1;
-                explosion.scale.y += explosionRadius * 0.1;
-                explosion.scale.z += explosionRadius * 0.1;
-            } else if (elapsed < 600) {
-                explosion.scale.x -= explosionRadius * 0.05;
-                explosion.scale.y -= explosionRadius * 0.05;
-                explosion.scale.z -= explosionRadius * 0.05;
-            } else {
+            if (elapsed < 0.2) {
+                explosion.scale.x += explosionRadius * 10 * delta;
+                explosion.scale.y += explosionRadius * 10 * delta;
+                explosion.scale.z += explosionRadius * 10 * delta;
+            } else if (elapsed >= 0.2 && elapsed <= 0.5) {
+                explosion.scale.x -= explosionRadius * 5 * delta;
+                explosion.scale.y -= explosionRadius * 5 * delta;
+                explosion.scale.z -= explosionRadius * 5 * delta;
+            } else if (elapsed > 0.5) {
                 removingExplosions.push(explosion);
             }
             // console.log({ explosion, elapsed });
@@ -706,7 +714,7 @@ function animate() {
 
         // METEORS
         for (const [meteorId, meteor] of meteors.entries()) {
-            if (meteor.destination.distanceTo(meteor.model.position) < 0.5) {
+            if (meteor.destination.distanceTo(meteor.model.position) < 0.6) {
                 meteor.explode();
                 scene.remove(meteor.model);
                 meteors.delete(meteorId);
@@ -717,17 +725,22 @@ function animate() {
 
         // BLIZZARDS
         for (const [, blizzard] of blizzards.entries()) {
+            if (blizzard.timeSinceSpawn > BLIZZARD_EFFECT_DURATION) {
+                blizzard.finish();
+            }
+
             for (const e of enemies) {
                 const distance = e.model.position.distanceTo(blizzard.initialPos);
                 if (distance < blizzard.radius) {
                     e.setSlowed();
                 }
             }
+
             blizzard.tick(delta);
         }
 
         // WAVE SPAWNING
-        const spawningEnemyIdx = currWave.findIndex((e) => e.spawnAt < gameElapsedTime);
+        const spawningEnemyIdx = currWave.findIndex((e) => e.spawnAt < activeGameTime);
         if (spawningEnemyIdx > -1) {
             const [spawningEnemy] = currWave.splice(spawningEnemyIdx, 1);
             spawnEnemy(spawningEnemy.enemyType, spawningEnemy.pathIdx);
@@ -737,9 +750,9 @@ function animate() {
     if (gameState === GameState.Active || gameState === GameState.Idle || gameState === GameState.Paused) {
         // NUMS
         for (const [id, num3D] of nums.entries()) {
-            num3D.position.y += 0.01;
+            num3D.position.y += 1 * delta;
 
-            if (gameClock.elapsedTime - num3D.userData.spawned_at > 4) {
+            if (totalGameTime - num3D.userData.spawned_at > 2) {
                 num3D.userData.container_el.remove();
                 scene.remove(num3D);
                 nums.delete(id);
@@ -1019,8 +1032,7 @@ function onCanvasClick(e: MouseEvent) {
         scene.traverse((obj) => {
             if (obj.name === "mouseTargetRing") return;
             // HIDE previously open modal
-            if ((obj as any).isCSS2DObject && obj.visible) {
-                if (obj.name === "call-wave-2D-modal") return;
+            if ((obj as any).isCSS2DObject && obj.visible && obj.name !== "call-wave-2D-modal" && obj.name !== "num") {
                 obj.visible = false;
             }
 
@@ -1048,7 +1060,7 @@ function onCanvasClick(e: MouseEvent) {
                 }
 
                 if (obj.visible) {
-                    if (obj.name === "call-wave-2D-modal") return;
+                    if (obj.name === "call-wave-2D-modal" || obj.name !== "num") return;
                     obj.visible = false;
                 }
             }
@@ -1077,15 +1089,14 @@ function onCanvasClick(e: MouseEvent) {
 
         // HIDE modal (3D)
         scene.traverse((obj) => {
+            // console.log(obj);
             if (obj.name === "mouseTargetRing") return;
 
-            if ((obj as any).isCSS2DObject && obj.visible) {
-                if (obj.name === "call-wave-2D-modal") return;
+            if ((obj as any).isCSS2DObject && obj.visible && obj.name !== "call-wave-2D-modal" && obj.name !== "num") {
                 obj.visible = false;
             }
 
             if ((obj as THREE.Mesh).isMesh && !obj.visible && obj.name !== "rangeGizmo") {
-                // console.log(obj);
                 obj.visible = true;
             }
         });
@@ -1350,7 +1361,7 @@ function onProjectileExplode(e: any) {
 
     const explosion = projectile.explosion as THREE.Mesh;
     explosion.userData["projectile_id"] = projectile.id;
-    explosion.userData["spawned_at"] = Date.now();
+    explosion.userData["spawned_at"] = totalGameTime;
     explosion.userData["radius"] = projectile.blueprint.explosionRadius;
 
     const pos = new THREE.Vector3(
@@ -1429,8 +1440,9 @@ function onEnemyDestroyed(e: any) {
         const num3D = new CSS2DObject(numContainer);
 
         numContainer.className = "num-container";
+        num3D.name = "num";
         num3D.userData["id"] = idMaker();
-        num3D.userData["spawned_at"] = gameElapsedTime;
+        num3D.userData["spawned_at"] = totalGameTime;
         num3D.userData["container_el"] = numContainer;
         num3D.position.set(enemy.model.position.x, enemy.model.position.y, enemy.model.position.z);
 
@@ -1448,7 +1460,7 @@ function onEnemyDestroyed(e: any) {
         console.log("wave ended");
         gameState = GameState.Idle;
         currWaveIdx++;
-        gameElapsedTime = 0;
+        activeGameTime = 0;
         (speedBtns.children[1] as HTMLInputElement).checked = true;
         gameSpeed = 1;
 
@@ -1520,6 +1532,7 @@ function onMeteorFire() {
     clearMeteorTargeting();
 
     const meteorCount = 6;
+
     for (let i = 0; i < meteorCount; i++) {
         const destination = new THREE.Vector3(
             THREE.MathUtils.lerp(meteorTargetPos.x - 2.5, meteorTargetPos.x + 2.5, Math.random()),
@@ -1558,10 +1571,6 @@ function onBlizzardFire() {
     const blizzard = new Blizzard(position);
     blizzards.set(blizzard.id, blizzard);
     scene.add(blizzard.model);
-
-    setTimeout(() => {
-        blizzard.finish();
-    }, BLIZZARD_EFFECT_DURATION);
 }
 
 function clearMeteorTargeting() {
@@ -1588,7 +1597,7 @@ function onMeteorExplode(e: any) {
     const explosion = meteor.explosion as THREE.Mesh;
     const pos = new THREE.Vector3(meteor.model.position.x, meteor.model.position.y, meteor.model.position.z);
     explosion.userData["meteor_id"] = meteor.id;
-    explosion.userData["spawned_at"] = Date.now();
+    explosion.userData["spawned_at"] = totalGameTime;
     explosion.userData["radius"] = 10;
     explosion.position.set(pos.x, pos.y, pos.z);
     explosions.set(meteor.id, explosion);

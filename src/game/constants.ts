@@ -12,35 +12,8 @@ export const DRAW_PROJECTILE_TRAJECTORIES = false;
 
 export const DRAW_METEOR_GIZMOS = true;
 
-export const BLIZZARD_SLOW_DURATION = 6; // seconds
-export const BLIZZARD_EFFECT_DURATION = 1200; // milliseconds
-
-// export const defaultPlayerSkills = {
-//     "constructor-1": false,
-//     "constructor-2": false,
-//     "constructor-3": false,
-//     "constructor-4": false,
-//     "constructor-5": false,
-//     "constructor-6": false,
-//     "merchant-1": false,
-//     "merchant-2": false,
-//     "merchant-3": false,
-//     "merchant-4": false,
-//     "merchant-5": false,
-//     "merchant-6": false,
-//     "chemist-1": false,
-//     "chemist-2": false,
-//     "chemist-3": false,
-//     "chemist-4": false,
-//     "chemist-5": false,
-//     "chemist-6": false,
-//     "blacksmith-1": false,
-//     "blacksmith-2": false,
-//     "blacksmith-3": false,
-//     "blacksmith-4": false,
-//     "blacksmith-5": false,
-//     "blacksmith-6": false,
-// };
+export const BLIZZARD_SLOW_DURATION = 6;
+export const BLIZZARD_EFFECT_DURATION = 1.5;
 
 export const defaultPlayerSkills = {
     "archer-1": false,
