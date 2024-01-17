@@ -1261,6 +1261,7 @@ function handleHoverEfx() {
         const mesh = ch.object as THREE.Mesh;
         if (mesh.isMesh && (mesh.name.includes("-Tower") || mesh.name.includes("TowerBase"))) {
             const oldMeshIdx = outlinePass.selectedObjects.findIndex((o) => o === prevHiglightedMesh);
+            outlinePass.visibleEdgeColor = new THREE.Color(0xffffff * Math.random());
             outlinePass.selectedObjects.splice(oldMeshIdx, 1, mesh);
             prevHiglightedMesh = mesh;
             foundHighlightTarget = true;
