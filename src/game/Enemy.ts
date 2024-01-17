@@ -180,10 +180,9 @@ export class Enemy {
         this.hp -= dmg;
 
         // console.log("takeDamage", dmg, this.hp);
-
-        // if (this.model && this.hp > 0) {
-        //     this.#_drawDamageEfx();
-        // }
+        if (this.model && this.hp > 0) {
+            this.#_drawDamageEfx();
+        }
 
         if (this.hp <= 0) this.destroy(false);
     }
@@ -236,32 +235,29 @@ export class Enemy {
         this.timeSinceSlowed = 0;
     }
 
-    // #_drawDamageEfx() {
-    //     // console.log("_drawDamageEfx", { enemyMesh, originalMaterial: this.originalMaterial });
-    //     try {
-    //         // enemyMesh.material = MATERIALS.damageMaterialStd;
-    //         this.model.traverse((obj) => {
-    //             if ((obj as any).isMesh) {
-    //                 (obj as THREE.Mesh).material = MATERIALS.damageMaterialStd;
-    //             }
-    //         });
-    //     } catch (error) {
-    //         console.error({ error });
-    //     } finally {
-    //         setTimeout(() => {
-    //             this.model.traverse((obj) => {
-    //                 if ((obj as any).isMesh) {
-    //                     const found = this.isPoisoned
-    //                         ? this.poisonMaterial.find((entry) => entry.meshName === obj.name)
-    //                         : this.originalMaterial.find((entry) => entry.meshName === obj.name);
-    //                     if (found) {
-    //                         (obj as THREE.Mesh).material = found.material;
-    //                     }
-    //                 }
-    //             });
-    //         }, 160);
-    //     }
-    // }
+    #_drawDamageEfx() {
+        // console.log("_drawDamageEfx", { enemyMesh, originalMaterial: this.originalMaterial });
+        try {
+            this.model.traverse((obj) => {
+                if ((obj as any).isMesh && obj.type === "SkinnedMesh") {
+                    (obj as THREE.Mesh).material = MATERIALS.damageMaterialStd;
+                }
+            });
+        } catch (error) {
+            console.error({ error });
+        } finally {
+            setTimeout(() => {
+                this.model.traverse((obj) => {
+                    if ((obj as any).isMesh && obj.type === "SkinnedMesh") {
+                        const found = this.originalMaterial.find((entry) => entry.meshName === obj.name);
+                        if (found) {
+                            (obj as THREE.Mesh).material = found.material;
+                        }
+                    }
+                });
+            }, 160);
+        }
+    }
 
     destroy(endReached: boolean) {
         window.dispatchEvent(new CustomEvent("enemy-destroyed", { detail: { enemy: this, endReached } }));
