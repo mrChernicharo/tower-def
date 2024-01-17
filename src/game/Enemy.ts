@@ -1,17 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { GLTF } from "three/examples/jsm/Addons.js";
-import { ENEMY_MODELS, pathCurves } from "./game";
+import { ENEMY_MODELS, slowOutlinePass, pathCurves, poisonOutlinePass } from "./game";
 import { THREE } from "../three";
 import * as SkeletonUtils from "three/examples/jsm/utils/SkeletonUtils.js";
 import { AppLayers, EnemyType } from "./enums";
 import { EnemyBluePrint } from "./types";
 import { ENEMY_BLUEPRINTS, MATERIALS } from "./constants";
 import { idMaker } from "./helpers";
-
-const beaconSize = {
-    raptor: 20,
-    default: 0.005,
-};
 
 export class Enemy {
     #ready = false;
@@ -33,7 +28,6 @@ export class Enemy {
     isPoisoned = false;
     isSlowed = false;
     timeSinceSlowed = 0;
-    slowBeacon!: THREE.Mesh;
     constructor(enemyType: EnemyType, pathIdx = 0) {
         this.id = idMaker();
         this.enemyType = enemyType;
@@ -94,17 +88,6 @@ export class Enemy {
                 obj.layers.enable(AppLayers.Enemy);
             }
         });
-
-        const size = this.enemyType === EnemyType.Raptor ? beaconSize.raptor : beaconSize.default;
-        const ypos = this.enemyType === EnemyType.Raptor ? 200 : 0.02;
-
-        const slowBeaconGeometry = new THREE.SphereGeometry(size);
-        this.slowBeacon = new THREE.Mesh(slowBeaconGeometry, MATERIALS.winter);
-        this.slowBeacon.name = "slowBeacon";
-        this.slowBeacon.visible = false;
-        this.slowBeacon.position.y = ypos;
-        model.add(this.slowBeacon);
-        // console.log(this.slowBeacon);
 
         return model;
     }
@@ -206,36 +189,50 @@ export class Enemy {
     }
 
     setPoisoned() {
+        if (!this.isPoisoned) {
+            this.model.traverse((obj) => {
+                if ((obj as any).isMesh && obj.type === "SkinnedMesh") {
+                    poisonOutlinePass.selectedObjects.push(obj);
+                    console.log("setSlowed", obj.uuid);
+                }
+            });
+        }
         this.isPoisoned = true;
-        // this.model.traverse((obj) => {
-        //     if ((obj as any).isMesh && obj.name !== "slowBeacon") {
-        //         const found = this.poisonMaterial.find((entry) => entry.meshName === obj.name);
-        //         if (found) {
-        //             (obj as THREE.Mesh).material = found.material;
-        //         }
-        //     }
-        // });
     }
     healPoison() {
         this.isPoisoned = false;
         this.model.traverse((obj) => {
-            if ((obj as any).isMesh && obj.name !== "slowBeacon") {
-                const found = this.originalMaterial.find((entry) => entry.meshName === obj.name);
-                if (found) {
-                    (obj as THREE.Mesh).material = found.material;
+            if ((obj as any).isMesh && obj.type === "SkinnedMesh") {
+                const outlineObjIdx = poisonOutlinePass.selectedObjects.findIndex((o) => o.uuid === obj.uuid);
+                if (outlineObjIdx > -1) {
+                    poisonOutlinePass.selectedObjects.splice(outlineObjIdx, 1);
                 }
             }
         });
     }
 
     setSlowed() {
+        if (!this.isSlowed) {
+            this.model.traverse((obj) => {
+                if ((obj as any).isMesh && obj.type === "SkinnedMesh") {
+                    slowOutlinePass.selectedObjects.push(obj);
+                    console.log("setSlowed", obj.uuid);
+                }
+            });
+        }
         this.isSlowed = true;
-        this.slowBeacon.visible = true;
         this.timeSinceSlowed = 0;
     }
     healSlow() {
         this.isSlowed = false;
-        this.slowBeacon.visible = false;
+        this.model.traverse((obj) => {
+            if ((obj as any).isMesh && obj.type === "SkinnedMesh") {
+                const outlineObjIdx = slowOutlinePass.selectedObjects.findIndex((o) => o.uuid === obj.uuid);
+                if (outlineObjIdx > -1) {
+                    slowOutlinePass.selectedObjects.splice(outlineObjIdx, 1);
+                }
+            }
+        });
         this.timeSinceSlowed = 0;
     }
 
@@ -244,7 +241,7 @@ export class Enemy {
     //     try {
     //         // enemyMesh.material = MATERIALS.damageMaterialStd;
     //         this.model.traverse((obj) => {
-    //             if ((obj as any).isMesh && obj.name !== "slowBeacon") {
+    //             if ((obj as any).isMesh) {
     //                 (obj as THREE.Mesh).material = MATERIALS.damageMaterialStd;
     //             }
     //         });
@@ -253,7 +250,7 @@ export class Enemy {
     //     } finally {
     //         setTimeout(() => {
     //             this.model.traverse((obj) => {
-    //                 if ((obj as any).isMesh && obj.name !== "slowBeacon") {
+    //                 if ((obj as any).isMesh) {
     //                     const found = this.isPoisoned
     //                         ? this.poisonMaterial.find((entry) => entry.meshName === obj.name)
     //                         : this.originalMaterial.find((entry) => entry.meshName === obj.name);

@@ -1,8 +1,8 @@
 import { getD } from "./helpers";
 
 const METEOR_COOLDOWN = 16;
-// const BLIZZARD_COOLDOWN = 2;
-const BLIZZARD_COOLDOWN = 8;
+const BLIZZARD_COOLDOWN = 2;
+// const BLIZZARD_COOLDOWN = 8;
 
 export class PlayerStats {
     hp: number;

@@ -111,7 +111,9 @@ let speedBtns: HTMLDivElement;
 let callWaveBeaconContainers: HTMLDivElement[] = [];
 
 let composer: EffectComposer;
-export let outlinePass: OutlinePass;
+let outlinePass: OutlinePass;
+export let slowOutlinePass: OutlinePass;
+export let poisonOutlinePass: OutlinePass;
 let effectFXAA: ShaderPass;
 
 let frameId = 0;
@@ -320,20 +322,20 @@ async function gameSetup() {
     scene.add(mouseTargetRing);
     mouseTargetRing.visible = false;
 
+    // post-processing (for drawing outlines)
     composer = new EffectComposer(renderer);
 
     const renderPass = new RenderPass(scene, camera);
     composer.addPass(renderPass);
 
     outlinePass = new OutlinePass(new THREE.Vector2(canvasWidth, canvasHeight), scene, camera);
+    slowOutlinePass = new OutlinePass(new THREE.Vector2(canvasWidth, canvasHeight), scene, camera);
+    poisonOutlinePass = new OutlinePass(new THREE.Vector2(canvasWidth, canvasHeight), scene, camera);
+    slowOutlinePass.visibleEdgeColor = new THREE.Color(COLORS.blue);
+    poisonOutlinePass.visibleEdgeColor = new THREE.Color(COLORS.poisonGreen);
     composer.addPass(outlinePass);
-
-    // const textureLoader = new THREE.TextureLoader();
-    // textureLoader.load("textures/tri_pattern.jpg", function (texture) {
-    //     outlinePass.patternTexture = texture;
-    //     texture.wrapS = THREE.RepeatWrapping;
-    //     texture.wrapT = THREE.RepeatWrapping;
-    // });
+    composer.addPass(slowOutlinePass);
+    composer.addPass(poisonOutlinePass);
 
     const outputPass = new OutputPass();
     composer.addPass(outputPass);
@@ -1016,7 +1018,7 @@ function onCanvasClick(e: MouseEvent) {
                 obj.visible = false;
             }
 
-            if ((obj as THREE.Mesh).isMesh && !obj.visible && obj.name !== "rangeGizmo" && obj.name !== "slowBeacon") {
+            if ((obj as THREE.Mesh).isMesh && !obj.visible && obj.name !== "rangeGizmo") {
                 obj.visible = true;
             }
         });
@@ -1048,8 +1050,7 @@ function onCanvasClick(e: MouseEvent) {
                 (obj as THREE.Mesh).isMesh &&
                 !obj.visible &&
                 obj.name !== "rangeGizmo" &&
-                obj.name !== "mouseTargetRing" &&
-                obj.name !== "slowBeacon"
+                obj.name !== "mouseTargetRing"
             ) {
                 obj.visible = true;
             }
@@ -1077,7 +1078,7 @@ function onCanvasClick(e: MouseEvent) {
                 obj.visible = false;
             }
 
-            if ((obj as THREE.Mesh).isMesh && !obj.visible && obj.name !== "rangeGizmo" && obj.name !== "slowBeacon") {
+            if ((obj as THREE.Mesh).isMesh && !obj.visible && obj.name !== "rangeGizmo") {
                 // console.log(obj);
                 obj.visible = true;
             }
@@ -1178,8 +1179,7 @@ function onPauseGame() {
             (obj as any).isCSS2DObject &&
             obj.visible &&
             obj.name.includes("-modal") && // is a modal
-            obj.name !== "call-wave-2D-modal" && // but not the callWaveBeacon
-            obj.name !== "slowBeacon"
+            obj.name !== "call-wave-2D-modal" // but not the callWaveBeacon
         ) {
             obj.visible = false;
 
@@ -1253,37 +1253,39 @@ function handleCameraMovement(e: PointerEvent) {
     camera.lookAt(camTarget);
 }
 
-let prevHiglightedMesh: THREE.Mesh | null = null;
+let prevHighlightedMeshUUID: string | null = null;
 function handleHoverEfx() {
     const rayIntersects = mouseRay.intersectObjects(scene.children);
     let foundHighlightTarget = false;
     for (const ch of rayIntersects) {
-        const mesh = ch.object as THREE.Mesh;
-        if (mesh.isMesh && (mesh.name.includes("-Tower") || mesh.name.includes("TowerBase"))) {
-            const oldMeshIdx = outlinePass.selectedObjects.findIndex((o) => o === prevHiglightedMesh);
-            outlinePass.visibleEdgeColor = new THREE.Color(0xffffff * Math.random());
-            outlinePass.selectedObjects.splice(oldMeshIdx, 1, mesh);
-            prevHiglightedMesh = mesh;
+        const obj = ch.object as THREE.Mesh;
+        if (
+            obj.isMesh &&
+            obj.type !== "SkinnedMesh" &&
+            (obj.name.includes("-Tower") || obj.name.includes("TowerBase"))
+        ) {
+            const oldMeshIdx = outlinePass.selectedObjects.findIndex((o) => o.uuid === prevHighlightedMeshUUID);
+            // outlinePass.visibleEdgeColor = new THREE.Color(0xffffff * Math.random());
+            prevHighlightedMeshUUID = obj.uuid;
             foundHighlightTarget = true;
+            outlinePass.selectedObjects.splice(oldMeshIdx, 1);
+            outlinePass.selectedObjects.push(obj);
             break;
         }
     }
 
     if (!foundHighlightTarget) {
-        outlinePass.selectedObjects = outlinePass.selectedObjects.filter((o) => o !== prevHiglightedMesh);
-        prevHiglightedMesh = null;
+        if (prevHighlightedMeshUUID) {
+            const oldMeshIdx = outlinePass.selectedObjects.findIndex(
+                (o) => o.type !== "SkinnedMesh" && o.uuid === prevHighlightedMeshUUID
+            );
+
+            if (oldMeshIdx > -1) {
+                outlinePass.selectedObjects.splice(oldMeshIdx, 1);
+            }
+        }
+        prevHighlightedMeshUUID = null;
     }
-    /**
-     *
-     * for each obj
-     *      if obj is tower or towerBase
-     *          remove prev tower/towerBase
-     *          add tower/towerBase
-     *               break
-     *  if no tower or towerBase
-     *      remove prev tower/towerBase
-     *
-     */
 }
 
 function revertCancelableModals(clickedModal: HTMLDivElement | undefined) {
