@@ -122,10 +122,10 @@ let readyToFireBlizzard = false;
 let blizzardTargetPos = new THREE.Vector3();
 
 let mouseTargetRing: THREE.Mesh;
-
 let scaling = false;
 let prevPinchDist = 0;
 let pinchDist = 0;
+
 export async function destroyGame() {
     console.log("destroy", { scene });
     cancelAnimationFrame(frameId);
@@ -166,7 +166,10 @@ export async function destroyGame() {
     window.removeEventListener("resize", onResize);
     window.removeEventListener("visibilitychange", onVisibilityChange);
     window.removeEventListener("wheel", onZoom);
-    // window.removeEventListener("gesturechange", onMobileZoom);
+    window.removeEventListener("touchstart", onTouchStart);
+    window.removeEventListener("touchmove", onTouchMove);
+    window.removeEventListener("touchend", onTouchEnd);
+
     canvas.removeEventListener("pointermove", onPointerMove);
     canvas.removeEventListener("click", onCanvasClick);
     canvas.removeEventListener("pointerdown", onMouseDown);
@@ -208,7 +211,10 @@ export async function initGame({ area, level, hp, skills }: GameInitProps) {
     window.addEventListener("resize", onResize);
     window.addEventListener("visibilitychange", onVisibilityChange);
     window.addEventListener("wheel", onZoom);
-    // window.addEventListener("gesturechange", onMobileZoom);
+    window.addEventListener("touchstart", onTouchStart);
+    window.addEventListener("touchmove", onTouchMove);
+    window.addEventListener("touchend", onTouchEnd);
+
     canvas.addEventListener("pointermove", onPointerMove);
     canvas.addEventListener("click", onCanvasClick);
     canvas.addEventListener("pointerdown", onMouseDown);
@@ -219,38 +225,22 @@ export async function initGame({ area, level, hp, skills }: GameInitProps) {
     blizzardBtn.addEventListener("click", onBlizzardBtnClick);
 
     frameId = requestAnimationFrame(animate);
+}
 
-    // fontLoader.load("/assets/fonts/font.json", (font) => {
-    //     console.log({ font });
-    //     const geometry = new TextGeometry("Hello three.js!", {
-    //         font: font,
-    //         size: 4,
-    //         height: 2,
-    //         curveSegments: 12,
-    //     });
-
-    //     const textMesh = new THREE.Mesh(geometry, MATERIALS.beacon);
-    //     scene.add(textMesh);
-    // });
-
-    window.ontouchstart = (e) => {
-        console.log("ontouchstart", e);
-        if (e.touches.length === 2) {
-            scaling = true;
-        }
-    };
-    window.ontouchmove = (e) => {
-        // console.log("ontouchmove", scaling);
-        if (scaling) {
-            onMobileZoom(e);
-        }
-    };
-    window.ontouchend = (e) => {
-        console.log("ontouchend", e);
-        if (scaling) {
-            scaling = false;
-        }
-    };
+function onTouchStart(e: TouchEvent) {
+    if (e.touches.length === 2) {
+        scaling = true;
+    }
+}
+function onTouchMove(e: TouchEvent) {
+    if (scaling) {
+        onMobileZoom(e);
+    }
+}
+function onTouchEnd() {
+    if (scaling) {
+        scaling = false;
+    }
 }
 
 async function gameSetup() {
@@ -1604,3 +1594,16 @@ function onPoisonEntryExpired(e: any) {
     // console.log("onPoisonEntryExpired", { poisonEntries, poison, enemy });
     poisonEntries.delete(poison.enemyId);
 }
+
+// fontLoader.load("/assets/fonts/font.json", (font) => {
+//     console.log({ font });
+//     const geometry = new TextGeometry("Hello three.js!", {
+//         font: font,
+//         size: 4,
+//         height: 2,
+//         curveSegments: 12,
+//     });
+
+//     const textMesh = new THREE.Mesh(geometry, MATERIALS.beacon);
+//     scene.add(textMesh);
+// });
