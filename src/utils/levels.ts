@@ -69,7 +69,7 @@ export const STAGE_WAVES_DATA: [string, number, number, number][][][] = [
         // wave 3
         [
             ...waveSegment(EnemyChar.Spider, 3, 13, 0, 1),
-            ...waveSegment(EnemyChar.Spider, 3, 11, 8, 3),
+            ...waveSegment(EnemyChar.Bee, 3, 11, 8, 3),
             ...waveSegment(EnemyChar.Spider, 3, 11, 16, 0),
             ...waveSegment(EnemyChar.Spider, 3, 11, 24, 2),
             ...waveSegment(EnemyChar.Ninja, 4, 8, 6, 3),
@@ -89,9 +89,9 @@ export const STAGE_WAVES_DATA: [string, number, number, number][][][] = [
             ...waveSegment(EnemyChar.Orc, 8, 2, 12, 3),
             ...waveSegment(EnemyChar.Orc, 8, 2, 18, 1),
             ...waveSegment(EnemyChar.Spider, 2, 8, 0, 0),
-            ...waveSegment(EnemyChar.Spider, 2, 8, 8, 1),
+            ...waveSegment(EnemyChar.Bee, 2, 8, 8, 1),
             ...waveSegment(EnemyChar.Spider, 2, 8, 16, 2),
-            ...waveSegment(EnemyChar.Spider, 2, 8, 24, 3),
+            ...waveSegment(EnemyChar.Bee, 2, 8, 24, 3),
         ],
         [...waveSegment(EnemyChar.Tribal, 4, 6, 0, 3), ...waveSegment(EnemyChar.Spider, 0.8, 20, 10, 1)],
         // wave 4
@@ -111,9 +111,9 @@ export const STAGE_WAVES_DATA: [string, number, number, number][][][] = [
             ...waveSegment(EnemyChar.Orc, 8, 2, 12, 3),
             ...waveSegment(EnemyChar.Orc, 8, 2, 18, 1),
             ...waveSegment(EnemyChar.Spider, 2, 8, 0, 0),
-            ...waveSegment(EnemyChar.Spider, 2, 8, 8, 1),
+            ...waveSegment(EnemyChar.Bee, 2, 8, 8, 1),
             ...waveSegment(EnemyChar.Spider, 2, 8, 16, 2),
-            ...waveSegment(EnemyChar.Spider, 2, 8, 24, 3),
+            ...waveSegment(EnemyChar.Bee, 2, 8, 24, 3),
         ],
         [...waveSegment(EnemyChar.Tribal, 4, 6, 0, 3), ...waveSegment(EnemyChar.Spider, 0.8, 20, 10, 1)],
         // wave 4
@@ -135,11 +135,11 @@ export const STAGE_WAVES_DATA: [string, number, number, number][][][] = [
             ...waveSegment(EnemyChar.Orc, 8, 3, 0, 1, []),
             ...waveSegment(EnemyChar.Orc, 8, 3, 6, 1, []),
             ...waveSegment(EnemyChar.Orc, 8, 3, 12, 2),
-            ...waveSegment(EnemyChar.Orc, 8, 3, 18, 3),
+            ...waveSegment(EnemyChar.Wizard, 8, 3, 18, 3),
             ...waveSegment(EnemyChar.Spider, 2, 10, 0, 0),
             ...waveSegment(EnemyChar.Spider, 2, 10, 8, 1),
             ...waveSegment(EnemyChar.Spider, 2, 10, 16, 2),
-            ...waveSegment(EnemyChar.Spider, 2, 10, 24, 3),
+            ...waveSegment(EnemyChar.Bee, 2, 10, 24, 3),
         ],
         [...waveSegment(EnemyChar.Tribal, 4, 6, 0, 3), ...waveSegment(EnemyChar.Spider, 0.8, 20, 10, 1)],
         // wave 4

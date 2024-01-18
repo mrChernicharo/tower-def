@@ -1260,6 +1260,7 @@ function onGameSpeedChange(e: MouseEvent) {
 }
 
 function handleCameraMovement(e: PointerEvent) {
+    if (mobileScaling) return; // block camera movement while zooming
     if (
         (e.movementX > 0 && camera.position.x > levelData.cameraBounds.left) ||
         (e.movementX < 0 && camera.position.x < levelData.cameraBounds.right)
