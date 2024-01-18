@@ -1,8 +1,15 @@
 export enum EnemyType {
     Spider = "spider",
     Orc = "orc",
-    Raptor = "raptor",
-    Raptor2 = "raptor2",
+    Alien = "alien",
+    Demon = "demon",
+    Dino = "dino",
+    Knight = "knight",
+    Wizard = "wizard",
+    Tribal = "tribal",
+    Ninja = "ninja",
+    Elf = "elf",
+    //
     Soldier = "soldier",
     Brigand = "brigand",
     Warrior = "warrior",
@@ -11,11 +18,18 @@ export enum EnemyType {
 export enum EnemyChar {
     Spider = "s",
     Orc = "o",
+    Alien = "a",
+    Demon = "d",
+    Dino = "dn",
+    Knight = "k",
+    Wizard = "wz",
+    Tribal = "t",
+    Ninja = "n",
+    Elf = "e",
+    //
     Soldier = "z",
     Brigand = "b",
     Warrior = "w",
-    Raptor = "r",
-    Raptor2 = "r2",
 }
 
 export enum GameState {

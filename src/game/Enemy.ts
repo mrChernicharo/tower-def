@@ -43,19 +43,19 @@ export class Enemy {
         this.model.visible = false;
         this.mixer = new THREE.AnimationMixer(this.model);
 
-        if (this.enemyType === EnemyType.Raptor2) {
-            this.mixer.timeScale = 0.4;
-        }
+        // if (this.enemyType === EnemyType.Raptor2) {
+        //     this.mixer.timeScale = 0.4;
+        // }
 
         const walkClip = this.glb.animations.find((anim) => anim.name === this.bluePrint.walkAnimationName)!;
         const walkAction = this.mixer.clipAction(walkClip);
         walkAction.play();
 
-        if (this.enemyType === EnemyType.Raptor || this.enemyType === EnemyType.Raptor2) {
-            const idleClip = this.glb.animations.find((anim) => anim.name === "Idling")!;
-            const idleAction = this.mixer.clipAction(idleClip);
-            idleAction.play();
-        }
+        // if (this.enemyType === EnemyType.Raptor || this.enemyType === EnemyType.Raptor2) {
+        //     const idleClip = this.glb.animations.find((anim) => anim.name === "Idling")!;
+        //     const idleAction = this.mixer.clipAction(idleClip);
+        //     idleAction.play();
+        // }
 
         this.timeSinceSpawn = 0;
         this.#ready = true;
@@ -133,27 +133,34 @@ export class Enemy {
                 this.model.lookAt(position.clone().sub(tangent));
                 break;
             }
-            case "orc": {
+            case "orc":
+            case "alien":
+            case "demon":
+            case "dino":
+            case "tribal":
+            case "ninja":
+            case "elf":
+            case "knight": {
                 const zeroYTan = new THREE.Vector3(tangent.x, 0, tangent.z);
                 this.model.lookAt(position.clone().add(zeroYTan));
                 break;
             }
-            case "raptor": {
-                const zeroYTan = new THREE.Vector3(tangent.x, 0, tangent.z);
-                this.model.lookAt(
-                    position.clone().add(zeroYTan.applyAxisAngle(this.model.up, -Math.PI * 0.5).add(zeroYTan))
-                );
-                this.model.position.y += 0.1;
-                break;
-            }
-            case "raptor2": {
-                const zeroYTan = new THREE.Vector3(tangent.x, 0, tangent.z);
-                this.model.lookAt(
-                    position.clone().add(zeroYTan.applyAxisAngle(this.model.up, -Math.PI * 0.5).add(zeroYTan))
-                );
-                this.model.position.y += 0.6;
-                break;
-            }
+            // case "raptor": {
+            //     const zeroYTan = new THREE.Vector3(tangent.x, 0, tangent.z);
+            //     this.model.lookAt(
+            //         position.clone().add(zeroYTan.applyAxisAngle(this.model.up, -Math.PI * 0.5).add(zeroYTan))
+            //     );
+            //     this.model.position.y += 0.1;
+            //     break;
+            // }
+            // case "raptor2": {
+            //     const zeroYTan = new THREE.Vector3(tangent.x, 0, tangent.z);
+            //     this.model.lookAt(
+            //         position.clone().add(zeroYTan.applyAxisAngle(this.model.up, -Math.PI * 0.5).add(zeroYTan))
+            //     );
+            //     this.model.position.y += 0.6;
+            //     break;
+            // }
             case "soldier":
             case "brigand":
             case "warrior": {
