@@ -331,11 +331,13 @@ async function gameSetup() {
     composer.addPass(renderPass);
 
     outlinePass = new OutlinePass(new THREE.Vector2(canvasWidth, canvasHeight), scene, camera);
-    outlinePass.visibleEdgeColor = new THREE.Color(0xffffff);
     slowOutlinePass = new OutlinePass(new THREE.Vector2(canvasWidth, canvasHeight), scene, camera);
-    slowOutlinePass.visibleEdgeColor = new THREE.Color(COLORS.blue);
     poisonOutlinePass = new OutlinePass(new THREE.Vector2(canvasWidth, canvasHeight), scene, camera);
+
+    outlinePass.visibleEdgeColor = new THREE.Color(0xffffff);
+    slowOutlinePass.visibleEdgeColor = new THREE.Color(COLORS.blue);
     poisonOutlinePass.visibleEdgeColor = new THREE.Color(COLORS.poisonGreen);
+
     composer.addPass(outlinePass);
     composer.addPass(slowOutlinePass);
     composer.addPass(poisonOutlinePass);
