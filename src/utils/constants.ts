@@ -413,7 +413,7 @@ export const TOWER_BLUEPRINTS: { [k in TowerType]: TowerBluePrint[] } = {
         {
             name: TowerType.Ballista,
             defaultStrategy: TargetingStrategy.FirstInLine,
-            firePointY: 6,
+            firePointY: 8,
             level: 1,
             damage: [10, 20],
             fireRate: 2,
@@ -425,7 +425,7 @@ export const TOWER_BLUEPRINTS: { [k in TowerType]: TowerBluePrint[] } = {
         {
             name: TowerType.Ballista,
             defaultStrategy: TargetingStrategy.FirstInLine,
-            firePointY: 6.5,
+            firePointY: 8.5,
             level: 2,
             damage: [20, 38],
             fireRate: 2.25,
@@ -437,7 +437,7 @@ export const TOWER_BLUEPRINTS: { [k in TowerType]: TowerBluePrint[] } = {
         {
             name: TowerType.Ballista,
             defaultStrategy: TargetingStrategy.FirstInLine,
-            firePointY: 7,
+            firePointY: 9,
             level: 3,
             damage: [34, 55],
             fireRate: 2.5,
@@ -449,7 +449,7 @@ export const TOWER_BLUEPRINTS: { [k in TowerType]: TowerBluePrint[] } = {
         {
             name: TowerType.Ballista,
             defaultStrategy: TargetingStrategy.FirstInLine,
-            firePointY: 7.5,
+            firePointY: 9.5,
             level: 4,
             damage: [51, 76],
             fireRate: 2.75,

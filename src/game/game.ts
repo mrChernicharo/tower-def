@@ -514,11 +514,11 @@ async function drawMap() {
                 obj.layers.set(AppLayers.TowerBase);
             } else if (/desert|Plane/g.test(mesh.name)) {
                 mesh.material = MATERIALS[`${levelData.area}`];
-                mesh.receiveShadow = true;
+                // mesh.receiveShadow = true;
                 obj.layers.set(AppLayers.Terrain);
             } else {
                 mesh.material = MATERIALS.concrete2;
-                mesh.receiveShadow = true;
+                // mesh.receiveShadow = true;
                 obj.layers.set(AppLayers.Buildings);
             }
         }

@@ -80,7 +80,7 @@ export class Enemy {
 
                 if (obj.type === "SkinnedMesh") {
                     const mesh = obj as SkinnedMesh;
-                    mesh.castShadow = true;
+                    // mesh.castShadow = true;
 
                     this.skinnedMeshes.push(mesh);
                     if (!this.originalMaterial) {
@@ -113,7 +113,8 @@ export class Enemy {
     }
 
     getFuturePosition(timeInSecs: number) {
-        const t = this.getPercDist(timeInSecs);
+        let t = this.getPercDist(timeInSecs);
+        if (t > 1) t = 1;
         return this.path.getPointAt(t);
     }
 

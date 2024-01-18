@@ -8,6 +8,9 @@ import { THREE } from "../three";
 import { Enemy } from "./Enemy";
 import { StraightProjectile, ParabolaProjectile } from "./Projectile";
 
+const estimatedTimeToTarget = 1;
+const turnSpeed = 0.05;
+
 export class Tower {
     id: string;
     cooldown: number;
@@ -20,6 +23,7 @@ export class Tower {
     tileIdx: string;
     rangeGizmo!: THREE.Mesh;
     strategy: TargetingStrategy;
+    targetLocked = false;
     constructor(towerType: TowerType, position: THREE.Vector3, tileIdx: string) {
         this.id = idMaker();
         // this.level = 1;
@@ -136,16 +140,12 @@ export class Tower {
     tick(delta: number, targetEnemy: Enemy | undefined) {
         if (targetEnemy) {
             if (this.headMesh) {
-                const dx = this.model.position.x - targetEnemy.getFuturePosition(1).x;
-                const dz = this.model.position.z - targetEnemy.getFuturePosition(1).z;
-                const theta = Math.atan2(dz, dx) + Math.PI * 0.5;
-                // const angle = targetEnemy.model.position.angleTo(this.model.position) + Math.PI;
-                // const angle = Math.PI * 1.5;
-                console.log(theta);
-                this.headMesh.rotation.z = theta;
+                this._rotateTowerHead(targetEnemy);
+            } else {
+                this.targetLocked = true;
             }
 
-            if (this.cooldown <= 0) {
+            if (this.cooldown <= 0 && this.targetLocked) {
                 // console.log("ShoooT!", targetEnemy.enemyType);
                 this.fireProjectile(targetEnemy);
 
@@ -153,6 +153,29 @@ export class Tower {
             }
         }
         this.cooldown -= delta;
+    }
+
+    _rotateTowerHead(targetEnemy: Enemy) {
+        if (!this.headMesh) return;
+        const dx = this.model.position.x - targetEnemy.getFuturePosition(estimatedTimeToTarget).x;
+        const dz = this.model.position.z - targetEnemy.getFuturePosition(estimatedTimeToTarget).z;
+        const theta = Math.atan2(dz, dx) + Math.PI * 0.5;
+
+        const angleDiff = theta - this.headMesh.rotation.z;
+        // console.log(theta, this.headMesh.rotation.z, angleDiff);
+
+        if (Math.abs(angleDiff) < 0.02) {
+            this.headMesh.rotation.z = theta;
+            this.targetLocked = true;
+        } else {
+            this.targetLocked = false;
+
+            if (angleDiff > 0) {
+                this.headMesh.rotation.z += turnSpeed;
+            } else if (angleDiff < 0) {
+                this.headMesh.rotation.z -= turnSpeed;
+            }
+        }
     }
 
     fireProjectile(enemy: Enemy) {
@@ -165,7 +188,6 @@ export class Tower {
 
         switch (projBlueprint.trajectoryType) {
             case TrajectoryType.Parabola: {
-                const estimatedTimeToTarget = 1;
                 const diff = new THREE.Vector3()
                     .copy(origin)
                     .sub(new THREE.Vector3().copy(enemy.getFuturePosition(estimatedTimeToTarget)));
