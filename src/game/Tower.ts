@@ -10,11 +10,12 @@ import { StraightProjectile, ParabolaProjectile } from "./Projectile";
 
 export class Tower {
     id: string;
-    // level: number;
     cooldown: number;
     towerName: TowerType;
     position: THREE.Vector3;
     model!: THREE.Group;
+    bodyMesh!: THREE.Mesh;
+    headMesh: THREE.Mesh | undefined;
     blueprint: TowerBluePrint;
     tileIdx: string;
     rangeGizmo!: THREE.Mesh;
@@ -117,20 +118,39 @@ export class Tower {
         const s = this.blueprint.modelScale;
         this.model.scale.set(s, s, s);
 
-        // this.model.traverse((obj) => {
-        //     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        //     if ((obj as any).isMesh) {
-        //         obj.castShadow = true;
-        //     }
-        // });
+        this.model.traverse((obj) => {
+            //     // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            //     if ((obj as any).isMesh) {
+            //         obj.castShadow = true;
+            //      }
+            if (obj.name.includes("_Body")) {
+                this.bodyMesh = obj as THREE.Mesh;
+            }
+            if (obj.name.includes("_Head")) {
+                this.headMesh = obj as THREE.Mesh;
+            }
+            console.log(obj);
+        });
     }
 
     tick(delta: number, targetEnemy: Enemy | undefined) {
-        if (targetEnemy && this.cooldown <= 0) {
-            // console.log("ShoooT!", targetEnemy.enemyType);
-            this.fireProjectile(targetEnemy);
+        if (targetEnemy) {
+            if (this.headMesh) {
+                const dx = this.model.position.x - targetEnemy.getFuturePosition(1).x;
+                const dz = this.model.position.z - targetEnemy.getFuturePosition(1).z;
+                const theta = Math.atan2(dz, dx) + Math.PI * 0.5;
+                // const angle = targetEnemy.model.position.angleTo(this.model.position) + Math.PI;
+                // const angle = Math.PI * 1.5;
+                console.log(theta);
+                this.headMesh.rotation.z = theta;
+            }
 
-            this.cooldown = 1 / (this.blueprint.fireRate * 0.5);
+            if (this.cooldown <= 0) {
+                // console.log("ShoooT!", targetEnemy.enemyType);
+                this.fireProjectile(targetEnemy);
+
+                this.cooldown = 1 / (this.blueprint.fireRate * 0.5);
+            }
         }
         this.cooldown -= delta;
     }
