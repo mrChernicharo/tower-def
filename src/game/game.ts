@@ -63,7 +63,7 @@ let canvasWidth = window.innerWidth;
 let canvasHeight = window.innerHeight;
 
 export const ENEMY_MODELS = {} as { [k in EnemyType]: GLTF };
-export const TOWER_MODELS = {} as { [k in TowerType]: { [k: `level-${number}`]: THREE.Mesh } };
+export const TOWER_MODELS = {} as { [k in TowerType]: { [k: `level-${number}`]: THREE.Group } };
 export const PROJECTILE_MODELS = {} as { [k in TowerType]: { [k: `level-${number}`]: THREE.Mesh } };
 
 let gltfLoader: GLTFLoader;
@@ -85,7 +85,7 @@ let activeGameTime: number;
 let loadingManager: THREE.LoadingManager;
 let gameSpeed: GameSpeed;
 let levelData: GameLevel;
-let towerPreview: { model: THREE.Mesh; rangeGizmo: THREE.Mesh } | undefined;
+let towerPreview: { model: THREE.Group; rangeGizmo: THREE.Mesh } | undefined;
 
 let ambientLight: THREE.AmbientLight;
 
@@ -411,13 +411,16 @@ async function _initEnemyModels() {
 }
 
 async function _initTowerModels() {
-    const towersFbx = await fbxLoader.loadAsync("/assets/fbx/towers-no-texture.fbx");
+    // const towersFbx = await fbxLoader.loadAsync("/assets/fbx/towers-no-texture.fbx");
+    const { scene: newTowers } = await gltfLoader.loadAsync("/assets/glb/towers/towers-no-texture-separated-heads.glb");
+
     const projectilesFbx = await fbxLoader.loadAsync("/assets/fbx/projectiles-no-texture.fbx");
     towerTexture = await new THREE.TextureLoader().loadAsync("/assets/fbx/towers-texture.png");
-    // console.log({ fbx: towersFbx, towers: towersFbx.children.map((c) => c.name).sort((a, b) => a.localeCompare(b)) });
+    console.log({ newTowers, towers: newTowers.children.map((c) => c.name).sort((a, b) => a.localeCompare(b)) });
 
-    const towerModels = towersFbx.children;
+    const towerModels = newTowers.children;
     for (const model of towerModels) {
+        // console.log(model);
         const towerLevel = +model.name.split("_")[3];
         const towerName = capitalize(model.name.split("_")[0]) as TowerType;
 
@@ -425,8 +428,19 @@ async function _initTowerModels() {
             TOWER_MODELS[towerName] = {};
         }
 
-        model.name = `${towerName}-Tower`;
-        TOWER_MODELS[towerName][`level-${towerLevel}`] = model as THREE.Mesh;
+        if (!TOWER_MODELS[towerName][`level-${towerLevel}`]) {
+            TOWER_MODELS[towerName][`level-${towerLevel}`] = new THREE.Group();
+        }
+
+        if (model.userData.name.includes("_Head")) {
+            model.name = `${towerName}-Tower_Head`;
+        } else if (model.userData.name.includes("_Body")) {
+            model.name = `${towerName}-Tower_Body`;
+        } else {
+            model.name = `${towerName}-Tower`;
+        }
+
+        TOWER_MODELS[towerName][`level-${towerLevel}`].add(model.clone());
     }
 
     const projectileModels = projectilesFbx.children;

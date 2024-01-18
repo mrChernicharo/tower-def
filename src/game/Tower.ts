@@ -14,7 +14,7 @@ export class Tower {
     cooldown: number;
     towerName: TowerType;
     position: THREE.Vector3;
-    model!: THREE.Mesh;
+    model!: THREE.Group;
     blueprint: TowerBluePrint;
     tileIdx: string;
     rangeGizmo!: THREE.Mesh;
@@ -83,9 +83,11 @@ export class Tower {
             throw Error("MAX LEVEL REACHED");
         }
         const desiredBlueprint = { ...TOWER_BLUEPRINTS[this.towerName][currLevel] };
-        const desiredModel = TOWER_MODELS[this.towerName][`level-${nextLevel}`].clone() as THREE.Mesh;
+        const desiredModel = TOWER_MODELS[this.towerName][`level-${nextLevel}`].clone();
         desiredModel.layers.set(AppLayers.Tower);
-        desiredModel.material = MATERIALS.tower(towerTexture);
+        desiredModel.children.forEach((mesh) => {
+            (mesh as THREE.Mesh).material = MATERIALS.tower(towerTexture);
+        });
         desiredModel.position.set(this.position.x, this.position.y, this.position.z);
         const s = desiredBlueprint.modelScale;
         desiredModel.scale.set(s, s, s);
@@ -105,17 +107,22 @@ export class Tower {
         this.model.userData["tower_level"] = this.blueprint.level;
         this.model.userData["tile_idx"] = this.tileIdx;
         this.model.layers.set(AppLayers.Tower);
-        this.model.material = MATERIALS.tower(towerTexture);
+        this.model.children.forEach((mesh) => {
+            (mesh as THREE.Mesh).material = MATERIALS.tower(towerTexture);
+            // mesh.userData["tower_id"] = this.id;
+            // mesh.userData["tower_level"] = this.blueprint.level;
+            // mesh.userData["tile_idx"] = this.tileIdx;
+        });
         this.model.position.set(this.position.x, this.position.y, this.position.z);
         const s = this.blueprint.modelScale;
         this.model.scale.set(s, s, s);
 
-        this.model.traverse((obj) => {
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            if ((obj as any).isMesh) {
-                obj.castShadow = true;
-            }
-        });
+        // this.model.traverse((obj) => {
+        //     // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        //     if ((obj as any).isMesh) {
+        //         obj.castShadow = true;
+        //     }
+        // });
     }
 
     tick(delta: number, targetEnemy: Enemy | undefined) {

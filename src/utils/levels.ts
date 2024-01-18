@@ -124,8 +124,8 @@ export const STAGE_WAVES_DATA: [string, number, number, number][][][] = [
         // wave 1
         [
             ...waveSegment(EnemyChar.Spider, 2.8, 10, 0, 0),
-            ...waveSegment(EnemyChar.Spider, 2.8, 10, 0, 1),
-            ...waveSegment(EnemyChar.Spider, 2.8, 10, 28, 2),
+            ...waveSegment(EnemyChar.Spider, 2.8, 10, 0, 2),
+            ...waveSegment(EnemyChar.Spider, 2.8, 10, 28, 1),
             ...waveSegment(EnemyChar.Spider, 2.8, 10, 28, 3),
         ],
         // wave 2
@@ -137,7 +137,7 @@ export const STAGE_WAVES_DATA: [string, number, number, number][][][] = [
             ...waveSegment(EnemyChar.Orc, 8, 3, 12, 2),
             ...waveSegment(EnemyChar.Wizard, 8, 3, 18, 3),
             ...waveSegment(EnemyChar.Spider, 2, 10, 0, 0),
-            ...waveSegment(EnemyChar.Spider, 2, 10, 8, 1),
+            ...waveSegment(EnemyChar.Bee, 2, 10, 8, 1),
             ...waveSegment(EnemyChar.Spider, 2, 10, 16, 2),
             ...waveSegment(EnemyChar.Bee, 2, 10, 24, 3),
         ],
@@ -484,7 +484,8 @@ export const GAME_LEVELS: GameLevel[] = [
     {
         area: GameArea.Forest,
         level: 7,
-        initialGold: 380,
+        // initialGold: 380,
+        initialGold: 3800,
         mapURL: mapURLs.forest,
         paths: forestLevelPaths,
         waves: STAGE_WAVES_DATA[7],

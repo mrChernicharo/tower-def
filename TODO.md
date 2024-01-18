@@ -1,5 +1,4 @@
--   [ ] compute skills efx
--   [ ] camera
+-   [✔] camera
 -   [✔] tower previews
 -   [✔] more levels
 -   [✔] enabling/disabling skill buttons
@@ -13,5 +12,13 @@
 -   [✔] meteors
 -   [✔] meteor cancel btn
 -   [✔] meteor gizmo
--   [ ] blizzard
--   [ ] slow & poison
+-   [✔] blizzard
+-   [✔] slow & poison
+-   [✔] more and better enemy models
+-   [ ] compute skills efx
+-   [ ] rotate towers (wizard, ballista, cannon)
+-   [ ] projectile trajectory towards flying enemies
+-   [ ] more and better levels
+-   [ ] prettier blizzard
+-   [ ] (mobile) remove mouseMove torus
+-   [ ] (mobile) debug tower/towerbase highlighting
