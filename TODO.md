@@ -16,7 +16,8 @@
 -   [✔] slow & poison
 -   [✔] more and better enemy models
 -   [ ] compute skills efx
--   [ ] rotate towers (wizard, ballista, cannon)
+-   [✔] rotate towers (wizard, ballista, cannon)
+-   [ ] enhance tower rotation
 -   [ ] projectile trajectory towards flying enemies
 -   [ ] more and better levels
 -   [ ] prettier blizzard

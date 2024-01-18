@@ -68,9 +68,9 @@ export const allAreas = [
 
 export const mapURLs = {
     desert: "/assets/glb/levels/lv1.desert-level.glb",
-    forest: "/assets/glb/levels/lv2.castle-level.glb",
-    winter: "/assets/glb/levels/lv4.village-level.glb",
-    lava: "/assets/glb/levels/lv4.village-level.glb",
+    forest: "/assets/glb/levels/lv4.town-level.glb",
+    winter: "/assets/glb/levels/lv3.village-level.glb",
+    lava: "/assets/glb/levels/lv2.castle-level.glb",
 };
 
 export const imgs = {

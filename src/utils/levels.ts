@@ -1,7 +1,10 @@
 import { EnemyChar, GameArea } from "./enums";
 import { GameLevel } from "./types";
 import { mapURLs } from "./constants";
-import { desertLevelPath, forestLevelPaths, villageLevelPath } from "./level-paths";
+import { winterLevelPath } from "./paths/winter/paths";
+import { lavaLevelPaths } from "./paths/lava/paths";
+import { desertLevelPath } from "./paths/desert/paths";
+import { forestLevelPaths } from "./paths/forest/paths";
 
 // enemyChar, pathIdx, spawnAt, xOffset
 export const STAGE_WAVES_DATA: [string, number, number, number][][][] = [
@@ -497,7 +500,7 @@ export const GAME_LEVELS: GameLevel[] = [
         level: 8,
         initialGold: 400,
         mapURL: mapURLs.winter,
-        paths: [villageLevelPath],
+        paths: [winterLevelPath],
         waves: STAGE_WAVES_DATA[8],
         initialCamPos: [0, 60, 60],
         cameraBounds: largeBounds,
@@ -507,7 +510,7 @@ export const GAME_LEVELS: GameLevel[] = [
         level: 9,
         initialGold: 420,
         mapURL: mapURLs.winter,
-        paths: [villageLevelPath],
+        paths: [winterLevelPath],
         waves: STAGE_WAVES_DATA[9],
         initialCamPos: [0, 60, 60],
         cameraBounds: largeBounds,
@@ -517,7 +520,7 @@ export const GAME_LEVELS: GameLevel[] = [
         level: 10,
         initialGold: 440,
         mapURL: mapURLs.winter,
-        paths: [villageLevelPath],
+        paths: [winterLevelPath],
         waves: STAGE_WAVES_DATA[10],
         initialCamPos: [0, 60, 60],
         cameraBounds: largeBounds,
@@ -527,7 +530,7 @@ export const GAME_LEVELS: GameLevel[] = [
         level: 11,
         initialGold: 460,
         mapURL: mapURLs.winter,
-        paths: [villageLevelPath],
+        paths: [winterLevelPath],
         waves: STAGE_WAVES_DATA[11],
         initialCamPos: [0, 60, 60],
         cameraBounds: largeBounds,
@@ -537,7 +540,7 @@ export const GAME_LEVELS: GameLevel[] = [
         level: 12,
         initialGold: 480,
         mapURL: mapURLs.forest,
-        paths: forestLevelPaths,
+        paths: lavaLevelPaths,
         waves: STAGE_WAVES_DATA[12],
         initialCamPos: [0, 60, 60],
         cameraBounds: smallBounds,
@@ -547,7 +550,7 @@ export const GAME_LEVELS: GameLevel[] = [
         level: 13,
         initialGold: 500,
         mapURL: mapURLs.forest,
-        paths: forestLevelPaths,
+        paths: lavaLevelPaths,
         waves: STAGE_WAVES_DATA[13],
         initialCamPos: [0, 60, 60],
         cameraBounds: smallBounds,
@@ -557,7 +560,7 @@ export const GAME_LEVELS: GameLevel[] = [
         level: 14,
         initialGold: 520,
         mapURL: mapURLs.forest,
-        paths: forestLevelPaths,
+        paths: lavaLevelPaths,
         waves: STAGE_WAVES_DATA[14],
         initialCamPos: [0, 60, 60],
         cameraBounds: smallBounds,
@@ -567,7 +570,7 @@ export const GAME_LEVELS: GameLevel[] = [
         level: 15,
         initialGold: 550,
         mapURL: mapURLs.forest,
-        paths: forestLevelPaths,
+        paths: lavaLevelPaths,
         waves: STAGE_WAVES_DATA[15],
         initialCamPos: [0, 60, 60],
         cameraBounds: smallBounds,
