@@ -2,11 +2,12 @@
 import { useCallback, useEffect, useRef } from "react";
 import { useParams } from "react-router-dom";
 import { usePlayerContext } from "../context/usePlayerContext";
-import { LevelStarCount, PlayerSkills, SkillId } from "../../game/types";
-import { GAME_LEVELS, imgs } from "../../game/constants";
+import { LevelStarCount, PlayerSkills, SkillId } from "../../utils/types";
+import { imgs } from "../../utils/constants";
 import { AiFillSound } from "react-icons/ai";
 import { FaMusic } from "react-icons/fa";
 import { RiCloseCircleFill } from "react-icons/ri";
+import { GAME_LEVELS } from "../../utils/levels";
 
 // import { IoMdClose } from "react-icons/io";
 // <IoMdClose />

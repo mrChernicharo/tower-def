@@ -1,8 +1,8 @@
 import { Tower } from "./Tower";
-import { TOWER_BLUEPRINTS, imgs } from "./constants";
-import { ModalType, TowerType } from "./enums";
-import { capitalize, getStarIcons } from "./helpers";
-import { LevelStarCount } from "./types";
+import { TOWER_BLUEPRINTS, imgs } from "../utils/constants";
+import { ModalType, TowerType } from "../utils/enums";
+import { capitalize, getStarIcons } from "../utils/helpers";
+import { LevelStarCount } from "../utils/types";
 
 // <img src="${IMAGES}" />
 export const modalTemplates = {

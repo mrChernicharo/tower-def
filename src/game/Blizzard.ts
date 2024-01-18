@@ -1,6 +1,6 @@
 import { THREE } from "../three";
-import { MATERIALS } from "./constants";
-import { idMaker } from "./helpers";
+import { MATERIALS } from "../utils/constants";
+import { idMaker } from "../utils/helpers";
 
 const speed = 4;
 const radius = 5;

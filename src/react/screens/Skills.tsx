@@ -1,10 +1,10 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { Link } from "react-router-dom";
 import { usePlayerContext } from "../context/usePlayerContext";
-import { gameSkills, imgs } from "../../game/constants";
+import { gameSkills, imgs } from "../../utils/constants";
 import { useCallback, useEffect, useState } from "react";
-import { Skill, SkillId } from "../../game/types";
-import { capitalize, getEarnedStars, getSkillInfo, getSpentStars } from "../../game/helpers";
+import { Skill, SkillId } from "../../utils/types";
+import { capitalize, getEarnedStars, getSkillInfo, getSpentStars } from "../../utils/helpers";
 import { FaArrowLeft } from "react-icons/fa";
 
 const Skills = () => {
@@ -84,7 +84,7 @@ const Skills = () => {
                                             style={{ background: purchased ? "dodgerblue" : "" }}
                                             onClick={() => onSkillClick(skill)}
                                         >
-                                            <span>lv {skill.id.split("-")[1]} </span>
+                                            <span>lv{skill.id.split("-")[1]} </span>
                                             <span style={{ color: "yellow" }}>
                                                 <small>{skill.starCost}★ </small>
                                             </span>

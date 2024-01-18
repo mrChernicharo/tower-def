@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { MATERIALS, PROJECTILE_BLUEPRINTS, TOWER_BLUEPRINTS } from "./constants";
-import { AppLayers, TargetingStrategy, TowerType, TrajectoryType } from "./enums";
+import { MATERIALS, PROJECTILE_BLUEPRINTS, TOWER_BLUEPRINTS } from "../utils/constants";
+import { AppLayers, TargetingStrategy, TowerType, TrajectoryType } from "../utils/enums";
 import { TOWER_MODELS, towerTexture } from "./game";
-import { idMaker } from "./helpers";
-import { TowerBluePrint } from "./types";
+import { idMaker } from "../utils/helpers";
+import { TowerBluePrint } from "../utils/types";
 import { THREE } from "../three";
 import { Enemy } from "./Enemy";
 import { StraightProjectile, ParabolaProjectile } from "./Projectile";

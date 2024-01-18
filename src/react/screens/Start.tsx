@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { imgs } from "../../game/constants";
+import { imgs } from "../../utils/constants";
 
 export function Start() {
     return (

@@ -1,9 +1,9 @@
 import { THREE } from "../three";
-import { AppLayers, TowerType } from "./enums";
+import { AppLayers, TowerType } from "../utils/enums";
 import { PROJECTILE_MODELS, towerTexture } from "./game";
-import { determineDamage, idMaker } from "./helpers";
-import { ProjectileBluePrint } from "./types";
-import { COLORS, MATERIALS, PROJECTILE_BLUEPRINTS } from "./constants";
+import { determineDamage, idMaker } from "../utils/helpers";
+import { ProjectileBluePrint } from "../utils/types";
+import { COLORS, MATERIALS, PROJECTILE_BLUEPRINTS } from "../utils/constants";
 import { Tower } from "./Tower";
 
 class ProjectileBase {

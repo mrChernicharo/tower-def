@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
-import { imgs } from "../../game/constants";
+import { imgs } from "../../utils/constants";
 import { usePlayerContext } from "../context/usePlayerContext";
-import { getAreaByLevel, getEarnedStars, getSpentStars, getUnlockedStages } from "../../game/helpers";
+import { getAreaByLevel, getEarnedStars, getSpentStars, getUnlockedStages } from "../../utils/helpers";
 import { LevelStars } from "../components/levelStars";
 import { FaArrowLeft } from "react-icons/fa";
 import { useCallback, useEffect, useState } from "react";

@@ -3,10 +3,10 @@ import { GLTF } from "three/examples/jsm/Addons.js";
 import { ENEMY_MODELS, slowOutlinePass, pathCurves, poisonOutlinePass } from "./game";
 import { THREE } from "../three";
 import * as SkeletonUtils from "three/examples/jsm/utils/SkeletonUtils.js";
-import { AppLayers, EnemyType } from "./enums";
-import { EnemyBluePrint } from "./types";
-import { ENEMY_BLUEPRINTS /*, MATERIALS*/, MATERIALS } from "./constants";
-import { idMaker } from "./helpers";
+import { AppLayers, EnemyType } from "../utils/enums";
+import { EnemyBluePrint } from "../utils/types";
+import { ENEMY_BLUEPRINTS /*, MATERIALS*/, MATERIALS } from "../utils/constants";
+import { idMaker } from "../utils/helpers";
 import { SkinnedMesh } from "three";
 
 export class Enemy {
@@ -136,7 +136,6 @@ export class Enemy {
             case "orc": {
                 const zeroYTan = new THREE.Vector3(tangent.x, 0, tangent.z);
                 this.model.lookAt(position.clone().add(zeroYTan));
-                this.model.position.y += 3;
                 break;
             }
             case "raptor": {

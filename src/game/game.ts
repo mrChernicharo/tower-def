@@ -25,7 +25,7 @@ import {
     getProjectileTowerName,
     handleModelGun,
     idMaker,
-} from "./helpers";
+} from "../utils/helpers";
 import {
     BLIZZARD_EFFECT_DURATION,
     BLIZZARD_SLOW_DURATION,
@@ -34,20 +34,28 @@ import {
     DRAW_METEOR_GIZMOS,
     DRAW_PROJECTILE_TRAJECTORIES,
     ENEMY_BLUEPRINTS,
-    GAME_LEVELS,
     MATERIALS,
-    STAGE_WAVES_DATA,
     TOWER_BLUEPRINTS,
-} from "./constants";
+} from "../utils/constants";
 
-import { AppLayers, EnemyChar, EnemyType, GameArea, GameState, ModalType, TargetingStrategy, TowerType } from "./enums";
-import { EnemyBluePrint, Projectile, WaveEnemy, GameInitProps, GameSpeed, GameLevel } from "./types";
+import {
+    AppLayers,
+    EnemyChar,
+    EnemyType,
+    GameArea,
+    GameState,
+    ModalType,
+    TargetingStrategy,
+    TowerType,
+} from "../utils/enums";
+import { EnemyBluePrint, Projectile, WaveEnemy, GameInitProps, GameSpeed, GameLevel } from "../utils/types";
 import { beaconTemplate, cancelableModalNames, gameEndTemplates, modalTemplates, speedBtnsTemplate } from "./templates";
 import { Tower } from "./Tower";
 import { PlayerStats } from "./PlayerStats";
 import { Meteor } from "./Meteor";
 import { PoisonEntry } from "./PoisonEntry";
 import { Blizzard } from "./Blizzard";
+import { GAME_LEVELS, STAGE_WAVES_DATA } from "../utils/levels";
 
 // let pathPoints: THREE.Vector3[] = [];
 
