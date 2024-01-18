@@ -133,16 +133,25 @@ export class Enemy {
                 this.model.lookAt(position.clone().sub(tangent));
                 break;
             }
+            // case "knight":
             case "orc":
             case "alien":
             case "demon":
             case "dino":
             case "tribal":
             case "ninja":
-            case "elf":
-            case "knight": {
+            case "elf": {
                 const zeroYTan = new THREE.Vector3(tangent.x, 0, tangent.z);
                 this.model.lookAt(position.clone().add(zeroYTan));
+                break;
+            }
+            case "bee":
+            case "ghost":
+            case "squidle":
+            case "dragon": {
+                const zeroYTan = new THREE.Vector3(tangent.x, 0, tangent.z);
+                this.model.lookAt(position.clone().add(zeroYTan));
+                this.model.position.y += 3;
                 break;
             }
             // case "raptor": {
@@ -161,14 +170,14 @@ export class Enemy {
             //     this.model.position.y += 0.6;
             //     break;
             // }
-            case "soldier":
-            case "brigand":
-            case "warrior": {
-                const zeroYTan = new THREE.Vector3(tangent.x, 0, tangent.z);
-                this.model.lookAt(position.clone().add(zeroYTan));
-                this.model.position.y += 0.175;
-                break;
-            }
+            // case "soldier":
+            // case "brigand":
+            // case "warrior": {
+            //     const zeroYTan = new THREE.Vector3(tangent.x, 0, tangent.z);
+            //     this.model.lookAt(position.clone().add(zeroYTan));
+            //     this.model.position.y += 0.175;
+            //     break;
+            // }
             default:
                 this.model.lookAt(position.clone().sub(tangent));
                 break;

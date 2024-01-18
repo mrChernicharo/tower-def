@@ -8,21 +8,17 @@ import { Enemy } from "../game/Enemy";
 
 export function getEnemyTypeFromChar(char: EnemyChar): EnemyType {
     switch (char) {
-        // case "r":
-        //     return EnemyType.Raptor;
-        // case "r2":
-        //     return EnemyType.Raptor2;
         case "o":
             return EnemyType.Orc;
         case "a":
             return EnemyType.Alien;
-        case "d":
+        case "dm":
             return EnemyType.Demon;
         case "dn":
             return EnemyType.Dino;
-        case "k":
-            return EnemyType.Knight;
-        case "wz":
+        // case "k":
+        //     return EnemyType.Knight;
+        case "w":
             return EnemyType.Wizard;
         case "t":
             return EnemyType.Tribal;
@@ -31,11 +27,13 @@ export function getEnemyTypeFromChar(char: EnemyChar): EnemyType {
         case "e":
             return EnemyType.Elf;
         case "b":
-            return EnemyType.Brigand;
-        case "w":
-            return EnemyType.Warrior;
-        case "z":
-            return EnemyType.Soldier;
+            return EnemyType.Bee;
+        case "g":
+            return EnemyType.Ghost;
+        case "dr":
+            return EnemyType.Dragon;
+        case "sq":
+            return EnemyType.Squidle;
         case "s":
         default:
             return EnemyType.Spider;

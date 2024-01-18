@@ -4,32 +4,36 @@ export enum EnemyType {
     Alien = "alien",
     Demon = "demon",
     Dino = "dino",
-    Knight = "knight",
+    // Knight = "knight",
     Wizard = "wizard",
     Tribal = "tribal",
     Ninja = "ninja",
     Elf = "elf",
-    //
-    Soldier = "soldier",
-    Brigand = "brigand",
-    Warrior = "warrior",
+    Bee = "bee",
+    Dragon = "dragon",
+    Ghost = "ghost",
+    Squidle = "squidle",
 }
 
 export enum EnemyChar {
     Spider = "s",
     Orc = "o",
     Alien = "a",
-    Demon = "d",
+    Demon = "dm",
     Dino = "dn",
-    Knight = "k",
-    Wizard = "wz",
+    // Knight = "k",
+    Wizard = "w",
     Tribal = "t",
     Ninja = "n",
     Elf = "e",
-    //
-    Soldier = "z",
-    Brigand = "b",
-    Warrior = "w",
+    Bee = "b",
+    Dragon = "dr",
+    Ghost = "g",
+    Squidle = "sq",
+    // //
+    // Soldier = "z",
+    // Brigand = "b",
+    // Warrior = "w",
 }
 
 export enum GameState {
