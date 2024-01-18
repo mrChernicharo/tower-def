@@ -483,8 +483,6 @@ function _init2DModals() {
 
             const modal3D = new CSS2DObject(modalContainer);
 
-            console.log(el.position);
-
             modal3D.position.set(el.position.x, el.position.y, el.position.z);
             modal3D.name = `${el.name}-modal`;
             modal3D.userData["tile_idx"] = tileIdx;
@@ -497,12 +495,6 @@ function _init2DModals() {
             modalEl.innerHTML = modalTemplates.towerBuild();
 
             modalEl.addEventListener("click", (e) => onModalClick(e, el, modal3D, modalEl));
-        }
-    });
-
-    scene.traverse((el) => {
-        if ((el as any).isCSS2DObject) {
-            console.log(el);
         }
     });
 }
@@ -538,7 +530,7 @@ async function drawMap() {
 
     levelData.towerBasePositions.forEach((pos, i) => {
         const towerBaseMesh = new THREE.Mesh(new THREE.CylinderGeometry(1.5, 1.5, 0.2), MATERIALS.concrete);
-        towerBaseMesh.name = "TowerBase";
+        towerBaseMesh.name = `TowerBase.${i}`;
 
         // towerBaseMesh.userData.name = `TowerBase.${i}`;
         towerBaseMesh.userData.idx = i;
