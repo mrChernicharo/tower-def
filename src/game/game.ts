@@ -470,8 +470,7 @@ function _init2DModals() {
         if ((el as THREE.Mesh).isMesh && el.name.includes("TowerBase")) {
             // console.log({ el });
 
-            const tileIdx = el.userData.name.split(".")[1];
-            el.userData["tile_idx"] = tileIdx;
+            const tileIdx = el.userData.idx;
 
             const modalContainer = document.createElement("div");
             modalContainer.className = "modal-container";
@@ -483,6 +482,9 @@ function _init2DModals() {
             modalEl.style.opacity = "0.9";
 
             const modal3D = new CSS2DObject(modalContainer);
+
+            console.log(el.position);
+
             modal3D.position.set(el.position.x, el.position.y, el.position.z);
             modal3D.name = `${el.name}-modal`;
             modal3D.userData["tile_idx"] = tileIdx;
@@ -497,6 +499,12 @@ function _init2DModals() {
             modalEl.addEventListener("click", (e) => onModalClick(e, el, modal3D, modalEl));
         }
     });
+
+    scene.traverse((el) => {
+        if ((el as any).isCSS2DObject) {
+            console.log(el);
+        }
+    });
 }
 
 async function drawMap() {
@@ -509,10 +517,12 @@ async function drawMap() {
         if ((obj as THREE.Mesh).isMesh) {
             const mesh = obj as THREE.Mesh;
 
-            if (mesh.name.includes("TowerBase")) {
-                mesh.material = MATERIALS.concrete;
-                obj.layers.set(AppLayers.TowerBase);
-            } else if (/desert|Plane/g.test(mesh.name)) {
+            // if (mesh.name.includes("TowerBase")) {
+            //     mesh.material = MATERIALS.concrete;
+            //     obj.layers.set(AppLayers.TowerBase);
+            // }
+
+            if (/desert|Plane/g.test(mesh.name)) {
                 mesh.material = MATERIALS[`${levelData.area}`];
                 // mesh.receiveShadow = true;
                 obj.layers.set(AppLayers.Terrain);
@@ -525,6 +535,17 @@ async function drawMap() {
     });
 
     scene.add(model);
+
+    levelData.towerBasePositions.forEach((pos, i) => {
+        const towerBaseMesh = new THREE.Mesh(new THREE.CylinderGeometry(1.5, 1.5, 0.2), MATERIALS.concrete);
+        towerBaseMesh.name = "TowerBase";
+
+        // towerBaseMesh.userData.name = `TowerBase.${i}`;
+        towerBaseMesh.userData.idx = i;
+        towerBaseMesh.layers.set(AppLayers.TowerBase);
+        towerBaseMesh.position.set(pos[0], pos[1], pos[2]);
+        scene.add(towerBaseMesh);
+    });
 }
 
 function drawPaths() {

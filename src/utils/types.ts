@@ -133,4 +133,5 @@ export type GameLevel = {
     waves: [string, number, number, number][][];
     initialCamPos: [number, number, number];
     cameraBounds: { left: number; right: number; top: number; bottom: number };
+    towerBasePositions: [number, number, number][];
 };

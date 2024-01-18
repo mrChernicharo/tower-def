@@ -107,14 +107,20 @@ const AreaSelection = () => {
                             key={`pos-${i}`}
                             style={{ position: "absolute", left: pos[0] + "%", top: pos[1] + "%", zIndex: 100 }}
                         >
-                            {getUnlockedStages(stars) >= i ? (
+                            {/* {getUnlockedStages(stars) >= i ? (
                                 <Link to={`/area/${getAreaByLevel(i)}/level/${i}`}>
                                     <button style={{ background: "transparent", border: "none", padding: 0 }}>
                                         <img width={36} height={36} src={imgs.Stage} />
                                         <LevelStars stars={stars[i]} />
                                     </button>
                                 </Link>
-                            ) : null}
+                            ) : null} */}
+                            <Link to={`/area/${getAreaByLevel(i)}/level/${i}`}>
+                                <button style={{ background: "transparent", border: "none", padding: 0 }}>
+                                    <img width={36} height={36} src={imgs.Stage} />
+                                    <LevelStars stars={stars[i]} />
+                                </button>
+                            </Link>
                         </div>
                     );
                 })}

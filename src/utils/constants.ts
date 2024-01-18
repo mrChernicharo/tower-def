@@ -66,13 +66,6 @@ export const allAreas = [
     { id: 3, name: GameArea.Lava },
 ] as const;
 
-export const mapURLs = {
-    desert: "/assets/glb/levels/lv1.desert-level.glb",
-    forest: "/assets/glb/levels/lv4.town-level.glb",
-    winter: "/assets/glb/levels/lv3.village-level.glb",
-    lava: "/assets/glb/levels/lv2.castle-level.glb",
-};
-
 export const imgs = {
     Splash: "/assets/imgs/splash.png",
     World: "/assets/imgs/world-map.jpeg",

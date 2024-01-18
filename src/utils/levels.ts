@@ -1,10 +1,107 @@
+/* eslint-disable @typescript-eslint/no-loss-of-precision */
 import { EnemyChar, GameArea } from "./enums";
 import { GameLevel } from "./types";
-import { mapURLs } from "./constants";
 import { winterLevelPath } from "./paths/winter/paths";
 import { lavaLevelPaths } from "./paths/lava/paths";
 import { desertLevelPath } from "./paths/desert/paths";
 import { forestLevelPaths } from "./paths/forest/paths";
+
+export const mapURLs = {
+    desert: "/assets/glb/levels/lv1.desert-level.glb",
+    forest: "/assets/glb/levels/lv2.forest-level.glb",
+    winter: "/assets/glb/levels/lv3.winter-level.glb",
+    lava: "/assets/glb/levels/lv4.lava-level.glb",
+};
+
+const towerBasePositions = {
+    desert: [
+        [-4.239693641662598, 0.1, -32],
+        [-10.030718803405762, 0.1, 9.045719146728516],
+        [-14.679625511169434, 0.1, 8.63398265838623],
+        [-15.787954330444336, 0.1, 3.8990440368652344],
+        [-10.658951759338379, 0.1, 3.6790854930877686],
+        [-4.939311981201172, 0.1, -25.139816284179688],
+        [-12.067779541015625, 0.1, -25.139816284179688],
+        [-11.546309471130371, 0.1, -31.42244529724121],
+        [14.094917297363281, 0.1, 20.26247787475586],
+        [8.918469429016113, 0.1, 20.561803817749023],
+        [9.130585670471191, 0.1, 26.90176010131836],
+        [14.723150253295898, 0.1, 26.308197021484375],
+        [13.216029167175293, 0.1, 33.36888122558594],
+        [7.623464584350586, 0.1, 33.96244812011719],
+        [-5.406293869018555, 0.1, 9.045719146728516],
+        [-11.051060676574707, 0.1, -18.505279541015625],
+        [-8.77873706817627, 0.1, -4.2777299880981445],
+        [5.645008087158203, 0.1, 12.768688201904297],
+    ] as [number, number, number][],
+    forest: [
+        [-4.239693641662598, 0.1, -32],
+        [-10.030718803405762, 0.1, 9.045719146728516],
+        [-14.679625511169434, 0.1, 8.63398265838623],
+        [-15.787954330444336, 0.1, 3.8990440368652344],
+        [-10.658951759338379, 0.1, 3.6790854930877686],
+        [-4.939311981201172, 0.1, -25.139816284179688],
+        [-12.067779541015625, 0.1, -25.139816284179688],
+        [-11.546309471130371, 0.1, -31.42244529724121],
+        [14.094917297363281, 0.1, 20.26247787475586],
+        [8.918469429016113, 0.1, 20.561803817749023],
+        [9.130585670471191, 0.1, 26.90176010131836],
+        [14.723150253295898, 0.1, 26.308197021484375],
+        [13.216029167175293, 0.1, 33.36888122558594],
+        [7.623464584350586, 0.1, 33.96244812011719],
+        [-5.406293869018555, 0.1, 9.045719146728516],
+        [-11.051060676574707, 0.1, -18.505279541015625],
+        [-8.77873706817627, 0.1, -4.2777299880981445],
+        [5.645008087158203, 0.1, 12.768688201904297],
+    ] as [number, number, number][],
+    winter: [
+        [-23.01464080810547, 0.3, -34.86179733276367],
+        [-19.42210578918457, 0.3, -33.057193756103516],
+        [3.03891658782959, 0.3, -41.71015548706055],
+        [12.669759750366211, 0.3, 5.26015567779541],
+        [21.851736068725586, 0.3, -34.869293212890625],
+        [21.62307357788086, 0.3, -25.5587100982666],
+        [28.83831787109375, 0.3, -28.39833641052246],
+        [25.587474822998047, 0.3, -12.408538818359375],
+        [22.06781005859375, 0.3, -8.736695289611816],
+        [22.750030517578125, 0.3, -16.384763717651367],
+        [-7.9996442794799805, 0.3, 39.601844787597656],
+        [-4.146993637084961, 0.3, 42.73162841796875],
+        [1.235826015472412, 0.3, 42.73162841796875],
+        [21.435108184814453, 0.3, 43.52125549316406],
+        [11.66355037689209, 0.3, -2.1947503089904785],
+        [-16.186887741088867, 0.3, 32.19786071777344],
+        [-21.5650634765625, 0.3, 23.653812408447266],
+        [-28.55293083190918, 0.3, 15.219037055969238],
+        [21.875337600708008, 6.485910415649414, 22.26441764831543],
+        [21.875337600708008, 6.6229448318481445, 27.55340576171875],
+        [21.875337600708008, 3.8913960456848145, 32.8218879699707],
+        [14.459419250488281, 4.8555521965026855, 13.536456108093262],
+        [-11.375808715820312, 5.825353145599365, -23.09593963623047],
+        [-16.135986328125, 5.321722507476807, -22.202123641967773],
+    ] as [number, number, number][],
+    lava: [
+        [-7.9717559814453125, 0.30000001192092896, 14.692939758300781],
+        [-10.693512916564941, 0.30000001192092896, -26.959732055664062],
+        [-8.4456787109375, 0.30000001192092896, -0.522979736328125],
+        [-0.5159873962402344, 0.30000001192092896, -26.063919067382812],
+        [-5.448331832885742, 0.30000001192092896, -18.18609619140625],
+        [-5.110391616821289, 0.30000001192092896, -11.77816390991211],
+        [-4.4046173095703125, 0.30000001192092896, 24.684951782226562],
+        [-9.512611389160156, 0.30000001192092896, 6.874664306640625],
+        [-1.3322467803955078, 0.30000001192092896, -1.8963775634765625],
+        [-1.0214557647705078, 0.30000001192092896, 15.341323852539062],
+        [6.30039119720459, 0.30000001192092896, 14.46826171875],
+        [7.553034782409668, 0.30000001192092896, 6.8575439453125],
+        [6.064409255981445, 0.30000001192092896, -1.31390380859375],
+        [6.050017356872559, 0.30000001192092896, -11.656843185424805],
+        [6.0035505294799805, 0.30000001192092896, -18.754493713378906],
+        [11.484609603881836, 0.30000001192092896, -26.89056396484375],
+        [5.920717239379883, 0.30000001192092896, 24.551246643066406],
+        [-18.172679901123047, 0.30000001192092896, -0.7079014778137207],
+        [16.111492156982422, 0.30000001192092896, -0.7079014778137207],
+    ] as [number, number, number][],
+};
 
 // enemyChar, pathIdx, spawnAt, xOffset
 export const STAGE_WAVES_DATA: [string, number, number, number][][][] = [
@@ -423,6 +520,7 @@ export const GAME_LEVELS: GameLevel[] = [
         waves: STAGE_WAVES_DATA[0],
         initialCamPos: [0, 40, 62],
         cameraBounds: mediumBounds,
+        towerBasePositions: towerBasePositions.desert,
     },
     {
         area: GameArea.Desert,
@@ -433,6 +531,7 @@ export const GAME_LEVELS: GameLevel[] = [
         waves: STAGE_WAVES_DATA[1],
         initialCamPos: [0, 40, 62],
         cameraBounds: mediumBounds,
+        towerBasePositions: towerBasePositions.desert,
     },
     {
         area: GameArea.Desert,
@@ -443,6 +542,7 @@ export const GAME_LEVELS: GameLevel[] = [
         waves: STAGE_WAVES_DATA[2],
         initialCamPos: [0, 40, 62],
         cameraBounds: mediumBounds,
+        towerBasePositions: towerBasePositions.desert,
     },
     {
         area: GameArea.Desert,
@@ -453,6 +553,7 @@ export const GAME_LEVELS: GameLevel[] = [
         waves: STAGE_WAVES_DATA[3],
         initialCamPos: [0, 40, 62],
         cameraBounds: mediumBounds,
+        towerBasePositions: towerBasePositions.desert,
     },
     {
         area: GameArea.Forest,
@@ -463,6 +564,7 @@ export const GAME_LEVELS: GameLevel[] = [
         waves: STAGE_WAVES_DATA[4],
         initialCamPos: [0, 60, 60],
         cameraBounds: smallBounds,
+        towerBasePositions: towerBasePositions.forest,
     },
     {
         area: GameArea.Forest,
@@ -473,6 +575,7 @@ export const GAME_LEVELS: GameLevel[] = [
         waves: STAGE_WAVES_DATA[5],
         initialCamPos: [0, 60, 60],
         cameraBounds: smallBounds,
+        towerBasePositions: towerBasePositions.forest,
     },
     {
         area: GameArea.Forest,
@@ -483,6 +586,7 @@ export const GAME_LEVELS: GameLevel[] = [
         waves: STAGE_WAVES_DATA[6],
         initialCamPos: [0, 60, 60],
         cameraBounds: smallBounds,
+        towerBasePositions: towerBasePositions.forest,
     },
     {
         area: GameArea.Forest,
@@ -494,6 +598,7 @@ export const GAME_LEVELS: GameLevel[] = [
         waves: STAGE_WAVES_DATA[7],
         initialCamPos: [0, 60, 60],
         cameraBounds: smallBounds,
+        towerBasePositions: towerBasePositions.forest,
     },
     {
         area: GameArea.Winter,
@@ -504,6 +609,7 @@ export const GAME_LEVELS: GameLevel[] = [
         waves: STAGE_WAVES_DATA[8],
         initialCamPos: [0, 60, 60],
         cameraBounds: largeBounds,
+        towerBasePositions: towerBasePositions.winter,
     },
     {
         area: GameArea.Winter,
@@ -514,6 +620,7 @@ export const GAME_LEVELS: GameLevel[] = [
         waves: STAGE_WAVES_DATA[9],
         initialCamPos: [0, 60, 60],
         cameraBounds: largeBounds,
+        towerBasePositions: towerBasePositions.winter,
     },
     {
         area: GameArea.Winter,
@@ -524,6 +631,7 @@ export const GAME_LEVELS: GameLevel[] = [
         waves: STAGE_WAVES_DATA[10],
         initialCamPos: [0, 60, 60],
         cameraBounds: largeBounds,
+        towerBasePositions: towerBasePositions.winter,
     },
     {
         area: GameArea.Winter,
@@ -534,46 +642,51 @@ export const GAME_LEVELS: GameLevel[] = [
         waves: STAGE_WAVES_DATA[11],
         initialCamPos: [0, 60, 60],
         cameraBounds: largeBounds,
+        towerBasePositions: towerBasePositions.winter,
     },
     {
         area: GameArea.Lava,
         level: 12,
         initialGold: 480,
-        mapURL: mapURLs.forest,
+        mapURL: mapURLs.lava,
         paths: lavaLevelPaths,
         waves: STAGE_WAVES_DATA[12],
         initialCamPos: [0, 60, 60],
         cameraBounds: smallBounds,
+        towerBasePositions: towerBasePositions.lava,
     },
     {
         area: GameArea.Lava,
         level: 13,
         initialGold: 500,
-        mapURL: mapURLs.forest,
+        mapURL: mapURLs.lava,
         paths: lavaLevelPaths,
         waves: STAGE_WAVES_DATA[13],
         initialCamPos: [0, 60, 60],
         cameraBounds: smallBounds,
+        towerBasePositions: towerBasePositions.lava,
     },
     {
         area: GameArea.Lava,
         level: 14,
         initialGold: 520,
-        mapURL: mapURLs.forest,
+        mapURL: mapURLs.lava,
         paths: lavaLevelPaths,
         waves: STAGE_WAVES_DATA[14],
         initialCamPos: [0, 60, 60],
         cameraBounds: smallBounds,
+        towerBasePositions: towerBasePositions.lava,
     },
     {
         area: GameArea.Lava,
         level: 15,
         initialGold: 550,
-        mapURL: mapURLs.forest,
+        mapURL: mapURLs.lava,
         paths: lavaLevelPaths,
         waves: STAGE_WAVES_DATA[15],
         initialCamPos: [0, 60, 60],
         cameraBounds: smallBounds,
+        towerBasePositions: towerBasePositions.lava,
     },
 ];
 
