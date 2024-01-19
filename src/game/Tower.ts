@@ -141,7 +141,7 @@ export class Tower {
     tick(delta: number, targetEnemy: Enemy | undefined) {
         if (targetEnemy) {
             if (this.headMesh) {
-                this._rotateTowerHead(targetEnemy);
+                this._rotateTowardsTarget(targetEnemy);
             } else {
                 this.targetLocked = true;
             }
@@ -156,26 +156,25 @@ export class Tower {
         this.cooldown -= delta;
     }
 
-    _rotateTowerHead(targetEnemy: Enemy) {
+    _rotateTowardsTarget(targetEnemy: Enemy) {
         if (!this.headMesh) return;
+
         const dx = this.model.position.x - targetEnemy.getFuturePosition(estimatedTimeToTarget).x;
         const dz = this.model.position.z - targetEnemy.getFuturePosition(estimatedTimeToTarget).z;
-        const theta = Math.atan2(dz, dx) + Math.PI * 0.5;
 
-        const angleDiff = theta - this.headMesh.rotation.z;
-        // console.log(theta, this.headMesh.rotation.z, angleDiff);
+        let theta = Math.atan2(dz, dx) + Math.PI * 0.5;
+        if (theta < 0) theta += Math.PI * 2;
 
-        if (Math.abs(angleDiff) < 0.02) {
-            this.headMesh.rotation.z = theta;
+        let rotationDiff = theta - this.headMesh.rotation.z;
+        if (rotationDiff > Math.PI) rotationDiff -= Math.PI * 2;
+        if (rotationDiff < -Math.PI) rotationDiff += Math.PI * 2;
+
+        if (Math.abs(rotationDiff) < 0.02) {
             this.targetLocked = true;
+            this.headMesh.rotation.z = theta;
         } else {
             this.targetLocked = false;
-
-            if (angleDiff > 0) {
-                this.headMesh.rotation.z += turnSpeed;
-            } else if (angleDiff < 0) {
-                this.headMesh.rotation.z -= turnSpeed;
-            }
+            this.headMesh.rotation.z += rotationDiff > 0 ? turnSpeed : -turnSpeed;
         }
     }
 
