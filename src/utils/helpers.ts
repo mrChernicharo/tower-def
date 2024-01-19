@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { EnemyChar, EnemyType, TowerType } from "./enums";
 import { THREE } from "../three";
@@ -233,4 +234,14 @@ export function mousePosToWorldPos(mouseRay: THREE.Raycaster, scene: THREE.Scene
     });
     // console.log("mousePosToWorldPos", pos);
     return pos;
+}
+
+// prettier-ignore
+export function isModal(obj: any) {
+    return (
+        (obj as any).isCSS2DObject &&
+        obj.visible &&
+        obj.name.includes("-modal") && 
+        obj.name !== "call-wave-2D-modal"
+    ); 
 }

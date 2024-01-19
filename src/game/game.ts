@@ -25,6 +25,7 @@ import {
     getProjectileTowerName,
     handleModelGun,
     idMaker,
+    isModal,
 } from "../utils/helpers";
 import {
     BLIZZARD_EFFECT_DURATION,
@@ -123,9 +124,9 @@ let speedBtns: HTMLDivElement;
 let callWaveBeaconContainers: HTMLDivElement[] = [];
 
 let composer: EffectComposer;
-let outlinePass: OutlinePass;
 export let slowOutlinePass: OutlinePass;
 export let poisonOutlinePass: OutlinePass;
+let outlinePass: OutlinePass;
 let effectFXAA: ShaderPass;
 
 let frameId = 0;
@@ -144,7 +145,7 @@ let meteorTargetPos = new THREE.Vector3();
 let readyToFireBlizzard = false;
 let blizzardTargetPos = new THREE.Vector3();
 
-let mouseTargetRing: THREE.Mesh;
+// let mouseTargetRing: THREE.Mesh;
 let mobileScaling = false;
 let prevPinchDist = 0;
 let pinchDist = 0;
@@ -318,7 +319,7 @@ async function gameSetup() {
     // orbit.maxPolarAngle = Math.PI * 0.48;
 
     ambientLight = new THREE.AmbientLight(0xefefef, 1);
-    directionalLight = new THREE.DirectionalLight(0xffffff, 6);
+    directionalLight = new THREE.DirectionalLight(0xffffff, 4);
     // directionalLight.position.set(-30, 50, -30);
     directionalLight.position.set(5, 10, 7.5);
     // x: 5, y: 10, z: 7.5
@@ -333,13 +334,13 @@ async function gameSetup() {
     mouseRay.layers.enable(AppLayers.Modals);
     mouseRay.layers.enable(AppLayers.Buildings);
 
-    const mouseTargetRingGeometry = new THREE.TorusGeometry(3);
-    mouseTargetRingGeometry.rotateX(-Math.PI / 2);
-    mouseTargetRing = new THREE.Mesh(mouseTargetRingGeometry, MATERIALS.beacon);
-    mouseTargetRing.name = "mouseTargetRing";
-    mouseTargetRing.position.set(0, 0, 0);
-    scene.add(mouseTargetRing);
-    mouseTargetRing.visible = false;
+    // const mouseTargetRingGeometry = new THREE.TorusGeometry(3);
+    // mouseTargetRingGeometry.rotateX(-Math.PI / 2);
+    // mouseTargetRing = new THREE.Mesh(mouseTargetRingGeometry, MATERIALS.beacon);
+    // mouseTargetRing.name = "mouseTargetRing";
+    // mouseTargetRing.position.set(0, 0, 0);
+    // scene.add(mouseTargetRing);
+    // mouseTargetRing.visible = false;
 
     // post-processing (for drawing outlines)
     composer = new EffectComposer(renderer);
@@ -826,19 +827,20 @@ function onPointerMove(e: PointerEvent) {
 
     mouseRay.setFromCamera(mousePos, camera);
 
-    if (readyToFireMeteor || readyToFireBlizzard) {
-        if (!mouseTargetRing.visible) mouseTargetRing.visible = true;
+    // if (readyToFireMeteor || readyToFireBlizzard) {
+    //     if (!mouseTargetRing.visible) mouseTargetRing.visible = true;
 
-        const pos = mousePosToWorldPos(mouseRay, scene);
-        mouseTargetRing.position.set(pos.x, pos.y, pos.z);
+    //     const pos = mousePosToWorldPos(mouseRay, scene);
+    //     mouseTargetRing.position.set(pos.x, pos.y, pos.z);
 
-        // make targeting ring disappear if mouse is outside map
-        if (pos.x === 0 && pos.y === 0 && pos.z === 0) {
-            mouseTargetRing.visible = false;
-        }
-    } else {
-        handleHoverEfx();
-    }
+    //     // make targeting ring disappear if mouse is outside map
+    //     if (pos.x === 0 && pos.y === 0 && pos.z === 0) {
+    //         mouseTargetRing.visible = false;
+    //     }
+    // }
+    // else {
+    //     handleHoverEfx();
+    // }
 
     if (e.buttons === 1) {
         handleCameraMovement(e);
@@ -856,7 +858,8 @@ function onModalClick(e: MouseEvent, el: THREE.Object3D, modal3D: CSS2DObject, m
     e.stopPropagation();
     const tower_id = el.userData.tower_id ?? "";
     const tower = towers.find((t) => t.id === tower_id);
-    // console.log(":::onModalClick::::", { e, el, modal3D, modalEl, tower_id, tower });
+    console.log(":::onModalClick::::", { e, el, modal3D, modalEl, tower_id, tower });
+    outlinePass.selectedObjects = [];
 
     /******* TOWER BUILD *******/
     if (evTarget.classList.contains("tower-build-btn")) {
@@ -872,19 +875,11 @@ function onModalClick(e: MouseEvent, el: THREE.Object3D, modal3D: CSS2DObject, m
     if (evTarget.classList.contains("cancel-tower-build-btn")) {
         modalEl.innerHTML = modalTemplates.towerBuild();
         towerToBuild = null;
-        if (towerPreview) {
-            // console.log("remove tower preview");
-            scene.remove(towerPreview.model);
-            scene.remove(towerPreview.rangeGizmo);
-        }
+        clearTowerPreview();
     }
     if (evTarget.classList.contains("confirm-tower-build-btn")) {
-        if (towerPreview) {
-            // console.log("remove tower preview");
-            scene.remove(towerPreview.model);
-            scene.remove(towerPreview.rangeGizmo);
-        }
         // console.log(`BUILD THIS GODAMN ${towerToBuild} TOWER`, { el });
+        clearTowerPreview();
 
         const towerPrice = TOWER_BLUEPRINTS[towerToBuild!][0].price;
         if (playerStats.gold < towerPrice) {
@@ -971,12 +966,8 @@ function onModalClick(e: MouseEvent, el: THREE.Object3D, modal3D: CSS2DObject, m
     if (evTarget.classList.contains("cancel-tower-upgrade-btn")) {
         console.log("open details modal", { tower });
         modalEl.innerHTML = modalTemplates.towerDetails(tower!);
-        if (towerPreview) {
-            console.log("revert tower preview");
-            scene.remove(towerPreview.model);
-            scene.remove(towerPreview.rangeGizmo);
-            towerPreview = undefined;
-        }
+        clearTowerPreview();
+
         if (tower) {
             tower.model.visible = true;
             tower.rangeGizmo.visible = true;
@@ -1035,10 +1026,8 @@ function onCanvasClick(e: MouseEvent) {
     mousePos.y = -(e.clientY / canvasHeight) * 2 + 1;
     mouseRay.setFromCamera(mousePos, camera);
 
-    const clickedModal = [...e.composedPath()].find((el) => (el as HTMLElement)?.classList?.contains("modal2D"));
     let clickedTower: THREE.Intersection | undefined;
     let clickedTowerBase: THREE.Intersection | undefined;
-
     const rayIntersects = mouseRay.intersectObjects(scene.children);
     rayIntersects.forEach((ch) => {
         if (ch.object.name.includes("TowerBase")) {
@@ -1049,115 +1038,64 @@ function onCanvasClick(e: MouseEvent) {
         }
     });
 
-    revertCancelableModals(clickedModal as HTMLDivElement | undefined);
+    revertCancelableModals();
+    closedAllOpenModels();
+    clearTowerPreview();
 
-    if (readyToFireMeteor) {
-        const mouseRayIntersects = mouseRay.intersectObjects(scene.children);
+    outlinePass.selectedObjects = [];
+    switch (true) {
+        case readyToFireMeteor: {
+            if (rayIntersects.length < 1) {
+                console.log("cancel meteor");
+                clearMeteorTargeting();
+                return;
+            }
 
-        if (mouseRayIntersects.length < 1) {
-            console.log("cancel meteor");
-            clearMeteorTargeting();
+            const pos = mousePosToWorldPos(mouseRay, scene);
+            meteorTargetPos = new THREE.Vector3(pos.x, pos.y, pos.z);
+            window.dispatchEvent(new CustomEvent("meteor-fire"));
             return;
         }
+        case readyToFireBlizzard: {
+            if (rayIntersects.length < 1) {
+                console.log("cancel blizzard");
+                clearBlizzardTargeting();
+                return;
+            }
 
-        const pos = mousePosToWorldPos(mouseRay, scene);
-        meteorTargetPos = new THREE.Vector3(pos.x, pos.y, pos.z);
-        window.dispatchEvent(new CustomEvent("meteor-fire"));
-        return;
-    } else if (readyToFireBlizzard) {
-        const mouseRayIntersects = mouseRay.intersectObjects(scene.children);
-
-        if (mouseRayIntersects.length < 1) {
-            console.log("cancel blizzard");
-            clearBlizzardTargeting();
+            const pos = mousePosToWorldPos(mouseRay, scene);
+            blizzardTargetPos = new THREE.Vector3(pos.x, pos.y, pos.z);
+            console.log("will dispatch blizzard-fire", { pos, blizzardTargetPos });
+            window.dispatchEvent(new CustomEvent("blizzard-fire"));
             return;
         }
-
-        const pos = mousePosToWorldPos(mouseRay, scene);
-        blizzardTargetPos = new THREE.Vector3(pos.x, pos.y, pos.z);
-        console.log("will dispatch blizzard-fire", { pos, blizzardTargetPos });
-        window.dispatchEvent(new CustomEvent("blizzard-fire"));
-        return;
-    } else if (clickedTowerBase) {
-        console.log("CLICKED TOWER BASE", { clickedTowerBase, scene });
-        const modal3D = scene.getObjectByName(`${clickedTowerBase.object.name}-modal`)!;
-        scene.traverse((obj) => {
-            if (obj.name === "mouseTargetRing") return;
-            // HIDE previously open modal
-            if ((obj as any).isCSS2DObject && obj.visible && obj.name !== "call-wave-2D-modal" && obj.name !== "num") {
-                obj.visible = false;
-            }
-
-            if ((obj as THREE.Mesh).isMesh && !obj.visible && obj.name !== "rangeGizmo") {
-                obj.visible = true;
-            }
-        });
-        if (towerPreview) {
-            console.log("revert tower preview", { clickedTowerBase, towerPreview });
-            scene.remove(towerPreview.model);
-            scene.remove(towerPreview.rangeGizmo);
-            towerPreview = undefined;
+        case Boolean(clickedTowerBase): {
+            if (!clickedTowerBase) return;
+            console.log("CLICKED TOWER BASE", { clickedTowerBase, scene });
+            const modal3D = scene.getObjectByName(`${clickedTowerBase.object.name}-modal`)!;
+            modal3D.visible = true;
+            outlinePass.selectedObjects.push(clickedTowerBase.object);
+            return;
         }
-        // SHOW current modal
-        modal3D.visible = true;
-    } else if (clickedTower) {
-        console.log("CLICKED TOWER", { clickedTower, scene });
+        case Boolean(clickedTower): {
+            if (!clickedTower) return;
+            console.log("CLICKED TOWER", { clickedTower, scene });
 
-        // HIDE previously open modal
-        let modal3D: THREE.Object3D | undefined;
-        scene.traverse((obj) => {
-            if ((obj as any).isCSS2DObject) {
-                if (obj.userData.tile_idx === clickedTower!.object.userData.tile_idx) {
-                    modal3D = obj;
+            outlinePass.selectedObjects.push(clickedTower.object.parent as THREE.Mesh);
+
+            scene.traverse((obj) => {
+                if ((obj as any).isCSS2DObject) {
+                    if (obj.userData.tile_idx === clickedTower!.object.userData.tile_idx) {
+                        // modal
+                        obj.visible = true;
+                    }
                 }
-
-                if (obj.visible) {
-                    if (obj.name === "call-wave-2D-modal" || obj.name !== "num") return;
-                    obj.visible = false;
-                }
-            }
-            if (
-                (obj as THREE.Mesh).isMesh &&
-                !obj.visible &&
-                obj.name !== "rangeGizmo" &&
-                obj.name !== "mouseTargetRing"
-            ) {
-                obj.visible = true;
-            }
-        });
-
-        if (towerPreview) {
-            console.log("revert tower preview", { clickedTower, towerPreview });
-            scene.remove(towerPreview.model);
-            scene.remove(towerPreview.rangeGizmo);
-            towerPreview = undefined;
+            });
+            return;
         }
-        // SHOW current modal
-        if (modal3D) modal3D.visible = true;
-    } else if (clickedModal) {
-        console.log("CLICKED MODAL", { clickedModal });
-    } else {
-        console.log("CLICKED OUTSIDE: Neither modal nor towerBase");
-
-        // HIDE modal (3D)
-        scene.traverse((obj) => {
-            // console.log(obj);
-            if (obj.name === "mouseTargetRing") return;
-
-            if ((obj as any).isCSS2DObject && obj.visible && obj.name !== "call-wave-2D-modal" && obj.name !== "num") {
-                obj.visible = false;
-            }
-
-            if ((obj as THREE.Mesh).isMesh && !obj.visible && obj.name !== "rangeGizmo") {
-                obj.visible = true;
-            }
-        });
-
-        if (towerPreview) {
-            console.log("revert tower preview", { towerPreview });
-            scene.remove(towerPreview.model);
-            scene.remove(towerPreview.rangeGizmo);
-            towerPreview = undefined;
+        default: {
+            console.log("CLICKED NOWHERE!");
+            return;
         }
     }
 }
@@ -1243,18 +1181,9 @@ function onPauseGame() {
 
     // hide modal on pause
     scene.traverse((obj) => {
-        if (
-            // openedModal &&
-            (obj as any).isCSS2DObject &&
-            obj.visible &&
-            obj.name.includes("-modal") && // is a modal
-            obj.name !== "call-wave-2D-modal" // but not the callWaveBeacon
-        ) {
+        if (isModal(obj)) {
             obj.visible = false;
-
-            revertCancelableModals(undefined);
-            // const isConfirmTowerUpgradeModal = openedModal.classList.contains(ModalType.ConfirmTowerUpgrade);
-            // console.log({ obj, openedModal, classList: openedModal.classList, isConfirmTowerUpgradeModal });
+            revertCancelableModals();
         }
     });
 }
@@ -1323,46 +1252,11 @@ function handleCameraMovement(e: PointerEvent) {
     camera.lookAt(camTarget);
 }
 
-let prevHighlightedMeshUUID: string | null = null;
-function handleHoverEfx() {
-    const rayIntersects = mouseRay.intersectObjects(scene.children);
-    let foundHighlightTarget = false;
-    for (const ch of rayIntersects) {
-        const obj = ch.object as THREE.Mesh;
-        if (
-            obj.isMesh &&
-            obj.type !== "SkinnedMesh" &&
-            (obj.name.includes("-Tower") || obj.name.includes("TowerBase"))
-        ) {
-            const oldMeshIdx = outlinePass.selectedObjects.findIndex((o) => o.uuid === prevHighlightedMeshUUID);
-            // outlinePass.visibleEdgeColor = new THREE.Color(0xffffff * Math.random());
-            prevHighlightedMeshUUID = obj.uuid;
-            foundHighlightTarget = true;
-            outlinePass.selectedObjects.splice(oldMeshIdx, 1);
-            outlinePass.selectedObjects.push(obj);
-            break;
-        }
-    }
-
-    if (!foundHighlightTarget) {
-        if (prevHighlightedMeshUUID) {
-            const oldMeshIdx = outlinePass.selectedObjects.findIndex(
-                (o) => o.type !== "SkinnedMesh" && o.uuid === prevHighlightedMeshUUID
-            );
-
-            if (oldMeshIdx > -1) {
-                outlinePass.selectedObjects.splice(oldMeshIdx, 1);
-            }
-        }
-        prevHighlightedMeshUUID = null;
-    }
-}
-
-function revertCancelableModals(clickedModal: HTMLDivElement | undefined) {
+function revertCancelableModals() {
     const allModals = Array.from(document.querySelectorAll<HTMLDivElement>(".modal2D"));
     // console.log("REVERT CANCELABLE MODALS");
     allModals.forEach((modalEl) => {
-        if (modalEl === clickedModal) return;
+        // if (modalEl === clickedModal) return;
         // console.log(":::", { modalEl, tower_id: modalEl.dataset["tower_id"] });
 
         for (const cancelableModalName of cancelableModalNames) {
@@ -1373,9 +1267,22 @@ function revertCancelableModals(clickedModal: HTMLDivElement | undefined) {
                     const tower = towers.find((t) => t.id === modalEl.dataset["tower_id"]);
                     if (tower) {
                         modalEl.innerHTML = modalTemplates.towerDetails(tower);
+
+                        if (!tower.model.visible) {
+                            tower.model.visible = true;
+                        }
                     }
                 }
             }
+        }
+    });
+}
+
+function closedAllOpenModels() {
+    console.log("closedAllOpenModels");
+    scene.traverse((obj) => {
+        if (isModal(obj)) {
+            obj.visible = false;
         }
     });
 }
@@ -1629,7 +1536,7 @@ function onBlizzardFire() {
 function clearMeteorTargeting() {
     readyToFireMeteor = false;
     document.body.style.cursor = "default";
-    mouseTargetRing.visible = false;
+    // mouseTargetRing.visible = false;
     if (meteorBtn.classList.contains("cancel-action")) {
         meteorBtn.classList.remove("cancel-action");
     }
@@ -1637,7 +1544,7 @@ function clearMeteorTargeting() {
 function clearBlizzardTargeting() {
     readyToFireBlizzard = false;
     document.body.style.cursor = "default";
-    mouseTargetRing.visible = false;
+    // mouseTargetRing.visible = false;
     if (blizzardBtn.classList.contains("cancel-action")) {
         blizzardBtn.classList.remove("cancel-action");
     }
@@ -1685,6 +1592,50 @@ function onPoisonEntryExpired(e: any) {
     // console.log("onPoisonEntryExpired", { poisonEntries, poison, enemy });
     poisonEntries.delete(poison.enemyId);
 }
+
+export function clearTowerPreview() {
+    if (towerPreview) {
+        console.log("revert tower preview", { towerPreview });
+        scene.remove(towerPreview.model);
+        scene.remove(towerPreview.rangeGizmo);
+        towerPreview = undefined;
+    }
+}
+
+// let prevHighlightedMeshUUID: string | null = null;
+// function handleHoverEfx() {
+//     const rayIntersects = mouseRay.intersectObjects(scene.children);
+//     let foundHighlightTarget = false;
+//     for (const ch of rayIntersects) {
+//         const obj = ch.object as THREE.Mesh;
+//         if (
+//             obj.isMesh &&
+//             obj.type !== "SkinnedMesh" &&
+//             (obj.name.includes("-Tower") || obj.name.includes("TowerBase"))
+//         ) {
+//             const oldMeshIdx = outlinePass.selectedObjects.findIndex((o) => o.uuid === prevHighlightedMeshUUID);
+//             // outlinePass.visibleEdgeColor = new THREE.Color(0xffffff * Math.random());
+//             prevHighlightedMeshUUID = obj.uuid;
+//             foundHighlightTarget = true;
+//             outlinePass.selectedObjects.splice(oldMeshIdx, 1);
+//             outlinePass.selectedObjects.push(obj);
+//             break;
+//         }
+//     }
+
+//     if (!foundHighlightTarget) {
+//         if (prevHighlightedMeshUUID) {
+//             const oldMeshIdx = outlinePass.selectedObjects.findIndex(
+//                 (o) => o.type !== "SkinnedMesh" && o.uuid === prevHighlightedMeshUUID
+//             );
+
+//             if (oldMeshIdx > -1) {
+//                 outlinePass.selectedObjects.splice(oldMeshIdx, 1);
+//             }
+//         }
+//         prevHighlightedMeshUUID = null;
+//     }
+// }
 
 // fontLoader.load("/assets/fonts/font.json", (font) => {
 //     console.log({ font });

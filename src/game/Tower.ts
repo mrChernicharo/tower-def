@@ -108,15 +108,16 @@ export class Tower {
     }
 
     _setupModelData() {
+        this.model.name = `${this.towerName}-${this.id}`;
         this.model.userData["tower_id"] = this.id;
         this.model.userData["tower_level"] = this.blueprint.level;
         this.model.userData["tile_idx"] = this.tileIdx;
         this.model.layers.set(AppLayers.Tower);
         this.model.children.forEach((mesh) => {
             (mesh as THREE.Mesh).material = MATERIALS.tower(towerTexture);
-            // mesh.userData["tower_id"] = this.id;
-            // mesh.userData["tower_level"] = this.blueprint.level;
-            // mesh.userData["tile_idx"] = this.tileIdx;
+            mesh.userData["tower_id"] = this.id;
+            mesh.userData["tower_level"] = this.blueprint.level;
+            mesh.userData["tile_idx"] = this.tileIdx;
         });
         this.model.position.set(this.position.x, this.position.y, this.position.z);
         const s = this.blueprint.modelScale;
@@ -133,7 +134,7 @@ export class Tower {
             if (obj.name.includes("_Head")) {
                 this.headMesh = obj as THREE.Mesh;
             }
-            console.log(obj);
+            // console.log(obj);
         });
     }
 

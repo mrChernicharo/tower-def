@@ -58,7 +58,7 @@ export class PlayerStats {
             this.meteorCooldown -= delta;
         } else if (!meteorBtn.classList.contains("ready")) {
             this.meteorCooldown = 0;
-            console.log("METEOR READY");
+            // console.log("METEOR READY");
 
             meteorBtn.classList.add("ready");
             this.meteorCooldownArc.classList.add("hidden");
@@ -67,7 +67,7 @@ export class PlayerStats {
 
         if (this.blizzardCooldown > 0) {
             if (this.blizzardCooldown === BLIZZARD_COOLDOWN) {
-                console.log("blizzard cooldown started", this.blizzardCooldown);
+                // console.log("blizzard cooldown started", this.blizzardCooldown);
             }
 
             if (blizzardBtn.classList.contains("ready")) {
@@ -78,7 +78,7 @@ export class PlayerStats {
             this._updateCooldownUI(blizzardArcs, BLIZZARD_COOLDOWN, this.blizzardCooldown);
             this.blizzardCooldown -= delta;
         } else if (!blizzardBtn.classList.contains("ready")) {
-            console.log("blizzard READY", this.blizzardCooldown);
+            // console.log("blizzard READY", this.blizzardCooldown);
             this.blizzardCooldown = 0;
             blizzardBtn.classList.add("ready");
             this.blizzardCooldownArc.classList.add("hidden");

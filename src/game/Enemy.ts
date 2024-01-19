@@ -76,8 +76,6 @@ export class Enemy {
         model.traverse((obj) => {
             if ((obj as any).isMesh) {
                 obj.layers.disableAll();
-                obj.layers.enable(AppLayers.Enemy);
-
                 if (obj.type === "SkinnedMesh") {
                     const mesh = obj as SkinnedMesh;
                     // mesh.castShadow = true;
