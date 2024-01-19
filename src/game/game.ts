@@ -35,6 +35,8 @@ import {
     DRAW_PROJECTILE_TRAJECTORIES,
     ENEMY_BLUEPRINTS,
     MATERIALS,
+    MAX_FOV,
+    MIN_FOV,
     TOWER_BLUEPRINTS,
 } from "../utils/constants";
 
@@ -88,6 +90,7 @@ let levelData: GameLevel;
 let towerPreview: { model: THREE.Group; rangeGizmo: THREE.Mesh } | undefined;
 
 let ambientLight: THREE.AmbientLight;
+let directionalLight: THREE.DirectionalLight;
 
 let enemies: Enemy[] = [];
 let towers: Tower[] = [];
@@ -161,6 +164,7 @@ export async function destroyGame() {
     composer.dispose();
     // orbit.dispose();
     ambientLight.dispose();
+    directionalLight.dispose();
     renderer.dispose();
     enemies = [];
     towers = [];
@@ -313,8 +317,13 @@ async function gameSetup() {
     // orbit = new OrbitControls(camera, renderer.domElement);
     // orbit.maxPolarAngle = Math.PI * 0.48;
 
-    ambientLight = new THREE.AmbientLight(0xefefef, 1.5);
+    ambientLight = new THREE.AmbientLight(0xefefef, 1);
+    directionalLight = new THREE.DirectionalLight(0xffffff, 6);
+    // directionalLight.position.set(-30, 50, -30);
+    directionalLight.position.set(5, 10, 7.5);
+    // x: 5, y: 10, z: 7.5
     scene.add(ambientLight);
+    scene.add(directionalLight);
 
     mouseRay = new THREE.Raycaster();
     mouseRay.layers.disableAll();
@@ -509,15 +518,21 @@ async function drawMap() {
         if ((obj as THREE.Mesh).isMesh) {
             const mesh = obj as THREE.Mesh;
 
+            console.log(mesh.name);
+
             // if (mesh.name.includes("TowerBase")) {
             //     mesh.material = MATERIALS.concrete;
             //     obj.layers.set(AppLayers.TowerBase);
             // }
 
-            if (/desert|Plane/g.test(mesh.name)) {
+            if (mesh.name.includes("Logs")) {
+                mesh.material = MATERIALS.wood;
+            } else if (/desert|Plane/g.test(mesh.name)) {
                 mesh.material = MATERIALS[`${levelData.area}`];
                 // mesh.receiveShadow = true;
                 obj.layers.set(AppLayers.Terrain);
+            } else if (mesh.name.includes("Windmill")) {
+                console.log(obj);
             } else {
                 mesh.material = MATERIALS.concrete2;
                 // mesh.receiveShadow = true;
@@ -1158,7 +1173,7 @@ function onResize() {
 
 function onZoom(e: WheelEvent) {
     // console.log(e, e.deltaX, e.deltaY, e.deltaZ);
-    if ((e.deltaY > 0 && camera.fov < 80) || (e.deltaY < 0 && camera.fov > 20)) {
+    if ((e.deltaY > 0 && camera.fov < MAX_FOV) || (e.deltaY < 0 && camera.fov > MIN_FOV)) {
         camera.fov += e.deltaY * 0.02;
     }
     camera.updateProjectionMatrix();
@@ -1189,7 +1204,7 @@ function onMobileZoom(e: any) {
 
     if (discard) return;
 
-    if ((diff > 0 && camera.fov > 20) || (diff < 0 && camera.fov < 80)) {
+    if ((diff > 0 && camera.fov > MIN_FOV) || (diff < 0 && camera.fov < MAX_FOV)) {
         camera.fov -= diff * 0.15;
     }
 

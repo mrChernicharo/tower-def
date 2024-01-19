@@ -14,6 +14,9 @@ export const DRAW_METEOR_GIZMOS = true;
 export const BLIZZARD_SLOW_DURATION = 6;
 export const BLIZZARD_EFFECT_DURATION = 1.5;
 
+export const MAX_FOV = 75;
+export const MIN_FOV = 10;
+
 export const defaultPlayerSkills = {
     "archer-1": false,
     "archer-2": false,
@@ -296,59 +299,6 @@ export const ENEMY_BLUEPRINTS: { [k in EnemyType]: EnemyBluePrint } = {
         walkAnimationName: "Flying_Idle",
     },
 } as const;
-
-export const MATERIALS = {
-    damageMaterialStd: new THREE.MeshStandardMaterial({ color: "red" }),
-    poisonDmgMaterialStd: new THREE.MeshStandardMaterial({ color: COLORS.poisonGreen }),
-    damageMaterialPhysical: new THREE.MeshStandardMaterial({ color: "red" }),
-    poisonDmgMaterialPhysical: new THREE.MeshStandardMaterial({ color: "green" }),
-    meteor: new THREE.MeshMatcapMaterial({ color: COLORS.red }),
-    concrete: new THREE.MeshMatcapMaterial({ color: COLORS.concrete }),
-    concrete2: new THREE.MeshMatcapMaterial({ color: COLORS.concrete2 }),
-    black: new THREE.MeshMatcapMaterial({ color: COLORS.black }),
-    transparentBlack: new THREE.MeshMatcapMaterial({ color: COLORS.black, transparent: true, opacity: 0.5 }),
-    desert: new THREE.MeshMatcapMaterial({ color: COLORS.desert }),
-    forest: new THREE.MeshMatcapMaterial({ color: COLORS.forest }),
-    winter: new THREE.MeshMatcapMaterial({ color: COLORS.winter }),
-    lava: new THREE.MeshMatcapMaterial({ color: COLORS.lava }),
-    path: new THREE.MeshMatcapMaterial({ color: COLORS.concrete }),
-    beacon: new THREE.MeshMatcapMaterial({ color: COLORS.green }),
-    icicle: new THREE.MeshMatcapMaterial({ color: "dodgerblue", transparent: true, opacity: 0.5 }),
-    concreteTransparent: new THREE.MeshMatcapMaterial({
-        color: COLORS.concrete,
-        transparent: true,
-        opacity: 0.5,
-    }),
-    projectileGizmo: new THREE.MeshToonMaterial({ color: 0x00ffff }),
-    tower: (towerTexture: THREE.Texture) =>
-        new THREE.MeshBasicMaterial({
-            color: 0xdba58c,
-            map: towerTexture,
-        }),
-    towerHighlight: (towerTexture: THREE.Texture) =>
-        new THREE.MeshBasicMaterial({
-            color: 0xca947d,
-            map: towerTexture,
-        }),
-    towerRangeGizmo: (color: string) =>
-        new THREE.MeshBasicMaterial({
-            transparent: true,
-            opacity: 0.15,
-            color,
-        }),
-    projectile: (color: number, towerTexture: THREE.Texture) =>
-        new THREE.MeshBasicMaterial({
-            color,
-            map: towerTexture,
-        }),
-    explosion: (color: number) =>
-        new THREE.MeshToonMaterial({
-            color,
-            transparent: true,
-            opacity: 0.6,
-        }),
-    trajectoryLine: () => new THREE.LineBasicMaterial({ color: 0xff0000 }),
-};
 
 export const TOWER_BLUEPRINTS: { [k in TowerType]: TowerBluePrint[] } = {
     Archer: [
@@ -819,4 +769,58 @@ export const PROJECTILE_BLUEPRINTS: { [k in TowerType]: ProjectileBluePrint[] } 
             trajectoryType: TrajectoryType.Parabola,
         },
     ],
+};
+
+export const MATERIALS = {
+    damageMaterialStd: new THREE.MeshStandardMaterial({ color: "red" }),
+    poisonDmgMaterialStd: new THREE.MeshStandardMaterial({ color: COLORS.poisonGreen }),
+    damageMaterialPhysical: new THREE.MeshStandardMaterial({ color: "red" }),
+    poisonDmgMaterialPhysical: new THREE.MeshStandardMaterial({ color: "green" }),
+    meteor: new THREE.MeshMatcapMaterial({ color: COLORS.red }),
+    concrete: new THREE.MeshMatcapMaterial({ color: COLORS.concrete }),
+    concrete2: new THREE.MeshMatcapMaterial({ color: COLORS.concrete2 }),
+    black: new THREE.MeshMatcapMaterial({ color: COLORS.black }),
+    transparentBlack: new THREE.MeshMatcapMaterial({ color: COLORS.black, transparent: true, opacity: 0.5 }),
+    desert: new THREE.MeshMatcapMaterial({ color: COLORS.desert }),
+    forest: new THREE.MeshMatcapMaterial({ color: COLORS.forest }),
+    winter: new THREE.MeshMatcapMaterial({ color: COLORS.winter }),
+    lava: new THREE.MeshMatcapMaterial({ color: COLORS.lava }),
+    path: new THREE.MeshMatcapMaterial({ color: COLORS.concrete }),
+    beacon: new THREE.MeshMatcapMaterial({ color: COLORS.green }),
+    wood: new THREE.MeshMatcapMaterial({ color: "brown" }),
+    icicle: new THREE.MeshMatcapMaterial({ color: "dodgerblue", transparent: true, opacity: 0.5 }),
+    concreteTransparent: new THREE.MeshMatcapMaterial({
+        color: COLORS.concrete,
+        transparent: true,
+        opacity: 0.5,
+    }),
+    projectileGizmo: new THREE.MeshToonMaterial({ color: 0x00ffff }),
+    tower: (towerTexture: THREE.Texture) =>
+        new THREE.MeshBasicMaterial({
+            color: 0xdba58c,
+            map: towerTexture,
+        }),
+    towerHighlight: (towerTexture: THREE.Texture) =>
+        new THREE.MeshBasicMaterial({
+            color: 0xca947d,
+            map: towerTexture,
+        }),
+    towerRangeGizmo: (color: string) =>
+        new THREE.MeshBasicMaterial({
+            transparent: true,
+            opacity: 0.15,
+            color,
+        }),
+    projectile: (color: number, towerTexture: THREE.Texture) =>
+        new THREE.MeshBasicMaterial({
+            color,
+            map: towerTexture,
+        }),
+    explosion: (color: number) =>
+        new THREE.MeshToonMaterial({
+            color,
+            transparent: true,
+            opacity: 0.6,
+        }),
+    trajectoryLine: () => new THREE.LineBasicMaterial({ color: 0xff0000 }),
 };
