@@ -2,7 +2,7 @@ import { THREE } from "../three";
 import { MATERIALS } from "../utils/constants";
 import { idMaker } from "../utils/helpers";
 
-const speed = 4;
+const speed = 3;
 const radius = 5;
 const icicleGeometry = new THREE.CylinderGeometry(0.01, 0.5, radius);
 const icicles = Array(12)
@@ -28,7 +28,7 @@ export class Blizzard {
                 THREE.MathUtils.lerp(-3, 3, Math.random())
             );
             icicle.name = "icicle";
-            icicle.userData["speed"] = THREE.MathUtils.lerp(speed * 0.1, speed, Math.random());
+            icicle.userData["speed"] = THREE.MathUtils.lerp(speed * 0.5, speed, Math.random());
             icicle.position.set(pos.x, pos.y, pos.z);
 
             this.model.add(icicle);
@@ -50,12 +50,11 @@ export class Blizzard {
 
         this.model.traverse((o) => {
             const obj = o as THREE.Mesh;
-            if (obj.isMesh && obj.name === "icicle") {
+            if (obj.isMesh) {
                 if (obj.name === "icicle") {
                     obj.position.y += obj.userData.speed * delta;
-                    obj.scale.set(1, 0.2 + this.timeSinceSpawn * (obj.userData.speed * 0.5), 1);
                 } else if (obj.name === "blizzardEffectRing") {
-                    obj.scale.set(1 + this.timeSinceSpawn * 3, 1, 1 + this.timeSinceSpawn * 3);
+                    obj.scale.set(1 + this.timeSinceSpawn * 2, 1, 1 + this.timeSinceSpawn * 2);
                 }
             }
         });

@@ -19,7 +19,8 @@
 -   [✔] rotate towers (wizard, ballista, cannon)
 -   [ ] enhance tower rotation
 -   [ ] projectile trajectory towards flying enemies
+-   [ ] flying enemies shadow
 -   [ ] more and better levels
--   [ ] prettier blizzard
--   [ ] (mobile) remove mouseMove torus
--   [ ] (mobile) debug tower/towerbase highlighting
+-   [✔] prettier blizzard
+-   [✔] (mobile) remove mouseMove torus
+-   [✔] (mobile) debug tower/towerbase highlighting

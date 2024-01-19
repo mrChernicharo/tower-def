@@ -519,12 +519,7 @@ async function drawMap() {
         if ((obj as THREE.Mesh).isMesh) {
             const mesh = obj as THREE.Mesh;
 
-            console.log(mesh.name);
-
-            // if (mesh.name.includes("TowerBase")) {
-            //     mesh.material = MATERIALS.concrete;
-            //     obj.layers.set(AppLayers.TowerBase);
-            // }
+            // console.log(mesh.name);
 
             if (mesh.name.includes("Logs")) {
                 mesh.material = MATERIALS.wood;
@@ -533,7 +528,8 @@ async function drawMap() {
                 // mesh.receiveShadow = true;
                 obj.layers.set(AppLayers.Terrain);
             } else if (mesh.name.includes("Windmill")) {
-                console.log(obj);
+                // console.log("Windmill", obj);
+                mesh.material = MATERIALS.wood;
             } else {
                 mesh.material = MATERIALS.concrete2;
                 // mesh.receiveShadow = true;

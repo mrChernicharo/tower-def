@@ -9,6 +9,8 @@ import { ENEMY_BLUEPRINTS /*, MATERIALS*/, MATERIALS } from "../utils/constants"
 import { idMaker } from "../utils/helpers";
 import { SkinnedMesh } from "three";
 
+const flightHeight = 3;
+
 export class Enemy {
     #ready = false;
     #endReached = false;
@@ -89,6 +91,12 @@ export class Enemy {
             }
         });
 
+        if (["bee", "ghost", "squidle", "dragon"].includes(this.enemyType)) {
+            const shadow = new THREE.Mesh(new THREE.CylinderGeometry(0.5, 0.5, 0.25), MATERIALS.transparentBlack);
+            shadow.name = "EnemyShadow";
+            shadow.position.y = -flightHeight;
+            model.add(shadow);
+        }
         return model;
     }
 
@@ -149,35 +157,12 @@ export class Enemy {
             case "ghost":
             case "squidle":
             case "dragon": {
+                // flying
                 const zeroYTan = new THREE.Vector3(tangent.x, 0, tangent.z);
                 this.model.lookAt(position.clone().add(zeroYTan));
-                this.model.position.y += 3;
+                this.model.position.y = flightHeight;
                 break;
             }
-            // case "raptor": {
-            //     const zeroYTan = new THREE.Vector3(tangent.x, 0, tangent.z);
-            //     this.model.lookAt(
-            //         position.clone().add(zeroYTan.applyAxisAngle(this.model.up, -Math.PI * 0.5).add(zeroYTan))
-            //     );
-            //     this.model.position.y += 0.1;
-            //     break;
-            // }
-            // case "raptor2": {
-            //     const zeroYTan = new THREE.Vector3(tangent.x, 0, tangent.z);
-            //     this.model.lookAt(
-            //         position.clone().add(zeroYTan.applyAxisAngle(this.model.up, -Math.PI * 0.5).add(zeroYTan))
-            //     );
-            //     this.model.position.y += 0.6;
-            //     break;
-            // }
-            // case "soldier":
-            // case "brigand":
-            // case "warrior": {
-            //     const zeroYTan = new THREE.Vector3(tangent.x, 0, tangent.z);
-            //     this.model.lookAt(position.clone().add(zeroYTan));
-            //     this.model.position.y += 0.175;
-            //     break;
-            // }
             default:
                 this.model.lookAt(position.clone().sub(tangent));
                 break;

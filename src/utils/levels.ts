@@ -174,7 +174,7 @@ export const STAGE_WAVES_DATA: [string, number, number, number][][][] = [
     // stage 06 - FOREST
     [
         // wave 1
-        waveSegment(EnemyChar.Spider, 1.4, 30, 0, 3),
+        [...waveSegment(EnemyChar.Spider, 1.4, 30, 0, 0), ...waveSegment(EnemyChar.Bee, 6, 6, 0, 2)],
         // wave 2
         [...waveSegment(EnemyChar.Tribal, 3.2, 7), ...waveSegment(EnemyChar.Spider)],
         // wave 3
