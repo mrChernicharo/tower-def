@@ -302,17 +302,35 @@ export const STAGE_WAVES_DATA: [string, number, number, number][][][] = [
     // stage 05 - FOREST
     [
         // wave 1
-        [...waveSegment(EnemyChar.Ninja, 4, 8)],
-        // wave 2
-        [...waveSegment(EnemyChar.Spider, 3, 13, 0, 0), ...waveSegment(EnemyChar.Spider, 3, 11, 6, 2)],
-        // wave 3
-        [
-            ...waveSegment(EnemyChar.Spider, 3, 13, 0, 1),
-            ...waveSegment(EnemyChar.Bee, 3, 11, 8, 3),
-            ...waveSegment(EnemyChar.Spider, 3, 11, 16, 0),
-            ...waveSegment(EnemyChar.Spider, 3, 11, 24, 2),
-            ...waveSegment(EnemyChar.Ninja, 4, 8, 6, 3),
-        ],
+        // count, interval, spawn_at, path   
+
+[
+...waveSegment(EnemyChar.Demon, 3, 10, 3, 0),
+...waveSegment(EnemyChar.Tribal, 6, 5, 0, 1),
+...waveSegment(EnemyChar.Bee, 8, 4, 0, 2),
+],
+  
+
+[
+...waveSegment(EnemyChar.Demon, 5, 7, 3, 0),
+...waveSegment(EnemyChar.Bee, 10, 4.6, 0, 1),
+...waveSegment(EnemyChar.Tribal, 8, 4, 0, 2),
+],
+
+[
+...waveSegment(EnemyChar.Demon, 10, 5, 0, 0),
+...waveSegment(EnemyChar.Bee, 10, 4.2, 0, 1),
+...waveSegment(EnemyChar.Ninja, 6, 6, 6, 1),
+...waveSegment(EnemyChar.Tribal, 8, 4, 0, 2),
+],
+
+
+
+
+
+
+
+    
     ],
 
     // stage 06 - FOREST
