@@ -146,7 +146,7 @@ export function getStarIcons(stars: LevelStarCount) {
 export function getAreaByLevel(level: number) {
     if (level < 4) return "desert";
     if (level > 3 && level < 8) return "forest";
-    if (level > 8 && level < 12) return "winter";
+    if (level > 7 && level < 12) return "winter";
     else return "lava";
 }
 

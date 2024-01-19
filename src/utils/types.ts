@@ -135,3 +135,13 @@ export type GameLevel = {
     cameraBounds: { left: number; right: number; top: number; bottom: number };
     towerBasePositions: [number, number, number][];
 };
+
+export type LevelObject = {
+    name: string;
+    url: string;
+    instances: {
+        position: [number, number, number];
+        rotation: [number, number, number];
+        scale: [number, number, number];
+    }[];
+};

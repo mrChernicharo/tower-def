@@ -58,7 +58,7 @@ import { PlayerStats } from "./PlayerStats";
 import { Meteor } from "./Meteor";
 import { PoisonEntry } from "./PoisonEntry";
 import { Blizzard } from "./Blizzard";
-import { GAME_LEVELS, STAGE_WAVES_DATA } from "../utils/levels";
+import { GAME_LEVELS, STAGE_WAVES_DATA, levelObjects } from "../utils/levels";
 
 // let pathPoints: THREE.Vector3[] = [];
 
@@ -511,25 +511,22 @@ function _init2DModals() {
 
 async function drawMap() {
     const glb = await gltfLoader.loadAsync(levelData.mapURL);
+
     const model = glb.scene;
 
     console.log("drawMap", { glb, model });
 
     model.traverse((obj) => {
+        console.log({ obj });
         if ((obj as THREE.Mesh).isMesh) {
             const mesh = obj as THREE.Mesh;
 
-            // console.log(mesh.name);
+            // console.log(mesh.name, mesh.position, mesh.rotation, mesh.scale);
 
-            if (mesh.name.includes("Logs")) {
-                mesh.material = MATERIALS.wood;
-            } else if (/desert|Plane/g.test(mesh.name)) {
+            if (/Plane/g.test(mesh.name)) {
                 mesh.material = MATERIALS[`${levelData.area}`];
                 // mesh.receiveShadow = true;
                 obj.layers.set(AppLayers.Terrain);
-            } else if (mesh.name.includes("Windmill")) {
-                // console.log("Windmill", obj);
-                mesh.material = MATERIALS.wood;
             } else {
                 mesh.material = MATERIALS.concrete2;
                 // mesh.receiveShadow = true;
@@ -550,6 +547,45 @@ async function drawMap() {
         towerBaseMesh.position.set(pos[0], pos[1], pos[2]);
         scene.add(towerBaseMesh);
     });
+
+    const mapObjects = levelObjects[levelArea as keyof typeof levelObjects];
+    console.log({ levelObjects, levelArea, levelData, mapObjects });
+
+    for (const levelObj of mapObjects) {
+        const { scene: object } = await gltfLoader.loadAsync(levelObj.url);
+
+        levelObj.instances.forEach((inst) => {
+            const clone = object.clone();
+            clone.name = levelObj.name;
+            clone.position.set(inst.position[0], inst.position[1], inst.position[2]);
+            clone.setRotationFromEuler(new THREE.Euler(inst.rotation[0], inst.rotation[1], inst.rotation[2]));
+            clone.scale.set(inst.scale[0], inst.scale[1], inst.scale[2]);
+
+            if (clone.name.includes("desert")) {
+                clone.traverse((obj) => {
+                    if ((obj as any).isMesh) {
+                        const mesh = obj as THREE.Mesh;
+                        mesh.material = MATERIALS[`${levelData.area}`];
+                        // // mesh.receiveShadow = true;
+                        obj.layers.set(AppLayers.Terrain);
+                    }
+                });
+            }
+
+            if (["Tavern", "Fountain_00", "Statue_01"].includes(clone.name)) {
+                clone.traverse((obj) => {
+                    if ((obj as any).isMesh) {
+                        const mesh = obj as THREE.Mesh;
+                        mesh.material = MATERIALS.lightConcrete;
+                        // // mesh.receiveShadow = true;
+                        obj.layers.set(AppLayers.Terrain);
+                    }
+                });
+            }
+
+            scene.add(clone);
+        });
+    }
 }
 
 function drawPaths() {
@@ -1029,6 +1065,7 @@ function onCanvasClick(e: MouseEvent) {
     rayIntersects.forEach((ch) => {
         if (ch.object.name.includes("TowerBase")) {
             clickedTowerBase = ch;
+            console.log(ch.object.position);
         }
         if (ch.object.name.includes("-Tower")) {
             clickedTower = ch;

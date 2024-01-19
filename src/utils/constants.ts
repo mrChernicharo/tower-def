@@ -153,6 +153,7 @@ export const gameSkills: { [k in SkillPath]: Skill[] }  = {
 export const COLORS = {
     bg: 0x333355,
     desert: 0xdd6600,
+    lightConcrete: 0xcdcdcd,
     concrete: 0xacacac,
     concrete2: 0x8a8a8a,
     blue: 0x3484d4,
@@ -174,7 +175,7 @@ export const ENEMY_BLUEPRINTS: { [k in EnemyType]: EnemyBluePrint } = {
     spider: {
         name: EnemyType.Spider,
         reward: 5,
-        modelURL: "/assets/glb/models/spider.glb",
+        modelURL: "/assets/glb/enemies/spider.glb",
         speed: 3,
         maxHp: 40,
         modelScale: 80,
@@ -183,8 +184,8 @@ export const ENEMY_BLUEPRINTS: { [k in EnemyType]: EnemyBluePrint } = {
     orc: {
         name: EnemyType.Orc,
         reward: 10,
-        // modelURL: "/assets/glb/models/hand-painted_orc.glb",
-        modelURL: "/assets/glb/models/Orc.gltf",
+        // modelURL: "/assets/glb/enemies/hand-painted_orc.glb",
+        modelURL: "/assets/glb/enemies/Orc.gltf",
         speed: 2,
         maxHp: 200,
         modelScale: 1,
@@ -193,7 +194,7 @@ export const ENEMY_BLUEPRINTS: { [k in EnemyType]: EnemyBluePrint } = {
     alien: {
         name: EnemyType.Alien,
         reward: 17,
-        modelURL: "/assets/glb/models/Alien.gltf",
+        modelURL: "/assets/glb/enemies/Alien.gltf",
         speed: 1.6,
         maxHp: 200,
         modelScale: 1,
@@ -202,7 +203,7 @@ export const ENEMY_BLUEPRINTS: { [k in EnemyType]: EnemyBluePrint } = {
     demon: {
         name: EnemyType.Demon,
         reward: 25,
-        modelURL: "/assets/glb/models/Demon.gltf",
+        modelURL: "/assets/glb/enemies/Demon.gltf",
         speed: 1.8,
         maxHp: 250,
         modelScale: 1,
@@ -211,7 +212,7 @@ export const ENEMY_BLUEPRINTS: { [k in EnemyType]: EnemyBluePrint } = {
     dino: {
         name: EnemyType.Dino,
         reward: 20,
-        modelURL: "/assets/glb/models/Dino.gltf",
+        modelURL: "/assets/glb/enemies/Dino.gltf",
         speed: 1.7,
         maxHp: 220,
         modelScale: 1,
@@ -220,7 +221,7 @@ export const ENEMY_BLUEPRINTS: { [k in EnemyType]: EnemyBluePrint } = {
     // knight: {
     //     name: EnemyType.Knight,
     //     reward: 30,
-    //     modelURL: "/assets/glb/models/Knight.gltf",
+    //     modelURL: "/assets/glb/enemies/Knight.gltf",
     //     speed: 1.5,
     //     maxHp: 300,
     //     modelScale: 1,
@@ -229,7 +230,7 @@ export const ENEMY_BLUEPRINTS: { [k in EnemyType]: EnemyBluePrint } = {
     wizard: {
         name: EnemyType.Wizard,
         reward: 35,
-        modelURL: "/assets/glb/models/Wizard.gltf",
+        modelURL: "/assets/glb/enemies/Wizard.gltf",
         speed: 1.4,
         maxHp: 180,
         modelScale: 1,
@@ -238,7 +239,7 @@ export const ENEMY_BLUEPRINTS: { [k in EnemyType]: EnemyBluePrint } = {
     tribal: {
         name: EnemyType.Tribal,
         reward: 16,
-        modelURL: "/assets/glb/models/Tribal.gltf",
+        modelURL: "/assets/glb/enemies/Tribal.gltf",
         speed: 1.6,
         maxHp: 300,
         modelScale: 1,
@@ -247,7 +248,7 @@ export const ENEMY_BLUEPRINTS: { [k in EnemyType]: EnemyBluePrint } = {
     ninja: {
         name: EnemyType.Ninja,
         reward: 21,
-        modelURL: "/assets/glb/models/Ninja.gltf",
+        modelURL: "/assets/glb/enemies/Ninja.gltf",
         speed: 4,
         maxHp: 140,
         modelScale: 1,
@@ -256,7 +257,7 @@ export const ENEMY_BLUEPRINTS: { [k in EnemyType]: EnemyBluePrint } = {
     elf: {
         name: EnemyType.Elf,
         reward: 32,
-        modelURL: "/assets/glb/models/Elf.gltf",
+        modelURL: "/assets/glb/enemies/Elf.gltf",
         speed: 1.7,
         maxHp: 280,
         modelScale: 1,
@@ -265,7 +266,7 @@ export const ENEMY_BLUEPRINTS: { [k in EnemyType]: EnemyBluePrint } = {
     bee: {
         name: EnemyType.Bee,
         reward: 6,
-        modelURL: "/assets/glb/models/Bee.gltf",
+        modelURL: "/assets/glb/enemies/Bee.gltf",
         speed: 2.8,
         maxHp: 80,
         modelScale: 1,
@@ -274,7 +275,7 @@ export const ENEMY_BLUEPRINTS: { [k in EnemyType]: EnemyBluePrint } = {
     dragon: {
         name: EnemyType.Dragon,
         reward: 35,
-        modelURL: "/assets/glb/models/Dragon.gltf",
+        modelURL: "/assets/glb/enemies/Dragon.gltf",
         speed: 1.8,
         maxHp: 480,
         modelScale: 1,
@@ -283,7 +284,7 @@ export const ENEMY_BLUEPRINTS: { [k in EnemyType]: EnemyBluePrint } = {
     ghost: {
         name: EnemyType.Ghost,
         reward: 8,
-        modelURL: "/assets/glb/models/Ghost.gltf",
+        modelURL: "/assets/glb/enemies/Ghost.gltf",
         speed: 2,
         maxHp: 130,
         modelScale: 1,
@@ -292,7 +293,7 @@ export const ENEMY_BLUEPRINTS: { [k in EnemyType]: EnemyBluePrint } = {
     squidle: {
         name: EnemyType.Squidle,
         reward: 7,
-        modelURL: "/assets/glb/models/Squidle.gltf",
+        modelURL: "/assets/glb/enemies/Squidle.gltf",
         speed: 2.5,
         maxHp: 120,
         modelScale: 1,
@@ -779,6 +780,12 @@ export const MATERIALS = {
     meteor: new THREE.MeshMatcapMaterial({ color: COLORS.red }),
     concrete: new THREE.MeshMatcapMaterial({ color: COLORS.concrete }),
     concrete2: new THREE.MeshMatcapMaterial({ color: COLORS.concrete2 }),
+    lightConcrete: new THREE.MeshMatcapMaterial({ color: COLORS.lightConcrete }),
+    concreteTransparent: new THREE.MeshMatcapMaterial({
+        color: COLORS.concrete,
+        transparent: true,
+        opacity: 0.5,
+    }),
     black: new THREE.MeshMatcapMaterial({ color: COLORS.black }),
     transparentBlack: new THREE.MeshMatcapMaterial({ color: COLORS.black, transparent: true, opacity: 0.5 }),
     desert: new THREE.MeshMatcapMaterial({ color: COLORS.desert }),
@@ -789,11 +796,7 @@ export const MATERIALS = {
     beacon: new THREE.MeshMatcapMaterial({ color: COLORS.green }),
     wood: new THREE.MeshMatcapMaterial({ color: "brown" }),
     icicle: new THREE.MeshMatcapMaterial({ color: "dodgerblue", transparent: true, opacity: 0.5 }),
-    concreteTransparent: new THREE.MeshMatcapMaterial({
-        color: COLORS.concrete,
-        transparent: true,
-        opacity: 0.5,
-    }),
+
     projectileGizmo: new THREE.MeshToonMaterial({ color: 0x00ffff }),
     tower: (towerTexture: THREE.Texture) =>
         new THREE.MeshBasicMaterial({
