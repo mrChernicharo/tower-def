@@ -3,8 +3,9 @@ import { EnemyChar, GameArea } from "./enums";
 import { GameLevel, LevelObject } from "./types";
 import { winterLevelPaths } from "./paths/winter/paths";
 import { lavaLevelPaths } from "./paths/lava/paths";
-import { desertLevelPath } from "./paths/desert/paths";
+import { desertLevelPaths00, desertLevelPaths01 } from "./paths/desert/paths";
 import { forestLevelPaths } from "./paths/forest/paths";
+// import { THREE } from "../three";
 
 export const mapURLs = {
     desert: "/assets/glb/levels/lv1.desert-level.glb",
@@ -33,6 +34,45 @@ const towerBasePositions = {
         [-11.05, 0.1, -18.505279541015625],
         [-8.77, 0.1, -4.2777299880981445],
         [5.64, 0.1, 12.768688201904297],
+    ] as [number, number, number][],
+    desert2: [
+        // [-17.5, 0.1, -20],
+        [-16.769852409018597, 0, -22.1100205012947],
+        [-10.084115639998581, 0, -19.25634365751264],
+        [-0.055603980089027116, 0, -17.736693319780095],
+        [-16.5, 0.1, -7],
+        [-8, 0.1, -5],
+        [-16, 0.1, 7],
+        [-7, 0.1, 5],
+        [-11, 0.1, 12],
+        [7, 0.1, 13],
+        [0, 0.1, 10],
+        [2.1066766393286835, 0, 1.3845094820838533],
+        [11.270140720927576, 0, 7.101552849333572],
+        [12.251040080251133, 0, -0.028416352144908785],
+        [12.45412333038625, 0, 23.101484393737536],
+        [-5.6441889522027076, 0, 30.42731280929469],
+        [-1.3580527298250695, 0, 21.598511061270955],
+        [-16.995856344543678, 0, 20.83100040563857],
+        [15.121864459180443, 0, 15.531729381782675],
+        // [-16.23, 0.1, -16],
+        // [-10.03, 0.1, 9.045719146728516],
+        // [-14.67, 0.1, 8.63398265838623],
+        // [-15.78, 0.1, 3.8990440368652344],
+        // [-10.65, 0.1, 3.6790854930877686],
+        // [-4.93, 0.1, -25.139816284179688],
+        // [-12.06, 0.1, -25.139816284179688],
+        // [-11.54, 0.1, -31.42244529724121],
+        // [14.094917297363281, 0.1, 20.26247787475586],
+        // [8.91, 0.1, 20.561803817749023],
+        // [9.13, 0.1, 26.90176010131836],
+        // [14.72, 0.1, 26.308197021484375],
+        // [13.21, 0.1, 33.36888122558594],
+        // [7.62, 0.1, 33.96244812011719],
+        // [-5.4, 0.1, 9.045719146728516],
+        // [-11.05, 0.1, -18.505279541015625],
+        // [-8.77, 0.1, -4.2777299880981445],
+        // [5.64, 0.1, 12.768688201904297],
     ] as [number, number, number][],
     forest: [
         [4.2, 0.1, -25],
@@ -88,8 +128,9 @@ const towerBasePositions = {
     ] as [number, number, number][],
 };
 
-export const levelObjects: { [k in GameArea]: LevelObject[] } = {
-    desert: [
+export const levelObjects: LevelObject[][] = [
+    // desert:
+    [
         {
             name: "Hill_desert_001",
             url: "assets/glb/other/Hill_desert_001.glb",
@@ -124,7 +165,84 @@ export const levelObjects: { [k in GameArea]: LevelObject[] } = {
             ],
         },
     ],
-    forest: [
+
+    // desert2:
+    [
+        {
+            name: "Hill_desert_001",
+            url: "assets/glb/other/Hill_desert.glb",
+            instances: [
+                {
+                    position: [0, 0, 0],
+                    // position: [15.2, 0, 13.4],
+                    rotation: [0, 0, 0],
+                    // rotation: [THREE.MathUtils.degToRad(90), 0, THREE.MathUtils.degToRad(162)],
+                    scale: [1, 1, 1],
+                },
+            ],
+        },
+        {
+            name: "Mountain_desert",
+            url: "assets/glb/other/Mountain_desert.glb",
+            instances: [
+                {
+                    position: [0, 0, 0],
+                    rotation: [0, 0, 0],
+                    scale: [1, 1, 1],
+                },
+            ],
+        },
+        {
+            name: "Cactus_Flower_5",
+            url: "assets/glb/other/Cactus_Flower_5.gltf",
+            instances: [
+                {
+                    position: [-0.9715956920661353, 0, -2.205156654401401],
+                    rotation: [0, -0.3, 0],
+                    scale: [1, 1, 1],
+                },
+                {
+                    position: [0.3170020644910606, 0, -3.223527018441432],
+                    rotation: [0, 0.7, 0],
+                    scale: [1, 1, 1],
+                },
+                {
+                    position: [-0.3234064705294956, 0, -5.187738022917099],
+                    rotation: [0, 0.3, 0],
+                    scale: [1, 1, 1],
+                },
+                {
+                    position: [-21.684582686539656, 3.667043585874767, -36.99834876811896],
+                    rotation: [0, 0.46, 0],
+                    scale: [1, 1, 1],
+                },
+                {
+                    position: [-18.077443845263527, 3.7153921547948774, -37.196506330805335],
+                    rotation: [0, 1.3, 0],
+                    scale: [1, 1, 1],
+                },
+                {
+                    position: [-21.69044910967062, 0, 37.97458105213804],
+                    rotation: [0, 1.3, 0],
+                    scale: [1, 1, 1],
+                },
+                {
+                    position: [-19.731727823520494, 0, 35.010801560845756],
+                    rotation: [0, 1.65, 0],
+                    scale: [1, 1, 1],
+                },
+                {
+                    position: [21.42091246828719, 0, 29.919761677735657],
+                    rotation: [0, 1.3, 0],
+                    scale: [1, 1, 1],
+                },
+            ],
+        },
+    ],
+
+    // forest
+
+    [
         {
             name: "Windmill",
             url: "assets/glb/other/Windmill.gltf",
@@ -197,7 +315,10 @@ export const levelObjects: { [k in GameArea]: LevelObject[] } = {
             ],
         },
     ],
-    winter: [
+
+    // winter
+
+    [
         {
             name: "Windmill",
             url: "assets/glb/other/Windmill.gltf",
@@ -226,7 +347,8 @@ export const levelObjects: { [k in GameArea]: LevelObject[] } = {
             ],
         },
     ],
-    lava: [
+    // lava
+    [
         {
             name: "Fountain_00",
             url: "assets/glb/other/Fountain_00.glb",
@@ -248,7 +370,7 @@ export const levelObjects: { [k in GameArea]: LevelObject[] } = {
             ],
         },
     ],
-};
+];
 
 // enemyChar, pathIdx, spawnAt, xOffset
 export const STAGE_WAVES_DATA: [string, number, number, number][][][] = [
@@ -268,11 +390,15 @@ export const STAGE_WAVES_DATA: [string, number, number, number][][][] = [
     // stage 02
     [
         // wave 1
-        [...waveSegment(EnemyChar.Squidle, 5, 5, 0, 0)],
+        [...waveSegment(EnemyChar.Squidle, 5, 5, 0, 0), ...waveSegment(EnemyChar.Tribal, 3, 5, 2.5, 2)],
         // wave 2
-        [...waveSegment(EnemyChar.Alien, 5, 6, 0, 0)],
+        [...waveSegment(EnemyChar.Squidle, 5, 6, 0, 2), ...waveSegment(EnemyChar.Tribal, 6, 5, 2.5, 1)],
         // wave 3
-        [...waveSegment(EnemyChar.Alien, 5, 6, 0, 0), ...waveSegment(EnemyChar.Squidle, 5, 5, 0, 0)],
+        [
+            ...waveSegment(EnemyChar.Alien, 5, 6, 0, 0),
+            ...waveSegment(EnemyChar.Squidle, 5, 5, 0, 1),
+            ...waveSegment(EnemyChar.Squidle, 5, 5, 0, 3),
+        ],
     ],
 
     // stage 03
@@ -302,35 +428,26 @@ export const STAGE_WAVES_DATA: [string, number, number, number][][][] = [
     // stage 05 - FOREST
     [
         // wave 1
-        // count, interval, spawn_at, path   
+        // count, interval, spawn_at, path
 
-[
-...waveSegment(EnemyChar.Demon, 3, 10, 3, 0),
-...waveSegment(EnemyChar.Tribal, 6, 5, 0, 1),
-...waveSegment(EnemyChar.Bee, 8, 4, 0, 2),
-],
-  
+        [
+            ...waveSegment(EnemyChar.Demon, 3, 10, 3, 0),
+            ...waveSegment(EnemyChar.Tribal, 6, 5, 0, 1),
+            ...waveSegment(EnemyChar.Bee, 8, 4, 0, 2),
+        ],
 
-[
-...waveSegment(EnemyChar.Demon, 5, 7, 3, 0),
-...waveSegment(EnemyChar.Bee, 10, 4.6, 0, 1),
-...waveSegment(EnemyChar.Tribal, 8, 4, 0, 2),
-],
+        [
+            ...waveSegment(EnemyChar.Demon, 5, 7, 3, 0),
+            ...waveSegment(EnemyChar.Bee, 10, 4.6, 0, 1),
+            ...waveSegment(EnemyChar.Tribal, 8, 4, 0, 2),
+        ],
 
-[
-...waveSegment(EnemyChar.Demon, 10, 5, 0, 0),
-...waveSegment(EnemyChar.Bee, 10, 4.2, 0, 1),
-...waveSegment(EnemyChar.Ninja, 6, 6, 6, 1),
-...waveSegment(EnemyChar.Tribal, 8, 4, 0, 2),
-],
-
-
-
-
-
-
-
-    
+        [
+            ...waveSegment(EnemyChar.Demon, 10, 5, 0, 0),
+            ...waveSegment(EnemyChar.Bee, 10, 4.2, 0, 1),
+            ...waveSegment(EnemyChar.Ninja, 6, 6, 6, 1),
+            ...waveSegment(EnemyChar.Tribal, 8, 4, 0, 2),
+        ],
     ],
 
     // stage 06 - FOREST
@@ -645,7 +762,7 @@ export const GAME_LEVELS: GameLevel[] = [
         level: 0,
         initialGold: 250,
         mapURL: mapURLs.desert,
-        paths: [desertLevelPath],
+        paths: desertLevelPaths00,
         waves: STAGE_WAVES_DATA[0],
         initialCamPos: [0, 40, 62],
         cameraBounds: mediumBounds,
@@ -656,18 +773,18 @@ export const GAME_LEVELS: GameLevel[] = [
         level: 1,
         initialGold: 260,
         mapURL: mapURLs.desert,
-        paths: [desertLevelPath],
+        paths: desertLevelPaths01,
         waves: STAGE_WAVES_DATA[1],
         initialCamPos: [0, 40, 62],
         cameraBounds: mediumBounds,
-        towerBasePositions: towerBasePositions.desert,
+        towerBasePositions: towerBasePositions.desert2,
     },
     {
         area: GameArea.Desert,
         level: 2,
         initialGold: 270,
         mapURL: mapURLs.desert,
-        paths: [desertLevelPath],
+        paths: desertLevelPaths00,
         waves: STAGE_WAVES_DATA[2],
         initialCamPos: [0, 40, 62],
         cameraBounds: mediumBounds,
@@ -678,11 +795,11 @@ export const GAME_LEVELS: GameLevel[] = [
         level: 3,
         initialGold: 280,
         mapURL: mapURLs.desert,
-        paths: [desertLevelPath],
+        paths: desertLevelPaths01,
         waves: STAGE_WAVES_DATA[3],
         initialCamPos: [0, 40, 62],
         cameraBounds: mediumBounds,
-        towerBasePositions: towerBasePositions.desert,
+        towerBasePositions: towerBasePositions.desert2,
     },
     {
         area: GameArea.Forest,

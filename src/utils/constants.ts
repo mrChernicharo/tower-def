@@ -307,6 +307,7 @@ export const TOWER_BLUEPRINTS: { [k in TowerType]: TowerBluePrint[] } = {
             name: TowerType.Archer,
             level: 1,
             defaultStrategy: TargetingStrategy.FirstInLine,
+            modelURL: "/assets/glb/towers/Archer_Tower.gltf",
             firePointY: 6,
             damage: [3, 7],
             fireRate: 6,

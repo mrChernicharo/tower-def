@@ -76,17 +76,18 @@ let fbxLoader: FBXLoader;
 let scene: THREE.Scene;
 let renderer: THREE.WebGLRenderer;
 let cssRenderer: CSS2DRenderer;
-let gameClock: THREE.Clock;
-//  let orbit: OrbitControls;
 let camera: THREE.PerspectiveCamera;
+//  let orbit: OrbitControls;
+
 let gameState = GameState.Idle;
+let gameClock: THREE.Clock;
+let totalGameTime: number;
+let activeGameTime: number;
+let gameSpeed: GameSpeed;
 
 let mouseRay: THREE.Raycaster;
 let playerStats: PlayerStats;
-let totalGameTime: number;
-let activeGameTime: number;
 let loadingManager: THREE.LoadingManager;
-let gameSpeed: GameSpeed;
 let levelData: GameLevel;
 let towerPreview: { model: THREE.Group; rangeGizmo: THREE.Mesh } | undefined;
 
@@ -144,7 +145,6 @@ let meteorTargetPos = new THREE.Vector3();
 
 let readyToFireBlizzard = false;
 let blizzardTargetPos = new THREE.Vector3();
-
 // let mouseTargetRing: THREE.Mesh;
 let mobileScaling = false;
 let prevPinchDist = 0;
@@ -422,14 +422,29 @@ async function _initEnemyModels() {
 
 async function _initTowerModels() {
     // const towersFbx = await fbxLoader.loadAsync("/assets/fbx/towers-no-texture.fbx");
-    const { scene: newTowers } = await gltfLoader.loadAsync("/assets/glb/towers/towers-no-texture-separated-heads.glb");
+    const { scene: towerModels } = await gltfLoader.loadAsync(
+        "/assets/glb/towers/towers-no-texture-separated-heads.glb"
+    );
+
+    // for (const [, mesh] of towerModels.children.entries()) {
+    //     if (mesh.userData.name === "archer_tower_LVL_1") {
+    //         const glb = await gltfLoader.loadAsync("/assets/glb/towers/Archer_Tower.gltf");
+    //         console.log("porra", { model: glb.scene, towerModels });
+    //         const g = glb.scene;
+    //         g.name = "archer_tower_LVL_1";
+    //         g.userData.name = "archer_tower_LVL_1";
+    //         towerModels.children[0] = g;
+    //     }
+    // }
 
     const projectilesFbx = await fbxLoader.loadAsync("/assets/fbx/projectiles-no-texture.fbx");
     towerTexture = await new THREE.TextureLoader().loadAsync("/assets/fbx/towers-texture.png");
-    console.log({ newTowers, towers: newTowers.children.map((c) => c.name).sort((a, b) => a.localeCompare(b)) });
+    console.log("_initTowerModels", {
+        towerModels,
+        towers: towerModels.children.map((c) => c.name).sort((a, b) => a.localeCompare(b)),
+    });
 
-    const towerModels = newTowers.children;
-    for (const model of towerModels) {
+    for (const model of towerModels.children) {
         // console.log(model);
         const towerLevel = +model.name.split("_")[3];
         const towerName = capitalize(model.name.split("_")[0]) as TowerType;
@@ -441,6 +456,11 @@ async function _initTowerModels() {
         if (!TOWER_MODELS[towerName][`level-${towerLevel}`]) {
             TOWER_MODELS[towerName][`level-${towerLevel}`] = new THREE.Group();
         }
+
+        // if (TOWER_BLUEPRINTS[towerName][towerLevel]?.modelURL) {
+        //     const glb = await gltfLoader.loadAsync(TOWER_BLUEPRINTS[towerName][towerLevel].modelURL!);
+        //     model = glb.scene;
+        // }
 
         if (model.userData.name.includes("_Head")) {
             model.name = `${towerName}-Tower_Head`;
@@ -548,7 +568,7 @@ async function drawMap() {
         scene.add(towerBaseMesh);
     });
 
-    const mapObjects = levelObjects[levelArea as keyof typeof levelObjects];
+    const mapObjects = levelObjects[levelIdx];
     console.log({ levelObjects, levelArea, levelData, mapObjects });
 
     for (const levelObj of mapObjects) {
@@ -1058,6 +1078,9 @@ function onCanvasClick(e: MouseEvent) {
     mousePos.x = (e.clientX / canvasWidth) * 2 - 1;
     mousePos.y = -(e.clientY / canvasHeight) * 2 + 1;
     mouseRay.setFromCamera(mousePos, camera);
+
+    const pos = mousePosToWorldPos(mouseRay, scene);
+    console.log([pos.x, pos.y, pos.z]);
 
     let clickedTower: THREE.Intersection | undefined;
     let clickedTowerBase: THREE.Intersection | undefined;

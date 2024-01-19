@@ -23,6 +23,7 @@ export type TowerBluePrint = {
     defaultStrategy: TargetingStrategy;
     modelScale: number;
     firePointY: number;
+    modelURL?: string;
     skills?: unknown[];
 };
 
