@@ -54,6 +54,7 @@ export enum AppLayers {
     Projectile = 4,
     Buildings = 5,
     Enemy = 6,
+    EnemyInternals = 7,
 }
 
 export enum TowerType {

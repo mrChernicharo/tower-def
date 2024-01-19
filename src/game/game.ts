@@ -879,7 +879,6 @@ function onModalClick(e: MouseEvent, el: THREE.Object3D, modal3D: CSS2DObject, m
     }
     if (evTarget.classList.contains("confirm-tower-build-btn")) {
         // console.log(`BUILD THIS GODAMN ${towerToBuild} TOWER`, { el });
-        clearTowerPreview();
 
         const towerPrice = TOWER_BLUEPRINTS[towerToBuild!][0].price;
         if (playerStats.gold < towerPrice) {
@@ -888,6 +887,8 @@ function onModalClick(e: MouseEvent, el: THREE.Object3D, modal3D: CSS2DObject, m
             msgArea.innerHTML = "not enough money!";
             return;
         }
+
+        clearTowerPreview();
         playerStats.spendGold(towerPrice);
 
         const tower = new Tower(towerToBuild!, el.position, modal3D.userData["tile_idx"]);

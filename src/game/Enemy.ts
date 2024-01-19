@@ -79,6 +79,7 @@ export class Enemy {
                 if (obj.type === "SkinnedMesh") {
                     const mesh = obj as SkinnedMesh;
                     // mesh.castShadow = true;
+                    obj.layers.enable(AppLayers.EnemyInternals);
 
                     this.skinnedMeshes.push(mesh);
                     if (!this.originalMaterial) {
