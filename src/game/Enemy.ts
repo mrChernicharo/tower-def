@@ -143,13 +143,13 @@ export class Enemy {
                 break;
             }
             // case "knight":
+            // case "elf":
             case "orc":
             case "alien":
             case "demon":
             case "dino":
             case "tribal":
-            case "ninja":
-            case "elf": {
+            case "ninja": {
                 const zeroYTan = new THREE.Vector3(tangent.x, 0, tangent.z);
                 this.model.lookAt(position.clone().add(zeroYTan));
                 break;

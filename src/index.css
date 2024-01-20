@@ -109,7 +109,28 @@ button:focus-visible {
     background: #444;
     padding: 1rem;
     border-radius: 12px;
-    transform: translate(0, -165px);
+    transform: translate(0, -250px);
+    /* transform: translate(0, -165px); */
+}
+
+.modal-line {
+    width: 55px;
+    height: 2px;
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translate(-50%, 50px);
+    border-top-color: #444;
+    border-top-width: 50px;
+    border-top-style: solid;
+
+    border-left-color: transparent;
+    border-left-width: 26px;
+    border-left-style: solid;
+
+    border-right-color: transparent;
+    border-right-width: 26px;
+    border-right-style: solid;
 }
 
 .modal-content-row {
@@ -137,13 +158,14 @@ button:focus-visible {
 
 .modal-content .cancel-btn-container {
     position: relative;
-    height: 50px;
+    height: 20px;
 }
 
 .modal-content .cancel-btn {
     background-color: transparent;
-    right: 0;
     position: absolute;
+    right: -12px;
+    top: -12px;
 }
 
 #pause-game-screen .btn-row button#resume-game-btn {
@@ -163,6 +185,11 @@ button:focus-visible {
 }
 #pause-game-screen .btn-row:last-of-type button,
 .modal-content .btn-row:last-of-type button {
+    width: 100%;
+}
+
+.modal-content .confirm-btn {
+    /* background-color: rgb(23, 184, 23); */
     width: 100%;
 }
 

@@ -1054,7 +1054,7 @@ function onModalClick(e: MouseEvent, el: THREE.Object3D, modal3D: CSS2DObject, m
             tower.rangeGizmo.visible = true;
         }
     }
-    if (evTarget.classList.contains("confirm-tower-upgrade-btn")) {
+    if (evTarget.id === "confirm-tower-upgrade-btn") {
         const tower = towers.find((t) => t.id === tower_id);
 
         // const towerIdx = towers.findIndex((t) => t.id === tower_id);
@@ -1155,14 +1155,6 @@ function onCanvasClick(e: MouseEvent) {
             window.dispatchEvent(new CustomEvent("blizzard-fire"));
             return;
         }
-        case Boolean(clickedTowerBase): {
-            if (!clickedTowerBase) return;
-            console.log("CLICKED TOWER BASE", { clickedTowerBase, scene });
-            const modal3D = scene.getObjectByName(`${clickedTowerBase.object.name}-modal`)!;
-            modal3D.visible = true;
-            outlinePass.selectedObjects.push(clickedTowerBase.object);
-            return;
-        }
         case Boolean(clickedTower): {
             if (!clickedTower) return;
             console.log("CLICKED TOWER", { clickedTower, scene });
@@ -1177,6 +1169,14 @@ function onCanvasClick(e: MouseEvent) {
                     }
                 }
             });
+            return;
+        }
+        case Boolean(clickedTowerBase): {
+            if (!clickedTowerBase) return;
+            console.log("CLICKED TOWER BASE", { clickedTowerBase, scene });
+            const modal3D = scene.getObjectByName(`${clickedTowerBase.object.name}-modal`)!;
+            modal3D.visible = true;
+            outlinePass.selectedObjects.push(clickedTowerBase.object);
             return;
         }
         default: {

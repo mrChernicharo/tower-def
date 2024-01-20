@@ -8,7 +8,7 @@ import { LevelStarCount } from "../utils/types";
 export const modalTemplates = {
     towerBuild: () => `
         <div class="${ModalType.TowerBuild} modal-content">
-            <h3>Build Tower</h3>
+            <!-- <h3>Build Tower</h3> -->
             <div class="modal-content-row btn-row">
                 <button id="${TowerType.Archer}-tower-build-btn" class="tower-build-btn">
                     <img width="50" height="50" src="${imgs.Archer}" />
@@ -29,6 +29,7 @@ export const modalTemplates = {
                 </button>
             </div>
         </div>
+        <div class="modal-line"></div>
     `,
     confirmTowerBuild: (towerType: TowerType) => `
         <div class="${ModalType.ConfirmTowerBuild} ${towerType} modal-content">
@@ -36,15 +37,34 @@ export const modalTemplates = {
                 <button class="cancel-btn cancel-tower-build-btn">←</button>
             </div>
 
-            <h3>Build ${capitalize(towerType)} Tower</h3>
+            <div style="display: flex; flex-direction: column; justify-content: center; align-items: center;">
+                <img width="50" height="50" src="${imgs[towerType]}" />
+                
+                <h3>${capitalize(towerType)} Tower</h3>
 
-            <div class="warning-msg-area"></div>
-
-            <div>
-                <button id="confirm-tower-build-btn" class="confirm-tower-build-btn">Confirm</button>
+                
+                <div class="warning-msg-area"></div>
+                
+                <button id="confirm-tower-build-btn" class="confirm-tower-build-btn confirm-btn">✓</button>
             </div>
         </div>
     `,
+
+    // confirmTowerBuild: (towerType: TowerType) => `
+    //     <div class="${ModalType.ConfirmTowerBuild} ${towerType} modal-content">
+    //         <div class="cancel-btn-container">
+    //             <button class="cancel-btn cancel-tower-build-btn">←</button>
+    //         </div>
+
+    //         <h3>Build ${capitalize(towerType)} Tower</h3>
+
+    //         <div class="warning-msg-area"></div>
+
+    //         <div>
+    //             <button id="confirm-tower-build-btn" class="confirm-tower-build-btn">Confirm</button>
+    //         </div>
+    //     </div>
+    // `,
     towerDetails: (tower: Tower) => {
         const t = tower.blueprint;
         const t2 = TOWER_BLUEPRINTS[tower.towerName][tower.blueprint.level];
@@ -78,10 +98,10 @@ export const modalTemplates = {
             
             <h3>Sell ${capitalize(tower.towerName)} Tower</h3>
 
-            <div>Sell Price $${Math.round(tower.blueprint.price * 0.7)}</div>
-
             <div>
-                <button id="confirm-tower-sell-btn" class="confirm-tower-sell-btn">Confirm</button>
+                <button id="confirm-tower-sell-btn" class="confirm-tower-sell-btn">SELL 💰${Math.round(
+                    tower.blueprint.price * 0.7
+                )}</button>
             </div>
         </div>
     `,
@@ -107,22 +127,23 @@ export const modalTemplates = {
                 <button class="cancel-btn cancel-tower-upgrade-btn">←</button>
             </div>
 
-            <h3>Upgrade ${capitalize(tower.towerName)} Tower</h3>
+            <div style="display: flex; flex-direction: column; justify-content: center; align-items: center;">
+                <img width="50" height="50" src="${imgs[t.name]}" />
+                <h3>${capitalize(tower.towerName)} Tower LVL ${t2.level}</h3>
+            </div>            
 
-            <h2>Cost $${t2.price}</h2>
-            
             <div>
                 <div>Level ${t.level} → ${t2.level}</div>
                 <div>Damage ${t.damage.join(" - ")} → ${t2.damage.join(" - ")}</div>
-                <div>FireRate ${t.fireRate} → ${t2.fireRate}</div>
-                <div>Range ${t.range} → ${t2.range}</div>
+                ${t.fireRate === t2.fireRate ? "" : `<div>FireRate ${t.fireRate} → ${t2.fireRate}</div>`}
+                ${t.range === t2.range ? "" : `<div>Range ${t.range} → ${t2.range}</div>`}
             </div>
 
 
             <div class="warning-msg-area"></div>
 
             <div>
-                <button class="confirm-tower-upgrade-btn">Confirm!</button>
+                <button id="confirm-tower-upgrade-btn" class="confirm-btn">UPGRADE! 💰${t2.price}</button>
             </div>
         </div>
     `;

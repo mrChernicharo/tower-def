@@ -25,8 +25,8 @@ export function getEnemyTypeFromChar(char: EnemyChar): EnemyType {
             return EnemyType.Tribal;
         case "n":
             return EnemyType.Ninja;
-        case "e":
-            return EnemyType.Elf;
+        // case "e":
+        //     return EnemyType.Elf;
         case "b":
             return EnemyType.Bee;
         case "g":
