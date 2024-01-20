@@ -443,7 +443,7 @@ async function _initTowerModels() {
         const [towerName, towerLevel] = [modelName.split("_")[0] as TowerType, +modelName.split("_")[3]];
         model.name = modelName;
         model.userData.name = model.name;
-        console.log(towerName, towerLevel, modelName);
+        // console.log(towerName, towerLevel, modelName);
 
         if (!TOWER_MODELS[towerName]) {
             TOWER_MODELS[towerName] = {};
@@ -453,13 +453,13 @@ async function _initTowerModels() {
             TOWER_MODELS[towerName][`level-${towerLevel}`] = new THREE.Group();
         }
 
-        // if (model.userData.name.includes("_Head")) {
-        //     model.name = `${towerName}-Tower_Head`;
-        // } else if (model.userData.name.includes("_Body")) {
-        //     model.name = `${towerName}-Tower_Body`;
-        // } else {
-        //     model.name = `${towerName}-Tower`;
-        // }
+        if (model.userData.name.includes("_Head")) {
+            model.name = `${towerName}_Tower_Head`;
+        } else if (model.userData.name.includes("_Body")) {
+            model.name = `${towerName}_Tower_Body`;
+        } else {
+            model.name = `${towerName}_Tower`;
+        }
 
         TOWER_MODELS[towerName][`level-${towerLevel}`].add(model.clone());
     }
@@ -1113,12 +1113,13 @@ function onCanvasClick(e: MouseEvent) {
     let clickedTower: THREE.Intersection | undefined;
     let clickedTowerBase: THREE.Intersection | undefined;
     const rayIntersects = mouseRay.intersectObjects(scene.children);
+    console.log(rayIntersects);
     rayIntersects.forEach((ch) => {
         if (ch.object.name.includes("TowerBase")) {
             clickedTowerBase = ch;
             console.log(ch.object.position);
         }
-        if (ch.object.name.includes("-Tower")) {
+        if (ch.object.name.includes("_Tower")) {
             clickedTower = ch;
         }
     });
@@ -1293,7 +1294,7 @@ function onResumeGame() {
 
     scene.traverse((obj) => {
         // paused with confirmUpgrade modal open? line below will ensure the tower mesh gets back to its original state on resume
-        if ((obj as any).isMesh && obj.name.includes("-Tower") && !obj.visible) {
+        if ((obj as any).isMesh && obj.name.includes("_Tower") && !obj.visible) {
             obj.visible = true;
         }
     });

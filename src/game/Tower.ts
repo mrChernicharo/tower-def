@@ -108,17 +108,11 @@ export class Tower {
     }
 
     _setupModelData() {
-        // this.model.name = `${this.towerName}-${this.id}`;
         this.model.userData["tower_id"] = this.id;
         this.model.userData["tower_level"] = this.blueprint.level;
         this.model.userData["tile_idx"] = this.tileIdx;
         this.model.layers.set(AppLayers.Tower);
-        this.model.children.forEach((mesh) => {
-            (mesh as THREE.Mesh).material = MATERIALS.tower(towerTexture);
-            mesh.userData["tower_id"] = this.id;
-            mesh.userData["tower_level"] = this.blueprint.level;
-            mesh.userData["tile_idx"] = this.tileIdx;
-        });
+
         this.model.position.set(this.position.x, this.position.y, this.position.z);
         const s = this.blueprint.modelScale;
         this.model.scale.set(s, s, s);
@@ -128,15 +122,20 @@ export class Tower {
             //     if ((obj as any).isMesh) {
             //         obj.castShadow = true;
             //      }
-            console.log({ obj });
+            // console.log({ obj });
+            obj.userData["tower_id"] = this.id;
+            obj.userData["tower_level"] = this.blueprint.level;
+            obj.userData["tile_idx"] = this.tileIdx;
+
             if (obj.name.includes("_Body")) {
                 this.bodyMesh = obj as THREE.Mesh;
             }
             if (obj.name.includes("_Head")) {
                 this.headMesh = obj as THREE.Mesh;
             }
-            // console.log(obj);
         });
+
+        // console.log("_setupModelData", { model: this.model, head: this.headMesh, body: this.bodyMesh });
     }
 
     tick(delta: number, targetEnemy: Enemy | undefined) {

@@ -15,9 +15,9 @@
             "matrix": [
                 0.004999999888241291, 0, 0, 0, 0, 0.004999999888241291, 0, 0, 0, 0, 0.004999999888241291, 0, 0, 0, 0, 1
             ],
-            "name": "Wizard_tower_LVL_4_Body",
+            "name": "Wizard_Tower_LVL_4_Body",
             "extras": {
-                "name": "Wizard_tower_LVL_4_Body"
+                "name": "Wizard_Tower_LVL_4_Body"
             },
             "mesh": 0
         },
@@ -25,9 +25,9 @@
             "matrix": [
                 0.004999999888241291, 0, 0, 0, 0, 0.004999999888241291, 0, 0, 0, 0, 0.004999999888241291, 0, 0, 0, 0, 1
             ],
-            "name": "Wizard_tower_LVL_4_Head",
+            "name": "Wizard_Tower_LVL_4_Head",
             "extras": {
-                "name": "Wizard_tower_LVL_4_Head"
+                "name": "Wizard_Tower_LVL_4_Head"
             },
             "mesh": 1
         },

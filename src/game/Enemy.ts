@@ -92,8 +92,6 @@ export class Enemy {
             }
         });
 
-        console.log(this.originalMaterial);
-
         if (["bee", "ghost", "squidle", "dragon"].includes(this.enemyType)) {
             const shadow = new THREE.Mesh(new THREE.CylinderGeometry(0.5, 0.5, 0.25), MATERIALS.transparentBlack);
             shadow.name = "EnemyShadow";

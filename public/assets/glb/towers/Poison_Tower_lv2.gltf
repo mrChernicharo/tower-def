@@ -15,9 +15,9 @@
             "matrix": [
                 0.004999999888241291, 0, 0, 0, 0, 0.004999999888241291, 0, 0, 0, 0, 0.004999999888241291, 0, 0, 0, 0, 1
             ],
-            "name": "Poison_tower_LVL_2_Body",
+            "name": "Poison_Tower_LVL_2_Body",
             "extras": {
-                "name": "Poison_tower_LVL_2_Body"
+                "name": "Poison_Tower_LVL_2_Body"
             },
             "mesh": 0
         },
@@ -25,9 +25,9 @@
             "matrix": [
                 0.004999999888241291, 0, 0, 0, 0, 0.004999999888241291, 0, 0, 0, 0, 0.004999999888241291, 0, 0, 0, 0, 1
             ],
-            "name": "Poison_tower_LVL_2_Head",
+            "name": "Poison_Tower_LVL_2_Head",
             "extras": {
-                "name": "Poison_tower_LVL_2_Head"
+                "name": "Poison_Tower_LVL_2_Head"
             },
             "mesh": 1
         },
