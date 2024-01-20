@@ -41,7 +41,9 @@ export type ProjectileBluePrint = {
 
 export type Projectile = ParabolaProjectile | StraightProjectile;
 
-export type WaveEnemy = {
+export type WaveEnemy = [string, number, number, number];
+
+export type WaveEnemyObj = {
     enemyType: EnemyType;
     pathIdx: number;
     spawnAt: number;

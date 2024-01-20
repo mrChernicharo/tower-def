@@ -3,10 +3,11 @@
 import { EnemyChar, EnemyType, TowerType } from "./enums";
 import { THREE } from "../three";
 import { GLTF } from "three/examples/jsm/Addons.js";
-import { LevelStarCount, LevelStarMap, PlayerSkills } from "./types";
+import { LevelStarCount, LevelStarMap, PlayerSkills, WaveEnemy } from "./types";
 import { Enemy } from "../game/Enemy";
 import { gameSkills } from "./constants/skills";
-import { allAreaLevels } from "./constants/levels/game-levels";
+import { STAGE_WAVES_DATA, allAreaLevels } from "./constants/levels/game-levels";
+import { ENEMY_BLUEPRINTS } from "./constants/enemies";
 
 export function getEnemyTypeFromChar(char: EnemyChar): EnemyType {
     switch (char) {
@@ -247,4 +248,49 @@ export function isModal(obj: any) {
         obj.name.includes("-modal") && 
         obj.name !== "call-wave-2D-modal"
     ); 
+}
+
+export function waveSegment(
+    e: EnemyChar,
+    enemyCount = 4,
+    interval = 2,
+    startSpawningAt = 0,
+    pathIdx = 0,
+    xOffList = [0]
+): [EnemyChar, number, number, number][] {
+    // console.log("waveSegment", { e, enemyCount, interval, startSpawningAt, xOffList });
+
+    return Array.from({ length: enemyCount }, (_, index) => [
+        e,
+        pathIdx,
+        index * interval + startSpawningAt,
+        xOffList[index % xOffList.length],
+    ]);
+}
+
+export function getWaveStats(wave: WaveEnemy[], enemyBlueprints: typeof ENEMY_BLUEPRINTS) {
+    const totalDmg = wave.reduce((p, n) => (p += enemyBlueprints[getEnemyTypeFromChar(n[0] as EnemyChar)].maxHp), 0);
+    return { totalDmg };
+}
+
+export function printWavesStatistics(enemyBlueprints: typeof ENEMY_BLUEPRINTS) {
+    // const TOP_LIMIT = 5;
+    // const BOTTOM_LIMIT = 2;
+
+    const res: any[] = [[0]];
+    STAGE_WAVES_DATA.forEach((stage) => {
+        // if (sIdx > TOP_LIMIT || sIdx < BOTTOM_LIMIT) return;
+
+        const waves: any[] = [];
+        stage.forEach((wave) => {
+            const { totalDmg } = getWaveStats(wave, enemyBlueprints);
+            waves.push(totalDmg);
+            // console.log([`${sIdx + 1}-${wIdx + 1}`, totalDmg]);
+            // console.log({ wave: `${sIdx + 1}-${wIdx + 1}`, totalDmg });
+            // console.table({ totalDmg });
+        });
+        res.push(waves);
+    });
+
+    console.table(res);
 }

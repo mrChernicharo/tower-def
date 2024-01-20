@@ -17,7 +17,7 @@ export const ENEMY_BLUEPRINTS: { [k in EnemyType]: EnemyBluePrint } = {
         reward: 35,
         modelURL: "/assets/glb/enemies/Wizard.gltf",
         speed: 1,
-        maxHp: 180,
+        maxHp: 130,
         modelScale: 1,
         walkAnimationName: "Walk",
     },
@@ -35,8 +35,17 @@ export const ENEMY_BLUEPRINTS: { [k in EnemyType]: EnemyBluePrint } = {
         name: EnemyType.Orc,
         reward: 10,
         modelURL: "/assets/glb/enemies/Orc.gltf",
-        speed: 2,
+        speed: 1,
         maxHp: 200,
+        modelScale: 1,
+        walkAnimationName: "Walk",
+    },
+    demon: {
+        name: EnemyType.Demon,
+        reward: 25,
+        modelURL: "/assets/glb/enemies/Demon.gltf",
+        speed: 2,
+        maxHp: 160,
         modelScale: 1,
         walkAnimationName: "Walk",
     },
@@ -51,7 +60,7 @@ export const ENEMY_BLUEPRINTS: { [k in EnemyType]: EnemyBluePrint } = {
     },
     ninja: {
         name: EnemyType.Ninja,
-        reward: 21,
+        reward: 16,
         modelURL: "/assets/glb/enemies/Ninja.gltf",
         speed: 4,
         maxHp: 140,
@@ -63,16 +72,7 @@ export const ENEMY_BLUEPRINTS: { [k in EnemyType]: EnemyBluePrint } = {
         reward: 17,
         modelURL: "/assets/glb/enemies/Alien.gltf",
         speed: 1,
-        maxHp: 200,
-        modelScale: 1,
-        walkAnimationName: "Walk",
-    },
-    demon: {
-        name: EnemyType.Demon,
-        reward: 25,
-        modelURL: "/assets/glb/enemies/Demon.gltf",
-        speed: 1,
-        maxHp: 250,
+        maxHp: 900,
         modelScale: 1,
         walkAnimationName: "Walk",
     },
@@ -92,7 +92,7 @@ export const ENEMY_BLUEPRINTS: { [k in EnemyType]: EnemyBluePrint } = {
         reward: 6,
         modelURL: "/assets/glb/enemies/Bee.gltf",
         speed: 2,
-        maxHp: 80,
+        maxHp: 60,
         modelScale: 1,
         walkAnimationName: "Flying_Idle",
     },
@@ -101,7 +101,7 @@ export const ENEMY_BLUEPRINTS: { [k in EnemyType]: EnemyBluePrint } = {
         reward: 7,
         modelURL: "/assets/glb/enemies/Squidle.gltf",
         speed: 2,
-        maxHp: 120,
+        maxHp: 100,
         modelScale: 1,
         walkAnimationName: "Flying_Idle",
     },
@@ -110,7 +110,7 @@ export const ENEMY_BLUEPRINTS: { [k in EnemyType]: EnemyBluePrint } = {
         reward: 8,
         modelURL: "/assets/glb/enemies/Ghost.gltf",
         speed: 2,
-        maxHp: 130,
+        maxHp: 140,
         modelScale: 1,
         walkAnimationName: "Flying_Idle",
     },
@@ -133,3 +133,17 @@ export const ENEMY_BLUEPRINTS: { [k in EnemyType]: EnemyBluePrint } = {
     //     walkAnimationName: "Walk",
     // },
 } as const;
+
+/**
+ * desert:
+ * - dino,  ninja, squidle, bee
+ *
+ * forest
+ * - spider, wizard, orc, tribal, bee, ghost
+ *
+ * winter
+ * - alien, ninja, orc, wizard, ghost
+ *
+ * lava
+ * - demon, , dino, tribal, dragon, squidle, demonBoss
+ */

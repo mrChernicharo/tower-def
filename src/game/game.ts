@@ -49,7 +49,7 @@ import {
     TargetingStrategy,
     TowerType,
 } from "../shared/enums";
-import { EnemyBluePrint, Projectile, WaveEnemy, GameInitProps, GameSpeed, GameLevel } from "../shared/types";
+import { EnemyBluePrint, Projectile, WaveEnemyObj, GameInitProps, GameSpeed, GameLevel } from "../shared/types";
 import { beaconTemplate, cancelableModalNames, gameEndTemplates, modalTemplates, speedBtnsTemplate } from "./templates";
 import { Tower } from "./Tower";
 import { PlayerStats } from "./PlayerStats";
@@ -137,7 +137,7 @@ let towerToBuild: TowerType | null = null;
 
 let levelArea: string;
 let levelIdx: number;
-let currWave: WaveEnemy[] = [];
+let currWave: WaveEnemyObj[] = [];
 let currWaveIdx = 0;
 let gameLost = false;
 
