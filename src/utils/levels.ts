@@ -871,7 +871,7 @@ export const STAGE_WAVES_DATA: [string, number, number, number][][][] = [
         // wave 1
         [...waveSegment(EnemyChar.Squidle, 5, 5, 0, 0)],
         // wave 2
-        [...waveSegment(EnemyChar.Alien, 5, 6, 0, 0)],
+        [...waveSegment(EnemyChar.Dino, 5, 6, 0, 0)],
         // wave 3
         [...waveSegment(EnemyChar.Alien, 5, 6, 0, 0), ...waveSegment(EnemyChar.Squidle, 5, 5, 0, 0)],
     ],
