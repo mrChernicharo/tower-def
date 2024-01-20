@@ -145,5 +145,5 @@ export const ENEMY_BLUEPRINTS: { [k in EnemyType]: EnemyBluePrint } = {
  * - alien, ninja, orc, wizard, ghost
  *
  * lava
- * - demon, , dino, tribal, dragon, squidle, demonBoss
+ * - demon, dino, tribal, dragon, squidle, demonBoss
  */

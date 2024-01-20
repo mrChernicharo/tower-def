@@ -12,6 +12,7 @@ import { ENEMY_BLUEPRINTS } from "../shared/constants/enemies";
 
 const flightHeight = 3;
 const hpBarHeight = 4;
+const FLYING_ENEMY_NAMES = ["bee", "ghost", "squidle", "dragon"];
 
 export class Enemy {
     #ready = false;
@@ -120,7 +121,7 @@ export class Enemy {
         this.hpBar3D.visible = false;
 
         // flying enemies shadow
-        if (["bee", "ghost", "squidle", "dragon"].includes(this.enemyType)) {
+        if (FLYING_ENEMY_NAMES.includes(this.enemyType)) {
             const shadow = new THREE.Mesh(new THREE.CylinderGeometry(0.5, 0.5, 0.25), MATERIALS.transparentBlack);
             shadow.name = "EnemyShadow";
             shadow.position.y = -flightHeight;

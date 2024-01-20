@@ -591,7 +591,8 @@ export const GAME_LEVELS: GameLevel[] = [
     {
         area: GameArea.Desert,
         level: 0,
-        initialGold: 250,
+        initialGold: 4060,
+        // initialGold: 250,
         mapURL: mapURLs.desert,
         paths: desertLevelPaths00,
         waves: STAGE_WAVES_DATA[0],

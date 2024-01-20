@@ -22,15 +22,20 @@
 -   [✔] prettier towers
 -   [✔] (mobile) remove mouseMove torus
 -   [✔] (mobile) debug tower/towerbase highlighting
+-   [✔] hp bars
+-   [ ] better firePoint calculations
 -   [ ] modal icons (info, up, sell, level, damage, range, fireRate)
 -   [ ] compute skills efx
 -   [ ] projectile trajectory towards flying enemies
 -   [ ] more and better levels
 -   [ ] different enemies sharing same model (small demon VS super huge demon)
 -   [ ] dmg_efx
--   [ ] elf heals its friends
--   [ ] spider resists poison
 -   [ ] (mobile) request full screen + landscape orientation
+-   [ ] fix firePointY
+-   [ ] slowdown movement when zooming
+
+-   [ ] spider resists poison
+-   [ ] elf heals its friends
 
 16 weak, 6 medium
 

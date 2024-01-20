@@ -8,6 +8,7 @@ import { THREE } from "../three";
 import { Enemy } from "./Enemy";
 import { StraightProjectile, ParabolaProjectile } from "./Projectile";
 import { TOWER_BLUEPRINTS, PROJECTILE_BLUEPRINTS } from "../shared/constants/towers";
+import { Vector3 } from "three";
 
 const estimatedTimeToTarget = 1;
 const turnSpeed = 0.05;
@@ -18,6 +19,7 @@ export class Tower {
     towerName: TowerType;
     position: THREE.Vector3;
     model!: THREE.Group;
+    firePoint!: THREE.Vector3;
     bodyMesh!: THREE.Mesh;
     headMesh: THREE.Mesh | undefined;
     blueprint: TowerBluePrint;
@@ -136,6 +138,18 @@ export class Tower {
             }
         });
 
+        this.firePoint = new Vector3(
+            this.model.position.x,
+            this.model.position.y + this.blueprint.firePointY,
+            this.model.position.z
+        );
+
+        // this.firePoint = new Vector3(
+        //     this.towerName === TowerType.Cannon ? this.model.position.x : this.model.position.x,
+        //     this.model.position.y + this.blueprint.firePointY,
+        //     this.towerName === TowerType.Cannon ? this.model.position.z + 1 : this.model.position.z
+        // );
+
         // console.log("_setupModelData", { model: this.model, head: this.headMesh, body: this.bodyMesh });
     }
 
@@ -182,11 +196,7 @@ export class Tower {
 
     fireProjectile(enemy: Enemy) {
         const projBlueprint = { ...PROJECTILE_BLUEPRINTS[this.towerName][this.blueprint.level - 1] };
-        const origin = new THREE.Vector3(
-            this.model.position.x,
-            this.model.position.y + this.blueprint.firePointY,
-            this.model.position.z
-        );
+        const origin = new THREE.Vector3(this.firePoint.x, this.firePoint.y, this.firePoint.z);
 
         switch (projBlueprint.trajectoryType) {
             case TrajectoryType.Parabola: {

@@ -33,11 +33,7 @@ class ProjectileBase {
         this.damage = determineDamage(tower.blueprint.damage);
 
         this.destination = new THREE.Vector3(destination.x, destination.y, destination.z);
-        this.originPos = new THREE.Vector3(
-            tower.position.x,
-            tower.position.y + tower.blueprint.firePointY,
-            tower.position.z
-        );
+        this.originPos = new THREE.Vector3(tower.firePoint.x, tower.firePoint.y, tower.firePoint.z);
 
         // SETUP MODEL
         const geometry = this.model.geometry.clone();

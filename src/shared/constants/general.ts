@@ -12,8 +12,8 @@ export const DRAW_METEOR_GIZMOS = true;
 export const BLIZZARD_SLOW_DURATION = 6;
 export const BLIZZARD_EFFECT_DURATION = 1.5;
 
-export const MAX_FOV = 75;
-export const MIN_FOV = 10;
+export const MAX_FOV = 72;
+export const MIN_FOV = 8;
 
 export const defaultPlayerSkills = {
     "archer-1": false,
