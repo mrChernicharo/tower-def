@@ -15,12 +15,28 @@
 -   [✔] blizzard
 -   [✔] slow & poison
 -   [✔] more and better enemy models
--   [ ] compute skills efx
 -   [✔] rotate towers (wizard, ballista, cannon)
--   [ ] enhance tower rotation
--   [ ] projectile trajectory towards flying enemies
--   [ ] flying enemies shadow
--   [ ] more and better levels
+-   [✔] enhance tower rotation
+-   [✔] flying enemies shadow
 -   [✔] prettier blizzard
+-   [✔] prettier towers
 -   [✔] (mobile) remove mouseMove torus
 -   [✔] (mobile) debug tower/towerbase highlighting
+-   [ ] modal icons (info, up, sell, level, damage, range, fireRate)
+-   [ ] compute skills efx
+-   [ ] projectile trajectory towards flying enemies
+-   [ ] more and better levels
+-   [ ] different enemies sharing same model (small demon VS super huge demon)
+-   [ ] dmg_efx
+-   [ ] elf heals its friends
+-   [ ] spider resists poison
+
+16 weak, 6 medium
+
+20 weak, 8 medium, 8 fast
+
+24 weak, 10 medium, 1 strong
+
+8 flying, 16 medium, 2 strong
+
+16 flying, 24 fast, 4 strong

@@ -6,65 +6,77 @@ import { LevelStarCount } from "../utils/types";
 
 // <img src="${IMAGES}" />
 export const modalTemplates = {
-    towerBuild: () => `
+    towerBuild: () => {
+        const ap = TOWER_BLUEPRINTS[TowerType.Archer][0].price;
+        const bp = TOWER_BLUEPRINTS[TowerType.Ballista][0].price;
+        const cp = TOWER_BLUEPRINTS[TowerType.Cannon][0].price;
+        const pp = TOWER_BLUEPRINTS[TowerType.Poison][0].price;
+        const wp = TOWER_BLUEPRINTS[TowerType.Wizard][0].price;
+
+        return `
         <div class="${ModalType.TowerBuild} modal-content">
             <!-- <h3>Build Tower</h3> -->
-            <div class="modal-content-row btn-row">
-                <button id="${TowerType.Archer}-tower-build-btn" class="tower-build-btn">
-                    <img width="50" height="50" src="${imgs.Archer}" />
-                </button>
-                <button id="${TowerType.Ballista}-tower-build-btn" class="tower-build-btn">
-                    <img width="50" height="50" src="${imgs.Ballista}" />
-                </button>
-            </div>
-            <div class="btn-row">
-                <button id="${TowerType.Cannon}-tower-build-btn" class="tower-build-btn">
-                    <img width="50" height="50" src="${imgs.Cannon}" />
-                </button>
-                <button id="${TowerType.Poison}-tower-build-btn" class="tower-build-btn">
-                    <img width="50" height="50" src="${imgs.Poison}" />
-                </button>
-                <button id="${TowerType.Wizard}-tower-build-btn" class="tower-build-btn">
-                    <img width="50" height="50" src="${imgs.Wizard}" />
-                </button>
-            </div>
+
+                <div class="modal-content-row btn-row">    
+                    <div class="btn-container">    
+                        <button id="${TowerType.Archer}-tower-build-btn" class="tower-build-btn">
+                            <img width="50" height="50" src="${imgs.Archer}" />
+                        </button>
+                        <div class="tower-price">💰${ap}</div>
+                    </div>
+                    <div class="btn-container">
+                        <button id="${TowerType.Ballista}-tower-build-btn" class="tower-build-btn">
+                            <img width="50" height="50" src="${imgs.Ballista}" />
+                        </button>
+                        <div class="tower-price">💰${bp}</div>
+                    </div>
+                    <div class="btn-container">    
+                        <button id="${TowerType.Cannon}-tower-build-btn" class="tower-build-btn">
+                            <img width="50" height="50" src="${imgs.Cannon}" />
+                        </button>
+                        <div class="tower-price">💰${cp}</div>
+                    </div>
+                </div>
+                <div class="modal-content-row btn-row">
+                    <div class="btn-container">
+                        <button id="${TowerType.Poison}-tower-build-btn" class="tower-build-btn">
+                            <img width="50" height="50" src="${imgs.Poison}" />
+                        </button>
+                        <div class="tower-price">💰${pp}</div>
+                    </div>
+                    <div class="btn-container">
+                        <button id="${TowerType.Wizard}-tower-build-btn" class="tower-build-btn">
+                            <img width="50" height="50" src="${imgs.Wizard}" />
+                        </button>
+                        <div class="tower-price">💰${wp}</div>
+                    </div>
+                </div>
+
         </div>
-        <div class="modal-line"></div>
-    `,
-    confirmTowerBuild: (towerType: TowerType) => `
+        <div class="modal-arrow"></div>
+    `;
+    },
+    confirmTowerBuild: (towerType: TowerType) => {
+        const price = TOWER_BLUEPRINTS[towerType][0].price;
+        return `
         <div class="${ModalType.ConfirmTowerBuild} ${towerType} modal-content">
             <div class="cancel-btn-container">
                 <button class="cancel-btn cancel-tower-build-btn">←</button>
             </div>
 
-            <div style="display: flex; flex-direction: column; justify-content: center; align-items: center;">
+            <div class="confirm-build-main">
                 <img width="50" height="50" src="${imgs[towerType]}" />
                 
                 <h3>${capitalize(towerType)} Tower</h3>
 
-                
                 <div class="warning-msg-area"></div>
                 
-                <button id="confirm-tower-build-btn" class="confirm-tower-build-btn confirm-btn">✓</button>
+                <button id="confirm-tower-build-btn" class="confirm-tower-build-btn confirm-btn">BUY! 💰${price}</button>
             </div>
         </div>
-    `,
-
-    // confirmTowerBuild: (towerType: TowerType) => `
-    //     <div class="${ModalType.ConfirmTowerBuild} ${towerType} modal-content">
-    //         <div class="cancel-btn-container">
-    //             <button class="cancel-btn cancel-tower-build-btn">←</button>
-    //         </div>
-
-    //         <h3>Build ${capitalize(towerType)} Tower</h3>
-
-    //         <div class="warning-msg-area"></div>
-
-    //         <div>
-    //             <button id="confirm-tower-build-btn" class="confirm-tower-build-btn">Confirm</button>
-    //         </div>
-    //     </div>
-    // `,
+        <div class="modal-arrow-small"></div>
+    `;
+    },
     towerDetails: (tower: Tower) => {
         const t = tower.blueprint;
         const t2 = TOWER_BLUEPRINTS[tower.towerName][tower.blueprint.level];
@@ -88,6 +100,8 @@ export const modalTemplates = {
             }
            </div>
         </div>
+        <div class="modal-arrow-small"></div>
+
     `;
     },
     confirmTowerSell: (tower: Tower) => `
@@ -104,6 +118,8 @@ export const modalTemplates = {
                 )}</button>
             </div>
         </div>
+        <div class="modal-arrow-small"></div>
+
     `,
     towerInfo: (tower: Tower) => `
         <div class="${ModalType.TowerInfo} ${tower.towerName} modal-content">
@@ -116,6 +132,8 @@ export const modalTemplates = {
             <pre style="font-size: 9px;">${JSON.stringify(tower.blueprint, null, 2)}</pre>
 
         </div>
+        <div class="modal-arrow-small"></div>
+
     `,
     confirmTowerUpgrade: (tower: Tower) => {
         const t = tower.blueprint;
@@ -127,7 +145,7 @@ export const modalTemplates = {
                 <button class="cancel-btn cancel-tower-upgrade-btn">←</button>
             </div>
 
-            <div style="display: flex; flex-direction: column; justify-content: center; align-items: center;">
+            <div class="confirm-upgrade-main">
                 <img width="50" height="50" src="${imgs[t.name]}" />
                 <h3>${capitalize(tower.towerName)} Tower LVL ${t2.level}</h3>
             </div>            
@@ -139,13 +157,13 @@ export const modalTemplates = {
                 ${t.range === t2.range ? "" : `<div>Range ${t.range} → ${t2.range}</div>`}
             </div>
 
-
             <div class="warning-msg-area"></div>
 
             <div>
                 <button id="confirm-tower-upgrade-btn" class="confirm-btn">UPGRADE! 💰${t2.price}</button>
             </div>
         </div>
+        <div class="modal-arrow-small"></div>
     `;
     },
 } as const;
