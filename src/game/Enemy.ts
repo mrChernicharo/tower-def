@@ -147,6 +147,7 @@ export class Enemy {
             case "orc":
             case "alien":
             case "demon":
+            case "demonBoss":
             case "dino":
             case "tribal":
             case "ninja": {

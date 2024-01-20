@@ -59,7 +59,7 @@ import { PlayerStats } from "./PlayerStats";
 import { Meteor } from "./Meteor";
 import { PoisonEntry } from "./PoisonEntry";
 import { Blizzard } from "./Blizzard";
-import { GAME_LEVELS, STAGE_WAVES_DATA, levelObjects } from "../utils/levels";
+import { GAME_LEVELS, STAGE_WAVES_DATA, LEVEL_OBJECTS } from "../utils/levels";
 
 // let pathPoints: THREE.Vector3[] = [];
 
@@ -596,8 +596,8 @@ async function drawMap() {
         scene.add(towerBaseMesh);
     });
 
-    const mapObjects = levelObjects[levelIdx];
-    console.log({ levelObjects, levelArea, levelData, mapObjects });
+    const mapObjects = LEVEL_OBJECTS[levelIdx];
+    console.log({ LEVEL_OBJECTS, levelArea, levelData, mapObjects });
 
     for (const levelObj of mapObjects) {
         const { scene: object } = await gltfLoader.loadAsync(levelObj.url);

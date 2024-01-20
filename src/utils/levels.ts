@@ -14,6 +14,25 @@ export const mapURLs = {
     lava: "/assets/glb/levels/lv4.lava-level.glb",
 };
 
+const smallBounds = {
+    left: -15,
+    right: 15,
+    top: -5,
+    bottom: 85,
+};
+const mediumBounds = {
+    left: -20,
+    right: 20,
+    top: 0,
+    bottom: 80,
+};
+const largeBounds = {
+    left: -30,
+    right: 30,
+    top: 0,
+    bottom: 110,
+};
+
 const towerBasePositions = {
     desert: [
         [-4.23, 0.1, -32],
@@ -128,7 +147,7 @@ const towerBasePositions = {
     ] as [number, number, number][],
 };
 
-export const levelObjects: LevelObject[][] = [
+export const LEVEL_OBJECTS: LevelObject[][] = [
     // desert:
     [
         {
@@ -920,38 +939,41 @@ export const STAGE_WAVES_DATA: [string, number, number, number][][][] = [
         // count, interval, spawn_at, path
 
         [
-            ...waveSegment(EnemyChar.Demon, 3, 10, 3, 0),
-            ...waveSegment(EnemyChar.Tribal, 6, 5, 0, 1),
-            ...waveSegment(EnemyChar.Bee, 8, 4, 0, 2),
+            ...waveSegment(EnemyChar.Dino, 8, 4, 0, 0),
+            ...waveSegment(EnemyChar.Bee, 3, 1, 0, 1),
+            ...waveSegment(EnemyChar.Bee, 3, 1, 12, 1),
+            ...waveSegment(EnemyChar.Bee, 3, 1, 24, 1),
+            ...waveSegment(EnemyChar.Tribal, 2, 5, 4, 2),
         ],
 
         [
-            ...waveSegment(EnemyChar.Demon, 5, 7, 3, 0),
+            ...waveSegment(EnemyChar.Dino, 10, 7, 3, 0),
             ...waveSegment(EnemyChar.Bee, 10, 4.6, 0, 1),
-            ...waveSegment(EnemyChar.Tribal, 8, 4, 0, 2),
+            ...waveSegment(EnemyChar.Tribal, 4, 4, 0, 2),
         ],
 
         [
-            ...waveSegment(EnemyChar.Demon, 10, 5, 0, 0),
-            ...waveSegment(EnemyChar.Bee, 10, 4.2, 0, 1),
+            ...waveSegment(EnemyChar.Dino, 10, 2.5, 0, 0),
+            ...waveSegment(EnemyChar.Bee, 10, 4.2, 0, 3),
             ...waveSegment(EnemyChar.Ninja, 6, 6, 6, 1),
-            ...waveSegment(EnemyChar.Tribal, 8, 4, 0, 2),
+            ...waveSegment(EnemyChar.Demon, 6, 6, 6, 2),
+            // ...waveSegment(EnemyChar.DemonBoss, 1, 4, 0, 1),
         ],
     ],
 
     // stage 06 - FOREST
     [
         // wave 1
-        [...waveSegment(EnemyChar.Bee, 6, 6, 0, 0)],
+        [...waveSegment(EnemyChar.Bee, 6, 6, 0, 0), ...waveSegment(EnemyChar.Bee, 6, 6, 0, 2)],
         // [...waveSegment(EnemyChar.Spider, 1.4, 30, 0, 0), ...waveSegment(EnemyChar.Bee, 6, 6, 0, 2)],
         // wave 2
-        [...waveSegment(EnemyChar.Tribal, 3.2, 7), ...waveSegment(EnemyChar.Spider)],
+        [...waveSegment(EnemyChar.Dino, 3.2, 7), ...waveSegment(EnemyChar.Spider)],
         // wave 3
         [
-            ...waveSegment(EnemyChar.Orc, 8, 2, 0, 2, []),
-            ...waveSegment(EnemyChar.Orc, 8, 2, 6, 0, []),
-            ...waveSegment(EnemyChar.Orc, 8, 2, 12, 3),
-            ...waveSegment(EnemyChar.Orc, 8, 2, 18, 1),
+            ...waveSegment(EnemyChar.Orc, 2, 2, 0, 2, []),
+            ...waveSegment(EnemyChar.Orc, 2, 2, 6, 0, []),
+            ...waveSegment(EnemyChar.Orc, 2, 2, 12, 3),
+            ...waveSegment(EnemyChar.Orc, 2, 2, 18, 1),
             ...waveSegment(EnemyChar.Spider, 2, 8, 0, 0),
             ...waveSegment(EnemyChar.Bee, 2, 8, 8, 1),
             ...waveSegment(EnemyChar.Spider, 2, 8, 16, 2),
@@ -970,10 +992,10 @@ export const STAGE_WAVES_DATA: [string, number, number, number][][][] = [
         [...waveSegment(EnemyChar.Tribal, 3.2, 7), ...waveSegment(EnemyChar.Spider)],
         // wave 3
         [
-            ...waveSegment(EnemyChar.Orc, 8, 2, 0, 2, []),
-            ...waveSegment(EnemyChar.Orc, 8, 2, 6, 0, []),
-            ...waveSegment(EnemyChar.Orc, 8, 2, 12, 3),
-            ...waveSegment(EnemyChar.Orc, 8, 2, 18, 1),
+            ...waveSegment(EnemyChar.Orc, 2, 2, 0, 2, []),
+            ...waveSegment(EnemyChar.Orc, 2, 2, 6, 0, []),
+            ...waveSegment(EnemyChar.Orc, 2, 2, 12, 3),
+            ...waveSegment(EnemyChar.Orc, 2, 2, 18, 1),
             ...waveSegment(EnemyChar.Spider, 2, 8, 0, 0),
             ...waveSegment(EnemyChar.Bee, 2, 8, 8, 1),
             ...waveSegment(EnemyChar.Spider, 2, 8, 16, 2),
@@ -1225,25 +1247,6 @@ export const STAGE_WAVES_DATA: [string, number, number, number][][][] = [
         [...waveSegment(EnemyChar.Orc, 1, 1), ...waveSegment(EnemyChar.Spider, 1.5, 40)],
     ],
 ];
-
-const smallBounds = {
-    left: -15,
-    right: 15,
-    top: -5,
-    bottom: 85,
-};
-const mediumBounds = {
-    left: -20,
-    right: 20,
-    top: 0,
-    bottom: 80,
-};
-const largeBounds = {
-    left: -30,
-    right: 30,
-    top: 0,
-    bottom: 110,
-};
 
 export const GAME_LEVELS: GameLevel[] = [
     {

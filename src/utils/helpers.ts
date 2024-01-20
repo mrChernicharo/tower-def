@@ -15,6 +15,8 @@ export function getEnemyTypeFromChar(char: EnemyChar): EnemyType {
             return EnemyType.Alien;
         case "dm":
             return EnemyType.Demon;
+        case "db":
+            return EnemyType.DemonBoss;
         case "dn":
             return EnemyType.Dino;
         // case "k":

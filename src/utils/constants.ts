@@ -193,11 +193,12 @@ export const ENEMY_BLUEPRINTS: { [k in EnemyType]: EnemyBluePrint } = {
     },
     dino: {
         name: EnemyType.Dino,
-        reward: 20,
+        reward: 8,
         modelURL: "/assets/glb/enemies/Dino.gltf",
-        speed: 1.7,
-        maxHp: 220,
-        modelScale: 1,
+        speed: 1.6, // mid
+        maxHp: 60,
+        modelScale: 0.8,
+        // modelScale: 1,
         walkAnimationName: "Walk",
     },
     orc: {
@@ -243,6 +244,15 @@ export const ENEMY_BLUEPRINTS: { [k in EnemyType]: EnemyBluePrint } = {
         speed: 1.8,
         maxHp: 250,
         modelScale: 1,
+        walkAnimationName: "Walk",
+    },
+    demonBoss: {
+        name: EnemyType.DemonBoss,
+        reward: 10,
+        modelURL: "/assets/glb/enemies/Demon.gltf",
+        speed: 1.8,
+        maxHp: 3000,
+        modelScale: 2,
         walkAnimationName: "Walk",
     },
 

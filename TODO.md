@@ -30,6 +30,7 @@
 -   [ ] dmg_efx
 -   [ ] elf heals its friends
 -   [ ] spider resists poison
+-   [ ] (mobile) request full screen + landscape orientation
 
 16 weak, 6 medium
 
