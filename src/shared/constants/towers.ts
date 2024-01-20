@@ -47,7 +47,8 @@ export const TOWER_BLUEPRINTS: { [k in TowerType]: TowerBluePrint[] } = {
             color: "blue",
             price: 70,
             range: 10, // Average
-            modelScale: 1,
+            // modelScale: 1,
+            modelScale: 0.75,
             // modelURL: "/assets/glb/towers/Archer_Tower.gltf",
         },
         {
@@ -60,7 +61,8 @@ export const TOWER_BLUEPRINTS: { [k in TowerType]: TowerBluePrint[] } = {
             color: "blue",
             price: 110,
             range: 11, // Long
-            modelScale: 1.1,
+            modelScale: 0.85,
+            // modelScale: 1.1,
         },
         {
             name: TowerType.Archer,
@@ -71,7 +73,8 @@ export const TOWER_BLUEPRINTS: { [k in TowerType]: TowerBluePrint[] } = {
             fireRate: 9, // Very Fast
             color: "blue",
             price: 160,
-            modelScale: 1.2,
+            // modelScale: 1.2,
+            modelScale: 0.95,
             range: 12, // Long
         },
         {
@@ -80,7 +83,8 @@ export const TOWER_BLUEPRINTS: { [k in TowerType]: TowerBluePrint[] } = {
             defaultStrategy: TargetingStrategy.FirstInLine,
             color: "blue",
             firePointY: 7.5,
-            modelScale: 1.3,
+            modelScale: 1.05,
+            // modelScale: 1.3,
             price: 230,
             damage: [7, 16],
             fireRate: 9, // Very Fast
@@ -91,15 +95,16 @@ export const TOWER_BLUEPRINTS: { [k in TowerType]: TowerBluePrint[] } = {
     Ballista: [
         {
             name: TowerType.Ballista,
+            level: 1,
+            color: "red",
             defaultStrategy: TargetingStrategy.FirstInLine,
             firePointY: 8,
-            level: 1,
+            // modelScale: 1,
+            modelScale: 0.75,
             damage: [4, 9],
             fireRate: 1.2, // Slow
-            color: "red",
-            price: 100,
             range: 12, // Long
-            modelScale: 1,
+            price: 100,
         },
         {
             name: TowerType.Ballista,
@@ -107,7 +112,8 @@ export const TOWER_BLUEPRINTS: { [k in TowerType]: TowerBluePrint[] } = {
             color: "red",
             defaultStrategy: TargetingStrategy.FirstInLine,
             firePointY: 8.5,
-            modelScale: 1.1,
+            modelScale: 0.85,
+            // modelScale: 1.1,
             damage: [8, 13],
             fireRate: 1.2, // Slow
             range: 13, // Great
@@ -119,7 +125,8 @@ export const TOWER_BLUEPRINTS: { [k in TowerType]: TowerBluePrint[] } = {
             defaultStrategy: TargetingStrategy.FirstInLine,
             color: "red",
             firePointY: 9,
-            modelScale: 1.2,
+            // modelScale: 1.2,
+            modelScale: 0.95,
             damage: [11, 20],
             fireRate: 1.2, // Slow
             range: 14, // Excellent
@@ -131,7 +138,8 @@ export const TOWER_BLUEPRINTS: { [k in TowerType]: TowerBluePrint[] } = {
             color: "red",
             defaultStrategy: TargetingStrategy.FirstInLine,
             firePointY: 9.5,
-            modelScale: 1.3,
+            modelScale: 1.05,
+            // modelScale: 1.3,
             damage: [21, 34],
             fireRate: 1.2, // Slow
             range: 15, // Extreme
@@ -146,7 +154,8 @@ export const TOWER_BLUEPRINTS: { [k in TowerType]: TowerBluePrint[] } = {
             defaultStrategy: TargetingStrategy.FirstInLine,
             color: "orange",
             firePointY: 8,
-            modelScale: 1,
+            // modelScale: 1,
+            modelScale: 0.75,
             damage: [7, 12],
             fireRate: 0.8, // Very Slow
             range: 9, // short
@@ -158,7 +167,8 @@ export const TOWER_BLUEPRINTS: { [k in TowerType]: TowerBluePrint[] } = {
             defaultStrategy: TargetingStrategy.FirstInLine,
             color: "orange",
             firePointY: 8.5,
-            modelScale: 1.1,
+            modelScale: 0.85,
+            // modelScale: 1.1,
             damage: [18, 30],
             fireRate: 0.8, // Very Slow
             range: 10, // Average
@@ -172,7 +182,8 @@ export const TOWER_BLUEPRINTS: { [k in TowerType]: TowerBluePrint[] } = {
             firePointY: 9,
             damage: [30, 50],
             fireRate: 0.8, // Very Slow
-            modelScale: 1.2,
+            modelScale: 0.95,
+            // modelScale: 1.2,
             range: 11, // Long
             price: 320,
         },
@@ -184,7 +195,8 @@ export const TOWER_BLUEPRINTS: { [k in TowerType]: TowerBluePrint[] } = {
             damage: [62, 106],
             fireRate: 0.8, // Very Slow
             color: "orange",
-            modelScale: 1.3,
+            modelScale: 1.05,
+            // modelScale: 1.3,
             range: 12, // Long
             price: 375,
             specials: [],
@@ -199,7 +211,8 @@ export const TOWER_BLUEPRINTS: { [k in TowerType]: TowerBluePrint[] } = {
             color: "green",
             damage: [4, 8],
             fireRate: 2, // Average
-            modelScale: 1,
+            // modelScale: 1,
+            modelScale: 0.75,
             range: 9, // Short
             price: 100,
         },
@@ -209,7 +222,8 @@ export const TOWER_BLUEPRINTS: { [k in TowerType]: TowerBluePrint[] } = {
             color: "green",
             defaultStrategy: TargetingStrategy.FirstInLine,
             firePointY: 8.5,
-            modelScale: 1.1,
+            modelScale: 0.85,
+            // modelScale: 1.1,
             damage: [11, 22],
             fireRate: 2, // Average
             range: 10,
@@ -221,7 +235,8 @@ export const TOWER_BLUEPRINTS: { [k in TowerType]: TowerBluePrint[] } = {
             defaultStrategy: TargetingStrategy.FirstInLine,
             color: "green",
             firePointY: 9,
-            modelScale: 1.2,
+            modelScale: 0.95,
+            // modelScale: 1.2,
             damage: [21, 37],
             fireRate: 2, // Average
             range: 11,
@@ -232,7 +247,8 @@ export const TOWER_BLUEPRINTS: { [k in TowerType]: TowerBluePrint[] } = {
             level: 4,
             defaultStrategy: TargetingStrategy.FirstInLine,
             firePointY: 10,
-            modelScale: 1.3,
+            modelScale: 1.05,
+            // modelScale: 1.3,
             color: "green",
             damage: [32, 61],
             fireRate: 2, // Average
@@ -248,7 +264,8 @@ export const TOWER_BLUEPRINTS: { [k in TowerType]: TowerBluePrint[] } = {
             defaultStrategy: TargetingStrategy.FirstInLine,
             color: "purple",
             firePointY: 9.5,
-            modelScale: 1,
+            // modelScale: 1,
+            modelScale: 0.75,
             damage: [8, 12],
             fireRate: 2, // Average
             range: 9, // Short
@@ -260,7 +277,8 @@ export const TOWER_BLUEPRINTS: { [k in TowerType]: TowerBluePrint[] } = {
             defaultStrategy: TargetingStrategy.FirstInLine,
             color: "purple",
             firePointY: 11,
-            modelScale: 1.1,
+            modelScale: 0.85,
+            // modelScale: 1.1,
             damage: [18, 30],
             fireRate: 2, // Average
             range: 10, // Average
@@ -275,7 +293,8 @@ export const TOWER_BLUEPRINTS: { [k in TowerType]: TowerBluePrint[] } = {
             fireRate: 2, // Average
             color: "purple",
             price: 220,
-            modelScale: 1.2,
+            // modelScale: 1.2,
+            modelScale: 0.95,
             range: 11, // Long
         },
         {
@@ -287,7 +306,8 @@ export const TOWER_BLUEPRINTS: { [k in TowerType]: TowerBluePrint[] } = {
             fireRate: 2, // Average
             color: "purple",
             price: 380,
-            modelScale: 1.3,
+            modelScale: 1.05,
+            // modelScale: 1.3,
             range: 12, // Long
             specials: [],
         },

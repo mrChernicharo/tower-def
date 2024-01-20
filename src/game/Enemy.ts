@@ -1,16 +1,17 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { GLTF } from "three/examples/jsm/Addons.js";
+import { CSS2DObject, GLTF } from "three/examples/jsm/Addons.js";
 import { ENEMY_MODELS, slowOutlinePass, pathCurves, poisonOutlinePass } from "./game";
 import { THREE } from "../three";
 import * as SkeletonUtils from "three/examples/jsm/utils/SkeletonUtils.js";
 import { AppLayers, EnemyType } from "../shared/enums";
 import { EnemyBluePrint } from "../shared/types";
-import { MATERIALS } from "../shared/constants/general";
+import { MATERIALS, MAX_FOV } from "../shared/constants/general";
 import { idMaker } from "../shared/helpers";
 import { SkinnedMesh } from "three";
 import { ENEMY_BLUEPRINTS } from "../shared/constants/enemies";
 
 const flightHeight = 3;
+const hpBarHeight = 4;
 
 export class Enemy {
     #ready = false;
@@ -32,13 +33,17 @@ export class Enemy {
     isSlowed = false;
     timeSinceSlowed = 0;
     skinnedMeshes: THREE.SkinnedMesh[] = [];
-    constructor(enemyType: EnemyType, pathIdx = 0) {
+    hpBar3D!: CSS2DObject;
+    hpBarContainer!: HTMLDivElement;
+    hpBar!: HTMLDivElement;
+    constructor(enemyType: EnemyType, pathIdx = 0, fov: number) {
         this.id = idMaker();
         this.enemyType = enemyType;
         this.bluePrint = { ...ENEMY_BLUEPRINTS[this.enemyType] };
         this.hp = this.bluePrint.maxHp;
         this.path = pathCurves[pathIdx];
         this.#_init();
+        this.updateHpBarLengthToMatchZoom(fov);
     }
 
     #_init() {
@@ -68,7 +73,6 @@ export class Enemy {
 
     #_setupModel() {
         this.glb = ENEMY_MODELS[this.enemyType];
-
         const model = SkeletonUtils.clone(this.glb.scene);
 
         const s = this.bluePrint.modelScale;
@@ -93,12 +97,36 @@ export class Enemy {
             }
         });
 
+        // hpBar
+        this.hpBarContainer = document.createElement("div");
+        this.hpBar = document.createElement("div");
+        this.hpBarContainer.className = "hp-bar-container";
+        this.hpBar.className = "hp-bar";
+        this.hpBar.style.width = "100%";
+
+        this.hpBar3D = new CSS2DObject(this.hpBarContainer);
+
+        this.hpBarContainer.append(this.hpBar);
+
+        if (this.enemyType === EnemyType.Spider) {
+            this.hpBar3D.position.y = 2;
+            this.hpBar3D.position.z = 1;
+            model.children[0].children[0].children[0].add(this.hpBar3D);
+        } else {
+            this.hpBar3D.position.y = hpBarHeight;
+            model.add(this.hpBar3D);
+        }
+
+        this.hpBar3D.visible = false;
+
+        // flying enemies shadow
         if (["bee", "ghost", "squidle", "dragon"].includes(this.enemyType)) {
             const shadow = new THREE.Mesh(new THREE.CylinderGeometry(0.5, 0.5, 0.25), MATERIALS.transparentBlack);
             shadow.name = "EnemyShadow";
             shadow.position.y = -flightHeight;
             model.add(shadow);
         }
+
         return model;
     }
 
@@ -107,6 +135,7 @@ export class Enemy {
 
         if (!this.model.visible) {
             this.model.visible = true;
+            // console.log("spawned", this, this.hpBar, this.hpBar3D);
         }
 
         if (this.isSlowed) {
@@ -195,6 +224,12 @@ export class Enemy {
             this.#_drawDamageEfx();
         }
 
+        if (!this.hpBar3D.visible) {
+            this.hpBar3D.visible = true;
+        }
+
+        this.hpBar.style.width = (this.hp / this.bluePrint.maxHp) * 100 + "%";
+
         if (this.hp <= 0) this.destroy(false);
     }
 
@@ -238,6 +273,16 @@ export class Enemy {
         this.timeSinceSlowed = 0;
     }
 
+    updateHpBarLengthToMatchZoom(fov: number) {
+        let rate = 1 - fov / MAX_FOV;
+        if (rate > 1) rate = 1;
+        if (rate < 0.2) rate = 0.2;
+
+        const width = THREE.MathUtils.lerp(10, 90, rate);
+        // console.log("updateHpBarLengthToMatchZoom", { fov, rate, width });
+        this.hpBarContainer.style.width = width + "px";
+    }
+
     #_drawDamageEfx() {
         // console.log("_drawDamageEfx", { enemyMesh, originalMaterial: this.originalMaterial });
         try {
@@ -258,6 +303,7 @@ export class Enemy {
     }
 
     destroy(endReached: boolean) {
+        this.hpBarContainer.remove();
         window.dispatchEvent(new CustomEvent("enemy-destroyed", { detail: { enemy: this, endReached } }));
     }
 }

@@ -937,6 +937,7 @@ function onModalClick(e: MouseEvent, el: THREE.Object3D, modal3D: CSS2DObject, m
     e.stopPropagation();
     const tower_id = el.userData.tower_id ?? "";
     const tower = towers.find((t) => t.id === tower_id);
+
     console.log(":::onModalClick::::", { e, el, modal3D, modalEl, tower_id, tower });
     outlinePass.selectedObjects = [];
 
@@ -977,7 +978,7 @@ function onModalClick(e: MouseEvent, el: THREE.Object3D, modal3D: CSS2DObject, m
         modal3D.userData["tower"] = towerToBuild;
         modal3D.userData["tower_id"] = tower.id;
 
-        console.log("open details modal", { tower });
+        // console.log("open details modal", { tower });
         modalEl.dataset["tower_id"] = tower.id;
         modalEl.innerHTML = modalTemplates.towerDetails(tower!);
         modal3D.visible = false;
@@ -1044,13 +1045,12 @@ function onModalClick(e: MouseEvent, el: THREE.Object3D, modal3D: CSS2DObject, m
         }
     }
     if (evTarget.classList.contains("cancel-tower-upgrade-btn")) {
-        console.log("open details modal", { tower });
+        // console.log("open details modal", { tower });
         modalEl.innerHTML = modalTemplates.towerDetails(tower!);
         clearTowerPreview();
 
         if (tower) {
             tower.model.visible = true;
-            tower.rangeGizmo.visible = true;
         }
     }
     if (evTarget.id === "confirm-tower-upgrade-btn") {
@@ -1070,12 +1070,7 @@ function onModalClick(e: MouseEvent, el: THREE.Object3D, modal3D: CSS2DObject, m
             }
             playerStats.spendGold(t2.price);
 
-            if (towerPreview) {
-                console.log("revert tower preview");
-                scene.remove(towerPreview.model);
-                scene.remove(towerPreview.rangeGizmo);
-                towerPreview = undefined;
-            }
+            clearTowerPreview();
 
             scene.remove(tower.rangeGizmo);
             scene.remove(tower.model);
@@ -1087,7 +1082,6 @@ function onModalClick(e: MouseEvent, el: THREE.Object3D, modal3D: CSS2DObject, m
             scene.add(upgradedTower.rangeGizmo);
 
             // console.log({ tower, towers });
-            console.log("open details modal", { tower });
             modalEl.innerHTML = modalTemplates.towerDetails(tower);
             upgradedTower.rangeGizmo.visible = false;
             modal3D.visible = false;
@@ -1156,8 +1150,10 @@ function onCanvasClick(e: MouseEvent) {
         }
         case Boolean(clickedTower): {
             if (!clickedTower) return;
-            console.log("CLICKED TOWER", { clickedTower, scene });
+            const tower = towers.find((t) => t.id === clickedTower!.object.userData.tower_id);
+            console.log("CLICKED TOWER", { clickedTower, tower, scene });
 
+            // tower!.rangeGizmo.visible = true;
             outlinePass.selectedObjects.push(clickedTower.object.parent as THREE.Mesh);
 
             scene.traverse((obj) => {
@@ -1200,6 +1196,9 @@ function onZoom(e: WheelEvent) {
         camera.fov += e.deltaY * 0.02;
     }
     camera.updateProjectionMatrix();
+    enemies.forEach((e) => {
+        e.updateHpBarLengthToMatchZoom(camera.fov);
+    });
 }
 
 function onTouchStart(e: TouchEvent) {
@@ -1233,7 +1232,11 @@ function onMobileZoom(e: any) {
 
     if (camera.fov < 20) camera.fov = 20;
     if (camera.fov > 80) camera.fov = 80;
+
     camera.updateProjectionMatrix();
+    enemies.forEach((e) => {
+        e.updateHpBarLengthToMatchZoom(camera.fov);
+    });
 }
 
 function onVisibilityChange() {
@@ -1450,7 +1453,7 @@ function onProjectileExplode(e: any) {
 
 function spawnEnemy(enemyType: EnemyType, pathIdx = 0) {
     // console.log("spawnEnemy", { enemyType, currWave });
-    const enemy = new Enemy(enemyType, pathIdx);
+    const enemy = new Enemy(enemyType, pathIdx, camera.fov);
     enemies.push(enemy);
     scene.add(enemy.model);
 }
@@ -1499,6 +1502,7 @@ function onEnemyDestroyed(e: any) {
     }
 
     enemies = enemies.filter((e) => e.id !== enemy.id);
+    console.log("remove enemy from scene", enemy);
     scene.remove(enemy.model);
 
     if (enemies.length === 0 && !gameLost) {

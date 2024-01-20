@@ -88,6 +88,15 @@ button:focus-visible {
     pointer-events: none;
 }
 
+.hp-bar-container {
+    background-color: rgb(184, 13, 13);
+    height: 3px;
+}
+.hp-bar {
+    height: 3px;
+    background-color: yellow;
+}
+
 /* @media (prefers-color-scheme: light) {
     :root {
         color: #213547;
