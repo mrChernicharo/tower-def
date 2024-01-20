@@ -1,7 +1,7 @@
 import { ReactNode, createContext, useEffect, useState } from "react";
-import { getTotalStageCount } from "../../utils/helpers";
-import { GlobalPlayerStats, LevelStarCount, LevelStarMap, PlayerSkills, Skill } from "../../utils/types";
-import { defaultPlayerSkills } from "../../utils/constants";
+import { getTotalStageCount } from "../../shared/helpers";
+import { GlobalPlayerStats, LevelStarCount, LevelStarMap, PlayerSkills, Skill } from "../../shared/types";
+import { defaultPlayerSkills } from "../../shared/constants/general";
 
 const defaultPlayerStats: GlobalPlayerStats = {
     hp: 10,

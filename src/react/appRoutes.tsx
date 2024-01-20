@@ -1,9 +1,9 @@
-import Achievements from "../screens/Achievements";
-import AreaSelection from "../screens/AreaSelection";
-import Game from "../screens/GameScreen";
-import Settings from "../screens/Settings";
-import Skills from "../screens/Skills";
-import { Start } from "../screens/Start";
+import Achievements from "./screens/Achievements";
+import AreaSelection from "./screens/AreaSelection";
+import Game from "./screens/GameScreen";
+import Settings from "./screens/Settings";
+import Skills from "./screens/Skills";
+import { Start } from "./screens/Start";
 
 export const appRoutes = [
     {

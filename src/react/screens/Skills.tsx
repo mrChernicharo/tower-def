@@ -1,11 +1,12 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { Link } from "react-router-dom";
 import { usePlayerContext } from "../context/usePlayerContext";
-import { gameSkills, imgs } from "../../utils/constants";
+import { imgs } from "../../shared/constants/general";
 import { useCallback, useEffect, useState } from "react";
-import { Skill, SkillId } from "../../utils/types";
-import { capitalize, getEarnedStars, getSkillInfo, getSpentStars } from "../../utils/helpers";
+import { Skill, SkillId } from "../../shared/types";
+import { capitalize, getEarnedStars, getSkillInfo, getSpentStars } from "../../shared/helpers";
 import { FaArrowLeft } from "react-icons/fa";
+import { gameSkills } from "../../shared/constants/skills";
 
 const Skills = () => {
     const { stars, skills, addSkill, removeSkill, resetAllSkills } = usePlayerContext();

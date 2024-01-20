@@ -26,7 +26,7 @@ import {
     handleModelGun,
     idMaker,
     isModal,
-} from "../utils/helpers";
+} from "../shared/helpers";
 import {
     BLIZZARD_EFFECT_DURATION,
     BLIZZARD_SLOW_DURATION,
@@ -34,13 +34,10 @@ import {
     DRAW_FUTURE_GIZMO,
     DRAW_METEOR_GIZMOS,
     DRAW_PROJECTILE_TRAJECTORIES,
-    ENEMY_BLUEPRINTS,
     MATERIALS,
     MAX_FOV,
     MIN_FOV,
-    TOWER_BLUEPRINTS,
-    towerModelsURLs,
-} from "../utils/constants";
+} from "../shared/constants/general";
 
 import {
     AppLayers,
@@ -51,15 +48,18 @@ import {
     ModalType,
     TargetingStrategy,
     TowerType,
-} from "../utils/enums";
-import { EnemyBluePrint, Projectile, WaveEnemy, GameInitProps, GameSpeed, GameLevel } from "../utils/types";
+} from "../shared/enums";
+import { EnemyBluePrint, Projectile, WaveEnemy, GameInitProps, GameSpeed, GameLevel } from "../shared/types";
 import { beaconTemplate, cancelableModalNames, gameEndTemplates, modalTemplates, speedBtnsTemplate } from "./templates";
 import { Tower } from "./Tower";
 import { PlayerStats } from "./PlayerStats";
 import { Meteor } from "./Meteor";
 import { PoisonEntry } from "./PoisonEntry";
 import { Blizzard } from "./Blizzard";
-import { GAME_LEVELS, STAGE_WAVES_DATA, LEVEL_OBJECTS } from "../utils/levels";
+import { GAME_LEVELS, STAGE_WAVES_DATA } from "../shared/constants/levels/game-levels";
+import { LEVEL_OBJECTS } from "../shared/constants/levels/level-objects";
+import { ENEMY_BLUEPRINTS } from "../shared/constants/enemies";
+import { towerModelsURLs, TOWER_BLUEPRINTS } from "../shared/constants/towers";
 
 // let pathPoints: THREE.Vector3[] = [];
 
@@ -596,10 +596,9 @@ async function drawMap() {
         scene.add(towerBaseMesh);
     });
 
-    const mapObjects = LEVEL_OBJECTS[levelIdx];
-    console.log({ LEVEL_OBJECTS, levelArea, levelData, mapObjects });
+    console.log({ LEVEL_OBJECTS, levelArea, levelData, mapObjects: LEVEL_OBJECTS[levelIdx] });
 
-    for (const levelObj of mapObjects) {
+    for (const levelObj of LEVEL_OBJECTS[levelIdx]) {
         const { scene: object } = await gltfLoader.loadAsync(levelObj.url);
 
         levelObj.instances.forEach((inst) => {

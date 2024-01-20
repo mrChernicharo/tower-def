@@ -1,12 +1,13 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { MATERIALS, PROJECTILE_BLUEPRINTS, TOWER_BLUEPRINTS } from "../utils/constants";
-import { AppLayers, TargetingStrategy, TowerType, TrajectoryType } from "../utils/enums";
+import { MATERIALS } from "../shared/constants/general";
+import { AppLayers, TargetingStrategy, TowerType, TrajectoryType } from "../shared/enums";
 import { TOWER_MODELS, towerTexture } from "./game";
-import { idMaker } from "../utils/helpers";
-import { TowerBluePrint } from "../utils/types";
+import { idMaker } from "../shared/helpers";
+import { TowerBluePrint } from "../shared/types";
 import { THREE } from "../three";
 import { Enemy } from "./Enemy";
 import { StraightProjectile, ParabolaProjectile } from "./Projectile";
+import { TOWER_BLUEPRINTS, PROJECTILE_BLUEPRINTS } from "../shared/constants/towers";
 
 const estimatedTimeToTarget = 1;
 const turnSpeed = 0.05;

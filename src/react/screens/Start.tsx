@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { imgs } from "../../utils/constants";
+import { imgs } from "../../shared/constants/general";
 
 export function Start() {
     return (

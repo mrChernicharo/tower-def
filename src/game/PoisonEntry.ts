@@ -1,4 +1,4 @@
-import { idMaker } from "../utils/helpers";
+import { idMaker } from "../shared/helpers";
 
 const POISON_DMG_COOLDOWN = 2.2;
 

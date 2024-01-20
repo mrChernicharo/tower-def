@@ -3,11 +3,12 @@ import { GLTF } from "three/examples/jsm/Addons.js";
 import { ENEMY_MODELS, slowOutlinePass, pathCurves, poisonOutlinePass } from "./game";
 import { THREE } from "../three";
 import * as SkeletonUtils from "three/examples/jsm/utils/SkeletonUtils.js";
-import { AppLayers, EnemyType } from "../utils/enums";
-import { EnemyBluePrint } from "../utils/types";
-import { ENEMY_BLUEPRINTS /*, MATERIALS*/, MATERIALS } from "../utils/constants";
-import { idMaker } from "../utils/helpers";
+import { AppLayers, EnemyType } from "../shared/enums";
+import { EnemyBluePrint } from "../shared/types";
+import { MATERIALS } from "../shared/constants/general";
+import { idMaker } from "../shared/helpers";
 import { SkinnedMesh } from "three";
+import { ENEMY_BLUEPRINTS } from "../shared/constants/enemies";
 
 const flightHeight = 3;
 

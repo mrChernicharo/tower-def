@@ -1,4 +1,4 @@
-import { getD } from "../utils/helpers";
+import { getD } from "../shared/helpers";
 
 const METEOR_COOLDOWN = 16;
 const BLIZZARD_COOLDOWN = 2;

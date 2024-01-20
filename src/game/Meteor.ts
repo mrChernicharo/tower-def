@@ -1,6 +1,6 @@
 import { THREE } from "../three";
-import { COLORS, MATERIALS } from "../utils/constants";
-import { idMaker } from "../utils/helpers";
+import { COLORS, MATERIALS } from "../shared/constants/general";
+import { idMaker } from "../shared/helpers";
 
 const size = 0.5;
 const speed = 25;
