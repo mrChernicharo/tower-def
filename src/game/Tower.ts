@@ -108,7 +108,7 @@ export class Tower {
     }
 
     _setupModelData() {
-        this.model.name = `${this.towerName}-${this.id}`;
+        // this.model.name = `${this.towerName}-${this.id}`;
         this.model.userData["tower_id"] = this.id;
         this.model.userData["tower_level"] = this.blueprint.level;
         this.model.userData["tile_idx"] = this.tileIdx;
@@ -128,6 +128,7 @@ export class Tower {
             //     if ((obj as any).isMesh) {
             //         obj.castShadow = true;
             //      }
+            console.log({ obj });
             if (obj.name.includes("_Body")) {
                 this.bodyMesh = obj as THREE.Mesh;
             }
@@ -163,18 +164,19 @@ export class Tower {
         const dz = this.model.position.z - targetEnemy.getFuturePosition(estimatedTimeToTarget).z;
 
         let theta = Math.atan2(dz, dx) + Math.PI * 0.5;
+        // let theta = Math.atan2(dz, dx) - Math.PI * 0.5;
         if (theta < 0) theta += Math.PI * 2;
 
-        let rotationDiff = theta - this.headMesh.rotation.z;
+        let rotationDiff = theta + this.headMesh.rotation.y;
         if (rotationDiff > Math.PI) rotationDiff -= Math.PI * 2;
         if (rotationDiff < -Math.PI) rotationDiff += Math.PI * 2;
 
         if (Math.abs(rotationDiff) < 0.02) {
             this.targetLocked = true;
-            this.headMesh.rotation.z = theta;
+            this.headMesh.rotation.y = theta * -1;
         } else {
             this.targetLocked = false;
-            this.headMesh.rotation.z += rotationDiff > 0 ? turnSpeed : -turnSpeed;
+            this.headMesh.rotation.y -= rotationDiff > 0 ? turnSpeed : -turnSpeed;
         }
     }
 

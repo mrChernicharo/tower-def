@@ -86,10 +86,13 @@ export class Enemy {
                     this.skinnedMeshes.push(mesh);
                     if (!this.originalMaterial) {
                         this.originalMaterial = mesh.material as THREE.Material;
+                        // this.originalMaterial.emissive.setHex("0xffffff");
                     }
                 }
             }
         });
+
+        console.log(this.originalMaterial);
 
         if (["bee", "ghost", "squidle", "dragon"].includes(this.enemyType)) {
             const shadow = new THREE.Mesh(new THREE.CylinderGeometry(0.5, 0.5, 0.25), MATERIALS.transparentBlack);
@@ -239,6 +242,7 @@ export class Enemy {
         // console.log("_drawDamageEfx", { enemyMesh, originalMaterial: this.originalMaterial });
         try {
             this.skinnedMeshes.forEach((obj) => {
+                // (obj.material as any).emissive.setHex(0xff0000);
                 (obj as THREE.Mesh).material = MATERIALS.damageMaterialStd;
             });
         } catch (error) {
@@ -247,6 +251,7 @@ export class Enemy {
             setTimeout(() => {
                 this.skinnedMeshes.forEach((obj) => {
                     (obj as THREE.Mesh).material = this.originalMaterial;
+                    // (obj.material as any).emissive.setHex(0xfffff);
                 });
             }, 160);
         }

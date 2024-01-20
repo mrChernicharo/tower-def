@@ -18,7 +18,7 @@ import { Enemy } from "./Enemy";
 import {
     applyAreaDamage,
     calcEarnedStarsForGameWin,
-    capitalize,
+    // capitalize,
     determineDamage,
     mousePosToWorldPos,
     getEnemyTypeFromChar,
@@ -39,6 +39,7 @@ import {
     MAX_FOV,
     MIN_FOV,
     TOWER_BLUEPRINTS,
+    towerModelsURLs,
 } from "../utils/constants";
 
 import {
@@ -422,32 +423,27 @@ async function _initEnemyModels() {
 
 async function _initTowerModels() {
     // const towersFbx = await fbxLoader.loadAsync("/assets/fbx/towers-no-texture.fbx");
-    const { scene: towerModels } = await gltfLoader.loadAsync(
-        "/assets/glb/towers/towers-no-texture-separated-heads.glb"
-    );
+    // const { scene: towerModels } = await gltfLoader.loadAsync(
+    //     "/assets/glb/towers/towers-no-texture-separated-heads.glb"
+    // );
 
-    // for (const [, mesh] of towerModels.children.entries()) {
-    //     if (mesh.userData.name === "archer_tower_LVL_1") {
-    //         const glb = await gltfLoader.loadAsync("/assets/glb/towers/Archer_Tower.gltf");
-    //         console.log("porra", { model: glb.scene, towerModels });
-    //         const g = glb.scene;
-    //         g.name = "archer_tower_LVL_1";
-    //         g.userData.name = "archer_tower_LVL_1";
-    //         towerModels.children[0] = g;
-    //     }
-    // }
+    const modelPromises: Promise<GLTF>[] = [];
+    for (const [, /*towerType*/ urls] of Object.entries(towerModelsURLs)) {
+        for (const url of urls) {
+            modelPromises.push(gltfLoader.loadAsync(url));
+        }
+    }
+    const result = await Promise.all(modelPromises);
 
-    const projectilesFbx = await fbxLoader.loadAsync("/assets/fbx/projectiles-no-texture.fbx");
-    towerTexture = await new THREE.TextureLoader().loadAsync("/assets/fbx/towers-texture.png");
-    console.log("_initTowerModels", {
-        towerModels,
-        towers: towerModels.children.map((c) => c.name).sort((a, b) => a.localeCompare(b)),
-    });
-
-    for (const model of towerModels.children) {
+    for (const glb of result) {
+        const model = glb.scene;
         // console.log(model);
-        const towerLevel = +model.name.split("_")[3];
-        const towerName = capitalize(model.name.split("_")[0]) as TowerType;
+        const modelName =
+            model.userData.name || model.children[0].userData.name || model.children[0].children[0].userData.name;
+        const [towerName, towerLevel] = [modelName.split("_")[0] as TowerType, +modelName.split("_")[3]];
+        model.name = modelName;
+        model.userData.name = model.name;
+        console.log(towerName, towerLevel, modelName);
 
         if (!TOWER_MODELS[towerName]) {
             TOWER_MODELS[towerName] = {};
@@ -457,21 +453,53 @@ async function _initTowerModels() {
             TOWER_MODELS[towerName][`level-${towerLevel}`] = new THREE.Group();
         }
 
-        // if (TOWER_BLUEPRINTS[towerName][towerLevel]?.modelURL) {
-        //     const glb = await gltfLoader.loadAsync(TOWER_BLUEPRINTS[towerName][towerLevel].modelURL!);
-        //     model = glb.scene;
+        // if (model.userData.name.includes("_Head")) {
+        //     model.name = `${towerName}-Tower_Head`;
+        // } else if (model.userData.name.includes("_Body")) {
+        //     model.name = `${towerName}-Tower_Body`;
+        // } else {
+        //     model.name = `${towerName}-Tower`;
         // }
-
-        if (model.userData.name.includes("_Head")) {
-            model.name = `${towerName}-Tower_Head`;
-        } else if (model.userData.name.includes("_Body")) {
-            model.name = `${towerName}-Tower_Body`;
-        } else {
-            model.name = `${towerName}-Tower`;
-        }
 
         TOWER_MODELS[towerName][`level-${towerLevel}`].add(model.clone());
     }
+    console.log({ result, TOWER_MODELS });
+
+    const projectilesFbx = await fbxLoader.loadAsync("/assets/fbx/projectiles-no-texture.fbx");
+    towerTexture = await new THREE.TextureLoader().loadAsync("/assets/fbx/towers-texture.png");
+    // console.log("_initTowerModels", {
+    //     towerModels,
+    //     towers: towerModels.children.map((c) => c.name).sort((a, b) => a.localeCompare(b)),
+    // });
+
+    // for (const model of towerModels.children) {
+    //     // console.log(model);
+    //     const towerLevel = +model.name.split("_")[3];
+    //     const towerName = capitalize(model.name.split("_")[0]) as TowerType;
+
+    //     if (!TOWER_MODELS[towerName]) {
+    //         TOWER_MODELS[towerName] = {};
+    //     }
+
+    //     if (!TOWER_MODELS[towerName][`level-${towerLevel}`]) {
+    //         TOWER_MODELS[towerName][`level-${towerLevel}`] = new THREE.Group();
+    //     }
+
+    //     // if (TOWER_BLUEPRINTS[towerName][towerLevel]?.modelURL) {
+    //     //     const glb = await gltfLoader.loadAsync(TOWER_BLUEPRINTS[towerName][towerLevel].modelURL!);
+    //     //     model = glb.scene;
+    //     // }
+
+    //     if (model.userData.name.includes("_Head")) {
+    //         model.name = `${towerName}-Tower_Head`;
+    //     } else if (model.userData.name.includes("_Body")) {
+    //         model.name = `${towerName}-Tower_Body`;
+    //     } else {
+    //         model.name = `${towerName}-Tower`;
+    //     }
+
+    //     TOWER_MODELS[towerName][`level-${towerLevel}`].add(model.clone());
+    // }
 
     const projectileModels = projectilesFbx.children;
     for (const model of projectileModels as THREE.Mesh[]) {

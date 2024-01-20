@@ -771,7 +771,8 @@ export const GAME_LEVELS: GameLevel[] = [
     {
         area: GameArea.Desert,
         level: 1,
-        initialGold: 260,
+        // initialGold: 260,
+        initialGold: 4060,
         mapURL: mapURLs.desert,
         paths: desertLevelPaths01,
         waves: STAGE_WAVES_DATA[1],
@@ -826,7 +827,8 @@ export const GAME_LEVELS: GameLevel[] = [
     {
         area: GameArea.Forest,
         level: 6,
-        initialGold: 360,
+        // initialGold: 360,
+        initialGold: 3800,
         mapURL: mapURLs.forest,
         paths: forestLevelPaths,
         waves: STAGE_WAVES_DATA[6],

@@ -301,20 +301,54 @@ export const ENEMY_BLUEPRINTS: { [k in EnemyType]: EnemyBluePrint } = {
     },
 } as const;
 
+export const towerModelsURLs = {
+    [TowerType.Archer]: [
+        // "/assets/glb/towers/scene (12).gltf",
+        "/assets/glb/towers/Archer_Tower_lv1.gltf",
+        "/assets/glb/towers/Archer_Tower_lv2.gltf",
+        "/assets/glb/towers/Archer_Tower_lv3.gltf",
+        "/assets/glb/towers/Archer_Tower_lv4.gltf",
+    ],
+    [TowerType.Ballista]: [
+        "/assets/glb/towers/Ballista_Tower_LVL_1.gltf",
+        "/assets/glb/towers/Ballista_Tower_LVL_2.gltf",
+        "/assets/glb/towers/Ballista_Tower_LVL_3.gltf",
+        "/assets/glb/towers/Ballista_Tower_LVL_4.gltf",
+    ],
+    [TowerType.Cannon]: [
+        "/assets/glb/towers/Cannon_Tower_LVL_1.gltf",
+        "/assets/glb/towers/Cannon_Tower_LVL_2.gltf",
+        "/assets/glb/towers/Cannon_Tower_LVL_3.gltf",
+        "/assets/glb/towers/Cannon_Tower_LVL_4.gltf",
+    ],
+    [TowerType.Poison]: [
+        "/assets/glb/towers/Poison_Tower_lv1.gltf",
+        "/assets/glb/towers/Poison_Tower_lv2.gltf",
+        "/assets/glb/towers/Poison_Tower_lv3.gltf",
+        "/assets/glb/towers/Poison_Tower_lv4.gltf",
+    ],
+    [TowerType.Wizard]: [
+        "/assets/glb/towers/Wizard_Tower_lv1.gltf",
+        "/assets/glb/towers/Wizard_Tower_lv2.gltf",
+        "/assets/glb/towers/Wizard_Tower_lv3.gltf",
+        "/assets/glb/towers/Wizard_Tower_lv4.gltf",
+    ],
+};
+
 export const TOWER_BLUEPRINTS: { [k in TowerType]: TowerBluePrint[] } = {
     Archer: [
         {
             name: TowerType.Archer,
             level: 1,
             defaultStrategy: TargetingStrategy.FirstInLine,
-            modelURL: "/assets/glb/towers/Archer_Tower.gltf",
             firePointY: 6,
             damage: [3, 7],
             fireRate: 6,
             color: "blue",
             price: 100,
             range: 8,
-            modelScale: 0.5,
+            modelScale: 1,
+            // modelURL: "/assets/glb/towers/Archer_Tower.gltf",
         },
         {
             name: TowerType.Archer,
@@ -326,7 +360,7 @@ export const TOWER_BLUEPRINTS: { [k in TowerType]: TowerBluePrint[] } = {
             color: "blue",
             price: 160,
             range: 9,
-            modelScale: 0.55,
+            modelScale: 1.1,
         },
         {
             name: TowerType.Archer,
@@ -337,7 +371,7 @@ export const TOWER_BLUEPRINTS: { [k in TowerType]: TowerBluePrint[] } = {
             fireRate: 7,
             color: "blue",
             price: 220,
-            modelScale: 0.6,
+            modelScale: 1.2,
             range: 10,
         },
         {
@@ -349,7 +383,7 @@ export const TOWER_BLUEPRINTS: { [k in TowerType]: TowerBluePrint[] } = {
             fireRate: 8,
             color: "blue",
             price: 380,
-            modelScale: 0.65,
+            modelScale: 1.3,
             range: 10,
             skills: [],
         },
@@ -365,7 +399,7 @@ export const TOWER_BLUEPRINTS: { [k in TowerType]: TowerBluePrint[] } = {
             color: "red",
             price: 100,
             range: 10,
-            modelScale: 0.5,
+            modelScale: 1,
         },
         {
             name: TowerType.Ballista,
@@ -377,7 +411,7 @@ export const TOWER_BLUEPRINTS: { [k in TowerType]: TowerBluePrint[] } = {
             color: "red",
             price: 160,
             range: 10.5,
-            modelScale: 0.55,
+            modelScale: 1.1,
         },
         {
             name: TowerType.Ballista,
@@ -388,7 +422,7 @@ export const TOWER_BLUEPRINTS: { [k in TowerType]: TowerBluePrint[] } = {
             fireRate: 2.5,
             color: "red",
             price: 220,
-            modelScale: 0.6,
+            modelScale: 1.2,
             range: 11,
         },
         {
@@ -400,7 +434,7 @@ export const TOWER_BLUEPRINTS: { [k in TowerType]: TowerBluePrint[] } = {
             fireRate: 2.75,
             color: "red",
             price: 380,
-            modelScale: 0.65,
+            modelScale: 1.3,
             range: 12,
             skills: [],
         },
@@ -416,7 +450,7 @@ export const TOWER_BLUEPRINTS: { [k in TowerType]: TowerBluePrint[] } = {
             color: "orange",
             price: 100,
             range: 9,
-            modelScale: 0.5,
+            modelScale: 1,
         },
         {
             name: TowerType.Cannon,
@@ -427,7 +461,7 @@ export const TOWER_BLUEPRINTS: { [k in TowerType]: TowerBluePrint[] } = {
             fireRate: 0.8,
             color: "orange",
             price: 160,
-            modelScale: 0.55,
+            modelScale: 1.1,
             range: 10,
         },
         {
@@ -439,7 +473,7 @@ export const TOWER_BLUEPRINTS: { [k in TowerType]: TowerBluePrint[] } = {
             fireRate: 0.8,
             color: "orange",
             price: 220,
-            modelScale: 0.6,
+            modelScale: 1.2,
             range: 11,
         },
         {
@@ -451,7 +485,7 @@ export const TOWER_BLUEPRINTS: { [k in TowerType]: TowerBluePrint[] } = {
             fireRate: 0.8,
             color: "orange",
             price: 380,
-            modelScale: 0.65,
+            modelScale: 1.3,
             range: 12,
             skills: [],
         },
@@ -466,7 +500,7 @@ export const TOWER_BLUEPRINTS: { [k in TowerType]: TowerBluePrint[] } = {
             fireRate: 3,
             color: "green",
             price: 100,
-            modelScale: 0.5,
+            modelScale: 1,
             range: 10,
         },
         {
@@ -478,7 +512,7 @@ export const TOWER_BLUEPRINTS: { [k in TowerType]: TowerBluePrint[] } = {
             fireRate: 2.5,
             color: "green",
             price: 160,
-            modelScale: 0.55,
+            modelScale: 1.1,
             range: 12,
         },
         {
@@ -490,7 +524,7 @@ export const TOWER_BLUEPRINTS: { [k in TowerType]: TowerBluePrint[] } = {
             fireRate: 2,
             color: "green",
             price: 220,
-            modelScale: 0.6,
+            modelScale: 1.2,
             range: 13,
         },
         {
@@ -502,7 +536,7 @@ export const TOWER_BLUEPRINTS: { [k in TowerType]: TowerBluePrint[] } = {
             fireRate: 2,
             color: "green",
             price: 380,
-            modelScale: 0.65,
+            modelScale: 1.3,
             range: 14,
             skills: [],
         },
@@ -517,7 +551,7 @@ export const TOWER_BLUEPRINTS: { [k in TowerType]: TowerBluePrint[] } = {
             fireRate: 2,
             color: "purple",
             price: 100,
-            modelScale: 0.5,
+            modelScale: 1,
             range: 12,
         },
         {
@@ -529,7 +563,7 @@ export const TOWER_BLUEPRINTS: { [k in TowerType]: TowerBluePrint[] } = {
             fireRate: 1.8,
             color: "purple",
             price: 160,
-            modelScale: 0.55,
+            modelScale: 1.1,
             range: 13,
         },
         {
@@ -541,7 +575,7 @@ export const TOWER_BLUEPRINTS: { [k in TowerType]: TowerBluePrint[] } = {
             fireRate: 1.6,
             color: "purple",
             price: 220,
-            modelScale: 0.6,
+            modelScale: 1.2,
             range: 14,
         },
         {
@@ -553,7 +587,7 @@ export const TOWER_BLUEPRINTS: { [k in TowerType]: TowerBluePrint[] } = {
             fireRate: 1.5,
             color: "purple",
             price: 380,
-            modelScale: 0.65,
+            modelScale: 1.3,
             range: 14,
             skills: [],
         },
