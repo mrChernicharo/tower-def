@@ -12,6 +12,7 @@ export class PlayerStats {
     meteorCooldownTime: number;
     meteorCooldownArc: SVGGElement;
     blizzardCooldown: number;
+    blizzardCooldownTime: number;
     blizzardCooldownArc: SVGGElement;
     constructor(playerStats: { hp: number; gold: number; skills: PlayerSkills }) {
         this.hp = playerStats.hp;
@@ -33,6 +34,15 @@ export class PlayerStats {
             meteorCooldownTime -= this.skills.meteor[3].effect.COOLDOWN!.value; // skill::meteor-4
         }
         this.meteorCooldownTime = meteorCooldownTime;
+
+        let blizzardCooldownTime = DEFAULT_BLIZZARD_COOLDOWN;
+        if (this.skills.blizzard[1]) {
+            blizzardCooldownTime -= this.skills.blizzard[1].effect.COOLDOWN!.value; // skill::blizzard-2
+        }
+        if (this.skills.blizzard[3]) {
+            blizzardCooldownTime -= this.skills.blizzard[1].effect.COOLDOWN!.value; // skill::blizzard-4
+        }
+        this.blizzardCooldownTime = blizzardCooldownTime;
 
         this.meteorCooldown = 0;
         this.blizzardCooldown = 0;
@@ -79,16 +89,12 @@ export class PlayerStats {
         }
 
         if (this.blizzardCooldown > 0) {
-            if (this.blizzardCooldown === DEFAULT_BLIZZARD_COOLDOWN) {
-                // console.log("blizzard cooldown started", this.blizzardCooldown);
-            }
-
             if (blizzardBtn.classList.contains("ready")) {
                 blizzardBtn.classList.remove("ready");
                 this.blizzardCooldownArc.classList.remove("hidden");
             }
 
-            this._updateCooldownUI(blizzardArcs, DEFAULT_BLIZZARD_COOLDOWN, this.blizzardCooldown);
+            this._updateCooldownUI(blizzardArcs, this.blizzardCooldownTime, this.blizzardCooldown);
             this.blizzardCooldown -= delta;
         } else if (!blizzardBtn.classList.contains("ready")) {
             // console.log("blizzard READY", this.blizzardCooldown);
@@ -123,6 +129,6 @@ export class PlayerStats {
     }
 
     fireBlizzard() {
-        this.blizzardCooldown = DEFAULT_BLIZZARD_COOLDOWN;
+        this.blizzardCooldown = this.blizzardCooldownTime;
     }
 }

@@ -11,13 +11,13 @@ export const DRAW_METEOR_GIZMOS = true;
 
 export const DEFAULT_METEOR_DAMAGE = [50, 200] as [number, number];
 export const DEFAULT_METEOR_COUNT = 5;
-export const DEFAULT_METEOR_COOLDOWN = 30;
+export const DEFAULT_METEOR_COOLDOWN = 60;
 
 export const DEFAULT_BLIZZARD_SLOW_DURATION = 5.5;
 export const DEFAULT_BLIZZARD_SLOW_POWER = 0.5;
 export const BLIZZARD_ANIMATION_DURATION = 1.5;
 export const DEFAULT_BLIZZARD_DAMAGE = [5, 16] as [number, number];
-export const DEFAULT_BLIZZARD_COOLDOWN = 8;
+export const DEFAULT_BLIZZARD_COOLDOWN = 30;
 export const DEFAULT_BLIZZARD_RADIUS = 3;
 
 export const MAX_FOV = 72;

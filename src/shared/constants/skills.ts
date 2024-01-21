@@ -351,7 +351,7 @@ export const GAME_SKILLS: { [k in SkillPath]: Skill[] } = {
             effectStr: "RANGE +1, COOLDOWN -5s",
             effect: {
                 [SkillEffectName.Range]: { value: 1, unit: "meters" },
-                [SkillEffectName.Cooldown]: { value: -5, unit: "s" },
+                [SkillEffectName.Cooldown]: { value: 5, unit: "s" },
             },
         },
         {
@@ -376,7 +376,7 @@ export const GAME_SKILLS: { [k in SkillPath]: Skill[] } = {
             effectStr: "RANGE +1, COOLDOWN -5s",
             effect: {
                 [SkillEffectName.Range]: { value: 1, unit: "meters" },
-                [SkillEffectName.Cooldown]: { value: -5, unit: "s" },
+                [SkillEffectName.Cooldown]: { value: 5, unit: "s" },
             },
         },
         {
