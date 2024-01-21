@@ -80,7 +80,7 @@ export class PlayerStats {
 
             this._updateCooldownUI(meteorArcs, this.meteorCooldownTime, this.meteorCooldown);
             this.meteorCooldown -= delta;
-        } else if (!meteorBtn?.classList.contains("ready")) {
+        } else if (!meteorBtn.classList.contains("ready")) {
             this.meteorCooldown = 0;
             // console.log("METEOR READY");
             meteorBtn.classList.add("ready");
@@ -96,7 +96,7 @@ export class PlayerStats {
 
             this._updateCooldownUI(blizzardArcs, this.blizzardCooldownTime, this.blizzardCooldown);
             this.blizzardCooldown -= delta;
-        } else if (!blizzardBtn?.classList.contains("ready")) {
+        } else if (!blizzardBtn.classList.contains("ready")) {
             // console.log("blizzard READY", this.blizzardCooldown);
             this.blizzardCooldown = 0;
             blizzardBtn.classList.add("ready");
@@ -131,4 +131,11 @@ export class PlayerStats {
     fireBlizzard() {
         this.blizzardCooldown = this.blizzardCooldownTime;
     }
+
+    // destroy() {
+    //     this.hpDisplay.remove();
+    //     this.goldDisplay.remove();
+    //     this.blizzardCooldownArc.remove();
+    //     this.meteorCooldownArc.remove();
+    // }
 }

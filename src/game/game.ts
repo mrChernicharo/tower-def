@@ -38,6 +38,7 @@ import {
     MAX_FOV,
     MIN_FOV,
     BLIZZARD_ANIMATION_DURATION,
+    DEFAULT_POISON_DURATION,
 } from "../shared/constants/general";
 
 import {
@@ -181,6 +182,7 @@ export async function destroyGame() {
     meteors.clear();
     blizzards.clear();
     poisonEntries.clear();
+    // playerStats.destroy();
     currWave = [];
     pathCurves = [];
     callWaveBeaconContainers = [];
@@ -1558,7 +1560,9 @@ function onProjectileExplode(e: any) {
                 break;
             }
             case TowerType.Poison: {
-                const poison = new PoisonEntry(targetEnemy.id);
+                const duration = DEFAULT_POISON_DURATION;
+
+                const poison = new PoisonEntry(targetEnemy.id, duration, playerStats.skills);
                 if (!targetEnemy.isPoisoned) {
                     targetEnemy.setPoisoned();
                 }

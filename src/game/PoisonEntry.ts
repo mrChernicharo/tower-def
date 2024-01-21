@@ -1,4 +1,5 @@
 import { idMaker } from "../shared/helpers";
+import { PlayerSkills } from "../shared/types";
 
 const POISON_DMG_COOLDOWN = 2.2;
 
@@ -8,10 +9,21 @@ export class PoisonEntry {
     duration: number;
     elapsed = 0;
     cooldown = POISON_DMG_COOLDOWN;
-    constructor(enemyId: string, durationInSeconds = 10) {
+    constructor(enemyId: string, durationInSeconds: number, skills: PlayerSkills) {
         this.id = idMaker();
         this.enemyId = enemyId;
-        this.duration = durationInSeconds;
+
+        let duration = durationInSeconds;
+
+        if (skills.poison[1]) {
+            duration += skills.poison[1].effect.POISON_DURATION!.value;
+        }
+        if (skills.poison[4]) {
+            duration += skills.poison[4].effect.POISON_DURATION!.value;
+        }
+
+        console.log("POISON ENTRY", { duration });
+        this.duration = duration;
     }
 
     tick(delta: number) {

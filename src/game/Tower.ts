@@ -315,8 +315,8 @@ export class Tower {
                     range += playerSkills.poison[2].effect.RANGE!.value;
                 }
 
-                if (playerSkills.poison[4]) {
-                    price -= (price * playerSkills.poison[4].effect.PRICE!.value) / 100;
+                if (playerSkills.poison[3]) {
+                    price -= (price * playerSkills.poison[3].effect.PRICE!.value) / 100;
                 }
                 break;
             }
