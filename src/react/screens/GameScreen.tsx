@@ -2,7 +2,7 @@
 import { useCallback, useEffect, useRef } from "react";
 import { useParams } from "react-router-dom";
 import { usePlayerContext } from "../context/usePlayerContext";
-import { LevelStarCount, PlayerSkills, SkillId } from "../../shared/types";
+import { LevelStarCount, PlayerSkillIDsMap, SkillId } from "../../shared/types";
 import { imgs } from "../../shared/constants/general";
 import { AiFillSound } from "react-icons/ai";
 import { FaMusic } from "react-icons/fa";
@@ -29,7 +29,7 @@ const Game = () => {
     useEffect(() => {
         if (gameRunning.current || !area || !level) return;
 
-        const skillsObj: Partial<PlayerSkills> = {};
+        const skillsObj: Partial<PlayerSkillIDsMap> = {};
         Object.entries(skills).forEach(([id, bool]) => {
             if (bool) {
                 skillsObj[id as SkillId] = true;

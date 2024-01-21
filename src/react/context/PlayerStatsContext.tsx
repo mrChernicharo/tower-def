@@ -1,6 +1,6 @@
 import { ReactNode, createContext, useEffect, useState } from "react";
 import { getTotalStageCount } from "../../shared/helpers";
-import { GlobalPlayerStats, LevelStarCount, LevelStarMap, PlayerSkills, Skill } from "../../shared/types";
+import { GlobalPlayerStats, LevelStarCount, LevelStarMap, PlayerSkillIDsMap, Skill } from "../../shared/types";
 import { defaultPlayerSkills } from "../../shared/constants/general";
 
 const defaultPlayerStats: GlobalPlayerStats = {
@@ -15,7 +15,7 @@ export type PlayerStatsContextType = {
     gold: number;
     stars: LevelStarMap;
     loaded: boolean;
-    skills: PlayerSkills;
+    skills: PlayerSkillIDsMap;
     updateStars: (stage: number, starCount: LevelStarCount) => void;
     addSkill: (skill: Skill) => void;
     removeSkill: (skill: Skill) => void;
@@ -72,7 +72,7 @@ export const PlayerStatsContextProvider = ({ children }: { children: ReactNode }
                 const copy = { ...prev };
 
                 if (copy.skills) {
-                    copy.skills[skill.id as keyof PlayerSkills] = true;
+                    copy.skills[skill.id as keyof PlayerSkillIDsMap] = true;
                 }
 
                 return { ...copy } as GlobalPlayerStats;
@@ -84,7 +84,7 @@ export const PlayerStatsContextProvider = ({ children }: { children: ReactNode }
 
                 if (copy.skills) {
                     // remove skill
-                    copy.skills[skill.id as keyof PlayerSkills] = false;
+                    copy.skills[skill.id as keyof PlayerSkillIDsMap] = false;
 
                     // remove greater skills in the same column
                     Object.entries(copy.skills).forEach(([id]) => {

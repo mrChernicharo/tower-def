@@ -9,6 +9,8 @@ export const DRAW_PROJECTILE_TRAJECTORIES = false;
 
 export const DRAW_METEOR_GIZMOS = true;
 
+export const DEFAULT_METEOR_COUNT = 5;
+
 export const BLIZZARD_SLOW_DURATION = 6;
 export const BLIZZARD_EFFECT_DURATION = 1.5;
 

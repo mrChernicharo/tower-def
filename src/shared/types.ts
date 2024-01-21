@@ -1,6 +1,6 @@
 import { ParabolaProjectile, StraightProjectile } from "../game/Projectile";
 import { defaultPlayerSkills } from "./constants/general";
-import { EnemyType, GameArea, TargetingStrategy, TowerType, TrajectoryType } from "./enums";
+import { EnemyType, GameArea, SkillEffectName, SkillPath, TargetingStrategy, TowerType, TrajectoryType } from "./enums";
 
 export type EnemyBluePrint = {
     name: EnemyType;
@@ -41,6 +41,7 @@ export type ProjectileBluePrint = {
 
 export type Projectile = ParabolaProjectile | StraightProjectile;
 
+// type, path, spawnAt, xOff
 export type WaveEnemy = [string, number, number, number];
 
 export type WaveEnemyObj = {
@@ -53,7 +54,9 @@ export type WaveEnemyObj = {
 export type LevelStarCount = 0 | 1 | 2 | 3;
 export type LevelStarMap = LevelStarCount[];
 
-export type PlayerSkills = {
+export type PlayerSkills = { [k in SkillPath]: Skill[] };
+
+export type PlayerSkillIDsMap = {
     "archer-1": boolean;
     "archer-2": boolean;
     "archer-3": boolean;
@@ -92,18 +95,21 @@ export type PlayerSkills = {
 };
 
 export type Skill = {
-    id: string;
+    id: keyof PlayerSkillIDsMap;
     name: string;
     description: string;
     starCost: number;
-    effect?: string;
+    effectStr: string;
+    effect: Partial<Record<SkillEffectName, SkillEffect>>;
 };
+
+export type SkillEffect = { value: number; unit: string };
 
 export type GameInitProps = {
     area: string;
     level: number;
     hp: number;
-    skills: Partial<PlayerSkills>;
+    skills: Partial<PlayerSkillIDsMap>;
     // gold: number;
     // skills: Skill[];
 };
@@ -112,7 +118,7 @@ export type GlobalPlayerStats = {
     hp: number;
     gold: number;
     stars: LevelStarMap;
-    skills: PlayerSkills;
+    skills: PlayerSkillIDsMap;
 };
 
 export type GameSpeed = 1 | 2 | 4;

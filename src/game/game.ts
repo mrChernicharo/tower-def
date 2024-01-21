@@ -31,6 +31,7 @@ import {
     BLIZZARD_EFFECT_DURATION,
     BLIZZARD_SLOW_DURATION,
     COLORS,
+    DEFAULT_METEOR_COUNT,
     DRAW_FUTURE_GIZMO,
     DRAW_METEOR_GIZMOS,
     DRAW_PROJECTILE_TRAJECTORIES,
@@ -46,10 +47,11 @@ import {
     GameArea,
     GameState,
     ModalType,
+    SkillPath,
     TargetingStrategy,
     TowerType,
 } from "../shared/enums";
-import { EnemyBluePrint, Projectile, WaveEnemyObj, GameInitProps, GameSpeed, GameLevel } from "../shared/types";
+import { EnemyBluePrint, Projectile, WaveEnemyObj, GameInitProps, GameSpeed, GameLevel, Skill } from "../shared/types";
 import { beaconTemplate, cancelableModalNames, gameEndTemplates, modalTemplates, speedBtnsTemplate } from "./templates";
 import { Tower } from "./Tower";
 import { PlayerStats } from "./PlayerStats";
@@ -60,6 +62,7 @@ import { GAME_LEVELS, STAGE_WAVES_DATA } from "../shared/constants/levels/game-l
 import { LEVEL_OBJECTS } from "../shared/constants/levels/level-objects";
 import { ENEMY_BLUEPRINTS } from "../shared/constants/enemies";
 import { towerModelsURLs, TOWER_BLUEPRINTS } from "../shared/constants/towers";
+import { GAME_SKILLS } from "../shared/constants/skills";
 
 // let pathPoints: THREE.Vector3[] = [];
 
@@ -215,10 +218,28 @@ export async function initGame({ area, level, hp, skills }: GameInitProps) {
     levelIdx = level;
     levelArea = area;
     levelData = GAME_LEVELS[levelIdx];
-    console.log({ levelData });
-    playerStats = new PlayerStats({ hp, gold: levelData.initialGold });
 
-    console.log("initGame", { skills, levelArea, levelIdx, levelData, PlayerStats });
+    const playerSkills: { [k in SkillPath]: Skill[] } = {
+        archer: [],
+        ballista: [],
+        cannon: [],
+        poison: [],
+        wizard: [],
+        blizzard: [],
+        meteor: [],
+    };
+
+    for (const skillId of Object.keys(skills)) {
+        const skillPath = skillId.split("-")[0] as SkillPath;
+        const skill = GAME_SKILLS[skillPath].find((s) => s.id === skillId);
+        if (skill) {
+            playerSkills[skillPath].push(skill);
+        }
+    }
+
+    console.log("initGame", { skills, levelArea, levelIdx, levelData, playerSkills });
+
+    playerStats = new PlayerStats({ hp, gold: levelData.initialGold, skills: playerSkills });
 
     await gameSetup();
     _wireUpLoadingManager();
@@ -1556,7 +1577,7 @@ function onEnemyDestroyed(e: any) {
     }
 
     enemies = enemies.filter((e) => e.id !== enemy.id);
-    console.log("remove enemy from scene", enemy);
+    // console.log("remove enemy from scene", enemy);
     scene.remove(enemy.model);
 
     if (enemies.length === 0 && !gameLost) {
@@ -1612,7 +1633,21 @@ function onMeteorFire() {
 
     clearMeteorTargeting();
 
-    const meteorCount = 6;
+    let meteorCount = DEFAULT_METEOR_COUNT;
+    // skill::meteor-1
+    if (playerStats.skills.meteor[0]) {
+        meteorCount += playerStats.skills.meteor[0].effect.METEOR_COUNT!.value;
+    }
+    // skill::meteor-3
+    if (playerStats.skills.meteor[2]) {
+        meteorCount += playerStats.skills.meteor[2].effect.METEOR_COUNT!.value;
+    }
+    // skill::meteor-5
+    if (playerStats.skills.meteor[4]) {
+        meteorCount += playerStats.skills.meteor[4].effect.METEOR_COUNT!.value;
+    }
+
+    console.log("meteor count", meteorCount);
 
     for (let i = 0; i < meteorCount; i++) {
         const destination = new THREE.Vector3(
@@ -1622,7 +1657,10 @@ function onMeteorFire() {
         );
 
         setTimeout(() => {
-            const meteor = new Meteor(destination);
+            // const meteorSkills = GAME_SKILLS.meteor.filter(s => s.id)
+            // const meteor = new Meteor(destination, undefined, meteorSkills);
+            // const skillLevel =
+            const meteor = new Meteor(destination, undefined);
             meteors.set(meteor.id, meteor);
             scene.add(meteor.model);
 

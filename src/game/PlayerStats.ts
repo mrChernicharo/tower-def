@@ -1,28 +1,33 @@
 import { getD } from "../shared/helpers";
+import { PlayerSkills } from "../shared/types";
 
-const METEOR_COOLDOWN = 16;
+const DEFAULT_METEOR_COOLDOWN = 16;
 const BLIZZARD_COOLDOWN = 2;
 // const BLIZZARD_COOLDOWN = 8;
 
 export class PlayerStats {
     hp: number;
     gold: number;
+    skills: PlayerSkills;
     hpDisplay: HTMLDivElement;
     goldDisplay: HTMLDivElement;
     meteorCooldown: number;
     blizzardCooldown: number;
     blizzardCooldownArc: SVGGElement;
     meteorCooldownArc: SVGGElement;
-    constructor(playerStats: { hp: number; gold: number }) {
+    constructor(playerStats: { hp: number; gold: number; skills: PlayerSkills }) {
         this.hp = playerStats.hp;
         this.gold = playerStats.gold;
+        this.skills = playerStats.skills;
+
         this.hpDisplay = document.querySelector("#hp-display")!;
         this.goldDisplay = document.querySelector("#gold-display > #gold")!;
-        this.goldDisplay.innerHTML = `${this.gold}`;
-        this.meteorCooldown = 0;
-        this.blizzardCooldown = 0;
         this.blizzardCooldownArc = document.querySelector("#blizzard-action-btn > svg > .cooldown-arc") as SVGGElement;
         this.meteorCooldownArc = document.querySelector("#meteor-action-btn > svg > .cooldown-arc") as SVGGElement;
+        this.goldDisplay.innerHTML = `${this.gold}`;
+
+        this.meteorCooldown = 0;
+        this.blizzardCooldown = 0;
     }
 
     gainGold(n: number) {
@@ -54,12 +59,11 @@ export class PlayerStats {
                 this.meteorCooldownArc.classList.remove("hidden");
             }
 
-            this._updateCooldownUI(meteorArcs, METEOR_COOLDOWN, this.meteorCooldown);
+            this._updateCooldownUI(meteorArcs, DEFAULT_METEOR_COOLDOWN, this.meteorCooldown);
             this.meteorCooldown -= delta;
         } else if (!meteorBtn.classList.contains("ready")) {
             this.meteorCooldown = 0;
             // console.log("METEOR READY");
-
             meteorBtn.classList.add("ready");
             this.meteorCooldownArc.classList.add("hidden");
             meteorArcs[1].setAttribute("d", "");
@@ -105,7 +109,17 @@ export class PlayerStats {
     }
 
     fireMeteor() {
-        this.meteorCooldown = METEOR_COOLDOWN;
+        let cooldownTime = DEFAULT_METEOR_COOLDOWN;
+        // skill::meteor-2
+        if (this.skills.meteor[1]) {
+            cooldownTime -= this.skills.meteor[1].effect.COOLDOWN!.value;
+        }
+        // skill::meteor-4
+        if (this.skills.meteor[3]) {
+            cooldownTime -= this.skills.meteor[3].effect.COOLDOWN!.value;
+        }
+        console.log("meteor cooldownTime", cooldownTime);
+        this.meteorCooldown = cooldownTime;
     }
 
     fireBlizzard() {

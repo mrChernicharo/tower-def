@@ -275,11 +275,7 @@ export const STAGE_WAVES_DATA: WaveEnemy[][][] = [
             ...waveSegment(EnemyChar.Ghost, 2, 6, 3, 2),
         ],
         // wave 2
-        [
-            ...waveSegment(EnemyChar.Wizard, 3, 5, 4, 0),
-            ...waveSegment(EnemyChar.Ghost, 4, 6, 0, 1),
-            ...waveSegment(EnemyChar.Tribal, 2, 6, 6, 2),
-        ],
+        [...waveSegment(EnemyChar.Ghost, 5, 6, 0, 1), ...waveSegment(EnemyChar.Tribal, 3, 10, 2, 2)],
         // wave 3
         [
             ...waveSegment(EnemyChar.Spider, 3, 1, 0, 3),
@@ -337,9 +333,9 @@ export const STAGE_WAVES_DATA: WaveEnemy[][][] = [
         // wave 2
         [
             ...waveSegment(EnemyChar.Wizard, 4, 5, 4, 0),
-            ...waveSegment(EnemyChar.Ghost, 5, 6, 0, 1),
-            ...waveSegment(EnemyChar.Bee, 6, 6, 0, 1),
-            ...waveSegment(EnemyChar.Tribal, 2, 6, 6, 2),
+            ...waveSegment(EnemyChar.Ghost, 5, 6, 2, 1),
+            ...waveSegment(EnemyChar.Bee, 6, 6, 0, 3),
+            ...waveSegment(EnemyChar.Tribal, 2, 8, 6, 2),
         ],
         // wave 3
         [

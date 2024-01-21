@@ -3,7 +3,7 @@
 import { EnemyChar, EnemyType, TowerType } from "./enums";
 import { THREE } from "../three";
 import { GLTF } from "three/examples/jsm/Addons.js";
-import { LevelStarCount, LevelStarMap, PlayerSkills, WaveEnemy } from "./types";
+import { LevelStarCount, LevelStarMap, PlayerSkillIDsMap, WaveEnemy } from "./types";
 import { Enemy } from "../game/Enemy";
 import { GAME_SKILLS } from "./constants/skills";
 import { STAGE_WAVES_DATA, allAreaLevels } from "./constants/levels/game-levels";
@@ -168,7 +168,7 @@ export function getEarnedStars(stars: number[]) {
     return stars.reduce((acc, next) => acc + next, 0);
 }
 
-export function getSpentStars(skills: PlayerSkills) {
+export function getSpentStars(skills: PlayerSkillIDsMap) {
     return Object.entries(skills)
         .filter(([_id, bool]) => bool)
         .reduce(
@@ -269,8 +269,13 @@ export function waveSegment(
 }
 
 export function getWaveStats(wave: WaveEnemy[], enemyBlueprints: typeof ENEMY_BLUEPRINTS) {
-    const totalDmg = wave.reduce((p, n) => (p += enemyBlueprints[getEnemyTypeFromChar(n[0] as EnemyChar)].maxHp), 0);
-    return { totalDmg };
+    // console.log(wave);
+    let highestSpawnAt = -Infinity;
+    const totalDmg = wave.reduce((p, n) => {
+        if (n[2] > highestSpawnAt) highestSpawnAt = n[2];
+        return (p += enemyBlueprints[getEnemyTypeFromChar(n[0] as EnemyChar)].maxHp);
+    }, 0);
+    return { totalDmg, highestSpawnAt };
 }
 
 export function printWavesStatistics(enemyBlueprints: typeof ENEMY_BLUEPRINTS) {
@@ -283,11 +288,10 @@ export function printWavesStatistics(enemyBlueprints: typeof ENEMY_BLUEPRINTS) {
 
         const waves: any[] = [];
         stage.forEach((wave) => {
-            const { totalDmg } = getWaveStats(wave, enemyBlueprints);
-            waves.push(totalDmg);
-            // console.log([`${sIdx + 1}-${wIdx + 1}`, totalDmg]);
+            const { totalDmg, highestSpawnAt } = getWaveStats(wave, enemyBlueprints);
+            waves.push(`${totalDmg}-${highestSpawnAt}`);
+            // waves.push(totalDmg, highestSpawnAt);
             // console.log({ wave: `${sIdx + 1}-${wIdx + 1}`, totalDmg });
-            // console.table({ totalDmg });
         });
         res.push(waves);
     });

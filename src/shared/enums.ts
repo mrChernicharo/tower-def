@@ -96,6 +96,31 @@ export enum SkillPath {
     Blizzard = "blizzard",
 }
 
+export enum SkillEffectName {
+    Range = "RANGE",
+    Damage = "DAMAGE",
+    RateOfFire = "RATE_OF_FIRE",
+    Price = "PRICE",
+    // Archer
+    MultiTarget = "MULTI_TARGET",
+    // Ballista
+    CriticalHit = "CRITICAL_HIT",
+    // Cannon
+    SplashArea = "SPLASH_AREA",
+    // Poison
+    PoisonDamage = "POISON_DAMAGE", // Applies to Poison
+    PoisonDuration = "POISON_DURATION", // Applies to Poison
+    // Wizard
+    Ricochet = "RICOCHET", // Applies to Wizard
+    // Meteor
+    MeteorCount = "METEOR_COUNT",
+    RandomTargets = "RANDOM_TARGETS",
+    // Blizzard
+    SlowEffect = "SLOW_EFFECT", // also Applies to Cannon
+    SlowDuration = "SLOW_DURATION", // also Applies to Cannon
+    Cooldown = "COOLDOWN",
+}
+
 export enum GameArea {
     Desert = "desert",
     Forest = "forest",
