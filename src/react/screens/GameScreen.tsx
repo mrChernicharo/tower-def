@@ -194,6 +194,6 @@ export default Game;
 // const skillList = Object.entries(skills)
 //     .filter(([_id, bool]) => bool)
 //     .map(([id, _bool]) => ({
-//         ...gameSkills[id.split("-")[0] as keyof typeof gameSkills][Number(id.split("-")[1]) - 1],
+//         ...GAME_SKILLS[id.split("-")[0] as keyof typeof GAME_SKILLS][Number(id.split("-")[1]) - 1],
 //     }));
 // console.log(skillList);

@@ -96,6 +96,7 @@ export type Skill = {
     name: string;
     description: string;
     starCost: number;
+    effect?: string;
 };
 
 export type GameInitProps = {

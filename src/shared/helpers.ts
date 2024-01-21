@@ -5,7 +5,7 @@ import { THREE } from "../three";
 import { GLTF } from "three/examples/jsm/Addons.js";
 import { LevelStarCount, LevelStarMap, PlayerSkills, WaveEnemy } from "./types";
 import { Enemy } from "../game/Enemy";
-import { gameSkills } from "./constants/skills";
+import { GAME_SKILLS } from "./constants/skills";
 import { STAGE_WAVES_DATA, allAreaLevels } from "./constants/levels/game-levels";
 import { ENEMY_BLUEPRINTS } from "./constants/enemies";
 
@@ -173,7 +173,7 @@ export function getSpentStars(skills: PlayerSkills) {
         .filter(([_id, bool]) => bool)
         .reduce(
             (acc, [id, _bool]) =>
-                acc + gameSkills[id.split("-")[0] as keyof typeof gameSkills].find((s) => s.id === id)!.starCost,
+                acc + GAME_SKILLS[id.split("-")[0] as keyof typeof GAME_SKILLS].find((s) => s.id === id)!.starCost,
             0
         );
 }

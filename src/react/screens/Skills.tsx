@@ -6,7 +6,8 @@ import { useCallback, useEffect, useState } from "react";
 import { Skill, SkillId } from "../../shared/types";
 import { capitalize, getEarnedStars, getSkillInfo, getSpentStars } from "../../shared/helpers";
 import { FaArrowLeft } from "react-icons/fa";
-import { gameSkills } from "../../shared/constants/skills";
+import { GAME_SKILLS } from "../../shared/constants/skills";
+import { SkillPath } from "../../shared/enums";
 
 const Skills = () => {
     const { stars, skills, addSkill, removeSkill, resetAllSkills } = usePlayerContext();
@@ -25,6 +26,11 @@ const Skills = () => {
             if (starsSpent + skill.starCost <= earnedStars) {
                 console.log("BUYING SKILL!!!");
                 addSkill(skill);
+                const [skillPath, skillLevel] = [skill.id.split("-")[0] as SkillPath, +skill.id.split("-")[1]];
+                const nextSkill = GAME_SKILLS[skillPath][skillLevel];
+                if (nextSkill) {
+                    setSkillDetail(nextSkill);
+                }
             } else {
                 console.log("CANNOT AFFORD SKILL");
             }
@@ -47,7 +53,8 @@ const Skills = () => {
     }, [resetAllSkills]);
 
     useEffect(() => {
-        console.log({ skills, gameSkills });
+        console.log({ skills, GAME_SKILLS });
+        setSkillDetail(GAME_SKILLS.archer[0]);
     }, [skills]);
 
     return (
@@ -69,7 +76,7 @@ const Skills = () => {
             </div>
 
             <div className="skills-container">
-                {Object.entries(gameSkills).map(([skillName, playerSkills]) => {
+                {Object.entries(GAME_SKILLS).map(([skillName, playerSkills]) => {
                     return (
                         <ul className="skill-row" key={skillName}>
                             {/* <h2>{skillName}</h2> */}
@@ -82,7 +89,10 @@ const Skills = () => {
                                 return (
                                     <li className="skill-item" key={skill.name}>
                                         <button
-                                            style={{ background: purchased ? "dodgerblue" : "" }}
+                                            style={{
+                                                background: purchased ? "dodgerblue" : "",
+                                                border: skillDetail?.id === skill.id ? "2px solid gold" : "",
+                                            }}
                                             onClick={() => onSkillClick(skill)}
                                         >
                                             <span>lv{skill.id.split("-")[1]} </span>

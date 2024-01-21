@@ -412,6 +412,12 @@ progress::-webkit-progress-value {
     margin-bottom: 5px;
 }
 
+.skill-row button {
+    height: 56px;
+    width: 60px;
+    padding: 0;
+}
+
 .skill-row > img {
     margin-right: 5px;
 }
@@ -426,8 +432,4 @@ progress::-webkit-progress-value {
 
 .skill-detail h2 {
     margin-top: 1rem;
-}
-
-.skill-detail p {
-    padding: 1rem;
 }
