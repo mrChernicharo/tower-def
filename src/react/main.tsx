@@ -1,8 +1,8 @@
 import ReactDOM from "react-dom/client";
-import { Routes } from "./react/router.tsx";
-import "./index.css";
-import "./react/screens/screens.css";
-import { PlayerStatsContextProvider } from "./react/context/PlayerStatsContext.tsx";
+import { Routes } from "./router.tsx";
+import "../index.css";
+import "./screens/screens.css";
+import { PlayerStatsContextProvider } from "./context/PlayerStatsContext.tsx";
 // import React from "react";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
