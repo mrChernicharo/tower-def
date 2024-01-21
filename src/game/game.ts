@@ -39,6 +39,7 @@ import {
     MIN_FOV,
     BLIZZARD_ANIMATION_DURATION,
     DEFAULT_POISON_DURATION,
+    DEFAULT_POISON_DAMAGE,
 } from "../shared/constants/general";
 
 import {
@@ -1845,8 +1846,20 @@ function onBlizzardFinish(e: any) {
 function onPoisonEntryDamage(e: any) {
     const poison = e.detail as PoisonEntry;
     const enemy = enemies.find((e) => e.id === poison.enemyId);
+
     if (enemy) {
-        enemy.takeDamage(4);
+        let poisonDamage = DEFAULT_POISON_DAMAGE;
+
+        if (playerStats.skills.poison[0]) {
+            poisonDamage += (DEFAULT_POISON_DAMAGE * playerStats.skills.poison[0].effect.POISON_DAMAGE!.value) / 100;
+        }
+        if (playerStats.skills.poison[3]) {
+            poisonDamage += (DEFAULT_POISON_DAMAGE * playerStats.skills.poison[3].effect.POISON_DAMAGE!.value) / 100;
+        }
+        if (playerStats.skills.poison[4]) {
+            poisonDamage += (DEFAULT_POISON_DAMAGE * playerStats.skills.poison[4].effect.POISON_DAMAGE!.value) / 100;
+        }
+        enemy.takeDamage(poisonDamage);
     }
     // console.log("onPoisonEntryDamage", { poisonEntries, poison, enemy });
 }

@@ -170,9 +170,9 @@ export const GAME_SKILLS: { [k in SkillPath]: Skill[] } = {
             name: "Toxic Enhancement",
             description: "Increase the poison damage inflicted by your attacks",
             starCost: 1,
-            effectStr: "POISON_DAMAGE +10%",
+            effectStr: "POISON_DAMAGE +25%",
             effect: {
-                [SkillEffectName.PoisonDamage]: { value: 10, unit: "%" },
+                [SkillEffectName.PoisonDamage]: { value: 25, unit: "%" },
             },
         },
         {
@@ -200,10 +200,10 @@ export const GAME_SKILLS: { [k in SkillPath]: Skill[] } = {
             name: "Cost-Effective Poison",
             description: "Reduce the price of your poison attacks and increase poison damage",
             starCost: 4,
-            effectStr: "PRICE -10%, POISON_DAMAGE +5%",
+            effectStr: "PRICE -10%, POISON_DAMAGE +20%",
             effect: {
                 [SkillEffectName.Price]: { value: 10, unit: "%" },
-                [SkillEffectName.PoisonDamage]: { value: 5, unit: "%" },
+                [SkillEffectName.PoisonDamage]: { value: 20, unit: "%" },
             },
         },
         {
@@ -211,10 +211,10 @@ export const GAME_SKILLS: { [k in SkillPath]: Skill[] } = {
             name: "Potent Toxin Mastery",
             description: "Further increase poison duration and damage for a potent and lasting effect",
             starCost: 5,
-            effectStr: "POISON_DURATION +1s, POISON_DAMAGE +5%",
+            effectStr: "POISON_DURATION +1s, POISON_DAMAGE +20%",
             effect: {
                 [SkillEffectName.PoisonDuration]: { value: 1, unit: "s" },
-                [SkillEffectName.PoisonDamage]: { value: 5, unit: "%" },
+                [SkillEffectName.PoisonDamage]: { value: 20, unit: "%" },
             },
         },
     ],
