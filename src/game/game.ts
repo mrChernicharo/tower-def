@@ -141,6 +141,8 @@ let currWave: WaveEnemyObj[] = [];
 let currWaveIdx = 0;
 let gameLost = false;
 
+let gameStateBeforePause = GameState.Idle;
+
 let readyToFireMeteor = false;
 let meteorTargetPos = new THREE.Vector3();
 
@@ -729,6 +731,8 @@ function drawWaveCallBeacon() {
             // console.log("CALL WAVE!", currWaveIdx + 1);
             // WAVE START
             console.log("<<< WAVE START >>>", { levelIdx, currWaveIdx });
+            (speedBtns.children[1] as HTMLInputElement).checked = true;
+            gameSpeed = 1;
             gameState = GameState.Active;
             pauseGameBtn.textContent = "⏸️";
             waveDisplay.innerHTML = `Wave ${currWaveIdx + 1}/${GAME_LEVELS[levelIdx!].waves.length}`;
@@ -900,6 +904,7 @@ function animate() {
 /****************************************/
 
 function onPointerMove(e: PointerEvent) {
+    // console.log("onPointerMove", e);
     const mousePos = new THREE.Vector2();
     mousePos.x = (e.clientX / canvasWidth) * 2 - 1;
     mousePos.y = -(e.clientY / canvasHeight) * 2 + 1;
@@ -1191,7 +1196,8 @@ function onResize() {
 }
 
 function onZoom(e: WheelEvent) {
-    // console.log(e, e.deltaX, e.deltaY, e.deltaZ);
+    if (gameState === GameState.Paused) return;
+    console.log("onZoom", e, e.deltaX, e.deltaY, e.deltaZ, gameState);
     if ((e.deltaY > 0 && camera.fov < MAX_FOV) || (e.deltaY < 0 && camera.fov > MIN_FOV)) {
         camera.fov += e.deltaY * 0.02;
     }
@@ -1218,6 +1224,8 @@ function onTouchEnd() {
 }
 
 function onMobileZoom(e: any) {
+    if (gameState === GameState.Paused) return;
+
     prevPinchDist = pinchDist;
     pinchDist = Math.hypot(e.touches[0].pageX - e.touches[1].pageX, e.touches[0].pageY - e.touches[1].pageY);
     const diff = pinchDist - prevPinchDist;
@@ -1253,19 +1261,19 @@ function onVisibilityChange() {
 /****************************************/
 
 function onPauseGame() {
-    console.log("onPauseGame", callWaveBeaconContainers);
+    console.log("onPauseGame", callWaveBeaconContainers, gameState);
+    gameStateBeforePause = gameState;
+    gameState = GameState.Paused;
 
     pauseScreen.classList.remove("hidden");
 
-    if (gameState === GameState.Active) {
-        gameState = GameState.Paused;
-    }
-
+    // hide call-wave beacons
     callWaveBeaconContainers.forEach((container) => {
         container.style.opacity = "0";
     });
 
-    // const openedModal = document.querySelector(".modal-content");
+    // dim enemies hp bars
+    cssRenderer.domElement.style.opacity = "0.4";
 
     // hide modal on pause
     scene.traverse((obj) => {
@@ -1279,14 +1287,19 @@ function onPauseGame() {
 function onResumeGame() {
     console.log("onResumeGame", callWaveBeaconContainers);
 
-    if (gameState === GameState.Paused) {
+    if (gameStateBeforePause === GameState.Active) {
         gameState = GameState.Active;
+    } else {
+        gameState = GameState.Idle;
     }
+
     pauseScreen.classList.add("hidden");
 
     callWaveBeaconContainers.forEach((container) => {
         container.style.opacity = "1";
     });
+
+    cssRenderer.domElement.style.opacity = "1";
 
     if (towerPreview) {
         console.log("remove tower preview");
@@ -1316,6 +1329,47 @@ function onGameSpeedChange(e: MouseEvent) {
         gameSpeed = speed as GameSpeed;
         console.log("onGameSpeedChange", { gameSpeed });
     }
+}
+
+function onWaveEnded() {
+    console.log("wave ended");
+    gameState = GameState.Idle;
+    currWaveIdx++;
+    activeGameTime = 0;
+
+    const waveCount = STAGE_WAVES_DATA[levelIdx].length;
+    if (currWaveIdx < waveCount) {
+        drawWaveCallBeacon();
+    }
+    if (currWaveIdx === waveCount) {
+        gameOverWin();
+    }
+
+    // pauseGameBtn.innerHTML = `Start Wave ${currWaveIdx + 1}`;
+}
+
+function gameOverWin() {
+    console.log("GAME END ... WIN!");
+    cssRenderer.domElement.style.opacity = "0";
+
+    const stars = calcEarnedStarsForGameWin(playerStats.hp);
+    endGameScreen.innerHTML = gameEndTemplates.gameWin(stars);
+    endGameScreen.classList.remove("hidden");
+
+    window.dispatchEvent(new CustomEvent("game-win", { detail: stars }));
+
+    endGameBtn = document.querySelector("#confirm-end-game-btn") as HTMLButtonElement;
+    endGameBtn.addEventListener("click", onEndGameConfirm);
+}
+
+function gameOverLose() {
+    console.log("GAME END ... LOSE");
+    cssRenderer.domElement.style.opacity = "0";
+    endGameScreen.innerHTML = gameEndTemplates.gameLose();
+    endGameScreen.classList.remove("hidden");
+    endGameBtn = document.querySelector("#confirm-end-game-btn") as HTMLButtonElement;
+    endGameBtn.addEventListener("click", onEndGameConfirm);
+    gameLost = true;
 }
 
 function handleCameraMovement(e: PointerEvent) {
@@ -1467,12 +1521,7 @@ function onEnemyDestroyed(e: any) {
         console.log(`${enemy.enemyType} reached end`);
         playerStats.loseHP(1);
         if (playerStats.hp <= 0) {
-            console.log("GAME END ... LOSE");
-            endGameScreen.innerHTML = gameEndTemplates.gameLose();
-            endGameScreen.classList.remove("hidden");
-            endGameBtn = document.querySelector("#confirm-end-game-btn") as HTMLButtonElement;
-            endGameBtn.addEventListener("click", onEndGameConfirm);
-            gameLost = true;
+            gameOverLose();
         }
     } else {
         // console.log("enemy killed");
@@ -1506,29 +1555,7 @@ function onEnemyDestroyed(e: any) {
     scene.remove(enemy.model);
 
     if (enemies.length === 0 && !gameLost) {
-        console.log("wave ended");
-        gameState = GameState.Idle;
-        currWaveIdx++;
-        activeGameTime = 0;
-        (speedBtns.children[1] as HTMLInputElement).checked = true;
-        gameSpeed = 1;
-
-        const waveCount = STAGE_WAVES_DATA[levelIdx].length;
-        if (currWaveIdx < waveCount) {
-            drawWaveCallBeacon();
-        }
-        if (currWaveIdx === waveCount) {
-            console.log("GAME END ... WIN!");
-            const stars = calcEarnedStarsForGameWin(playerStats.hp);
-            endGameScreen.innerHTML = gameEndTemplates.gameWin(stars);
-            endGameScreen.classList.remove("hidden");
-            window.dispatchEvent(new CustomEvent("game-win", { detail: stars }));
-
-            endGameBtn = document.querySelector("#confirm-end-game-btn") as HTMLButtonElement;
-            endGameBtn.addEventListener("click", onEndGameConfirm);
-        }
-
-        // pauseGameBtn.innerHTML = `Start Wave ${currWaveIdx + 1}`;
+        onWaveEnded();
     }
 }
 
