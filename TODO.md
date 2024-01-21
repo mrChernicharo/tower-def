@@ -24,17 +24,24 @@
 -   [✔] (mobile) debug tower/towerbase highlighting
 -   [✔] hp bars
 -   [✔] give some love to enemies and waves
--   [ ] better firePoint calculations (move it forward in case its a Cannon tower)
--   [ ] modal icons (info, up, sell, level, damage, range, fireRate)
--   [ ] compute skills efx
+-   [✔] slowdown cam movement when zooming
 -   [✔] prevent zoom when paused (gotta find out if was idle or active before pause)
+-   [ ] modal icons (info, up, sell, level, damage, range, fireRate)
 -   [ ] projectile trajectory towards flying enemies
 -   [ ] more and better levels
--   [ ] different enemies sharing same model (small demon VS super huge demon)
+-   [ ] enemies with different sizes (small demon VS super huge demon)
 -   [ ] dmg_efx
 -   [ ] (mobile) request full screen + landscape orientation
--   [ ] fix firePointY
--   [✔] slowdown cam movement when zooming
+-   [ ] better firePoint calculations (move it forward in case its a Cannon tower)
+-   [ ] compute skills efx
+
+    -   [ ] archer
+    -   [✔] ballista
+    -   [ ] cannon
+    -   [ ] poison
+    -   [ ] wizard
+    -   [✔] blizzard
+    -   [✔] meteor
 
 -   [ ] spider resists poison
 -   [ ] elf heals its friends

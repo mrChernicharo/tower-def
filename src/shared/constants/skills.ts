@@ -1,5 +1,6 @@
 import { SkillEffectName, SkillPath } from "../enums";
 import { Skill } from "../types";
+import { BALLISTA_CRITICAL_HIT_CHANCE } from "./general";
 
 export const GAME_SKILLS: { [k in SkillPath]: Skill[] } = {
     archer: [
@@ -84,7 +85,7 @@ export const GAME_SKILLS: { [k in SkillPath]: Skill[] } = {
             starCost: 3,
             effectStr: "CRITICAL_HIT ENABLED",
             effect: {
-                [SkillEffectName.CriticalHit]: { value: 1, unit: "" },
+                [SkillEffectName.CriticalHit]: { value: BALLISTA_CRITICAL_HIT_CHANCE, unit: "%" },
             },
         },
         {
@@ -106,7 +107,7 @@ export const GAME_SKILLS: { [k in SkillPath]: Skill[] } = {
             effectStr: "RANGE +2, CRITICAL_HIT +5%",
             effect: {
                 [SkillEffectName.Range]: { value: 2, unit: "meters" },
-                [SkillEffectName.CriticalHit]: { value: 5, unit: "%" },
+                [SkillEffectName.CriticalHit]: { value: 2.5, unit: "%" },
             },
         },
     ],

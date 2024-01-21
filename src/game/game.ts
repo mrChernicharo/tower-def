@@ -1518,10 +1518,46 @@ function onProjectileExplode(e: any) {
     explosion.position.set(pos.x, pos.y, pos.z);
 
     if (targetEnemy && targetEnemy.hp > 0) {
-        if (projectile.type === TowerType.Cannon) {
-            applyAreaDamage(enemies, pos, explosion.userData.radius * 4.5, projectile.damage);
-        } else {
-            if (projectile.type === TowerType.Poison) {
+        switch (projectile.type) {
+            case TowerType.Archer: {
+                targetEnemy.takeDamage(projectile.damage);
+                break;
+            }
+            case TowerType.Ballista: {
+                let damage = projectile.damage;
+                let critChance = 0;
+
+                if (playerStats.skills.ballista[2]) {
+                    critChance += playerStats.skills.ballista[2].effect.CRITICAL_HIT!.value / 100;
+                }
+
+                if (playerStats.skills.ballista[4]) {
+                    critChance += playerStats.skills.ballista[4].effect.CRITICAL_HIT!.value / 100;
+                }
+
+                const isCriticalHit = Math.random() < critChance;
+                if (isCriticalHit) {
+                    const t = TOWER_BLUEPRINTS.Ballista[projectile.level - 1];
+                    const towerAvgDmg = THREE.MathUtils.lerp(t.damage[0], t.damage[1], 0.5);
+                    const critDamage = towerAvgDmg * 3;
+                    const pureDamage = damage;
+                    damage += critDamage;
+                    console.log("CRITICAL HIT", {
+                        pureDamage,
+                        towerAvgDmg,
+                        "critDamage (3x towerAvgDmg)": critDamage,
+                        finalDamage: damage,
+                    });
+                }
+
+                targetEnemy.takeDamage(damage);
+                break;
+            }
+            case TowerType.Cannon: {
+                applyAreaDamage(enemies, pos, explosion.userData.radius * 4.5, projectile.damage);
+                break;
+            }
+            case TowerType.Poison: {
                 const poison = new PoisonEntry(targetEnemy.id);
                 if (!targetEnemy.isPoisoned) {
                     targetEnemy.setPoisoned();
@@ -1533,9 +1569,13 @@ function onProjectileExplode(e: any) {
                 } else {
                     poisonEntries.set(poison.enemyId, poison);
                 }
+                targetEnemy.takeDamage(projectile.damage);
+                break;
             }
-
-            targetEnemy.takeDamage(projectile.damage);
+            case TowerType.Wizard: {
+                targetEnemy.takeDamage(projectile.damage);
+                break;
+            }
         }
     }
 
