@@ -41,7 +41,7 @@ export const GAME_SKILLS: { [k in SkillPath]: Skill[] } = {
             effectStr: "RATE_OF_FIRE +5%, PRICE -10%",
             effect: {
                 [SkillEffectName.RateOfFire]: { value: 5, unit: "%" },
-                [SkillEffectName.Price]: { value: -10, unit: "%" },
+                [SkillEffectName.Price]: { value: 10, unit: "%" },
             },
         },
         {
@@ -95,7 +95,7 @@ export const GAME_SKILLS: { [k in SkillPath]: Skill[] } = {
             effectStr: "RATE_OF_FIRE +5%, PRICE -10%",
             effect: {
                 [SkillEffectName.RateOfFire]: { value: 5, unit: "%" },
-                [SkillEffectName.Price]: { value: -10, unit: "%" },
+                [SkillEffectName.Price]: { value: 10, unit: "%" },
             },
         },
         {
@@ -159,7 +159,7 @@ export const GAME_SKILLS: { [k in SkillPath]: Skill[] } = {
             effectStr: "RATE_OF_FIRE +10%, PRICE -10%",
             effect: {
                 [SkillEffectName.RateOfFire]: { value: 10, unit: "%" },
-                [SkillEffectName.Price]: { value: -10, unit: "%" },
+                [SkillEffectName.Price]: { value: 10, unit: "%" },
             },
         },
     ],
@@ -201,7 +201,7 @@ export const GAME_SKILLS: { [k in SkillPath]: Skill[] } = {
             starCost: 4,
             effectStr: "PRICE -10%, POISON_DAMAGE +5%",
             effect: {
-                [SkillEffectName.Price]: { value: -10, unit: "%" },
+                [SkillEffectName.Price]: { value: 10, unit: "%" },
                 [SkillEffectName.PoisonDamage]: { value: 5, unit: "%" },
             },
         },
@@ -266,7 +266,7 @@ export const GAME_SKILLS: { [k in SkillPath]: Skill[] } = {
             starCost: 5,
             effectStr: "PRICE -10%, RICOCHET +1",
             effect: {
-                [SkillEffectName.Price]: { value: -10, unit: "%" },
+                [SkillEffectName.Price]: { value: 10, unit: "%" },
                 [SkillEffectName.Ricochet]: { value: 1, unit: "" },
             },
         },

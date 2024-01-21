@@ -44,9 +44,9 @@ export const TOWER_BLUEPRINTS: { [k in TowerType]: TowerBluePrint[] } = {
             firePointY: 3.9,
             // firePointY: 6,
             damage: [2, 5],
-            fireRate: 6, // Fast
+            fireRate: 3, // Fast
             color: "blue",
-            price: 70,
+            price: 80,
             range: 10, // Average
             // modelScale: 1,
             modelScale: 0.75,
@@ -59,9 +59,9 @@ export const TOWER_BLUEPRINTS: { [k in TowerType]: TowerBluePrint[] } = {
             firePointY: 4.8,
             level: 2,
             damage: [4, 9],
-            fireRate: 6, // Fast
+            fireRate: 3, // Fast
             color: "blue",
-            price: 110,
+            price: 135,
             range: 11, // Long
             modelScale: 0.85,
             // modelScale: 1.1,
@@ -73,9 +73,9 @@ export const TOWER_BLUEPRINTS: { [k in TowerType]: TowerBluePrint[] } = {
             firePointY: 5.2,
             level: 3,
             damage: [5, 11],
-            fireRate: 9, // Very Fast
+            fireRate: 4, // Very Fast
             color: "blue",
-            price: 160,
+            price: 200,
             // modelScale: 1.2,
             modelScale: 0.95,
             range: 12, // Long
@@ -89,9 +89,9 @@ export const TOWER_BLUEPRINTS: { [k in TowerType]: TowerBluePrint[] } = {
             // firePointY: 7.5,
             modelScale: 1.05,
             // modelScale: 1.3,
-            price: 230,
+            price: 325,
             damage: [7, 16],
-            fireRate: 9, // Very Fast
+            fireRate: 4, // Very Fast
             range: 13, // Great
             specials: [],
         },
@@ -107,7 +107,7 @@ export const TOWER_BLUEPRINTS: { [k in TowerType]: TowerBluePrint[] } = {
             // modelScale: 1,
             modelScale: 0.75,
             damage: [4, 9],
-            fireRate: 1.2, // Slow
+            fireRate: 0.6, // Slow
             range: 12, // Long
             price: 100,
         },
@@ -120,7 +120,7 @@ export const TOWER_BLUEPRINTS: { [k in TowerType]: TowerBluePrint[] } = {
             modelScale: 0.85,
             // modelScale: 1.1,
             damage: [8, 13],
-            fireRate: 1.2, // Slow
+            fireRate: 0.6, // Slow
             range: 13, // Great
             price: 160,
         },
@@ -134,7 +134,7 @@ export const TOWER_BLUEPRINTS: { [k in TowerType]: TowerBluePrint[] } = {
             // modelScale: 1.2,
             modelScale: 0.95,
             damage: [11, 20],
-            fireRate: 1.2, // Slow
+            fireRate: 0.6, // Slow
             range: 14, // Excellent
             price: 220,
         },
@@ -148,7 +148,7 @@ export const TOWER_BLUEPRINTS: { [k in TowerType]: TowerBluePrint[] } = {
             modelScale: 1.05,
             // modelScale: 1.3,
             damage: [21, 34],
-            fireRate: 1.2, // Slow
+            fireRate: 0.6, // Slow
             range: 15, // Extreme
             specials: [],
             price: 380,
@@ -165,7 +165,7 @@ export const TOWER_BLUEPRINTS: { [k in TowerType]: TowerBluePrint[] } = {
             firePointY: 5,
             modelScale: 0.75,
             damage: [7, 12],
-            fireRate: 0.8, // Very Slow
+            fireRate: 0.4, // Very Slow
             range: 9, // short
             price: 125,
         },
@@ -179,7 +179,7 @@ export const TOWER_BLUEPRINTS: { [k in TowerType]: TowerBluePrint[] } = {
             firePointY: 5.6,
             modelScale: 0.85,
             damage: [18, 30],
-            fireRate: 0.8, // Very Slow
+            fireRate: 0.4, // Very Slow
             range: 10, // Average
             price: 220,
         },
@@ -193,7 +193,7 @@ export const TOWER_BLUEPRINTS: { [k in TowerType]: TowerBluePrint[] } = {
             firePointY: 6.2,
             modelScale: 0.95,
             damage: [30, 50],
-            fireRate: 0.8, // Very Slow
+            fireRate: 0.4, // Very Slow
             range: 11, // Long
             price: 320,
         },
@@ -207,7 +207,7 @@ export const TOWER_BLUEPRINTS: { [k in TowerType]: TowerBluePrint[] } = {
             firePointY: 6.8,
             modelScale: 1.05,
             damage: [62, 106],
-            fireRate: 0.8, // Very Slow
+            fireRate: 0.4, // Very Slow
             range: 12, // Long
             price: 375,
             specials: [],
@@ -223,7 +223,7 @@ export const TOWER_BLUEPRINTS: { [k in TowerType]: TowerBluePrint[] } = {
             // modelScale: 1,
             firePointY: 5.5,
             damage: [4, 8],
-            fireRate: 2, // Average
+            fireRate: 1, // Average
             modelScale: 0.75,
             range: 9, // Short
             price: 100,
@@ -238,7 +238,7 @@ export const TOWER_BLUEPRINTS: { [k in TowerType]: TowerBluePrint[] } = {
             firePointY: 5.6,
             modelScale: 0.85,
             damage: [11, 22],
-            fireRate: 2, // Average
+            fireRate: 1, // Average
             range: 10,
             price: 160,
         },
@@ -252,7 +252,7 @@ export const TOWER_BLUEPRINTS: { [k in TowerType]: TowerBluePrint[] } = {
             firePointY: 6.3,
             modelScale: 0.95,
             damage: [21, 37],
-            fireRate: 2, // Average
+            fireRate: 1, // Average
             range: 11,
             price: 220,
         },
@@ -266,7 +266,7 @@ export const TOWER_BLUEPRINTS: { [k in TowerType]: TowerBluePrint[] } = {
             modelScale: 1.05,
             color: "green",
             damage: [32, 61],
-            fireRate: 2, // Average
+            fireRate: 1, // Average
             range: 12,
             price: 380,
             specials: [],
@@ -283,7 +283,7 @@ export const TOWER_BLUEPRINTS: { [k in TowerType]: TowerBluePrint[] } = {
             firePointY: 7.5,
             modelScale: 0.75,
             damage: [8, 12],
-            fireRate: 2, // Average
+            fireRate: 1, // Average
             range: 9, // Short
             price: 100,
         },
@@ -297,7 +297,7 @@ export const TOWER_BLUEPRINTS: { [k in TowerType]: TowerBluePrint[] } = {
             firePointY: 9,
             modelScale: 0.85,
             damage: [18, 30],
-            fireRate: 2, // Average
+            fireRate: 1, // Average
             range: 10, // Average
             price: 160,
         },
@@ -311,7 +311,7 @@ export const TOWER_BLUEPRINTS: { [k in TowerType]: TowerBluePrint[] } = {
             firePointY: 10,
             modelScale: 0.95,
             damage: [34, 56],
-            fireRate: 2, // Average
+            fireRate: 1, // Average
             range: 11, // Long
             price: 220,
         },
@@ -325,7 +325,7 @@ export const TOWER_BLUEPRINTS: { [k in TowerType]: TowerBluePrint[] } = {
             firePointY: 11.2,
             modelScale: 1.05,
             damage: [47, 74],
-            fireRate: 2, // Average
+            fireRate: 1, // Average
             range: 12, // Long
             price: 380,
             specials: [],

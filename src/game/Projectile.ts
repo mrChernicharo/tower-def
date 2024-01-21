@@ -30,7 +30,7 @@ class ProjectileBase {
         this.model = PROJECTILE_MODELS[this.type][`level-${this.level}`].clone();
 
         this.timeSinceSpawn = 0;
-        this.damage = determineDamage(tower.blueprint.damage);
+        this.damage = determineDamage(tower.damage);
 
         this.destination = new THREE.Vector3(destination.x, destination.y, destination.z);
         this.originPos = new THREE.Vector3(tower.firePoint.x, tower.firePoint.y, tower.firePoint.z);

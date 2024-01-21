@@ -3,7 +3,7 @@ import { MATERIALS } from "../shared/constants/general";
 import { AppLayers, TargetingStrategy, TowerType, TrajectoryType } from "../shared/enums";
 import { TOWER_MODELS, towerTexture } from "./game";
 import { idMaker } from "../shared/helpers";
-import { TowerBluePrint } from "../shared/types";
+import { PlayerSkills, TowerBluePrint } from "../shared/types";
 import { THREE } from "../three";
 import { Enemy } from "./Enemy";
 import { StraightProjectile, ParabolaProjectile } from "./Projectile";
@@ -24,26 +24,37 @@ export class Tower {
     headMesh: THREE.Mesh | undefined;
     blueprint: TowerBluePrint;
     tileIdx: string;
+    range: number;
+    damage: [number, number];
+    price: number;
+    rateOfFire: number;
     rangeGizmo!: THREE.Mesh;
     strategy: TargetingStrategy;
     targetLocked = false;
-    constructor(towerType: TowerType, position: THREE.Vector3, tileIdx: string) {
+    constructor(towerType: TowerType, position: THREE.Vector3, tileIdx: string, playerSkills: PlayerSkills) {
         this.id = idMaker();
-        // this.level = 1;
         this.towerName = towerType;
         this.position = position;
         this.tileIdx = tileIdx;
         this.cooldown = 0;
         this.blueprint = { ...TOWER_BLUEPRINTS[towerType][0] };
-        // this.strategy = TargetingStrategy.FirstInLine;
         this.strategy = this.blueprint.defaultStrategy;
+
+        const { range, damage, rateOfFire, price } = Tower.getTowerValuesBasedOnPlayerStats(
+            playerSkills,
+            this.blueprint
+        );
+        this.range = range;
+        this.damage = damage;
+        this.rateOfFire = rateOfFire;
+        this.price = price;
 
         this._init();
     }
 
     async _init() {
         await this._setupModel();
-
+        console.log(this);
         return this;
     }
 
@@ -55,7 +66,7 @@ export class Tower {
     }
 
     _setupRangeGizmo() {
-        const circleGeometry = new THREE.CircleGeometry(this.blueprint.range);
+        const circleGeometry = new THREE.CircleGeometry(this.range);
         const circleMaterial = MATERIALS.towerRangeGizmo(this.blueprint.color);
         const circleMesh = new THREE.Mesh(circleGeometry, circleMaterial);
         circleMesh.position.set(this.position.x, this.position.y + 0.5, this.position.z);
@@ -100,6 +111,7 @@ export class Tower {
         const s = desiredBlueprint.modelScale;
         desiredModel.scale.set(s, s, s);
 
+        // @TODO -> apply real range
         const circleGeometry = new THREE.CircleGeometry(desiredBlueprint.range);
         const circleMaterial = MATERIALS.towerRangeGizmo(desiredBlueprint.color);
         const circleMesh = new THREE.Mesh(circleGeometry, circleMaterial);
@@ -165,7 +177,7 @@ export class Tower {
                 // console.log("ShoooT!", targetEnemy.enemyType);
                 this.fireProjectile(targetEnemy);
 
-                this.cooldown = 1 / (this.blueprint.fireRate * 0.5);
+                this.cooldown = 1 / this.rateOfFire;
             }
         }
         this.cooldown -= delta;
@@ -238,5 +250,31 @@ export class Tower {
             default:
                 return;
         }
+    }
+
+    static getTowerValuesBasedOnPlayerStats(playerSkills: PlayerSkills, bluePrint: TowerBluePrint) {
+        let range = bluePrint.range;
+        let damage = bluePrint.damage;
+        let rateOfFire = bluePrint.fireRate;
+        let price = bluePrint.price;
+        switch (bluePrint.name) {
+            case TowerType.Archer: {
+                if (playerSkills.archer[0]) {
+                    range += playerSkills.archer[0].effect.RANGE!.value;
+                }
+                if (playerSkills.archer[1]) {
+                    damage = [
+                        damage[0] + (damage[0] * playerSkills.archer[1].effect.DAMAGE!.value) / 100,
+                        damage[1] + (damage[1] * playerSkills.archer[1].effect.DAMAGE!.value) / 100,
+                    ];
+                }
+                if (playerSkills.archer[3]) {
+                    price -= (price * playerSkills.archer[3].effect.PRICE!.value) / 100;
+                    rateOfFire += (rateOfFire * playerSkills.archer[3].effect.RATE_OF_FIRE!.value) / 100;
+                }
+            }
+        }
+
+        return { range, damage, rateOfFire, price };
     }
 }

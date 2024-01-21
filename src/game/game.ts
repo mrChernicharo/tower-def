@@ -28,7 +28,6 @@ import {
     isModal,
 } from "../shared/helpers";
 import {
-    DEFAULT_BLIZZARD_SLOW_DURATION,
     COLORS,
     DEFAULT_METEOR_COUNT,
     DEFAULT_METEOR_DAMAGE,
@@ -38,10 +37,7 @@ import {
     MATERIALS,
     MAX_FOV,
     MIN_FOV,
-    DEFAULT_BLIZZARD_RADIUS,
-    DEFAULT_BLIZZARD_DAMAGE,
     BLIZZARD_ANIMATION_DURATION,
-    DEFAULT_BLIZZARD_SLOW_POWER,
 } from "../shared/constants/general";
 
 import {
@@ -577,7 +573,7 @@ function _init2DModals() {
             scene.add(modal3D);
 
             modalContainer.append(modalEl);
-            modalEl.innerHTML = modalTemplates.towerBuild();
+            modalEl.innerHTML = modalTemplates.towerBuild(playerStats.skills);
 
             modalEl.addEventListener("click", (e) => onModalClick(e, el, modal3D, modalEl));
         }
@@ -812,7 +808,7 @@ function animate() {
             let targetEnemy: Enemy | undefined;
 
             const enemiesInRange = enemies.filter(
-                (e) => e.hp > 0 && tower.position.distanceTo(e.model.position) <= tower.blueprint.range
+                (e) => e.hp > 0 && tower.position.distanceTo(e.model.position) <= tower.range
             );
 
             if (enemiesInRange) {
@@ -982,24 +978,30 @@ function onModalClick(e: MouseEvent, el: THREE.Object3D, modal3D: CSS2DObject, m
     /******* TOWER BUILD *******/
     if (evTarget.classList.contains("tower-build-btn")) {
         towerToBuild = evTarget.id.split("-")[0] as TowerType;
-        modalEl.innerHTML = modalTemplates.confirmTowerBuild(towerToBuild);
+        modalEl.innerHTML = modalTemplates.confirmTowerBuild(towerToBuild, playerStats.skills);
 
-        const t = new Tower(towerToBuild!, el.position, modal3D.userData["tile_idx"]);
+        const t = new Tower(towerToBuild!, el.position, modal3D.userData["tile_idx"], playerStats.skills);
         towerPreview = { model: t.model, rangeGizmo: t.rangeGizmo };
         console.log("draw tower preview", towerPreview);
         scene.add(towerPreview.model);
         scene.add(towerPreview.rangeGizmo);
     }
     if (evTarget.classList.contains("cancel-tower-build-btn")) {
-        modalEl.innerHTML = modalTemplates.towerBuild();
+        modalEl.innerHTML = modalTemplates.towerBuild(playerStats.skills);
         towerToBuild = null;
         clearTowerPreview();
     }
     if (evTarget.classList.contains("confirm-tower-build-btn")) {
         // console.log(`BUILD THIS GODAMN ${towerToBuild} TOWER`, { el });
 
-        const towerPrice = TOWER_BLUEPRINTS[towerToBuild!][0].price;
-        if (playerStats.gold < towerPrice) {
+        // const towerPrice = .price;
+
+        const { price } = Tower.getTowerValuesBasedOnPlayerStats(
+            playerStats.skills,
+            TOWER_BLUEPRINTS[towerToBuild!][0]
+        );
+
+        if (playerStats.gold < price) {
             console.warn("not enough money");
             const msgArea = document.querySelector(".warning-msg-area")!;
             msgArea.innerHTML = "not enough money!";
@@ -1007,9 +1009,9 @@ function onModalClick(e: MouseEvent, el: THREE.Object3D, modal3D: CSS2DObject, m
         }
 
         clearTowerPreview();
-        playerStats.spendGold(towerPrice);
+        playerStats.spendGold(price);
 
-        const tower = new Tower(towerToBuild!, el.position, modal3D.userData["tile_idx"]);
+        const tower = new Tower(towerToBuild!, el.position, modal3D.userData["tile_idx"], playerStats.skills);
 
         el.userData["tower"] = towerToBuild;
         el.userData["tower_id"] = tower.id;
@@ -1018,7 +1020,7 @@ function onModalClick(e: MouseEvent, el: THREE.Object3D, modal3D: CSS2DObject, m
 
         // console.log("open details modal", { tower });
         modalEl.dataset["tower_id"] = tower.id;
-        modalEl.innerHTML = modalTemplates.towerDetails(tower!);
+        modalEl.innerHTML = modalTemplates.towerDetails(tower, playerStats.skills);
         modal3D.visible = false;
 
         towers.push(tower);
@@ -1031,11 +1033,11 @@ function onModalClick(e: MouseEvent, el: THREE.Object3D, modal3D: CSS2DObject, m
 
     /******* TOWER SELL *******/
     if (evTarget.id === "tower-sell-btn") {
-        modalEl.innerHTML = modalTemplates.confirmTowerSell(tower!);
+        modalEl.innerHTML = modalTemplates.confirmTowerSell(tower!, playerStats.skills);
     }
     if (evTarget.classList.contains("cancel-tower-sell-btn")) {
         console.log("open details modal", { tower });
-        modalEl.innerHTML = modalTemplates.towerDetails(tower!);
+        modalEl.innerHTML = modalTemplates.towerDetails(tower!, playerStats.skills);
     }
     if (evTarget.id === "confirm-tower-sell-btn") {
         // console.log("SELL THIS GODAMN TOWER", { el });
@@ -1044,7 +1046,7 @@ function onModalClick(e: MouseEvent, el: THREE.Object3D, modal3D: CSS2DObject, m
         delete modal3D.userData.tower;
         delete modal3D.userData.tower_id;
 
-        modalEl.innerHTML = modalTemplates.towerBuild();
+        modalEl.innerHTML = modalTemplates.towerBuild(playerStats.skills);
         modal3D.visible = false;
 
         // towers = towers.filter((t) => t.id !== tower_id);
@@ -1052,7 +1054,7 @@ function onModalClick(e: MouseEvent, el: THREE.Object3D, modal3D: CSS2DObject, m
         const [tower] = towers.splice(towerIdx, 1);
         scene.remove(tower.model);
         scene.remove(tower.rangeGizmo);
-        playerStats.gainGold(tower.blueprint.price * 0.7);
+        playerStats.gainGold(tower.price * 0.7);
 
         // console.log({ towers, tower, scene });
     }
@@ -1064,13 +1066,13 @@ function onModalClick(e: MouseEvent, el: THREE.Object3D, modal3D: CSS2DObject, m
     }
     if (evTarget.classList.contains("cancel-tower-info-btn")) {
         console.log("open details modal", { tower });
-        modalEl.innerHTML = modalTemplates.towerDetails(tower!);
+        modalEl.innerHTML = modalTemplates.towerDetails(tower!, playerStats.skills);
     }
 
     /******* TOWER UPGRADE *******/
     if (evTarget.id === "tower-upgrade-btn") {
         // console.log("UPGRADE", { el });
-        modalEl.innerHTML = modalTemplates.confirmTowerUpgrade(tower!);
+        modalEl.innerHTML = modalTemplates.confirmTowerUpgrade(tower!, playerStats.skills);
 
         if (tower) {
             const { model, rangeGizmo } = tower.getUpgradedPreview();
@@ -1084,7 +1086,7 @@ function onModalClick(e: MouseEvent, el: THREE.Object3D, modal3D: CSS2DObject, m
     }
     if (evTarget.classList.contains("cancel-tower-upgrade-btn")) {
         // console.log("open details modal", { tower });
-        modalEl.innerHTML = modalTemplates.towerDetails(tower!);
+        modalEl.innerHTML = modalTemplates.towerDetails(tower!, playerStats.skills);
         clearTowerPreview();
 
         if (tower) {
@@ -1098,15 +1100,19 @@ function onModalClick(e: MouseEvent, el: THREE.Object3D, modal3D: CSS2DObject, m
         // console.log("tower upgrade", { e, el, modal3D, modalEl, tower_id, tower });
         // if (towerIdx >= 0)
         if (tower) {
-            const t2 = TOWER_BLUEPRINTS[tower.towerName][tower.blueprint.level];
+            // const t2 = TOWER_BLUEPRINTS[tower.towerName][tower.blueprint.level];
+            const { price } = Tower.getTowerValuesBasedOnPlayerStats(
+                playerStats.skills,
+                TOWER_BLUEPRINTS[tower.towerName][tower.blueprint.level]
+            );
 
-            if (playerStats.gold < t2.price) {
+            if (playerStats.gold < price) {
                 console.warn("not enough money");
                 const msgArea = document.querySelector(".warning-msg-area")!;
                 msgArea.innerHTML = "not enough money!";
                 return;
             }
-            playerStats.spendGold(t2.price);
+            playerStats.spendGold(price);
 
             clearTowerPreview();
 
@@ -1120,7 +1126,7 @@ function onModalClick(e: MouseEvent, el: THREE.Object3D, modal3D: CSS2DObject, m
             scene.add(upgradedTower.rangeGizmo);
 
             // console.log({ tower, towers });
-            modalEl.innerHTML = modalTemplates.towerDetails(tower);
+            modalEl.innerHTML = modalTemplates.towerDetails(tower, playerStats.skills);
             upgradedTower.rangeGizmo.visible = false;
             modal3D.visible = false;
         }
@@ -1442,11 +1448,11 @@ function revertCancelableModals() {
         for (const cancelableModalName of cancelableModalNames) {
             if (modalEl.children[0].classList.contains(cancelableModalName)) {
                 if (cancelableModalName === ModalType.ConfirmTowerBuild) {
-                    modalEl.innerHTML = modalTemplates.towerBuild();
+                    modalEl.innerHTML = modalTemplates.towerBuild(playerStats.skills);
                 } else {
                     const tower = towers.find((t) => t.id === modalEl.dataset["tower_id"]);
                     if (tower) {
-                        modalEl.innerHTML = modalTemplates.towerDetails(tower);
+                        modalEl.innerHTML = modalTemplates.towerDetails(tower, playerStats.skills);
 
                         if (!tower.model.visible) {
                             tower.model.visible = true;
@@ -1722,60 +1728,9 @@ function onBlizzardFire() {
     const position = new THREE.Vector3(blizzardTargetPos.x, blizzardTargetPos.y, blizzardTargetPos.z);
     console.log("fire Blizzard", position);
 
-    let radius = DEFAULT_BLIZZARD_RADIUS;
-    if (playerStats.skills.blizzard[1]) {
-        radius += playerStats.skills.blizzard[1].effect.RANGE!.value; // skill::blizzard-2
-    }
-    if (playerStats.skills.blizzard[3]) {
-        radius += playerStats.skills.blizzard[3].effect.RANGE!.value; // skill::blizzard-4
-    }
-    if (playerStats.skills.blizzard[4]) {
-        radius += playerStats.skills.blizzard[4].effect.RANGE!.value; // skill::blizzard-5
-    }
+    const { radius, slowPower, duration, damage } = Blizzard.setValuesBasedOnPlayerStats(playerStats);
+    // console.log("blizzard", { radius, slowPower, duration, damage });
 
-    let slowPower = DEFAULT_BLIZZARD_SLOW_POWER;
-    if (playerStats.skills.blizzard[2]) {
-        slowPower += playerStats.skills.blizzard[2].effect.SLOW_POWER!.value / 100; // skill::blizzard-3
-    }
-    if (playerStats.skills.blizzard[4]) {
-        slowPower += playerStats.skills.blizzard[4].effect.SLOW_POWER!.value / 100; // skill::blizzard-5
-    }
-
-    let duration = DEFAULT_BLIZZARD_SLOW_DURATION;
-    if (playerStats.skills.blizzard[0]) {
-        duration += playerStats.skills.blizzard[0].effect.SLOW_DURATION!.value; // skill::blizzard-1
-    }
-    if (playerStats.skills.blizzard[2]) {
-        duration += playerStats.skills.blizzard[2].effect.SLOW_DURATION!.value; // skill::blizzard-3
-    }
-
-    if (playerStats.skills.blizzard[4]) {
-        duration += playerStats.skills.blizzard[4].effect.SLOW_DURATION!.value; // skill::blizzard-5
-    }
-
-    let damage = DEFAULT_BLIZZARD_DAMAGE;
-    if (playerStats.skills.blizzard[0]) {
-        damage = [
-            damage[0] + DEFAULT_BLIZZARD_DAMAGE[0] * (playerStats.skills.blizzard[0].effect.DAMAGE!.value / 100),
-            damage[1] + DEFAULT_BLIZZARD_DAMAGE[1] * (playerStats.skills.blizzard[0].effect.DAMAGE!.value / 100),
-        ]; // skill::blizzard-1
-    }
-
-    if (playerStats.skills.blizzard[2]) {
-        damage = [
-            damage[0] + DEFAULT_BLIZZARD_DAMAGE[0] * (playerStats.skills.blizzard[2].effect.DAMAGE!.value / 100),
-            damage[1] + DEFAULT_BLIZZARD_DAMAGE[1] * (playerStats.skills.blizzard[2].effect.DAMAGE!.value / 100),
-        ]; // skill::blizzard-3
-    }
-
-    if (playerStats.skills.blizzard[4]) {
-        damage = [
-            damage[0] + DEFAULT_BLIZZARD_DAMAGE[0] * (playerStats.skills.blizzard[4].effect.DAMAGE!.value / 100),
-            damage[1] + DEFAULT_BLIZZARD_DAMAGE[1] * (playerStats.skills.blizzard[4].effect.DAMAGE!.value / 100),
-        ]; // skill::blizzard-5
-    }
-
-    console.log("blizzard", { radius, slowPower, duration, damage });
     const blizzard = new Blizzard(position, radius, slowPower, duration, damage);
     blizzards.set(blizzard.id, blizzard);
     scene.add(blizzard.model);

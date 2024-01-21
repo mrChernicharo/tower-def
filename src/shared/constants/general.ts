@@ -23,6 +23,8 @@ export const DEFAULT_BLIZZARD_RADIUS = 3;
 export const MAX_FOV = 72;
 export const MIN_FOV = 8;
 
+export const SELL_PRICE_MULTIPLIER = 0.5;
+
 export const defaultPlayerSkills = {
     "archer-1": false,
     "archer-2": false,

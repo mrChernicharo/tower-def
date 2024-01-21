@@ -1,6 +1,13 @@
 import { THREE } from "../three";
-import { MATERIALS } from "../shared/constants/general";
+import {
+    DEFAULT_BLIZZARD_DAMAGE,
+    DEFAULT_BLIZZARD_RADIUS,
+    DEFAULT_BLIZZARD_SLOW_DURATION,
+    DEFAULT_BLIZZARD_SLOW_POWER,
+    MATERIALS,
+} from "../shared/constants/general";
 import { idMaker } from "../shared/helpers";
+import { PlayerStats } from "./PlayerStats";
 
 const speed = 3;
 const icicleRadius = 5;
@@ -78,5 +85,61 @@ export class Blizzard {
 
     finish() {
         window.dispatchEvent(new CustomEvent("blizzard-finish", { detail: this }));
+    }
+
+    static setValuesBasedOnPlayerStats(playerStats: PlayerStats) {
+        let radius = DEFAULT_BLIZZARD_RADIUS;
+        if (playerStats.skills.blizzard[1]) {
+            radius += playerStats.skills.blizzard[1].effect.RANGE!.value; // skill::blizzard-2
+        }
+        if (playerStats.skills.blizzard[3]) {
+            radius += playerStats.skills.blizzard[3].effect.RANGE!.value; // skill::blizzard-4
+        }
+        if (playerStats.skills.blizzard[4]) {
+            radius += playerStats.skills.blizzard[4].effect.RANGE!.value; // skill::blizzard-5
+        }
+
+        let slowPower = DEFAULT_BLIZZARD_SLOW_POWER;
+        if (playerStats.skills.blizzard[2]) {
+            slowPower += playerStats.skills.blizzard[2].effect.SLOW_POWER!.value / 100; // skill::blizzard-3
+        }
+        if (playerStats.skills.blizzard[4]) {
+            slowPower += playerStats.skills.blizzard[4].effect.SLOW_POWER!.value / 100; // skill::blizzard-5
+        }
+
+        let duration = DEFAULT_BLIZZARD_SLOW_DURATION;
+        if (playerStats.skills.blizzard[0]) {
+            duration += playerStats.skills.blizzard[0].effect.SLOW_DURATION!.value; // skill::blizzard-1
+        }
+        if (playerStats.skills.blizzard[2]) {
+            duration += playerStats.skills.blizzard[2].effect.SLOW_DURATION!.value; // skill::blizzard-3
+        }
+
+        if (playerStats.skills.blizzard[4]) {
+            duration += playerStats.skills.blizzard[4].effect.SLOW_DURATION!.value; // skill::blizzard-5
+        }
+
+        let damage = DEFAULT_BLIZZARD_DAMAGE;
+        if (playerStats.skills.blizzard[0]) {
+            damage = [
+                damage[0] + DEFAULT_BLIZZARD_DAMAGE[0] * (playerStats.skills.blizzard[0].effect.DAMAGE!.value / 100),
+                damage[1] + DEFAULT_BLIZZARD_DAMAGE[1] * (playerStats.skills.blizzard[0].effect.DAMAGE!.value / 100),
+            ]; // skill::blizzard-1
+        }
+
+        if (playerStats.skills.blizzard[2]) {
+            damage = [
+                damage[0] + DEFAULT_BLIZZARD_DAMAGE[0] * (playerStats.skills.blizzard[2].effect.DAMAGE!.value / 100),
+                damage[1] + DEFAULT_BLIZZARD_DAMAGE[1] * (playerStats.skills.blizzard[2].effect.DAMAGE!.value / 100),
+            ]; // skill::blizzard-3
+        }
+
+        if (playerStats.skills.blizzard[4]) {
+            damage = [
+                damage[0] + DEFAULT_BLIZZARD_DAMAGE[0] * (playerStats.skills.blizzard[4].effect.DAMAGE!.value / 100),
+                damage[1] + DEFAULT_BLIZZARD_DAMAGE[1] * (playerStats.skills.blizzard[4].effect.DAMAGE!.value / 100),
+            ]; // skill::blizzard-5
+        }
+        return { radius, damage, duration, slowPower };
     }
 }
