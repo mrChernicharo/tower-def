@@ -1,126 +1,267 @@
 import { SkillPath } from "../enums";
 import { Skill } from "../types";
 
-// prettier-ignore
-export const GAME_SKILLS: { [k in SkillPath]: Skill[] }  = {
+export const GAME_SKILLS: { [k in SkillPath]: Skill[] } = {
     archer: [
-        { id: "archer-1", name: "precision shot", description: "Increase accuracy for archer towers by 15%", starCost: 1 },
-        { id: "archer-2", name: "swift arrows", description: "Archers shoot 20% faster", starCost: 2 },
-        { id: "archer-3", name: "piercing shots", description: "Archers' shots pierce through enemy armor, dealing extra damage", starCost: 3 },
-        { id: "archer-4", name: "eagle eye", description: "Archers have a chance to deal critical hits, causing double damage", starCost: 4 },
-        { id: "archer-5", name: "archer commander", description: "Command all archers to focus fire, dealing massive damage to a single target", starCost: 5 },
+        {
+            id: "archer-1",
+            name: "Longshot Mastery",
+            description: "Master the art of the Longshot, increasing the range of your arrows",
+            starCost: 1,
+            effect: "RANGE +1",
+        },
+        {
+            id: "archer-2",
+            name: "Precision Strikes",
+            description: "Hone your archery skills for precision strikes, increasing arrow damage",
+            starCost: 2,
+            effect: "DAMAGE +10%",
+        },
+        {
+            id: "archer-3",
+            name: "Multi-Target Precision",
+            description: "Learn the technique of hitting multiple targets with precision",
+            starCost: 3,
+            effect: "MULTI_TARGET ENABLED",
+        },
+        {
+            id: "archer-4",
+            name: "Rapid Fire Efficiency",
+            description: "Improve your archery speed with increased rate of fire and reduced arrow cost",
+            starCost: 4,
+            effect: "RATE_OF_FIRE +5%, PRICE -10%",
+        },
+        {
+            id: "archer-5",
+            name: "Master Archer",
+            description:
+                "Attain the title of Master Archer, gaining even greater precision and multi-target capabilities",
+            starCost: 5,
+            effect: "MULTI_TARGET +1",
+        },
     ],
     ballista: [
-        { id: "ballista-1", name: "heavy bolts", description: "Ballista towers shoot heavy bolts, dealing increased damage", starCost: 1 },
-        { id: "ballista-2", name: "rapid reload", description: "Reduce the reload time for ballista towers by 20%", starCost: 2 },
-        { id: "ballista-3", name: "piercing impact", description: "Ballista bolts pierce through multiple enemies, causing collateral damage", starCost: 3 },
-        { id: "ballista-4", name: "siege mastery", description: "Ballista towers become highly effective against enemy fortifications", starCost: 4 },
-        { id: "ballista-5", name: "ballista engineer", description: "Upgrade ballista towers with advanced technology, greatly increasing their power", starCost: 5 },
+        {
+            id: "ballista-1",
+            name: "Ballistic Power",
+            description: "Increase the damage output of your Ballista",
+            starCost: 1,
+            effect: "DAMAGE +10%",
+        },
+        {
+            id: "ballista-2",
+            name: "Rapid Reload",
+            description: "Improve the rate of fire for your Ballista",
+            starCost: 2,
+            effect: "RATE_OF_FIRE +10%",
+        },
+        {
+            id: "ballista-3",
+            name: "Precision Strikes",
+            description: "Unlock the ability to land critical hits with your Ballista shots",
+            starCost: 3,
+            effect: "CRITICAL_HIT ENABLED",
+        },
+        {
+            id: "ballista-4",
+            name: "Efficient Deployment",
+            description: "Optimize your Ballista's performance with increased rate of fire and reduced cost",
+            starCost: 4,
+            effect: "RATE_OF_FIRE +5%, PRICE -10%",
+        },
+        {
+            id: "ballista-5",
+            name: "Extreme Range Mastery",
+            description: "Master the art of extreme range attacks, increasing Ballista range and critical hit chance",
+            starCost: 5,
+            effect: "RANGE +2, CRITICAL_HIT +5%",
+        },
     ],
     cannon: [
-        { id: "cannon-1", name: "armor-piercing rounds", description: "Cannon shots ignore enemy armor, dealing full damage", starCost: 1 },
-        { id: "cannon-2", name: "shrapnel explosion", description: "Cannon shots explode on impact, causing shrapnel damage to nearby enemies", starCost: 2 },
-        { id: "cannon-3", name: "heavy artillery", description: "Upgrade cannons to heavy artillery, greatly increasing their damage", starCost: 3 },
-        { id: "cannon-4", name: "volley fire", description: "Cannons unleash a rapid volley of shots, overwhelming enemies", starCost: 4 },
-        { id: "cannon-5", name: "cannon general", description: "Command all cannons to focus fire on a single target, dealing massive damage", starCost: 5 },
+        {
+            id: "cannon-1",
+            name: "Cannon Barrage",
+            description: "Increase the damage output of your Cannon",
+            starCost: 1,
+            effect: "DAMAGE +10%",
+        },
+        {
+            id: "cannon-2",
+            name: "Explosive Impact",
+            description: "Widen the splash area of your Cannon shots",
+            starCost: 2,
+            effect: "SPLASH_AREA +10%",
+        },
+        {
+            id: "cannon-3",
+            name: "Extended Range",
+            description: "Improve the range of your Cannon shots",
+            starCost: 3,
+            effect: "RANGE +1",
+        },
+        {
+            id: "cannon-4",
+            name: "Slow Induction",
+            description: "Enable a slowing effect on your Cannon shots",
+            starCost: 4,
+            effect: "SLOW ENABLED",
+        },
+        {
+            id: "cannon-5",
+            name: "Efficient Bombardment",
+            description: "Enhance the rate of fire for your Cannon shots while reducing the cost",
+            starCost: 5,
+            effect: "RATE_OF_FIRE +10%, PRICE -10%",
+        },
     ],
     poison: [
-        { id: "poison-1", name: "toxic arrows", description: "Archers use poisoned arrows, dealing damage over time to enemies", starCost: 1 },
-        { id: "poison-2", name: "venomous clouds", description: "Create poisonous clouds that linger, damaging enemies over time", starCost: 2 },
-        { id: "poison-3", name: "corrosive mixture", description: "Poison damage has a chance to reduce enemy armor temporarily", starCost: 3 },
-        { id: "poison-4", name: "toxin spread", description: "Enemies hit by poison attacks spread the toxin to nearby foes", starCost: 4 },
-        { id: "poison-5", name: "poison alchemist", description: "Become a master alchemist, creating deadly poisons with devastating effects", starCost: 5 },
+        {
+            id: "poison-1",
+            name: "Toxic Enhancement",
+            description: "Increase the poison damage inflicted by your attacks",
+            starCost: 1,
+            effect: "POISON_DAMAGE +10%",
+        },
+        {
+            id: "poison-2",
+            name: "Extended Toxicity",
+            description: "Prolong the duration of the poison effect",
+            starCost: 2,
+            effect: "POISON_DURATION +1s",
+        },
+        {
+            id: "poison-3",
+            name: "Venomous Reach",
+            description: "Extend the range of your poison attacks",
+            starCost: 3,
+            effect: "RANGE +1",
+        },
+        {
+            id: "poison-4",
+            name: "Cost-Effective Poison",
+            description: "Reduce the price of your poison attacks and increase poison damage",
+            starCost: 4,
+            effect: "PRICE -10%, POISON_DAMAGE +5%",
+        },
+        {
+            id: "poison-5",
+            name: "Potent Toxin Mastery",
+            description: "Further increase poison duration and damage for a potent and lasting effect",
+            starCost: 5,
+            effect: "POISON_DURATION +1s, POISON_DAMAGE +5%",
+        },
     ],
     wizard: [
-        { id: "wizard-1", name: "arcane missile", description: "Wizards shoot powerful arcane missiles, seeking out enemies", starCost: 1 },
-        { id: "wizard-2", name: "mana shield", description: "Wizards create a protective mana shield, reducing incoming damage", starCost: 2 },
-        { id: "wizard-3", name: "time warp", description: "Manipulate time to slow down enemy movement and attacks", starCost: 3 },
-        { id: "wizard-4", name: "elemental mastery", description: "Master the elements, enhancing wizard spells with elemental power", starCost: 4 },
-        { id: "wizard-5", name: "archmage", description: "Attain the rank of archmage, unlocking the most powerful wizard spells", starCost: 5 },
+        {
+            id: "wizard-1",
+            name: "Arcane Reach",
+            description: "Increase the range of your wizard spells",
+            starCost: 1,
+            effect: "RANGE +1",
+        },
+        {
+            id: "wizard-2",
+            name: "Ricochet Mastery",
+            description: "Unlock the ability for your spells to bounce between targets",
+            starCost: 2,
+            effect: "RICOCHET ENABLED",
+        },
+        {
+            id: "wizard-3",
+            name: "Arcane Power Boost",
+            description: "Enhance the damage output of your wizard spells",
+            starCost: 3,
+            effect: "DAMAGE +10%",
+        },
+        {
+            id: "wizard-4",
+            name: "Extended Range and Ricochet",
+            description: "Increase both the range of your wizard spells and the number of ricochets",
+            starCost: 4,
+            effect: "RANGE +0.5, RICOCHET +1",
+        },
+        {
+            id: "wizard-5",
+            name: "Cost-Effective Spellcasting",
+            description: "Reduce the price of your wizard spells while gaining additional ricochet capability",
+            starCost: 5,
+            effect: "PRICE -10%, RICOCHET +1",
+        },
     ],
     meteor: [
-        // { id: "meteor-1", name: "meteor shower", description: "Summon a meteor shower, devastating enemies in a targeted area", starCost: 1 },
-        // { id: "meteor-2", name: "celestial judgment", description: "Call upon celestial forces to deliver a powerful judgment, dealing massive damage", starCost: 2 },
-        // { id: "meteor-3", name: "cosmic explosion", description: "Upgrade meteors to explode upon impact, causing additional damage", starCost: 3 },
-        // { id: "meteor-4", name: "supernova", description: "Reach the pinnacle of meteor mastery, unleashing a devastating supernova", starCost: 4 },
-        // { id: "meteor-5", name: "celestial sorcerer", description: "Become a master of celestial magic, wielding unmatched power with meteors", starCost: 5 },
-
-            { 
-                id: "meteor-1",
-                name: "Enhanced Meteor Shower",
-                description: "Summon a meteor shower, devastating enemies in a targeted area",
-                starCost: 1,
-                effect: "Meteor Count +2"
-            },
-            { 
-                id: "meteor-2",
-                name: "Empowered Celestial Judgment",
-                description: "Call upon celestial forces to deliver a powerful judgment, dealing massive damage",
-                starCost: 2,
-                effect: "+10% damage, Cooldown -10 seconds"
-            },
-            { 
-                id: "meteor-3",
-                name: "Explosive Cosmic Upgrade",
-                description: "Upgrade meteors to explode upon impact, causing additional damage",
-                starCost: 3,
-                effect: "Meteor Count +2, Enable Slow Effect"
-            },
-            { 
-                id: "meteor-4",
-                name: "Supernova Mastery",
-                description: "Reach the pinnacle of meteor mastery, unleashing a devastating supernova",
-                starCost: 4,
-                effect: "+10% damage, Cooldown -10 seconds, Enable Random Targets"
-            },
-            { 
-                id: "meteor-5",
-                name: "Celestial Sorcery Mastery",
-                description: "Become a master of celestial magic, wielding unmatched power with meteors",
-                starCost: 5,
-                effect: "Meteor Count +2, Slow Effect +15%, Random Targets +3"
-            },
+        {
+            id: "meteor-1",
+            name: "Enhanced Meteor Shower",
+            description: "Summon a meteor shower, devastating enemies in a targeted area",
+            starCost: 1,
+            effect: "COUNT +2",
+        },
+        {
+            id: "meteor-2",
+            name: "Empowered Celestial Judgment",
+            description: "Call upon celestial forces to deliver a powerful judgment, dealing massive damage",
+            starCost: 2,
+            effect: "DAMAGE +10% , COOLDOWN -10s",
+        },
+        {
+            id: "meteor-3",
+            name: "Explosive Cosmic Upgrade",
+            description: "Upgrade meteors to explode upon impact, causing additional damage",
+            starCost: 3,
+            effect: "COUNT +2, SLOW_EFFECT ENABLED",
+        },
+        {
+            id: "meteor-4",
+            name: "Supernova Mastery",
+            description: "Reach the pinnacle of meteor mastery, unleashing a devastating supernova",
+            starCost: 4,
+            effect: "DAMAGE +10% , COOLDOWN -10s, RANDOM_TARGETS ENABLED",
+        },
+        {
+            id: "meteor-5",
+            name: "Celestial Sorcery Mastery",
+            description: "Become a master of celestial magic, wielding unmatched power with meteors",
+            starCost: 5,
+            effect: "COUNT +2, SLOW_EFFECT +15%, RANDOM_TARGETS +3",
+        },
     ],
     blizzard: [
-        // { id: "blizzard-1", name: "icy winds", description: "Summon icy winds that slow down and freeze enemies in their tracks", starCost: 1 },
-        // { id: "blizzard-2", name: "frostbite aura", description: "Create a chilling aura that inflicts frostbite, reducing enemy movement speed", starCost: 2 },
-        // { id: "blizzard-3", name: "snowstorm", description: "Unleash a snowstorm, impairing visibility and slowing enemy attacks", starCost: 3 },
-        // { id: "blizzard-4", name: "absolute zero", description: "Reach the absolute zero temperature, freezing enemies on the battlefield", starCost: 4 },
-        // { id: "blizzard-5", name: "cryomancer", description: "Attain the title of cryomancer, mastering the art of ice and cold magic", starCost: 5 },
-        { 
+        {
             id: "blizzard-1",
             name: "Icy Winds",
             description: "Summon chilling Icy Winds, dealing increased damage and lasting for a longer duration",
             starCost: 1,
-            effect: "+50% damage, Duration +0.5 seconds"
+            effect: "DAMAGE +50%, DURATION +0.5s",
         },
-        { 
+        {
             id: "blizzard-2",
             name: "Arctic Frost",
             description: "Channel Arctic Frost, extending the range of your blizzard and reducing its cooldown time",
             starCost: 2,
-            effect: "+1 range, Cooldown -5 seconds"
+            effect: "RANGE +1, COOLDOWN -5s",
         },
-        { 
+        {
             id: "blizzard-3",
             name: "Polar Vortex",
-            description: "Unleash a Polar Vortex, intensifying the blizzard's damage, duration, and adding a bonus to slowEffect",
+            description:
+                "Unleash a Polar Vortex, intensifying the blizzard's damage, duration, and adding a bonus to slowEffect",
             starCost: 3,
-            effect: "+50% damage, Duration +0.5 seconds, +10% slowEffect"
+            effect: "DAMAGE +50%, DURATION +0.5s,  SLOW_EFFECT +10%",
         },
-        { 
+        {
             id: "blizzard-4",
             name: "Glacial Expansion",
-            description: "Initiate Glacial Expansion, increasing the range of your blizzard and further reducing its cooldown time",
+            description:
+                "Initiate Glacial Expansion, increasing the range of your blizzard and further reducing its cooldown time",
             starCost: 4,
-            effect: "+1 range, Cooldown -5 seconds"
+            effect: "RANGE +1, COOLDOWN -5s",
         },
-        { 
+        {
             id: "blizzard-5",
             name: "Blizzard Mastery",
-            description: "Master the art of Blizzard, enhancing damage, duration, and slowEffect. Effect: +50% damage, Duration +0.5 seconds, +5% slowEffect",
+            description: "Master the art of Blizzard, enhancing damage, duration, and slowEffect",
             starCost: 5,
-            effect: "+50% damage, Duration +0.5 seconds, +5% slowEffect"
+            effect: "DAMAGE +50%, DURATION +0.5s, SLOW_EFFECT  +5%",
         },
     ],
 };
