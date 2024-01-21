@@ -13,7 +13,6 @@ export class Meteor {
     initialPos: THREE.Vector3;
     model: THREE.Mesh;
     explosion: THREE.Mesh;
-    timeToTarget = Infinity;
     slowPower = 0;
     slowDuration = 0;
     constructor(destination: THREE.Vector3, color: number = COLORS.orangered) {
@@ -29,9 +28,12 @@ export class Meteor {
         const explosionGeometry = new THREE.SphereGeometry(0.15);
         const explosionMaterial = MATERIALS.explosion(color);
         this.explosion = new THREE.Mesh(explosionGeometry, explosionMaterial);
+    }
 
-        const distanceToTarget = this.initialPos.distanceTo(this.destination);
-        this.timeToTarget = distanceToTarget / speed;
+    static timeToTarget() {
+        const distanceToTarget = spawnHeight;
+        // const distanceToTarget = this.initialPos.distanceTo(this.destination);
+        return distanceToTarget / speed;
     }
 
     tick(delta: number) {

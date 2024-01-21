@@ -1637,6 +1637,7 @@ function onMeteorFire() {
 
     let meteorCount = DEFAULT_METEOR_COUNT;
 
+    // METEOR COUNT
     if (playerStats.skills.meteor[0]) {
         meteorCount += playerStats.skills.meteor[0].effect.METEOR_COUNT!.value; // skill::meteor-1
     }
@@ -1648,42 +1649,61 @@ function onMeteorFire() {
     }
 
     for (let i = 0; i < meteorCount; i++) {
-        const destination = new THREE.Vector3(
-            THREE.MathUtils.lerp(meteorTargetPos.x - 2.5, meteorTargetPos.x + 2.5, Math.random()),
-            meteorTargetPos.y,
-            THREE.MathUtils.lerp(meteorTargetPos.z - 2.5, meteorTargetPos.z + 2.5, Math.random())
-        );
+        const delay = i * 220;
+        spawnMeteor(delay);
+    }
 
-        setTimeout(() => {
-            const meteor = new Meteor(destination, undefined);
+    // ADDITIONAL METEORS AT RANDOM POSITIONS
+    if (playerStats.skills.meteor[3]) {
+        let randomTargetMeteorCount = playerStats.skills.meteor[3].effect.RANDOM_TARGETS!.value; // skill::meteor-4
 
-            if (playerStats.skills.meteor[2]) {
-                meteor.slowPower = playerStats.skills.meteor[2].effect.SLOW_POWER!.value / 100; // skill::meteor-3
-                meteor.slowDuration = playerStats.skills.meteor[2].effect.SLOW_DURATION!.value; // skill::meteor-3
-            }
-            if (playerStats.skills.meteor[4]) {
-                meteor.slowPower = meteor.slowPower + playerStats.skills.meteor[4].effect.SLOW_POWER!.value / 100; // skill::meteor-5
-                meteor.slowDuration = meteor.slowDuration + playerStats.skills.meteor[4].effect.SLOW_DURATION!.value; // skill::meteor-5
-            }
+        if (playerStats.skills.meteor[4]) {
+            randomTargetMeteorCount += playerStats.skills.meteor[4].effect.RANDOM_TARGETS!.value; // skill::meteor-5
+        }
 
-            meteors.set(meteor.id, meteor);
-            scene.add(meteor.model);
-
-            if (DRAW_METEOR_GIZMOS) {
-                const meteorGizmo = new THREE.Mesh(
-                    new THREE.CylinderGeometry(0.5, 0.5, 0.25),
-                    MATERIALS.transparentBlack
-                );
-                meteorGizmo.position.set(destination.x, destination.y + 0.25, destination.z);
-                scene.add(meteorGizmo);
-
-                setTimeout(() => {
-                    scene.remove(meteorGizmo);
-                }, meteor.timeToTarget * 1000);
-            }
-        }, i * 220);
+        for (let i = 0; i < randomTargetMeteorCount; i++) {
+            const randomEnemy = enemies[Math.floor(enemies.length * Math.random())];
+            const delay = i * 200;
+            const target = randomEnemy.getFuturePosition(Meteor.timeToTarget() + delay / 1000);
+            spawnMeteor(delay, target);
+        }
     }
 }
+
+function spawnMeteor(delay: number, target?: THREE.Vector3) {
+    const destination = new THREE.Vector3(
+        target ? target.x : THREE.MathUtils.lerp(meteorTargetPos.x - 2.5, meteorTargetPos.x + 2.5, Math.random()),
+        target ? target.y : meteorTargetPos.y,
+        target ? target.z : THREE.MathUtils.lerp(meteorTargetPos.z - 2.5, meteorTargetPos.z + 2.5, Math.random())
+    );
+
+    setTimeout(() => {
+        const meteor = new Meteor(destination);
+
+        if (playerStats.skills.meteor[2]) {
+            meteor.slowPower = playerStats.skills.meteor[2].effect.SLOW_POWER!.value / 100; // skill::meteor-3
+            meteor.slowDuration = playerStats.skills.meteor[2].effect.SLOW_DURATION!.value; // skill::meteor-3
+        }
+        if (playerStats.skills.meteor[4]) {
+            meteor.slowPower = meteor.slowPower + playerStats.skills.meteor[4].effect.SLOW_POWER!.value / 100; // skill::meteor-5
+            meteor.slowDuration = meteor.slowDuration + playerStats.skills.meteor[4].effect.SLOW_DURATION!.value; // skill::meteor-5
+        }
+
+        meteors.set(meteor.id, meteor);
+        scene.add(meteor.model);
+
+        if (DRAW_METEOR_GIZMOS) {
+            const meteorGizmo = new THREE.Mesh(new THREE.CylinderGeometry(0.5, 0.5, 0.25), MATERIALS.transparentBlack);
+            meteorGizmo.position.set(destination.x, destination.y + 0.25, destination.z);
+            scene.add(meteorGizmo);
+
+            setTimeout(() => {
+                scene.remove(meteorGizmo);
+            }, Meteor.timeToTarget() * 1000);
+        }
+    }, delay);
+}
+
 function onBlizzardFire() {
     playerStats.fireBlizzard();
 

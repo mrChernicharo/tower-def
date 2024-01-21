@@ -9,9 +9,10 @@ export class PlayerStats {
     hpDisplay: HTMLDivElement;
     goldDisplay: HTMLDivElement;
     meteorCooldown: number;
+    meteorCooldownTime: number;
+    meteorCooldownArc: SVGGElement;
     blizzardCooldown: number;
     blizzardCooldownArc: SVGGElement;
-    meteorCooldownArc: SVGGElement;
     constructor(playerStats: { hp: number; gold: number; skills: PlayerSkills }) {
         this.hp = playerStats.hp;
         this.gold = playerStats.gold;
@@ -23,8 +24,19 @@ export class PlayerStats {
         this.meteorCooldownArc = document.querySelector("#meteor-action-btn > svg > .cooldown-arc") as SVGGElement;
         this.goldDisplay.innerHTML = `${this.gold}`;
 
+        // Calc MeteorCooldownTime
+        let meteorCooldownTime = DEFAULT_METEOR_COOLDOWN;
+        if (this.skills.meteor[1]) {
+            meteorCooldownTime -= this.skills.meteor[1].effect.COOLDOWN!.value; // skill::meteor-2
+        }
+        if (this.skills.meteor[3]) {
+            meteorCooldownTime -= this.skills.meteor[3].effect.COOLDOWN!.value; // skill::meteor-4
+        }
+        this.meteorCooldownTime = meteorCooldownTime;
+
         this.meteorCooldown = 0;
         this.blizzardCooldown = 0;
+        console.log(this);
     }
 
     gainGold(n: number) {
@@ -56,7 +68,7 @@ export class PlayerStats {
                 this.meteorCooldownArc.classList.remove("hidden");
             }
 
-            this._updateCooldownUI(meteorArcs, DEFAULT_METEOR_COOLDOWN, this.meteorCooldown);
+            this._updateCooldownUI(meteorArcs, this.meteorCooldownTime, this.meteorCooldown);
             this.meteorCooldown -= delta;
         } else if (!meteorBtn.classList.contains("ready")) {
             this.meteorCooldown = 0;
@@ -106,17 +118,8 @@ export class PlayerStats {
     }
 
     fireMeteor() {
-        let cooldownTime = DEFAULT_METEOR_COOLDOWN;
-
-        if (this.skills.meteor[1]) {
-            cooldownTime -= this.skills.meteor[1].effect.COOLDOWN!.value; // skill::meteor-2
-        }
-
-        if (this.skills.meteor[3]) {
-            cooldownTime -= this.skills.meteor[3].effect.COOLDOWN!.value; // skill::meteor-4
-        }
-        console.log("meteor cooldownTime", cooldownTime);
-        this.meteorCooldown = cooldownTime;
+        console.log("meteor cooldownTime", this.meteorCooldownTime);
+        this.meteorCooldown = this.meteorCooldownTime;
     }
 
     fireBlizzard() {

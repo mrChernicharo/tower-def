@@ -290,7 +290,7 @@ export const GAME_SKILLS: { [k in SkillPath]: Skill[] } = {
             effectStr: "DAMAGE +10% , COOLDOWN -10s",
             effect: {
                 [SkillEffectName.Damage]: { value: 10, unit: "%" },
-                [SkillEffectName.Cooldown]: { value: -10, unit: "s" },
+                [SkillEffectName.Cooldown]: { value: 5, unit: "s" },
             },
         },
         {
@@ -313,8 +313,8 @@ export const GAME_SKILLS: { [k in SkillPath]: Skill[] } = {
             effectStr: "DAMAGE +10% , COOLDOWN -10s, RANDOM_TARGETS ENABLED",
             effect: {
                 [SkillEffectName.Damage]: { value: 10, unit: "%" },
-                [SkillEffectName.Cooldown]: { value: -10, unit: "s" },
-                [SkillEffectName.RandomTargets]: { value: 1, unit: "" },
+                [SkillEffectName.Cooldown]: { value: 5, unit: "s" },
+                [SkillEffectName.RandomTargets]: { value: 3, unit: "" },
             },
         },
         {
@@ -325,7 +325,7 @@ export const GAME_SKILLS: { [k in SkillPath]: Skill[] } = {
             effectStr: "METEOR_COUNT +2, SLOW_EFFECT +15%, RANDOM_TARGETS +3",
             effect: {
                 [SkillEffectName.MeteorCount]: { value: 2, unit: "" },
-                [SkillEffectName.RandomTargets]: { value: 3, unit: "" },
+                [SkillEffectName.RandomTargets]: { value: 2, unit: "" },
                 [SkillEffectName.SlowPower]: { value: 10, unit: "%" },
                 [SkillEffectName.SlowDuration]: { value: 1, unit: "s" },
             },
