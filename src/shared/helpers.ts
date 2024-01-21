@@ -218,6 +218,7 @@ export function applyAreaDamage(enemies: Enemy[], pos: THREE.Vector3, radius: nu
         // console.log(e.id, { dist, percDist, fullHit, damage });
     });
     // console.log("applyAreaDamage", { enemies, enemiesHit, pos, splashRadius, radius });
+    return enemiesHit;
 }
 
 export function determineDamage(damage: [number, number]) {

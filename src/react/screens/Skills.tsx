@@ -113,6 +113,7 @@ const Skills = () => {
                     <div>
                         <h2>{capitalize(skillDetail.name)}</h2>
                         <p>{skillDetail.description}</p>
+                        <p>{skillDetail.effectStr}</p>
 
                         <div style={{ paddingTop: "1rem", display: "flex", justifyContent: "center" }}>
                             <SkillActionButton

@@ -14,6 +14,8 @@ export class Meteor {
     model: THREE.Mesh;
     explosion: THREE.Mesh;
     timeToTarget = Infinity;
+    slowPower = 0;
+    slowDuration = 0;
     constructor(destination: THREE.Vector3, color: number = COLORS.orangered) {
         this.id = idMaker();
         this.destination = destination;

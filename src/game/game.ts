@@ -890,7 +890,8 @@ function animate() {
             for (const e of enemies) {
                 const distance = e.model.position.distanceTo(blizzard.initialPos);
                 if (distance < blizzard.radius) {
-                    e.setSlowed();
+                    e.setSlowed({ slowPower: 0.5, duration: BLIZZARD_EFFECT_DURATION });
+                    // e.setSlowed(blizzardSlowPower);
                 }
             }
 
@@ -1661,6 +1662,15 @@ function onMeteorFire() {
             // const meteor = new Meteor(destination, undefined, meteorSkills);
             // const skillLevel =
             const meteor = new Meteor(destination, undefined);
+
+            if (playerStats.skills.meteor[2]) {
+                meteor.slowPower = 0.5;
+                meteor.slowDuration = 2;
+            }
+            if (playerStats.skills.meteor[4]) {
+                meteor.slowPower = 0.65;
+            }
+
             meteors.set(meteor.id, meteor);
             scene.add(meteor.model);
 
@@ -1727,13 +1737,18 @@ function onMeteorExplode(e: any) {
     if (playerStats.skills.meteor[1]) {
         damage += (damage * playerStats.skills.meteor[1].effect.DAMAGE!.value) / 100; // skill::meteor-2
     }
-    console.log(meteor.id, damage);
 
     if (playerStats.skills.meteor[3]) {
         damage += (damage * playerStats.skills.meteor[1].effect.DAMAGE!.value) / 100; // skill::meteor-4
     }
-    console.log(meteor.id, damage);
-    applyAreaDamage(enemies, pos, explosion.userData.radius * 0.4, damage);
+
+    const hitEnemies = applyAreaDamage(enemies, pos, explosion.userData.radius * 0.4, damage);
+
+    if (meteor.slowPower > 0) {
+        hitEnemies.forEach((e) => {
+            e.setSlowed({ slowPower: meteor.slowPower, duration: meteor.slowDuration });
+        });
+    }
 }
 function onBlizzardFinish(e: any) {
     const blizzard = e.detail as Blizzard;

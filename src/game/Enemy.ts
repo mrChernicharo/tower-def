@@ -25,24 +25,26 @@ export class Enemy {
     model!: THREE.Object3D;
     walkAnimation!: THREE.AnimationClip;
     futureGizmo!: THREE.Mesh;
-    timestamp = Date.now();
     hp: number;
     timeSinceSpawn!: number;
     originalMaterial!: THREE.Material;
     path: THREE.CatmullRomCurve3;
-    isPoisoned = false;
-    isSlowed = false;
-    timeSinceSlowed = 0;
     skinnedMeshes: THREE.SkinnedMesh[] = [];
     hpBar3D!: CSS2DObject;
     hpBarContainer!: HTMLDivElement;
     hpBar!: HTMLDivElement;
+    isSlowed = false;
+    slowedBy = 0;
+    timeSinceSlowed = 0;
+    slowEntries: Map<number, { slowPower: number; duration: number }>;
+    isPoisoned = false;
     constructor(enemyType: EnemyType, pathIdx = 0, fov: number) {
         this.id = idMaker();
         this.enemyType = enemyType;
         this.bluePrint = { ...ENEMY_BLUEPRINTS[this.enemyType] };
         this.hp = this.bluePrint.maxHp;
         this.path = pathCurves[pathIdx];
+        this.slowEntries = new Map();
         this.#_init();
         this.updateHpBarLengthToMatchZoom(fov);
     }
@@ -140,8 +142,8 @@ export class Enemy {
         }
 
         if (this.isSlowed) {
-            this.timeSinceSpawn += delta / 2;
-            this.mixer.update(delta / 2);
+            this.timeSinceSpawn += delta * (1 - this.slowedBy);
+            this.mixer.update(delta * (1 - this.slowedBy));
             this.timeSinceSlowed += delta;
         } else {
             this.timeSinceSpawn += delta;
@@ -253,7 +255,7 @@ export class Enemy {
         });
     }
 
-    setSlowed() {
+    setSlowed({ slowPower = 0.5, duration = 5 }) {
         if (!this.isSlowed) {
             this.skinnedMeshes.forEach((obj) => {
                 slowOutlinePass.selectedObjects.push(obj);
@@ -261,6 +263,9 @@ export class Enemy {
             });
         }
         this.isSlowed = true;
+        this.slowEntries.set(this.timeSinceSpawn, { slowPower, duration });
+        console.log("slowEntries", this.slowEntries);
+        this.slowedBy = slowPower;
         this.timeSinceSlowed = 0;
     }
     healSlow() {
