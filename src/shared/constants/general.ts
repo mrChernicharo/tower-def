@@ -22,6 +22,8 @@ export const DEFAULT_BLIZZARD_RADIUS = 3;
 
 export const BALLISTA_CRITICAL_HIT_CHANCE = 5; // 5%
 
+export const DEFAULT_CANNON_SLOW_DURATION = 1.25;
+
 export const DEFAULT_POISON_DURATION = 10;
 export const DEFAULT_POISON_DAMAGE = 4;
 

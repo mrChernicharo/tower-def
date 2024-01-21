@@ -37,7 +37,7 @@
 
     -   [ ] archer
     -   [✔] ballista
-    -   [ ] cannon
+    -   [✔] cannon
     -   [✔] poison
     -   [ ] wizard
     -   [✔] blizzard

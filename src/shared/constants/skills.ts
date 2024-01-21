@@ -127,9 +127,9 @@ export const GAME_SKILLS: { [k in SkillPath]: Skill[] } = {
             name: "Explosive Impact",
             description: "Widen the splash area of your Cannon shots",
             starCost: 2,
-            effectStr: "SPLASH_AREA +10%",
+            effectStr: "SPLASH_AREA +20%",
             effect: {
-                [SkillEffectName.SplashArea]: { value: 10, unit: "%" },
+                [SkillEffectName.SplashArea]: { value: 20, unit: "%" },
             },
         },
         {

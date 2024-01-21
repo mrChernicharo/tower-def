@@ -40,6 +40,7 @@ import {
     BLIZZARD_ANIMATION_DURATION,
     DEFAULT_POISON_DURATION,
     DEFAULT_POISON_DAMAGE,
+    DEFAULT_CANNON_SLOW_DURATION,
 } from "../shared/constants/general";
 
 import {
@@ -1557,7 +1558,24 @@ function onProjectileExplode(e: any) {
                 break;
             }
             case TowerType.Cannon: {
-                applyAreaDamage(enemies, pos, explosion.userData.radius * 4.5, projectile.damage);
+                let radius = explosion.userData.radius;
+                if (playerStats.skills.cannon[1]) {
+                    radius += (radius * playerStats.skills.cannon[1].effect.SPLASH_AREA!.value) / 100; // skill::cannon-2
+                }
+                // override previously set radius, so explosion is drawn with the right size
+                explosion.userData["radius"] = radius;
+
+                const CRAZY_MULTIPLIER = 4;
+                const enemiesHit = applyAreaDamage(enemies, pos, radius * CRAZY_MULTIPLIER, projectile.damage);
+
+                if (playerStats.skills.cannon[3]) {
+                    const slowPower = playerStats.skills.cannon[3].effect.SLOW_POWER!.value / 100;
+                    const duration = DEFAULT_CANNON_SLOW_DURATION;
+
+                    enemiesHit.forEach((e) => {
+                        e.setSlowed({ slowPower, duration });
+                    });
+                }
                 break;
             }
             case TowerType.Poison: {
