@@ -5,7 +5,7 @@ import { THREE } from "../three";
 import * as SkeletonUtils from "three/examples/jsm/utils/SkeletonUtils.js";
 import { AppLayers, EnemyType } from "../shared/enums";
 import { EnemyBluePrint } from "../shared/types";
-import { MATERIALS, MAX_FOV } from "../shared/constants/general";
+import { BLIZZARD_SLOW_DURATION, MATERIALS, MAX_FOV } from "../shared/constants/general";
 import { idMaker } from "../shared/helpers";
 import { SkinnedMesh } from "three";
 import { ENEMY_BLUEPRINTS } from "../shared/constants/enemies";
@@ -34,9 +34,9 @@ export class Enemy {
     hpBarContainer!: HTMLDivElement;
     hpBar!: HTMLDivElement;
     isSlowed = false;
-    slowedBy = 0;
     timeSinceSlowed = 0;
-    slowEntries: Map<number, { slowPower: number; duration: number }>;
+    slowedBy = 0;
+    slowDuration = 0;
     isPoisoned = false;
     constructor(enemyType: EnemyType, pathIdx = 0, fov: number) {
         this.id = idMaker();
@@ -44,7 +44,6 @@ export class Enemy {
         this.bluePrint = { ...ENEMY_BLUEPRINTS[this.enemyType] };
         this.hp = this.bluePrint.maxHp;
         this.path = pathCurves[pathIdx];
-        this.slowEntries = new Map();
         this.#_init();
         this.updateHpBarLengthToMatchZoom(fov);
     }
@@ -255,7 +254,7 @@ export class Enemy {
         });
     }
 
-    setSlowed({ slowPower = 0.5, duration = 5 }) {
+    setSlowed({ slowPower = 0.5, duration = BLIZZARD_SLOW_DURATION }) {
         if (!this.isSlowed) {
             this.skinnedMeshes.forEach((obj) => {
                 slowOutlinePass.selectedObjects.push(obj);
@@ -263,9 +262,8 @@ export class Enemy {
             });
         }
         this.isSlowed = true;
-        this.slowEntries.set(this.timeSinceSpawn, { slowPower, duration });
-        console.log("slowEntries", this.slowEntries);
-        this.slowedBy = slowPower;
+        if (slowPower > this.slowedBy) this.slowedBy = slowPower;
+        if (duration > this.slowDuration) this.slowDuration = duration;
         this.timeSinceSlowed = 0;
     }
     healSlow() {
@@ -276,6 +274,8 @@ export class Enemy {
                 slowOutlinePass.selectedObjects.splice(outlineObjIdx, 1);
             }
         });
+        this.slowedBy = 0;
+        this.slowDuration = 0;
         this.timeSinceSlowed = 0;
     }
 

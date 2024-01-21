@@ -797,7 +797,8 @@ function animate() {
             enemy.tick(delta);
 
             if (enemy.isSlowed) {
-                if (enemy.timeSinceSlowed > BLIZZARD_SLOW_DURATION) {
+                // console.log(enemy.slowedBy, enemy.timeSinceSlowed, enemy.slowDuration);
+                if (enemy.timeSinceSlowed > enemy.slowDuration) {
                     enemy.healSlow();
                 }
             }
@@ -890,8 +891,7 @@ function animate() {
             for (const e of enemies) {
                 const distance = e.model.position.distanceTo(blizzard.initialPos);
                 if (distance < blizzard.radius) {
-                    e.setSlowed({ slowPower: 0.5, duration: BLIZZARD_EFFECT_DURATION });
-                    // e.setSlowed(blizzardSlowPower);
+                    e.setSlowed({ slowPower: 0.5, duration: BLIZZARD_SLOW_DURATION });
                 }
             }
 
@@ -1640,15 +1640,12 @@ function onMeteorFire() {
     if (playerStats.skills.meteor[0]) {
         meteorCount += playerStats.skills.meteor[0].effect.METEOR_COUNT!.value; // skill::meteor-1
     }
-
     if (playerStats.skills.meteor[2]) {
         meteorCount += playerStats.skills.meteor[2].effect.METEOR_COUNT!.value; // skill::meteor-3
     }
     if (playerStats.skills.meteor[4]) {
         meteorCount += playerStats.skills.meteor[4].effect.METEOR_COUNT!.value; // skill::meteor-5
     }
-
-    console.log("meteor count", meteorCount);
 
     for (let i = 0; i < meteorCount; i++) {
         const destination = new THREE.Vector3(
@@ -1658,17 +1655,15 @@ function onMeteorFire() {
         );
 
         setTimeout(() => {
-            // const meteorSkills = GAME_SKILLS.meteor.filter(s => s.id)
-            // const meteor = new Meteor(destination, undefined, meteorSkills);
-            // const skillLevel =
             const meteor = new Meteor(destination, undefined);
 
             if (playerStats.skills.meteor[2]) {
-                meteor.slowPower = 0.5;
-                meteor.slowDuration = 2;
+                meteor.slowPower = playerStats.skills.meteor[2].effect.SLOW_POWER!.value / 100; // skill::meteor-3
+                meteor.slowDuration = playerStats.skills.meteor[2].effect.SLOW_DURATION!.value; // skill::meteor-3
             }
             if (playerStats.skills.meteor[4]) {
-                meteor.slowPower = 0.65;
+                meteor.slowPower = meteor.slowPower + playerStats.skills.meteor[4].effect.SLOW_POWER!.value / 100; // skill::meteor-5
+                meteor.slowDuration = meteor.slowDuration + playerStats.skills.meteor[4].effect.SLOW_DURATION!.value; // skill::meteor-5
             }
 
             meteors.set(meteor.id, meteor);
@@ -1733,7 +1728,7 @@ function onMeteorExplode(e: any) {
     scene.add(explosion);
 
     let damage = determineDamage(DEFAULT_METEOR_DAMAGE);
-    console.log(meteor.id, damage);
+
     if (playerStats.skills.meteor[1]) {
         damage += (damage * playerStats.skills.meteor[1].effect.DAMAGE!.value) / 100; // skill::meteor-2
     }
@@ -1744,9 +1739,13 @@ function onMeteorExplode(e: any) {
 
     const hitEnemies = applyAreaDamage(enemies, pos, explosion.userData.radius * 0.4, damage);
 
+    console.log({ id: meteor.id, meteor });
     if (meteor.slowPower > 0) {
         hitEnemies.forEach((e) => {
-            e.setSlowed({ slowPower: meteor.slowPower, duration: meteor.slowDuration });
+            const slowPower = meteor.slowPower;
+            const duration = meteor.slowDuration;
+            // console.log(e, slowPower, duration);
+            e.setSlowed({ slowPower, duration });
         });
     }
 }

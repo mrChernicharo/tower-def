@@ -116,8 +116,8 @@ export enum SkillEffectName {
     MeteorCount = "METEOR_COUNT",
     RandomTargets = "RANDOM_TARGETS",
     // Blizzard
-    SlowEffect = "SLOW_EFFECT", // also Applies to Cannon
-    SlowDuration = "SLOW_DURATION", // also Applies to Cannon
+    SlowPower = "SLOW_POWER", // also Applies to Cannon and Meteor
+    SlowDuration = "SLOW_DURATION", // also Applies to Cannon and Meteor
     Cooldown = "COOLDOWN",
 }
 

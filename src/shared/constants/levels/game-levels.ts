@@ -419,13 +419,14 @@ export const STAGE_WAVES_DATA: WaveEnemy[][][] = [
     // stage 12
     [
         [
-            ...waveSegment(EnemyChar.Orc, 6, 6, 0, 0),
-            ...waveSegment(EnemyChar.Bee, 8, 4.5, 7, 0),
-            ...waveSegment(EnemyChar.Spider, 4, 0.8, 0, 2),
-            ...waveSegment(EnemyChar.Spider, 4, 0.8, 5, 2),
-            ...waveSegment(EnemyChar.Spider, 4, 0.8, 10, 2),
-            ...waveSegment(EnemyChar.Spider, 4, 0.8, 15, 2),
-            ...waveSegment(EnemyChar.Spider, 4, 0.8, 20, 2),
+            // ...waveSegment(EnemyChar.Orc, 6, 6, 0, 0),
+            // ...waveSegment(EnemyChar.Bee, 8, 4.5, 7, 0),
+            // ...waveSegment(EnemyChar.Spider, 4, 0.8, 0, 2),
+            // ...waveSegment(EnemyChar.Spider, 4, 0.8, 5, 2),
+            // ...waveSegment(EnemyChar.Spider, 4, 0.8, 10, 2),
+            // ...waveSegment(EnemyChar.Spider, 4, 0.8, 15, 2),
+            // ...waveSegment(EnemyChar.Spider, 4, 0.8, 20, 2),
+            ...waveSegment(EnemyChar.DemonBoss, 1, undefined, 0, 0),
         ],
         // wave 2
         [

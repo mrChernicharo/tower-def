@@ -148,7 +148,7 @@ export const GAME_SKILLS: { [k in SkillPath]: Skill[] } = {
             starCost: 4,
             effectStr: "SLOW ENABLED",
             effect: {
-                [SkillEffectName.SlowEffect]: { value: 1, unit: "" },
+                [SkillEffectName.SlowPower]: { value: 50, unit: "%" },
             },
         },
         {
@@ -301,7 +301,8 @@ export const GAME_SKILLS: { [k in SkillPath]: Skill[] } = {
             effectStr: "METEOR_COUNT +2, SLOW_EFFECT ENABLED",
             effect: {
                 [SkillEffectName.MeteorCount]: { value: 2, unit: "" },
-                [SkillEffectName.SlowEffect]: { value: 1, unit: "" },
+                [SkillEffectName.SlowPower]: { value: 45, unit: "%" },
+                [SkillEffectName.SlowDuration]: { value: 2, unit: "s" },
             },
         },
         {
@@ -324,8 +325,9 @@ export const GAME_SKILLS: { [k in SkillPath]: Skill[] } = {
             effectStr: "METEOR_COUNT +2, SLOW_EFFECT +15%, RANDOM_TARGETS +3",
             effect: {
                 [SkillEffectName.MeteorCount]: { value: 2, unit: "" },
-                [SkillEffectName.SlowEffect]: { value: 15, unit: "%" },
                 [SkillEffectName.RandomTargets]: { value: 3, unit: "" },
+                [SkillEffectName.SlowPower]: { value: 10, unit: "%" },
+                [SkillEffectName.SlowDuration]: { value: 1, unit: "s" },
             },
         },
     ],
@@ -363,7 +365,7 @@ export const GAME_SKILLS: { [k in SkillPath]: Skill[] } = {
             effect: {
                 [SkillEffectName.Damage]: { value: 50, unit: "%" },
                 [SkillEffectName.SlowDuration]: { value: 0.5, unit: "s" },
-                [SkillEffectName.SlowEffect]: { value: 10, unit: "%" },
+                [SkillEffectName.SlowPower]: { value: 10, unit: "%" },
             },
         },
         {
@@ -387,7 +389,7 @@ export const GAME_SKILLS: { [k in SkillPath]: Skill[] } = {
             effect: {
                 [SkillEffectName.Damage]: { value: 50, unit: "%" },
                 [SkillEffectName.SlowDuration]: { value: 0.5, unit: "s" },
-                [SkillEffectName.SlowEffect]: { value: 5, unit: "%" },
+                [SkillEffectName.SlowPower]: { value: 5, unit: "%" },
             },
         },
     ],
