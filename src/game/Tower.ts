@@ -312,11 +312,11 @@ export class Tower {
             }
             case TowerType.Poison: {
                 if (playerSkills.poison[2]) {
-                    range += playerSkills.poison[2].effect.RANGE!.value;
+                    range += playerSkills.poison[2].effect.RANGE!.value; // skill::poison-3
                 }
 
                 if (playerSkills.poison[3]) {
-                    price -= (price * playerSkills.poison[3].effect.PRICE!.value) / 100;
+                    price -= (price * playerSkills.poison[3].effect.PRICE!.value) / 100; // skill::poison-4
                 }
                 break;
             }

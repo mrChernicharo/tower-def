@@ -16,10 +16,10 @@ export class PoisonEntry {
         let duration = durationInSeconds;
 
         if (skills.poison[1]) {
-            duration += skills.poison[1].effect.POISON_DURATION!.value;
+            duration += skills.poison[1].effect.POISON_DURATION!.value; // skill::poison-2
         }
         if (skills.poison[4]) {
-            duration += skills.poison[4].effect.POISON_DURATION!.value;
+            duration += skills.poison[4].effect.POISON_DURATION!.value; // skill::poison-5
         }
 
         console.log("POISON ENTRY", { duration });

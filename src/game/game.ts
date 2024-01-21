@@ -1851,13 +1851,13 @@ function onPoisonEntryDamage(e: any) {
         let poisonDamage = DEFAULT_POISON_DAMAGE;
 
         if (playerStats.skills.poison[0]) {
-            poisonDamage += (DEFAULT_POISON_DAMAGE * playerStats.skills.poison[0].effect.POISON_DAMAGE!.value) / 100;
+            poisonDamage += (DEFAULT_POISON_DAMAGE * playerStats.skills.poison[0].effect.POISON_DAMAGE!.value) / 100; // skill::poison-1
         }
         if (playerStats.skills.poison[3]) {
-            poisonDamage += (DEFAULT_POISON_DAMAGE * playerStats.skills.poison[3].effect.POISON_DAMAGE!.value) / 100;
+            poisonDamage += (DEFAULT_POISON_DAMAGE * playerStats.skills.poison[3].effect.POISON_DAMAGE!.value) / 100; // skill::poison-4
         }
         if (playerStats.skills.poison[4]) {
-            poisonDamage += (DEFAULT_POISON_DAMAGE * playerStats.skills.poison[4].effect.POISON_DAMAGE!.value) / 100;
+            poisonDamage += (DEFAULT_POISON_DAMAGE * playerStats.skills.poison[4].effect.POISON_DAMAGE!.value) / 100; // skill::poison-5
         }
         enemy.takeDamage(poisonDamage);
     }
