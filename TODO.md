@@ -27,14 +27,14 @@
 -   [ ] better firePoint calculations (move it forward in case its a Cannon tower)
 -   [ ] modal icons (info, up, sell, level, damage, range, fireRate)
 -   [ ] compute skills efx
--   [ ] prevent zoom when paused (gotta find out if was idle or active before pause)
+-   [✔] prevent zoom when paused (gotta find out if was idle or active before pause)
 -   [ ] projectile trajectory towards flying enemies
 -   [ ] more and better levels
 -   [ ] different enemies sharing same model (small demon VS super huge demon)
 -   [ ] dmg_efx
 -   [ ] (mobile) request full screen + landscape orientation
 -   [ ] fix firePointY
--   [ ] slowdown movement when zooming
+-   [✔] slowdown cam movement when zooming
 
 -   [ ] spider resists poison
 -   [ ] elf heals its friends

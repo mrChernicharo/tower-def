@@ -1197,7 +1197,7 @@ function onResize() {
 
 function onZoom(e: WheelEvent) {
     if (gameState === GameState.Paused) return;
-    console.log("onZoom", e, e.deltaX, e.deltaY, e.deltaZ, gameState);
+    // console.log("onZoom", e, e.deltaX, e.deltaY, e.deltaZ, gameState);
     if ((e.deltaY > 0 && camera.fov < MAX_FOV) || (e.deltaY < 0 && camera.fov > MIN_FOV)) {
         camera.fov += e.deltaY * 0.02;
     }
@@ -1374,18 +1374,23 @@ function gameOverLose() {
 
 function handleCameraMovement(e: PointerEvent) {
     if (mobileScaling) return; // block camera movement while zooming
+    // vel = (fov - MIN) / (MAX - MIN)
+    const speed = 0.2;
+    const vel = THREE.MathUtils.clamp((camera.fov - MIN_FOV) / (MAX_FOV - MIN_FOV), 0.25, 1);
+    // console.log({ fov: camera.fov, vel });
+
     if (
         (e.movementX > 0 && camera.position.x > levelData.cameraBounds.left) ||
         (e.movementX < 0 && camera.position.x < levelData.cameraBounds.right)
     ) {
-        camera.position.x -= e.movementX * 0.2;
+        camera.position.x -= e.movementX * speed * vel;
     }
 
     if (
         (e.movementY > 0 && camera.position.z > levelData.cameraBounds.top) ||
         (e.movementY < 0 && camera.position.z < levelData.cameraBounds.bottom)
     ) {
-        camera.position.z -= e.movementY * 0.2;
+        camera.position.z -= e.movementY * speed * vel;
     }
 
     // console.log("isDragging", e.buttons, e.movementX, e.movementY);
