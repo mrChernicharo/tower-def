@@ -200,8 +200,8 @@ export const STAGE_WAVES_DATA: WaveEnemy[][][] = [
         // wave 1
         [
             ...waveSegment(EnemyChar.Dino, 6, 4, 0, 0),
-            ...waveSegment(EnemyChar.Bee, 2, 1, 0, 2),
-            ...waveSegment(EnemyChar.Bee, 2, 1, 4, 2),
+            ...waveSegment(EnemyChar.Bee, 2, 1, 0, 0),
+            ...waveSegment(EnemyChar.Bee, 2, 1, 4, 0),
         ],
         // wave 2
         [...waveSegment(EnemyChar.Dino, 8, 4, 0, 0), ...waveSegment(EnemyChar.Squidle, 4, 8, 2, 0)],

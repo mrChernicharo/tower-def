@@ -273,7 +273,7 @@ export const GAME_SKILLS: { [k in SkillPath]: Skill[] } = {
     ],
     meteor: [
         {
-            id: "meteor-1",
+            id: "meteor-1", // ok
             name: "Enhanced Meteor Shower",
             description: "Summon a meteor shower, devastating enemies in a targeted area",
             starCost: 1,
@@ -283,7 +283,7 @@ export const GAME_SKILLS: { [k in SkillPath]: Skill[] } = {
             },
         },
         {
-            id: "meteor-2",
+            id: "meteor-2", // ok
             name: "Empowered Celestial Judgment",
             description: "Call upon celestial forces to deliver a powerful judgment, dealing massive damage",
             starCost: 2,

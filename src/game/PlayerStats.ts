@@ -1,9 +1,6 @@
+import { DEFAULT_METEOR_COOLDOWN, DEFAULT_BLIZZARD_COOLDOWN } from "../shared/constants/general";
 import { getD } from "../shared/helpers";
 import { PlayerSkills } from "../shared/types";
-
-const DEFAULT_METEOR_COOLDOWN = 16;
-const BLIZZARD_COOLDOWN = 2;
-// const BLIZZARD_COOLDOWN = 8;
 
 export class PlayerStats {
     hp: number;
@@ -70,7 +67,7 @@ export class PlayerStats {
         }
 
         if (this.blizzardCooldown > 0) {
-            if (this.blizzardCooldown === BLIZZARD_COOLDOWN) {
+            if (this.blizzardCooldown === DEFAULT_BLIZZARD_COOLDOWN) {
                 // console.log("blizzard cooldown started", this.blizzardCooldown);
             }
 
@@ -79,7 +76,7 @@ export class PlayerStats {
                 this.blizzardCooldownArc.classList.remove("hidden");
             }
 
-            this._updateCooldownUI(blizzardArcs, BLIZZARD_COOLDOWN, this.blizzardCooldown);
+            this._updateCooldownUI(blizzardArcs, DEFAULT_BLIZZARD_COOLDOWN, this.blizzardCooldown);
             this.blizzardCooldown -= delta;
         } else if (!blizzardBtn.classList.contains("ready")) {
             // console.log("blizzard READY", this.blizzardCooldown);
@@ -110,19 +107,19 @@ export class PlayerStats {
 
     fireMeteor() {
         let cooldownTime = DEFAULT_METEOR_COOLDOWN;
-        // skill::meteor-2
+
         if (this.skills.meteor[1]) {
-            cooldownTime -= this.skills.meteor[1].effect.COOLDOWN!.value;
+            cooldownTime -= this.skills.meteor[1].effect.COOLDOWN!.value; // skill::meteor-2
         }
-        // skill::meteor-4
+
         if (this.skills.meteor[3]) {
-            cooldownTime -= this.skills.meteor[3].effect.COOLDOWN!.value;
+            cooldownTime -= this.skills.meteor[3].effect.COOLDOWN!.value; // skill::meteor-4
         }
         console.log("meteor cooldownTime", cooldownTime);
         this.meteorCooldown = cooldownTime;
     }
 
     fireBlizzard() {
-        this.blizzardCooldown = BLIZZARD_COOLDOWN;
+        this.blizzardCooldown = DEFAULT_BLIZZARD_COOLDOWN;
     }
 }

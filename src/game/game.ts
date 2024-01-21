@@ -32,6 +32,7 @@ import {
     BLIZZARD_SLOW_DURATION,
     COLORS,
     DEFAULT_METEOR_COUNT,
+    DEFAULT_METEOR_DAMAGE,
     DRAW_FUTURE_GIZMO,
     DRAW_METEOR_GIZMOS,
     DRAW_PROJECTILE_TRAJECTORIES,
@@ -1634,17 +1635,16 @@ function onMeteorFire() {
     clearMeteorTargeting();
 
     let meteorCount = DEFAULT_METEOR_COUNT;
-    // skill::meteor-1
+
     if (playerStats.skills.meteor[0]) {
-        meteorCount += playerStats.skills.meteor[0].effect.METEOR_COUNT!.value;
+        meteorCount += playerStats.skills.meteor[0].effect.METEOR_COUNT!.value; // skill::meteor-1
     }
-    // skill::meteor-3
+
     if (playerStats.skills.meteor[2]) {
-        meteorCount += playerStats.skills.meteor[2].effect.METEOR_COUNT!.value;
+        meteorCount += playerStats.skills.meteor[2].effect.METEOR_COUNT!.value; // skill::meteor-3
     }
-    // skill::meteor-5
     if (playerStats.skills.meteor[4]) {
-        meteorCount += playerStats.skills.meteor[4].effect.METEOR_COUNT!.value;
+        meteorCount += playerStats.skills.meteor[4].effect.METEOR_COUNT!.value; // skill::meteor-5
     }
 
     console.log("meteor count", meteorCount);
@@ -1721,7 +1721,19 @@ function onMeteorExplode(e: any) {
     explosion.position.set(pos.x, pos.y, pos.z);
     explosions.set(meteor.id, explosion);
     scene.add(explosion);
-    applyAreaDamage(enemies, pos, explosion.userData.radius * 0.4, determineDamage([50, 200]));
+
+    let damage = determineDamage(DEFAULT_METEOR_DAMAGE);
+    console.log(meteor.id, damage);
+    if (playerStats.skills.meteor[1]) {
+        damage += (damage * playerStats.skills.meteor[1].effect.DAMAGE!.value) / 100; // skill::meteor-2
+    }
+    console.log(meteor.id, damage);
+
+    if (playerStats.skills.meteor[3]) {
+        damage += (damage * playerStats.skills.meteor[1].effect.DAMAGE!.value) / 100; // skill::meteor-4
+    }
+    console.log(meteor.id, damage);
+    applyAreaDamage(enemies, pos, explosion.userData.radius * 0.4, damage);
 }
 function onBlizzardFinish(e: any) {
     const blizzard = e.detail as Blizzard;
