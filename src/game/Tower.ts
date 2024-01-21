@@ -272,8 +272,79 @@ export class Tower {
                     price -= (price * playerSkills.archer[3].effect.PRICE!.value) / 100;
                     rateOfFire += (rateOfFire * playerSkills.archer[3].effect.RATE_OF_FIRE!.value) / 100;
                 }
+                break;
+            }
+            case TowerType.Ballista: {
+                if (playerSkills.ballista[0]) {
+                    damage = [
+                        damage[0] + (damage[0] * playerSkills.ballista[0].effect.DAMAGE!.value) / 100,
+                        damage[1] + (damage[1] * playerSkills.ballista[0].effect.DAMAGE!.value) / 100,
+                    ];
+                }
+                if (playerSkills.ballista[1]) {
+                    rateOfFire += (rateOfFire * playerSkills.ballista[1].effect.RATE_OF_FIRE!.value) / 100;
+                }
+                if (playerSkills.ballista[3]) {
+                    price -= (price * playerSkills.ballista[3].effect.PRICE!.value) / 100;
+                    rateOfFire += (rateOfFire * playerSkills.ballista[3].effect.RATE_OF_FIRE!.value) / 100;
+                }
+                if (playerSkills.ballista[4]) {
+                    range += playerSkills.ballista[4].effect.RANGE!.value;
+                }
+                break;
+            }
+            case TowerType.Cannon: {
+                if (playerSkills.cannon[0]) {
+                    damage = [
+                        damage[0] + (damage[0] * playerSkills.cannon[0].effect.DAMAGE!.value) / 100,
+                        damage[1] + (damage[1] * playerSkills.cannon[0].effect.DAMAGE!.value) / 100,
+                    ];
+                }
+                if (playerSkills.cannon[2]) {
+                    range += playerSkills.cannon[2].effect.RANGE!.value;
+                }
+
+                if (playerSkills.cannon[4]) {
+                    price -= (price * playerSkills.cannon[4].effect.PRICE!.value) / 100;
+                    rateOfFire += (rateOfFire * playerSkills.cannon[4].effect.RATE_OF_FIRE!.value) / 100;
+                }
+                break;
+            }
+            case TowerType.Poison: {
+                if (playerSkills.poison[2]) {
+                    range += playerSkills.poison[2].effect.RANGE!.value;
+                }
+
+                if (playerSkills.poison[4]) {
+                    price -= (price * playerSkills.poison[4].effect.PRICE!.value) / 100;
+                }
+                break;
+            }
+            case TowerType.Wizard: {
+                if (playerSkills.wizard[0]) {
+                    range += playerSkills.wizard[0].effect.RANGE!.value;
+                }
+
+                if (playerSkills.wizard[2]) {
+                    damage = [
+                        damage[0] + (damage[0] * playerSkills.wizard[2].effect.DAMAGE!.value) / 100,
+                        damage[1] + (damage[1] * playerSkills.wizard[2].effect.DAMAGE!.value) / 100,
+                    ];
+                }
+
+                if (playerSkills.wizard[3]) {
+                    range += playerSkills.wizard[3].effect.RANGE!.value;
+                }
+
+                if (playerSkills.wizard[4]) {
+                    price -= (price * playerSkills.wizard[4].effect.PRICE!.value) / 100;
+                }
+
+                break;
             }
         }
+
+        price = Math.round(price);
 
         return { range, damage, rateOfFire, price };
     }
