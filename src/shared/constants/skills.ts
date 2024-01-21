@@ -322,7 +322,7 @@ export const GAME_SKILLS: { [k in SkillPath]: Skill[] } = {
             name: "Celestial Sorcery Mastery",
             description: "Become a master of celestial magic, wielding unmatched power with meteors",
             starCost: 5,
-            effectStr: "METEOR_COUNT +2, SLOW_EFFECT +15%, RANDOM_TARGETS +3",
+            effectStr: "METEOR_COUNT +2, SLOW_POWER +10%, RANDOM_TARGETS +3",
             effect: {
                 [SkillEffectName.MeteorCount]: { value: 2, unit: "" },
                 [SkillEffectName.RandomTargets]: { value: 2, unit: "" },
@@ -360,10 +360,10 @@ export const GAME_SKILLS: { [k in SkillPath]: Skill[] } = {
             description:
                 "Unleash a Polar Vortex, intensifying the blizzard's damage, duration, and adding a bonus to slowEffect",
             starCost: 3,
-            effectStr: "DAMAGE +40%, SLOW_DURATION +0.5s,  SLOW_EFFECT +10%",
+            effectStr: "DAMAGE +40%, SLOW_DURATION +0.6s,  SLOW_POWER +10%",
             effect: {
                 [SkillEffectName.Damage]: { value: 40, unit: "%" },
-                [SkillEffectName.SlowDuration]: { value: 0.5, unit: "s" },
+                [SkillEffectName.SlowDuration]: { value: 0.6, unit: "s" },
                 [SkillEffectName.SlowPower]: { value: 10, unit: "%" },
             },
         },
@@ -384,11 +384,11 @@ export const GAME_SKILLS: { [k in SkillPath]: Skill[] } = {
             name: "Blizzard Mastery",
             description: "Master the art of Blizzard, enhancing damage, duration, and slowEffect",
             starCost: 5,
-            effectStr: "DAMAGE +30%, SLOW_DURATION +0.5s, SLOW_EFFECT  +5%",
+            effectStr: "DAMAGE +30%, SLOW_DURATION +0.7s, SLOW_POWER +5%",
             effect: {
                 [SkillEffectName.Range]: { value: 1, unit: "meters" },
                 [SkillEffectName.Damage]: { value: 30, unit: "%" },
-                [SkillEffectName.SlowDuration]: { value: 0.5, unit: "s" },
+                [SkillEffectName.SlowDuration]: { value: 0.7, unit: "s" },
                 [SkillEffectName.SlowPower]: { value: 5, unit: "%" },
             },
         },

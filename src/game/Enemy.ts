@@ -5,7 +5,7 @@ import { THREE } from "../three";
 import * as SkeletonUtils from "three/examples/jsm/utils/SkeletonUtils.js";
 import { AppLayers, EnemyType } from "../shared/enums";
 import { EnemyBluePrint } from "../shared/types";
-import { DEFAULT_BLIZZARD_SLOW_DURATION, MATERIALS, MAX_FOV } from "../shared/constants/general";
+import { MATERIALS, MAX_FOV } from "../shared/constants/general";
 import { idMaker } from "../shared/helpers";
 import { SkinnedMesh } from "three";
 import { ENEMY_BLUEPRINTS } from "../shared/constants/enemies";
@@ -255,7 +255,7 @@ export class Enemy {
         });
     }
 
-    setSlowed({ slowPower = 0.5, duration = DEFAULT_BLIZZARD_SLOW_DURATION }) {
+    setSlowed({ slowPower, duration }: { slowPower: number; duration: number }) {
         if (!this.isSlowed) {
             this.skinnedMeshes.forEach((obj) => {
                 slowOutlinePass.selectedObjects.push(obj);

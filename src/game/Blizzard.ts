@@ -11,14 +11,24 @@ export class Blizzard {
     initialPos: THREE.Vector3;
     radius: number;
     damage: [number, number];
+    slowDuration: number;
+    slowPower: number; // 0 <= slowPower <= 1
     model: THREE.Group;
     timeSinceSpawn = 0;
-    constructor(position: THREE.Vector3, radius: number, damage: [number, number]) {
+    constructor(
+        position: THREE.Vector3,
+        radius: number,
+        slowPower: number,
+        duration: number,
+        damage: [number, number]
+    ) {
         this.id = idMaker();
         this.initialPos = new THREE.Vector3(position.x, position.y, position.z);
         this.model = new THREE.Group();
         this.radius = radius;
         this.damage = [...damage];
+        this.slowDuration = duration;
+        this.slowPower = slowPower;
 
         const icicleCount = this.radius * 4;
         const icicles = Array(icicleCount)
