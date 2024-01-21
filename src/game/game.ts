@@ -28,8 +28,8 @@ import {
     isModal,
 } from "../shared/helpers";
 import {
-    BLIZZARD_EFFECT_DURATION,
-    BLIZZARD_SLOW_DURATION,
+    DEFAULT_BLIZZARD_DURATION,
+    DEFAULT_BLIZZARD_SLOW_DURATION,
     COLORS,
     DEFAULT_METEOR_COUNT,
     DEFAULT_METEOR_DAMAGE,
@@ -39,6 +39,8 @@ import {
     MATERIALS,
     MAX_FOV,
     MIN_FOV,
+    DEFAULT_BLIZZARD_RADIUS,
+    DEFAULT_BLIZZARD_DAMAGE,
 } from "../shared/constants/general";
 
 import {
@@ -884,14 +886,21 @@ function animate() {
 
         // BLIZZARDS
         for (const [, blizzard] of blizzards.entries()) {
-            if (blizzard.timeSinceSpawn > BLIZZARD_EFFECT_DURATION) {
+            if (blizzard.timeSinceSpawn > DEFAULT_BLIZZARD_DURATION) {
                 blizzard.finish();
             }
 
             for (const e of enemies) {
                 const distance = e.model.position.distanceTo(blizzard.initialPos);
                 if (distance < blizzard.radius) {
-                    e.setSlowed({ slowPower: 0.5, duration: BLIZZARD_SLOW_DURATION });
+                    e.setSlowed({ slowPower: 0.5, duration: DEFAULT_BLIZZARD_SLOW_DURATION });
+
+                    if (e.lastBlizzardId !== blizzard.id) {
+                        const damage = determineDamage(blizzard.damage);
+                        console.log(e.id, damage);
+                        e.takeDamage(damage);
+                        e.lastBlizzardId = blizzard.id;
+                    }
                 }
             }
 
@@ -1712,7 +1721,43 @@ function onBlizzardFire() {
     const position = new THREE.Vector3(blizzardTargetPos.x, blizzardTargetPos.y, blizzardTargetPos.z);
     console.log("fire Blizzard", position);
 
-    const blizzard = new Blizzard(position);
+    let radius = DEFAULT_BLIZZARD_RADIUS;
+    if (playerStats.skills.blizzard[1]) {
+        radius += playerStats.skills.blizzard[1].effect.RANGE!.value; // skill::blizzard-2
+    }
+    if (playerStats.skills.blizzard[3]) {
+        radius += playerStats.skills.blizzard[3].effect.RANGE!.value; // skill::blizzard-2
+    }
+    if (playerStats.skills.blizzard[4]) {
+        radius += playerStats.skills.blizzard[4].effect.RANGE!.value; // skill::blizzard-2
+    }
+
+    let damage = DEFAULT_BLIZZARD_DAMAGE;
+    console.log(damage);
+    // let damage = determineDamage(DEFAULT_BLIZZARD_DAMAGE);
+    if (playerStats.skills.blizzard[0]) {
+        damage = [
+            damage[0] + DEFAULT_BLIZZARD_DAMAGE[0] * (playerStats.skills.blizzard[0].effect.DAMAGE!.value / 100),
+            damage[1] + DEFAULT_BLIZZARD_DAMAGE[1] * (playerStats.skills.blizzard[0].effect.DAMAGE!.value / 100),
+        ];
+    }
+
+    if (playerStats.skills.blizzard[2]) {
+        damage = [
+            damage[0] + DEFAULT_BLIZZARD_DAMAGE[0] * (playerStats.skills.blizzard[2].effect.DAMAGE!.value / 100),
+            damage[1] + DEFAULT_BLIZZARD_DAMAGE[1] * (playerStats.skills.blizzard[2].effect.DAMAGE!.value / 100),
+        ];
+    }
+
+    if (playerStats.skills.blizzard[4]) {
+        damage = [
+            damage[0] + DEFAULT_BLIZZARD_DAMAGE[0] * (playerStats.skills.blizzard[4].effect.DAMAGE!.value / 100),
+            damage[1] + DEFAULT_BLIZZARD_DAMAGE[1] * (playerStats.skills.blizzard[4].effect.DAMAGE!.value / 100),
+        ];
+    }
+    console.log(damage);
+
+    const blizzard = new Blizzard(position, radius, damage);
     blizzards.set(blizzard.id, blizzard);
     scene.add(blizzard.model);
 }

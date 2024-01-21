@@ -3,29 +3,35 @@ import { MATERIALS } from "../shared/constants/general";
 import { idMaker } from "../shared/helpers";
 
 const speed = 3;
-const radius = 5;
-const icicleGeometry = new THREE.CylinderGeometry(0.01, 0.5, radius);
-const icicles = Array(12)
-    .fill(0)
-    .map(() => new THREE.Mesh(icicleGeometry, MATERIALS.icicle));
+const icicleRadius = 5;
+const icicleGeometry = new THREE.CylinderGeometry(0.01, 0.5, icicleRadius);
 
 export class Blizzard {
     id: string;
     initialPos: THREE.Vector3;
     radius: number;
+    damage: [number, number];
     model: THREE.Group;
     timeSinceSpawn = 0;
-    constructor(position: THREE.Vector3) {
+    constructor(position: THREE.Vector3, radius: number, damage: [number, number]) {
         this.id = idMaker();
         this.initialPos = new THREE.Vector3(position.x, position.y, position.z);
         this.model = new THREE.Group();
         this.radius = radius;
+        this.damage = [...damage];
+
+        const icicleCount = this.radius * 4;
+        const icicles = Array(icicleCount)
+            .fill(0)
+            .map(() => new THREE.Mesh(icicleGeometry, MATERIALS.icicle));
+
+        console.log("Blizzard", { icicleCount, radius: this.radius, damage: this.damage });
 
         for (const icicle of icicles) {
             const pos = new THREE.Vector3(
-                THREE.MathUtils.lerp(-3, 3, Math.random()),
+                THREE.MathUtils.lerp(-this.radius, this.radius, Math.random()),
                 THREE.MathUtils.lerp(-0.5, 0.5, Math.random()),
-                THREE.MathUtils.lerp(-3, 3, Math.random())
+                THREE.MathUtils.lerp(-this.radius, this.radius, Math.random())
             );
             icicle.name = "icicle";
             icicle.userData["speed"] = THREE.MathUtils.lerp(speed * 0.5, speed, Math.random());

@@ -13,9 +13,11 @@ export const DEFAULT_METEOR_DAMAGE = [50, 200] as [number, number];
 export const DEFAULT_METEOR_COUNT = 5;
 export const DEFAULT_METEOR_COOLDOWN = 30;
 
-export const BLIZZARD_SLOW_DURATION = 6;
-export const BLIZZARD_EFFECT_DURATION = 1.5;
+export const DEFAULT_BLIZZARD_SLOW_DURATION = 6;
+export const DEFAULT_BLIZZARD_DURATION = 1.5;
+export const DEFAULT_BLIZZARD_DAMAGE = [5, 16] as [number, number];
 export const DEFAULT_BLIZZARD_COOLDOWN = 8;
+export const DEFAULT_BLIZZARD_RADIUS = 3;
 
 export const MAX_FOV = 72;
 export const MIN_FOV = 8;

@@ -331,7 +331,6 @@ export const GAME_SKILLS: { [k in SkillPath]: Skill[] } = {
             },
         },
     ],
-
     blizzard: [
         {
             id: "blizzard-1",
@@ -361,9 +360,9 @@ export const GAME_SKILLS: { [k in SkillPath]: Skill[] } = {
             description:
                 "Unleash a Polar Vortex, intensifying the blizzard's damage, duration, and adding a bonus to slowEffect",
             starCost: 3,
-            effectStr: "DAMAGE +50%, SLOW_DURATION +0.5s,  SLOW_EFFECT +10%",
+            effectStr: "DAMAGE +40%, SLOW_DURATION +0.5s,  SLOW_EFFECT +10%",
             effect: {
-                [SkillEffectName.Damage]: { value: 50, unit: "%" },
+                [SkillEffectName.Damage]: { value: 40, unit: "%" },
                 [SkillEffectName.SlowDuration]: { value: 0.5, unit: "s" },
                 [SkillEffectName.SlowPower]: { value: 10, unit: "%" },
             },
@@ -385,9 +384,10 @@ export const GAME_SKILLS: { [k in SkillPath]: Skill[] } = {
             name: "Blizzard Mastery",
             description: "Master the art of Blizzard, enhancing damage, duration, and slowEffect",
             starCost: 5,
-            effectStr: "DAMAGE +50%, SLOW_DURATION +0.5s, SLOW_EFFECT  +5%",
+            effectStr: "DAMAGE +30%, SLOW_DURATION +0.5s, SLOW_EFFECT  +5%",
             effect: {
-                [SkillEffectName.Damage]: { value: 50, unit: "%" },
+                [SkillEffectName.Range]: { value: 1, unit: "meters" },
+                [SkillEffectName.Damage]: { value: 30, unit: "%" },
                 [SkillEffectName.SlowDuration]: { value: 0.5, unit: "s" },
                 [SkillEffectName.SlowPower]: { value: 5, unit: "%" },
             },

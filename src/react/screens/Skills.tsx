@@ -112,17 +112,26 @@ const Skills = () => {
                 {skillDetail ? (
                     <div>
                         <h2>{capitalize(skillDetail.name)}</h2>
-                        <p>{skillDetail.description}</p>
+
                         <p>{skillDetail.effectStr}</p>
 
-                        <div style={{ paddingTop: "1rem", display: "flex", justifyContent: "center" }}>
+                        <SkillActionButton
+                            skill={skillDetail}
+                            onPurchaseSkill={onPurchaseSkill}
+                            onRemoveSkill={onRemoveSkill}
+                            playerStars={starsToSpend}
+                        />
+
+                        <p>{skillDetail.description}</p>
+
+                        {/* <div style={{ paddingTop: "1rem", display: "flex", justifyContent: "center" }}>
                             <SkillActionButton
                                 skill={skillDetail}
                                 onPurchaseSkill={onPurchaseSkill}
                                 onRemoveSkill={onRemoveSkill}
                                 playerStars={starsToSpend}
                             />
-                        </div>
+                        </div> */}
                     </div>
                 ) : null}
             </div>
