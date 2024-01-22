@@ -25,7 +25,7 @@ export const BALLISTA_CRITICAL_HIT_CHANCE = 5; // 5%
 export const DEFAULT_CANNON_SLOW_DURATION = 1.25;
 
 export const DEFAULT_POISON_DURATION = 10;
-export const DEFAULT_POISON_DAMAGE = 4;
+export const DEFAULT_POISON_DAMAGE = [4, 6, 11, 17];
 
 export const WIZARD_RICOCHET_RANGE = 10;
 export const RICOCHET_IDEAL_DISTANCE = 3;

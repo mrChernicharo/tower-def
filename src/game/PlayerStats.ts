@@ -124,7 +124,6 @@ export class PlayerStats {
     }
 
     fireMeteor() {
-        console.log("meteor cooldownTime", this.meteorCooldownTime);
         this.meteorCooldown = this.meteorCooldownTime;
     }
 

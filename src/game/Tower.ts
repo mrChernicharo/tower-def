@@ -54,7 +54,7 @@ export class Tower {
 
     async _init() {
         await this._setupModel();
-        console.log(this);
+        // console.log("created tower", this);
         return this;
     }
 
@@ -62,7 +62,6 @@ export class Tower {
         this.model = TOWER_MODELS[this.towerName]["level-1"].clone();
         this._setupModelData();
         this._setupRangeGizmo();
-        console.log("created tower", this);
     }
 
     _setupRangeGizmo() {

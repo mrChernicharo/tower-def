@@ -39,7 +39,6 @@ import {
     MIN_FOV,
     BLIZZARD_ANIMATION_DURATION,
     DEFAULT_POISON_DURATION,
-    DEFAULT_POISON_DAMAGE,
     DEFAULT_CANNON_SLOW_DURATION,
     WIZARD_RICOCHET_RANGE,
     RICOCHET_IDEAL_DISTANCE,
@@ -49,6 +48,7 @@ import {
     AppLayers,
     EnemyChar,
     EnemyType,
+    GameArea,
     GameState,
     ModalType,
     SkillPath,
@@ -162,8 +162,7 @@ let prevPinchDist = 0;
 let pinchDist = 0;
 
 export async function destroyGame() {
-    console.log("destroy", { scene });
-    cancelAnimationFrame(frameId);
+    // console.log("destroy", { scene });
     gameState = GameState.Idle;
     currWaveIdx = 0;
     levelArea = "";
@@ -190,6 +189,8 @@ export async function destroyGame() {
     currWave = [];
     pathCurves = [];
     callWaveBeaconContainers = [];
+
+    cancelAnimationFrame(frameId);
 
     window.removeEventListener("projectile", onProjectile);
     window.removeEventListener("projectile-explode", onProjectileExplode);
@@ -243,7 +244,7 @@ export async function initGame({ area, level, hp, skills }: GameInitProps) {
         }
     }
 
-    console.log("initGame", { skills, levelArea, levelIdx, levelData, playerSkills });
+    console.log("initGame", { skills, levelData, playerSkills });
 
     playerStats = new PlayerStats({ hp, gold: levelData.initialGold, skills: playerSkills });
 
@@ -466,13 +467,12 @@ async function _initTowerModels() {
 
     for (const glb of result) {
         const model = glb.scene;
-        // console.log(model);
+
         const modelName =
             model.userData.name || model.children[0].userData.name || model.children[0].children[0].userData.name;
         const [towerName, towerLevel] = [modelName.split("_")[0] as TowerType, +modelName.split("_")[3]];
         model.name = modelName;
         model.userData.name = model.name;
-        // console.log(towerName, towerLevel, modelName);
 
         if (!TOWER_MODELS[towerName]) {
             TOWER_MODELS[towerName] = {};
@@ -492,43 +492,10 @@ async function _initTowerModels() {
 
         TOWER_MODELS[towerName][`level-${towerLevel}`].add(model.clone());
     }
-    console.log({ result, TOWER_MODELS });
+    // console.log({ result, TOWER_MODELS });
 
     const projectilesFbx = await fbxLoader.loadAsync("/assets/fbx/projectiles-no-texture.fbx");
     towerTexture = await new THREE.TextureLoader().loadAsync("/assets/fbx/towers-texture.png");
-    // console.log("_initTowerModels", {
-    //     towerModels,
-    //     towers: towerModels.children.map((c) => c.name).sort((a, b) => a.localeCompare(b)),
-    // });
-
-    // for (const model of towerModels.children) {
-    //     // console.log(model);
-    //     const towerLevel = +model.name.split("_")[3];
-    //     const towerName = capitalize(model.name.split("_")[0]) as TowerType;
-
-    //     if (!TOWER_MODELS[towerName]) {
-    //         TOWER_MODELS[towerName] = {};
-    //     }
-
-    //     if (!TOWER_MODELS[towerName][`level-${towerLevel}`]) {
-    //         TOWER_MODELS[towerName][`level-${towerLevel}`] = new THREE.Group();
-    //     }
-
-    //     // if (TOWER_BLUEPRINTS[towerName][towerLevel]?.modelURL) {
-    //     //     const glb = await gltfLoader.loadAsync(TOWER_BLUEPRINTS[towerName][towerLevel].modelURL!);
-    //     //     model = glb.scene;
-    //     // }
-
-    //     if (model.userData.name.includes("_Head")) {
-    //         model.name = `${towerName}-Tower_Head`;
-    //     } else if (model.userData.name.includes("_Body")) {
-    //         model.name = `${towerName}-Tower_Body`;
-    //     } else {
-    //         model.name = `${towerName}-Tower`;
-    //     }
-
-    //     TOWER_MODELS[towerName][`level-${towerLevel}`].add(model.clone());
-    // }
 
     const projectileModels = projectilesFbx.children;
     for (const model of projectileModels as THREE.Mesh[]) {
@@ -591,14 +558,10 @@ async function drawMap() {
 
     const model = glb.scene;
 
-    console.log("drawMap", { glb, model });
-
     model.traverse((obj) => {
-        console.log({ obj });
+        // console.log({ obj });
         if ((obj as THREE.Mesh).isMesh) {
             const mesh = obj as THREE.Mesh;
-
-            // console.log(mesh.name, mesh.position, mesh.rotation, mesh.scale);
 
             if (/Plane/g.test(mesh.name)) {
                 mesh.material = MATERIALS[`${levelData.area}`];
@@ -617,15 +580,13 @@ async function drawMap() {
     levelData.towerBasePositions.forEach((pos, i) => {
         const towerBaseMesh = new THREE.Mesh(new THREE.CylinderGeometry(1.5, 1.5, 0.2), MATERIALS.concrete);
         towerBaseMesh.name = `TowerBase.${i}`;
-
-        // towerBaseMesh.userData.name = `TowerBase.${i}`;
         towerBaseMesh.userData.idx = i;
         towerBaseMesh.layers.set(AppLayers.TowerBase);
         towerBaseMesh.position.set(pos[0], pos[1], pos[2]);
         scene.add(towerBaseMesh);
     });
 
-    console.log({ LEVEL_OBJECTS, levelArea, levelData, mapObjects: LEVEL_OBJECTS[levelIdx] });
+    // console.log({ LEVEL_OBJECTS, levelArea, levelData, mapObjects: LEVEL_OBJECTS[levelIdx] });
 
     for (const levelObj of LEVEL_OBJECTS[levelIdx]) {
         const { scene: object } = await gltfLoader.loadAsync(levelObj.url);
@@ -665,7 +626,7 @@ async function drawMap() {
 }
 
 function drawPaths() {
-    console.log("drawPaths", { levelData });
+    // console.log("drawPaths", { levelData });
 
     levelData.paths.forEach((path) => {
         const pathPoints: THREE.Vector3[] = [];
@@ -679,10 +640,14 @@ function drawPaths() {
         // const [shapeW, shapeH] =
         // levelData.area === GameArea.Forest || levelData.area === GameArea.Lava ? [0.05, 0.2] : [0.05, 0.05];
         // const [shapeW, shapeH] = [0.05, 0.05];
-        const [shapeW, shapeH] = [0.8, 0.035];
+        let [shapeW, shapeH] = [0.8, 0.035];
         // const [shapeW, shapeH] = [1, 0.02];
         // const [shapeW, shapeH] = [0.5, 0.05];
         // const [shapeW, shapeH] = [0.2, 0.05];
+
+        if (levelData.area === GameArea.Lava) {
+            [shapeW, shapeH] = [0.8, 0.135];
+        }
 
         const shapePts = [
             new THREE.Vector2(-shapeH, -shapeW),
@@ -904,10 +869,6 @@ function animate() {
         // EXPLOSIONS
         const removingExplosions = [];
         for (const [, explosion] of explosions.entries()) {
-            // if (gameState === GameState.Idle) {
-
-            // }
-
             const elapsed = totalGameTime - explosion.userData.spawned_at;
             const explosionRadius = explosion.userData.radius;
             if (elapsed < 0.2) {
@@ -1030,7 +991,7 @@ function onModalClick(e: MouseEvent, el: THREE.Object3D, modal3D: CSS2DObject, m
     const tower_id = el.userData.tower_id ?? "";
     const tower = towers.find((t) => t.id === tower_id);
 
-    console.log(":::onModalClick::::", { e, el, modal3D, modalEl, tower_id, tower });
+    // console.log(":::onModalClick::::", { e, el, modal3D, modalEl, tower_id, tower });
     outlinePass.selectedObjects = [];
 
     /******* TOWER BUILD *******/
@@ -1040,7 +1001,7 @@ function onModalClick(e: MouseEvent, el: THREE.Object3D, modal3D: CSS2DObject, m
 
         const t = new Tower(towerToBuild!, el.position, modal3D.userData["tile_idx"], playerStats.skills);
         towerPreview = { model: t.model, rangeGizmo: t.rangeGizmo };
-        console.log("draw tower preview", towerPreview);
+        // console.log("draw tower preview", towerPreview);
         scene.add(towerPreview.model);
         scene.add(towerPreview.rangeGizmo);
     }
@@ -1094,7 +1055,7 @@ function onModalClick(e: MouseEvent, el: THREE.Object3D, modal3D: CSS2DObject, m
         modalEl.innerHTML = modalTemplates.confirmTowerSell(tower!, playerStats.skills);
     }
     if (evTarget.classList.contains("cancel-tower-sell-btn")) {
-        console.log("open details modal", { tower });
+        // console.log("open details modal", { tower });
         modalEl.innerHTML = modalTemplates.towerDetails(tower!, playerStats.skills);
     }
     if (evTarget.id === "confirm-tower-sell-btn") {
@@ -1123,7 +1084,7 @@ function onModalClick(e: MouseEvent, el: THREE.Object3D, modal3D: CSS2DObject, m
         modalEl.innerHTML = modalTemplates.towerInfo(tower!);
     }
     if (evTarget.classList.contains("cancel-tower-info-btn")) {
-        console.log("open details modal", { tower });
+        // console.log("open details modal", { tower });
         modalEl.innerHTML = modalTemplates.towerDetails(tower!, playerStats.skills);
     }
 
@@ -1135,7 +1096,7 @@ function onModalClick(e: MouseEvent, el: THREE.Object3D, modal3D: CSS2DObject, m
         if (tower) {
             const { model, rangeGizmo } = tower.getUpgradedPreview();
             towerPreview = { model, rangeGizmo };
-            console.log("draw tower preview");
+            // console.log("draw tower preview");
             scene.add(towerPreview.model);
             scene.add(towerPreview.rangeGizmo);
             tower.model.visible = false;
@@ -1203,16 +1164,16 @@ function onCanvasClick(e: MouseEvent) {
     mouseRay.setFromCamera(mousePos, camera);
 
     const pos = mousePosToWorldPos(mouseRay, scene);
-    console.log([pos.x, pos.y, pos.z]);
+    console.log("click at", pos.x, pos.y, pos.z);
 
     let clickedTower: THREE.Intersection | undefined;
     let clickedTowerBase: THREE.Intersection | undefined;
     const rayIntersects = mouseRay.intersectObjects(scene.children);
-    console.log(rayIntersects);
+    // console.log(rayIntersects);
     rayIntersects.forEach((ch) => {
         if (ch.object.name.includes("TowerBase")) {
             clickedTowerBase = ch;
-            console.log(ch.object.position);
+            // console.log(ch.object.position);
         }
         if (ch.object.name.includes("_Tower")) {
             clickedTower = ch;
@@ -1227,7 +1188,7 @@ function onCanvasClick(e: MouseEvent) {
     switch (true) {
         case readyToFireMeteor: {
             if (rayIntersects.length < 1) {
-                console.log("cancel meteor");
+                // console.log("cancel meteor");
                 clearMeteorTargeting();
                 return;
             }
@@ -1239,21 +1200,21 @@ function onCanvasClick(e: MouseEvent) {
         }
         case readyToFireBlizzard: {
             if (rayIntersects.length < 1) {
-                console.log("cancel blizzard");
+                // console.log("cancel blizzard");
                 clearBlizzardTargeting();
                 return;
             }
 
             const pos = mousePosToWorldPos(mouseRay, scene);
             blizzardTargetPos = new THREE.Vector3(pos.x, pos.y, pos.z);
-            console.log("will dispatch blizzard-fire", { pos, blizzardTargetPos });
+            // console.log("will dispatch blizzard-fire", { pos, blizzardTargetPos });
             window.dispatchEvent(new CustomEvent("blizzard-fire"));
             return;
         }
         case Boolean(clickedTower): {
             if (!clickedTower) return;
             const tower = towers.find((t) => t.id === clickedTower!.object.userData.tower_id);
-            console.log("CLICKED TOWER", { clickedTower, tower, scene });
+            console.log("CLICKED TOWER", { clickedTower, tower });
 
             // tower!.rangeGizmo.visible = true;
             outlinePass.selectedObjects.push(clickedTower.object.parent as THREE.Mesh);
@@ -1270,7 +1231,7 @@ function onCanvasClick(e: MouseEvent) {
         }
         case Boolean(clickedTowerBase): {
             if (!clickedTowerBase) return;
-            console.log("CLICKED TOWER BASE", { clickedTowerBase, scene });
+            console.log("CLICKED TOWER BASE", { clickedTowerBase });
             const modal3D = scene.getObjectByName(`${clickedTowerBase.object.name}-modal`)!;
             modal3D.visible = true;
             outlinePass.selectedObjects.push(clickedTowerBase.object);
@@ -1424,12 +1385,12 @@ function onGameSpeedChange(e: MouseEvent) {
         const speedStr = elTarget.id.split("-")[1];
         const speed = Number(speedStr[0]);
         gameSpeed = speed as GameSpeed;
-        console.log("onGameSpeedChange", { gameSpeed });
+        // console.log("onGameSpeedChange", { gameSpeed });
     }
 }
 
 function onWaveEnded() {
-    console.log("wave ended");
+    console.log(`WAVE ${currWaveIdx + 1} ended`);
     gameState = GameState.Idle;
     currWaveIdx++;
     activeGameTime = 0;
@@ -1501,7 +1462,6 @@ function revertCancelableModals() {
     const allModals = Array.from(document.querySelectorAll<HTMLDivElement>(".modal2D"));
     // console.log("REVERT CANCELABLE MODALS");
     allModals.forEach((modalEl) => {
-        // if (modalEl === clickedModal) return;
         // console.log(":::", { modalEl, tower_id: modalEl.dataset["tower_id"] });
 
         for (const cancelableModalName of cancelableModalNames) {
@@ -1524,7 +1484,6 @@ function revertCancelableModals() {
 }
 
 function closedAllOpenModels() {
-    console.log("closedAllOpenModels");
     scene.traverse((obj) => {
         if (isModal(obj)) {
             obj.visible = false;
@@ -1599,14 +1558,14 @@ function onProjectileExplode(e: any) {
                     const t = TOWER_BLUEPRINTS.Ballista[projectile.level - 1];
                     const towerAvgDmg = THREE.MathUtils.lerp(t.damage[0], t.damage[1], 0.5);
                     const critDamage = towerAvgDmg * 3;
-                    const pureDamage = damage;
+                    // const pureDamage = damage;
                     damage += critDamage;
-                    console.log("CRITICAL HIT", {
-                        pureDamage,
-                        towerAvgDmg,
-                        "critDamage (3x towerAvgDmg)": critDamage,
-                        finalDamage: damage,
-                    });
+                    // console.log("CRITICAL HIT", {
+                    //     pureDamage,
+                    //     towerAvgDmg,
+                    //     "critDamage (3x towerAvgDmg)": critDamage,
+                    //     finalDamage: damage,
+                    // });
                 }
 
                 targetEnemy.takeDamage(damage);
@@ -1636,7 +1595,7 @@ function onProjectileExplode(e: any) {
             case TowerType.Poison: {
                 const duration = DEFAULT_POISON_DURATION;
 
-                const poison = new PoisonEntry(targetEnemy.id, duration, playerStats.skills);
+                const poison = new PoisonEntry(targetEnemy.id, duration, projectile.level, playerStats.skills);
                 if (!targetEnemy.isPoisoned) {
                     targetEnemy.setPoisoned();
                 }
@@ -1760,7 +1719,7 @@ function onEnemyDestroyed(e: any) {
     const { enemy, endReached } = data as { enemy: Enemy; endReached: boolean };
 
     if (endReached) {
-        console.log(`${enemy.enemyType} reached end`);
+        // console.log(`${enemy.enemyType} reached end`);
         playerStats.loseHP(1);
         if (playerStats.hp <= 0) {
             gameOverLose();
@@ -1807,10 +1766,10 @@ function onEnemyDestroyed(e: any) {
 
 function onMeteorBtnClick() {
     if (gameState === GameState.Active && meteorBtn.classList.contains("cancel-action")) {
-        console.log("onMeteorBtnClick! cancel meteor");
+        // console.log("onMeteorBtnClick! cancel meteor");
         clearMeteorTargeting();
     } else if (gameState === GameState.Active && playerStats.readyToMeteor()) {
-        console.log("onMeteorBtnClick! meteor targeting on");
+        // console.log("onMeteorBtnClick! meteor targeting on");
 
         document.body.style.cursor = "crosshair";
         readyToFireMeteor = true;
@@ -1826,10 +1785,10 @@ function onMeteorBtnClick() {
 }
 function onBlizzardBtnClick() {
     if (gameState === GameState.Active && blizzardBtn.classList.contains("cancel-action")) {
-        console.log("onBlizzardBtnClick! cancel blizzard");
+        // console.log("onBlizzardBtnClick! cancel blizzard");
         clearBlizzardTargeting();
     } else if (gameState === GameState.Active && playerStats.readyToBlizzard()) {
-        console.log("onBlizzardBtnClick! blizzard targeting on");
+        // console.log("onBlizzardBtnClick! blizzard targeting on");
 
         document.body.style.cursor = "crosshair";
         readyToFireBlizzard = true;
@@ -1976,7 +1935,7 @@ function onMeteorExplode(e: any) {
 
     const hitEnemies = applyAreaDamage(enemies, pos, explosion.userData.radius * 0.4, damage);
 
-    console.log({ id: meteor.id, meteor });
+    // console.log({ id: meteor.id, meteor });
     if (meteor.slowPower > 0) {
         hitEnemies.forEach((e) => {
             const slowPower = meteor.slowPower;
@@ -1988,7 +1947,7 @@ function onMeteorExplode(e: any) {
 }
 function onBlizzardFinish(e: any) {
     const blizzard = e.detail as Blizzard;
-    console.log("onBlizzardFinish", blizzard);
+    // console.log("onBlizzardFinish", blizzard);
     scene.remove(blizzard.model);
     blizzards.delete(blizzard.id);
 }
@@ -2001,18 +1960,7 @@ function onPoisonEntryDamage(e: any) {
     const enemy = enemies.find((e) => e.id === poison.enemyId);
 
     if (enemy) {
-        let poisonDamage = DEFAULT_POISON_DAMAGE;
-
-        if (playerStats.skills.poison[0]) {
-            poisonDamage += (DEFAULT_POISON_DAMAGE * playerStats.skills.poison[0].effect.POISON_DAMAGE!.value) / 100; // skill::poison-1
-        }
-        if (playerStats.skills.poison[3]) {
-            poisonDamage += (DEFAULT_POISON_DAMAGE * playerStats.skills.poison[3].effect.POISON_DAMAGE!.value) / 100; // skill::poison-4
-        }
-        if (playerStats.skills.poison[4]) {
-            poisonDamage += (DEFAULT_POISON_DAMAGE * playerStats.skills.poison[4].effect.POISON_DAMAGE!.value) / 100; // skill::poison-5
-        }
-        enemy.takeDamage(poisonDamage);
+        enemy.takeDamage(poison.damage);
     }
     // console.log("onPoisonEntryDamage", { poisonEntries, poison, enemy });
 }
@@ -2029,7 +1977,7 @@ function onPoisonEntryExpired(e: any) {
 
 export function clearTowerPreview() {
     if (towerPreview) {
-        console.log("revert tower preview", { towerPreview });
+        // console.log("revert tower preview", { towerPreview });
         scene.remove(towerPreview.model);
         scene.remove(towerPreview.rangeGizmo);
         towerPreview = undefined;

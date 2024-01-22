@@ -101,7 +101,6 @@ export const PlayerStatsContextProvider = ({ children }: { children: ReactNode }
                             }
                         }
                     });
-                    console.log("ha", copy.skills);
                 }
 
                 return { ...copy } as GlobalPlayerStats;
@@ -124,7 +123,7 @@ async function loadUserStats() {
         ? JSON.parse(localStorage.getItem("playerStats")!)
         : defaultPlayerStats;
 
-    console.log("set initial playerStats", { stats });
+    // console.log("set initial playerStats", { stats });
 
     return Promise.resolve(stats);
 }

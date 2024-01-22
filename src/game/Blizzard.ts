@@ -42,7 +42,7 @@ export class Blizzard {
             .fill(0)
             .map(() => new THREE.Mesh(icicleGeometry, MATERIALS.icicle));
 
-        console.log("Blizzard", { icicleCount, radius: this.radius, damage: this.damage });
+        // console.log("Blizzard", { icicleCount, radius: this.radius, damage: this.damage });
 
         for (const icicle of icicles) {
             const pos = new THREE.Vector3(
