@@ -819,29 +819,51 @@ function animate() {
             );
 
             if (enemiesInRange) {
-                if (tower.strategy === TargetingStrategy.FirstInLine) {
-                    let maxCoveredDistance = 0;
-                    enemiesInRange.forEach((e) => {
-                        const coveredDist = e.getPercDist();
-                        if (coveredDist > maxCoveredDistance) {
-                            maxCoveredDistance = coveredDist;
-                            targetEnemy = e;
-                        }
-                    });
-                } else if (tower.strategy === TargetingStrategy.LastInLine) {
-                    let minCoveredDistance = Infinity;
-                    enemiesInRange.forEach((e) => {
-                        const coveredDist = e.getPercDist();
-                        if (coveredDist < minCoveredDistance) {
-                            minCoveredDistance = coveredDist;
-                            targetEnemy = e;
-                        }
-                    });
-                }
-            }
+                const multiShotEnabled = playerStats.skills.archer[2];
+                if (tower.towerName === TowerType.Archer && multiShotEnabled) {
+                    let sortedEnemies: Enemy[] = [];
 
-            // console.log({ tower, enemiesInRange, enemies: [...enemies], targetEnemy });
-            tower.tick(delta, targetEnemy!);
+                    if (tower.strategy === TargetingStrategy.FirstInLine) {
+                        sortedEnemies = [...enemiesInRange].sort((a, b) => a.getPercDist() - b.getPercDist());
+                    } else if (tower.strategy === TargetingStrategy.LastInLine) {
+                        sortedEnemies = [...enemiesInRange].sort((a, b) => b.getPercDist() - a.getPercDist());
+                    }
+
+                    // console.log(sortedEnemies.map((e) => e.getPercDist()));
+
+                    const targetEnemies: Enemy[] = [];
+                    if (playerStats.skills.archer[4]) {
+                        if (sortedEnemies.length) targetEnemies.push(sortedEnemies.pop()!);
+                    }
+                    if (sortedEnemies.length) targetEnemies.push(sortedEnemies.pop()!);
+                    if (sortedEnemies.length) targetEnemies.push(sortedEnemies.pop()!);
+
+                    tower.tick(delta, targetEnemies);
+                } else {
+                    if (tower.strategy === TargetingStrategy.FirstInLine) {
+                        let maxCoveredDistance = 0;
+                        enemiesInRange.forEach((e) => {
+                            const coveredDist = e.getPercDist();
+                            if (coveredDist > maxCoveredDistance) {
+                                maxCoveredDistance = coveredDist;
+                                targetEnemy = e;
+                            }
+                        });
+                    } else if (tower.strategy === TargetingStrategy.LastInLine) {
+                        let minCoveredDistance = Infinity;
+                        enemiesInRange.forEach((e) => {
+                            const coveredDist = e.getPercDist();
+                            if (coveredDist < minCoveredDistance) {
+                                minCoveredDistance = coveredDist;
+                                targetEnemy = e;
+                            }
+                        });
+                    }
+                }
+
+                // console.log({ tower, enemiesInRange, enemies: [...enemies], targetEnemy });
+                tower.tick(delta, targetEnemy!);
+            }
         }
 
         // PROJECTILE
@@ -1607,7 +1629,6 @@ function onProjectileExplode(e: any) {
                 if (ricochetEnabled) {
                     if (projectile.model.userData.ricochet === 3) {
                         targetEnemy.takeDamage(projectile.damage * 0.35);
-                        break;
                     }
 
                     if (projectile.model.userData.ricochet === 2) {
@@ -1620,7 +1641,6 @@ function onProjectileExplode(e: any) {
                             projectile.model.userData.tower_id,
                             3
                         );
-                        break;
                     }
 
                     if (projectile.model.userData.ricochet === 1) {
@@ -1633,7 +1653,6 @@ function onProjectileExplode(e: any) {
                             projectile.model.userData.tower_id,
                             2
                         );
-                        break;
                     }
 
                     if (!projectile.model.userData.ricochet) {

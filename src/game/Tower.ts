@@ -165,17 +165,25 @@ export class Tower {
         // console.log("_setupModelData", { model: this.model, head: this.headMesh, body: this.bodyMesh });
     }
 
-    tick(delta: number, targetEnemy: Enemy | undefined) {
-        if (targetEnemy) {
+    tick(delta: number, target: Enemy | Enemy[] | undefined) {
+        if (target instanceof Array) {
+            if (this.cooldown <= 0) {
+                target.forEach((e, i) => {
+                    // console.log("ShoooT!", targetEnemy.enemyType);
+                    this.fireProjectile(e, i !== 0);
+                });
+                this.cooldown = 1 / this.rateOfFire;
+            }
+        } else if (target instanceof Enemy) {
             if (this.headMesh) {
-                this._rotateTowardsTarget(targetEnemy);
+                this._rotateTowardsTarget(target);
             } else {
                 this.targetLocked = true;
             }
 
             if (this.cooldown <= 0 && this.targetLocked) {
                 // console.log("ShoooT!", targetEnemy.enemyType);
-                this.fireProjectile(targetEnemy);
+                this.fireProjectile(target);
 
                 this.cooldown = 1 / this.rateOfFire;
             }
@@ -206,7 +214,7 @@ export class Tower {
         }
     }
 
-    fireProjectile(enemy: Enemy) {
+    fireProjectile(enemy: Enemy, isMultiShot = false) {
         const projBlueprint = { ...PROJECTILE_BLUEPRINTS[this.towerName][this.blueprint.level - 1] };
         const origin = new THREE.Vector3(this.firePoint.x, this.firePoint.y, this.firePoint.z);
 
@@ -232,6 +240,7 @@ export class Tower {
 
                 const destination = new THREE.Vector3().copy(enemy.getFuturePosition(timeToReachTargetViaParabola));
                 const projectile = new ParabolaProjectile(this, origin, destination, enemy.id, curve);
+
                 window.dispatchEvent(new CustomEvent("projectile", { detail: projectile }));
                 return;
             }
@@ -243,6 +252,9 @@ export class Tower {
 
                 const projectile = new StraightProjectile(this, origin, destination, enemy.id);
 
+                if (isMultiShot) {
+                    projectile.damage *= 0.5;
+                }
                 window.dispatchEvent(new CustomEvent("projectile", { detail: projectile }));
                 return;
             }
