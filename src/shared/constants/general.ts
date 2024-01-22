@@ -151,7 +151,7 @@ export const MATERIALS = {
     projectileGizmo: new THREE.MeshToonMaterial({ color: 0x00ffff }),
     tower: (towerTexture: THREE.Texture) =>
         new THREE.MeshBasicMaterial({
-            color: 0xdba58c,
+            color: 0x000000,
             map: towerTexture,
         }),
     towerHighlight: (towerTexture: THREE.Texture) =>

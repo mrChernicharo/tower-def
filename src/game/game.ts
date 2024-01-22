@@ -554,35 +554,20 @@ function _init2DModals() {
 }
 
 async function drawMap() {
-    const glb = await gltfLoader.loadAsync(levelData.mapURL);
-
-    const model = glb.scene;
-
-    model.traverse((obj) => {
-        // console.log({ obj });
-        if ((obj as THREE.Mesh).isMesh) {
-            const mesh = obj as THREE.Mesh;
-
-            if (/Plane/g.test(mesh.name)) {
-                mesh.material = MATERIALS[`${levelData.area}`];
-                // mesh.receiveShadow = true;
-                obj.layers.set(AppLayers.Terrain);
-            } else {
-                mesh.material = MATERIALS.concrete2;
-                // mesh.receiveShadow = true;
-                obj.layers.set(AppLayers.Buildings);
-            }
-        }
+    levelData.ground.forEach((plane) => {
+        const [x, y, z] = plane;
+        const groundGeometry = new THREE.BoxGeometry(x, y, z);
+        const ground = new THREE.Mesh(groundGeometry, MATERIALS[levelData.area]);
+        ground.layers.set(AppLayers.Terrain);
+        scene.add(ground);
     });
-
-    scene.add(model);
 
     levelData.towerBasePositions.forEach((pos, i) => {
         const towerBaseMesh = new THREE.Mesh(new THREE.CylinderGeometry(1.5, 1.5, 0.2), MATERIALS.concrete);
+        towerBaseMesh.position.set(pos[0], pos[1], pos[2]);
         towerBaseMesh.name = `TowerBase.${i}`;
         towerBaseMesh.userData.idx = i;
         towerBaseMesh.layers.set(AppLayers.TowerBase);
-        towerBaseMesh.position.set(pos[0], pos[1], pos[2]);
         scene.add(towerBaseMesh);
     });
 
@@ -591,18 +576,19 @@ async function drawMap() {
     for (const levelObj of LEVEL_OBJECTS[levelIdx]) {
         const { scene: object } = await gltfLoader.loadAsync(levelObj.url);
 
-        levelObj.instances.forEach((inst) => {
+        levelObj.instances.forEach((d) => {
             const clone = object.clone();
             clone.name = levelObj.name;
-            clone.position.set(inst.position[0], inst.position[1], inst.position[2]);
-            clone.setRotationFromEuler(new THREE.Euler(inst.rotation[0], inst.rotation[1], inst.rotation[2]));
-            clone.scale.set(inst.scale[0], inst.scale[1], inst.scale[2]);
+            clone.position.set(d.position[0], d.position[1], d.position[2]);
+            clone.setRotationFromEuler(new THREE.Euler(d.rotation[0], d.rotation[1], d.rotation[2]));
+            clone.scale.set(d.scale[0], d.scale[1], d.scale[2]);
 
             if (clone.name.includes("desert")) {
                 clone.traverse((obj) => {
                     if ((obj as any).isMesh) {
                         const mesh = obj as THREE.Mesh;
-                        mesh.material = MATERIALS[`${levelData.area}`];
+                        mesh.material = MATERIALS[levelData.area];
+                        mesh.position.y -= 0.1;
                         // // mesh.receiveShadow = true;
                         obj.layers.set(AppLayers.Terrain);
                     }

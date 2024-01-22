@@ -138,7 +138,7 @@ export type GameLevel = {
     area: GameArea;
     level: number;
     initialGold: number;
-    mapURL: string;
+    ground: [number, number, number][];
     paths: JSONPath[];
     waves: [string, number, number, number][][];
     initialCamPos: [number, number, number];
