@@ -30,7 +30,7 @@ export const DEFAULT_POISON_DAMAGE = 4;
 export const WIZARD_RICOCHET_RANGE = 10;
 export const RICOCHET_IDEAL_DISTANCE = 3;
 
-export const MAX_FOV = 72;
+export const MAX_FOV = 60;
 export const MIN_FOV = 8;
 
 export const SELL_PRICE_MULTIPLIER = 0.5;
@@ -145,6 +145,7 @@ export const MATERIALS = {
     path: new THREE.MeshMatcapMaterial({ color: COLORS.concrete }),
     beacon: new THREE.MeshMatcapMaterial({ color: COLORS.green }),
     wood: new THREE.MeshMatcapMaterial({ color: "brown" }),
+    transparentWood: new THREE.MeshMatcapMaterial({ color: "brown", transparent: true, opacity: 0.5 }),
     icicle: new THREE.MeshMatcapMaterial({ color: "dodgerblue", transparent: true, opacity: 0.5 }),
 
     projectileGizmo: new THREE.MeshToonMaterial({ color: 0x00ffff }),

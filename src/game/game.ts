@@ -49,7 +49,6 @@ import {
     AppLayers,
     EnemyChar,
     EnemyType,
-    GameArea,
     GameState,
     ModalType,
     SkillPath,
@@ -677,10 +676,11 @@ function drawPaths() {
         const pathCurve = new THREE.CatmullRomCurve3(pathPoints, false, "catmullrom", 0.5);
         pathCurves.push(pathCurve);
 
-        const [shapeW, shapeH] =
-            levelData.area === GameArea.Forest || levelData.area === GameArea.Lava ? [0.05, 0.2] : [0.05, 0.05];
+        // const [shapeW, shapeH] =
+        // levelData.area === GameArea.Forest || levelData.area === GameArea.Lava ? [0.05, 0.2] : [0.05, 0.05];
         // const [shapeW, shapeH] = [0.05, 0.05];
-        // const [shapeW, shapeH] = [1, 0.05];
+        const [shapeW, shapeH] = [0.8, 0.035];
+        // const [shapeW, shapeH] = [1, 0.02];
         // const [shapeW, shapeH] = [0.5, 0.05];
         // const [shapeW, shapeH] = [0.2, 0.05];
 
@@ -695,12 +695,41 @@ function drawPaths() {
             steps: 200,
             extrudePath: pathCurve,
         });
-        const pathMesh = new THREE.Mesh(geometry, MATERIALS.path);
+
+        // levelData.area === GameArea.Forest || levelData.area === GameArea.Lava
+
+        const pathMaterials = {
+            desert: MATERIALS.concrete,
+            forest: MATERIALS.concrete,
+            winter: MATERIALS.lightConcrete,
+            lava: MATERIALS.concrete,
+        } as const;
+
+        const pathMesh = new THREE.Mesh(geometry, pathMaterials[levelArea as keyof typeof pathMaterials]);
         pathMesh.name = "Road";
         pathMesh.position.y = shapeH;
 
-        // console.log({ attributes: pathMesh.geometry.attributes, geometry });
+        // const rectangle = new THREE.Mesh(new THREE.BoxGeometry(1, 0.05, 0.2), MATERIALS.transparentWood);
+        // geometry.toJSON().options.extrudePath.points.forEach((p, i, arr) => {
+        //     const rect = rectangle.clone();
+        //     rect.position.set(p[0], p[1], p[2]);
+
+        //     const nextPoint = arr[i + 1];
+        //     if (nextPoint) {
+        //         rect.lookAt(nextPoint[0], nextPoint[1], nextPoint[2]);
+        //         scene.add(rect);
+        //     }
+        // });
+
         // console.log({ pathCurve, pathMesh, pathPoints });
+        // console.log("drawPaths", {
+        //     attributes: pathMesh.geometry.attributes,
+        //     geometry,
+        //     json: geometry.toJSON(),
+        //     points: geometry.toJSON().options.extrudePath.points,
+        //     // geometry.computeTangents()
+        //     morphAttrs: geometry.morphAttributes,
+        // });
 
         scene.add(pathMesh);
     });
