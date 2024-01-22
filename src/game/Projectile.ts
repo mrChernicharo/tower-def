@@ -20,7 +20,7 @@ class ProjectileBase {
     blueprint: ProjectileBluePrint;
     explosion: THREE.Mesh;
     damage: number;
-    constructor(tower: Tower, destination: THREE.Vector3, targetId: string) {
+    constructor(tower: Tower, origin: THREE.Vector3, destination: THREE.Vector3, targetId: string) {
         // INITIALIZE CLASS MEMBERS
         this.id = `proj-${tower.towerName}-${idMaker()}`;
         this.targetEnemyId = targetId;
@@ -33,7 +33,7 @@ class ProjectileBase {
         this.damage = determineDamage(tower.damage);
 
         this.destination = new THREE.Vector3(destination.x, destination.y, destination.z);
-        this.originPos = new THREE.Vector3(tower.firePoint.x, tower.firePoint.y, tower.firePoint.z);
+        this.originPos = new THREE.Vector3(origin.x, origin.y, origin.z);
 
         // SETUP MODEL
         const geometry = this.model.geometry.clone();
@@ -46,6 +46,7 @@ class ProjectileBase {
         this.model.scale.set(size, size, size);
         this.model.userData["projectile_id"] = this.id;
         this.model.userData["projectile_level"] = this.level;
+        this.model.userData["tower_id"] = tower.id;
         this.model.layers.set(AppLayers.Projectile);
 
         // SETUP EXPLOSION
@@ -56,8 +57,8 @@ class ProjectileBase {
 }
 
 export class StraightProjectile extends ProjectileBase {
-    constructor(tower: Tower, destination: THREE.Vector3, targetId: string) {
-        super(tower, destination, targetId);
+    constructor(tower: Tower, origin: THREE.Vector3, destination: THREE.Vector3, targetId: string) {
+        super(tower, origin, destination, targetId);
         this._setupTrajectory();
     }
 
@@ -105,8 +106,14 @@ export class StraightProjectile extends ProjectileBase {
 
 export class ParabolaProjectile extends ProjectileBase {
     curve!: THREE.CatmullRomCurve3;
-    constructor(tower: Tower, destination: THREE.Vector3, targetId: string, curve: THREE.CatmullRomCurve3) {
-        super(tower, destination, targetId);
+    constructor(
+        tower: Tower,
+        origin: THREE.Vector3,
+        destination: THREE.Vector3,
+        targetId: string,
+        curve: THREE.CatmullRomCurve3
+    ) {
+        super(tower, origin, destination, targetId);
         this.curve = curve;
         this._setupTrajectory();
     }

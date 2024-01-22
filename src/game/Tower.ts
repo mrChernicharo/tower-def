@@ -230,19 +230,18 @@ export class Tower {
 
                 const timeToReachTargetViaParabola = curve.getLength() / projBlueprint.speed;
 
-                const destination = enemy.getFuturePosition(timeToReachTargetViaParabola);
-
-                const projectile = new ParabolaProjectile(this, new THREE.Vector3().copy(destination), enemy.id, curve);
+                const destination = new THREE.Vector3().copy(enemy.getFuturePosition(timeToReachTargetViaParabola));
+                const projectile = new ParabolaProjectile(this, origin, destination, enemy.id, curve);
                 window.dispatchEvent(new CustomEvent("projectile", { detail: projectile }));
                 return;
             }
             case TrajectoryType.Straight: {
                 const timeToReachTargetViaStraightLine =
-                    origin.distanceTo(new THREE.Vector3().copy(enemy.getFuturePosition(0))) / projBlueprint.speed;
+                    origin.distanceTo(new THREE.Vector3().copy(enemy.getFuturePosition(0.2))) / projBlueprint.speed;
 
-                const destination = enemy.getFuturePosition(timeToReachTargetViaStraightLine);
+                const destination = new THREE.Vector3().copy(enemy.getFuturePosition(timeToReachTargetViaStraightLine));
 
-                const projectile = new StraightProjectile(this, new THREE.Vector3().copy(destination), enemy.id);
+                const projectile = new StraightProjectile(this, origin, destination, enemy.id);
 
                 window.dispatchEvent(new CustomEvent("projectile", { detail: projectile }));
                 return;

@@ -27,6 +27,9 @@ export const DEFAULT_CANNON_SLOW_DURATION = 1.25;
 export const DEFAULT_POISON_DURATION = 10;
 export const DEFAULT_POISON_DAMAGE = 4;
 
+export const WIZARD_RICOCHET_RANGE = 10;
+export const RICOCHET_IDEAL_DISTANCE = 3;
+
 export const MAX_FOV = 72;
 export const MIN_FOV = 8;
 

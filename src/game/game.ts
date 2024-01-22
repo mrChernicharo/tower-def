@@ -41,6 +41,8 @@ import {
     DEFAULT_POISON_DURATION,
     DEFAULT_POISON_DAMAGE,
     DEFAULT_CANNON_SLOW_DURATION,
+    WIZARD_RICOCHET_RANGE,
+    RICOCHET_IDEAL_DISTANCE,
 } from "../shared/constants/general";
 
 import {
@@ -66,6 +68,7 @@ import { LEVEL_OBJECTS } from "../shared/constants/levels/level-objects";
 import { ENEMY_BLUEPRINTS } from "../shared/constants/enemies";
 import { towerModelsURLs, TOWER_BLUEPRINTS } from "../shared/constants/towers";
 import { GAME_SKILLS } from "../shared/constants/skills";
+import { StraightProjectile } from "./Projectile";
 
 // let pathPoints: THREE.Vector3[] = [];
 
@@ -1407,6 +1410,7 @@ function gameOverWin() {
 
 function gameOverLose() {
     console.log("GAME END ... LOSE");
+    gameState = GameState.Idle;
     cssRenderer.domElement.style.opacity = "0";
     endGameScreen.innerHTML = gameEndTemplates.gameLose();
     endGameScreen.classList.remove("hidden");
@@ -1596,7 +1600,55 @@ function onProjectileExplode(e: any) {
                 break;
             }
             case TowerType.Wizard: {
-                targetEnemy.takeDamage(projectile.damage);
+                const ricochetEnabled = playerStats.skills.wizard[1];
+                const ricochet3 = playerStats.skills.wizard[3];
+                const ricochet4 = playerStats.skills.wizard[4];
+
+                if (ricochetEnabled) {
+                    if (projectile.model.userData.ricochet === 3) {
+                        targetEnemy.takeDamage(projectile.damage * 0.35);
+                        break;
+                    }
+
+                    if (projectile.model.userData.ricochet === 2) {
+                        targetEnemy.takeDamage(projectile.damage * 0.5);
+                        if (!ricochet4) break;
+                        handleRicochet(
+                            pos,
+                            targetEnemy,
+                            projectile.blueprint.speed,
+                            projectile.model.userData.tower_id,
+                            3
+                        );
+                        break;
+                    }
+
+                    if (projectile.model.userData.ricochet === 1) {
+                        targetEnemy.takeDamage(projectile.damage * 0.65);
+                        if (!ricochet3) break;
+                        handleRicochet(
+                            pos,
+                            targetEnemy,
+                            projectile.blueprint.speed,
+                            projectile.model.userData.tower_id,
+                            2
+                        );
+                        break;
+                    }
+
+                    if (!projectile.model.userData.ricochet) {
+                        targetEnemy.takeDamage(projectile.damage);
+                        handleRicochet(
+                            pos,
+                            targetEnemy,
+                            projectile.blueprint.speed,
+                            projectile.model.userData.tower_id,
+                            1
+                        );
+                    }
+                } else {
+                    targetEnemy.takeDamage(projectile.damage);
+                }
                 break;
             }
         }
@@ -1610,6 +1662,41 @@ function onProjectileExplode(e: any) {
     explosions.set(projectile.id, explosion);
     scene.add(explosion);
     // console.log("onProjectileExplode", { poisonEntries });
+}
+
+function handleRicochet(pos: THREE.Vector3, targetEnemy: Enemy, speed: number, tower_id: string, level: number) {
+    const tower = towers.find((t) => t.id === tower_id)!;
+
+    // RICOCHET
+    let chosenEnemy: Enemy | undefined;
+    enemies.forEach((e) => {
+        if (pos.distanceTo(e.model.position) < WIZARD_RICOCHET_RANGE && e.id !== targetEnemy.id) {
+            if (chosenEnemy) {
+                // if (pos.distanceTo(e.model.position) < pos.distanceTo(chosenEnemy.model.position)) {
+                if (
+                    Math.abs(pos.distanceTo(e.model.position) - RICOCHET_IDEAL_DISTANCE) <
+                    Math.abs(pos.distanceTo(chosenEnemy.model.position) - RICOCHET_IDEAL_DISTANCE)
+                ) {
+                    chosenEnemy = e;
+                }
+            } else {
+                chosenEnemy = e;
+            }
+        }
+    });
+
+    if (chosenEnemy) {
+        const timeToReachTargetViaStraightLine =
+            pos.distanceTo(new THREE.Vector3().copy(chosenEnemy.getFuturePosition(0.2))) / speed;
+        const destination = new THREE.Vector3().copy(chosenEnemy.getFuturePosition(timeToReachTargetViaStraightLine));
+        const origin = new THREE.Vector3().copy(pos);
+        const ricochetProjectile = new StraightProjectile(tower, origin, destination, chosenEnemy.id);
+        // window.dispatchEvent(new CustomEvent("ricochet-projectile", { detail: ricochetProjectile }));
+
+        ricochetProjectile.model.userData["ricochet"] = level;
+        // ricochetProjectile.model.userData["ricochet_enemy_id"] = level;
+        window.dispatchEvent(new CustomEvent("projectile", { detail: ricochetProjectile }));
+    }
 }
 
 function spawnEnemy(enemyType: EnemyType, pathIdx = 0) {
