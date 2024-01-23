@@ -39,7 +39,6 @@ const Game = () => {
         import("../../game/game").then(({ initGame }) => {
             initGame({
                 hp,
-                area,
                 level: +level,
                 skills: skillsObj,
             });

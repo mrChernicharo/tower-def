@@ -106,10 +106,10 @@ export type Skill = {
 export type SkillEffect = { value: number; unit: string };
 
 export type GameInitProps = {
-    area: string;
     level: number;
     hp: number;
     skills: Partial<PlayerSkillIDsMap>;
+    // area: string;
     // gold: number;
     // skills: Skill[];
 };
@@ -136,7 +136,8 @@ export type JSONPath = {
 
 export type GameLevel = {
     area: GameArea;
-    level: number;
+    stage: number;
+    levelIdx: number;
     initialGold: number;
     ground: [number, number, number][];
     paths: JSONPath[];

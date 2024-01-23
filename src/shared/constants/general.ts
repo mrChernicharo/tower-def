@@ -1,8 +1,11 @@
 /* eslint-disable @typescript-eslint/no-loss-of-precision */
 import { THREE } from "../../three";
+import { ALL_PATHS } from "./paths/all-paths";
 
-export const DRAW_AND_COMPUTE_OFFSET_PATHS = true;
-// export const DRAW_AND_COMPUTE_OFFSET_PATHS = false;
+console.log(ALL_PATHS);
+
+// export const DRAW_AND_COMPUTE_OFFSET_PATHS = true;
+export const DRAW_AND_COMPUTE_OFFSET_PATHS = false;
 
 export const USE_ORBIT_CONTROLS = true;
 // export const USE_ORBIT_CONTROLS = false;
