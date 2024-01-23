@@ -14,19 +14,14 @@ import { OutputPass } from "three/addons/postprocessing/OutputPass.js";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 // import { DragControls } from "three/examples/jsm/controls/DragControls.js";
 import { CSS2DRenderer, CSS2DObject } from "three/examples/jsm/renderers/CSS2DRenderer.js";
-import { Enemy } from "./Enemy";
-import {
-    applyAreaDamage,
-    calcEarnedStarsForGameWin,
-    // capitalize,
-    determineDamage,
-    mousePosToWorldPos,
-    getEnemyTypeFromChar,
-    getProjectileTowerName,
-    handleModelGun,
-    idMaker,
-    isModal,
-} from "../shared/helpers";
+
+import { GAME_LEVELS, STAGE_WAVES_DATA } from "../shared/constants/levels/game-levels";
+import { LEVEL_OBJECTS } from "../shared/constants/levels/level-objects";
+import { ENEMY_BLUEPRINTS } from "../shared/constants/enemies";
+import { towerModelsURLs, TOWER_BLUEPRINTS } from "../shared/constants/towers";
+import { GAME_SKILLS } from "../shared/constants/skills";
+import { StraightProjectile } from "./Projectile";
+import { ALL_PATHS } from "../shared/constants/paths/all-paths";
 import {
     COLORS,
     DEFAULT_METEOR_COUNT,
@@ -45,6 +40,18 @@ import {
     DRAW_AND_COMPUTE_OFFSET_PATHS,
     USE_ORBIT_CONTROLS,
 } from "../shared/constants/general";
+import {
+    applyAreaDamage,
+    calcEarnedStarsForGameWin,
+    // capitalize,
+    determineDamage,
+    mousePosToWorldPos,
+    getEnemyTypeFromChar,
+    getProjectileTowerName,
+    handleModelGun,
+    idMaker,
+    isModal,
+} from "../shared/helpers";
 
 import {
     AppLayers,
@@ -56,20 +63,23 @@ import {
     TargetingStrategy,
     TowerType,
 } from "../shared/enums";
-import { EnemyBluePrint, Projectile, WaveEnemyObj, GameInitProps, GameSpeed, GameLevel, Skill } from "../shared/types";
+import {
+    EnemyBluePrint,
+    Projectile,
+    WaveEnemyObj,
+    GameInitProps,
+    GameSpeed,
+    GameLevel,
+    Skill,
+    LaneChar,
+} from "../shared/types";
 import { beaconTemplate, cancelableModalNames, gameEndTemplates, modalTemplates, speedBtnsTemplate } from "./templates";
-import { Tower } from "./Tower";
 import { PlayerStats } from "./PlayerStats";
+import { Tower } from "./Tower";
+import { Enemy } from "./Enemy";
 import { Meteor } from "./Meteor";
-import { PoisonEntry } from "./PoisonEntry";
 import { Blizzard } from "./Blizzard";
-import { GAME_LEVELS, STAGE_WAVES_DATA } from "../shared/constants/levels/game-levels";
-import { LEVEL_OBJECTS } from "../shared/constants/levels/level-objects";
-import { ENEMY_BLUEPRINTS } from "../shared/constants/enemies";
-import { towerModelsURLs, TOWER_BLUEPRINTS } from "../shared/constants/towers";
-import { GAME_SKILLS } from "../shared/constants/skills";
-import { StraightProjectile } from "./Projectile";
-import { ALL_PATHS } from "../shared/constants/paths/all-paths";
+import { PoisonEntry } from "./PoisonEntry";
 
 // let pathPoints: THREE.Vector3[] = [];
 
@@ -116,7 +126,15 @@ let explosions: Map<string, THREE.Mesh>;
 let poisonEntries: Map<string, PoisonEntry>;
 let futureGizmos: Map<string, THREE.Mesh>;
 
-export let pathCurves: THREE.CatmullRomCurve3[] = [];
+export let allPathCurves: {
+    center: THREE.CatmullRomCurve3[];
+    left: THREE.CatmullRomCurve3[];
+    right: THREE.CatmullRomCurve3[];
+} = {
+    center: [],
+    left: [],
+    right: [],
+};
 export let towerTexture: THREE.Texture;
 
 let gui: GUI;
@@ -189,7 +207,11 @@ export async function destroyGame() {
     if (USE_ORBIT_CONTROLS) orbit.dispose();
     // playerStats.destroy();
     currWave = [];
-    pathCurves = [];
+    allPathCurves = {
+        center: [],
+        left: [],
+        right: [],
+    };
     callWaveBeaconContainers = [];
 
     cancelAnimationFrame(frameId);
@@ -621,52 +643,59 @@ function drawPaths() {
         const leftPaths: { x: number; y: number; z: number }[][] = [];
         const rightPaths: { x: number; y: number; z: number }[][] = [];
 
-        levelData.paths.forEach((path) => {
-            const pathPoints: THREE.Vector3[] = [];
+        for (const [lane, paths] of Object.entries(ALL_PATHS[levelData.levelIdx].paths)) {
+            console.log("lane, paths", lane, paths);
 
-            path.points.forEach((point) => {
-                pathPoints.push(new THREE.Vector3(point.x, point.y, point.z));
-            });
+            for (const path of paths) {
+                const pathPoints: THREE.Vector3[] = [];
 
-            const pathCurve = new THREE.CatmullRomCurve3(pathPoints, false, "catmullrom", 0.5);
-            pathCurves.push(pathCurve);
+                path.points.forEach((point) => {
+                    pathPoints.push(new THREE.Vector3(point.x, point.y, point.z));
+                });
 
-            // eslint-disable-next-line prefer-const
-            const [shapeW, shapeH] = [1, 0.035];
+                const pathCurve = new THREE.CatmullRomCurve3(pathPoints, false, "catmullrom", 0.5);
+                allPathCurves[lane as keyof typeof allPathCurves].push(pathCurve);
 
-            const shapePts = [
-                new THREE.Vector2(-shapeH, -shapeW),
-                new THREE.Vector2(shapeH, -shapeW),
-                new THREE.Vector2(shapeH, shapeW),
-                new THREE.Vector2(-shapeH, shapeW),
-            ];
-            const extrudeShape = new THREE.Shape(shapePts);
-            const mainPathGeometry = new THREE.ExtrudeGeometry(extrudeShape, {
-                steps: 200,
-                extrudePath: pathCurve,
-            });
+                // eslint-disable-next-line prefer-const
+                const [shapeW, shapeH] = [1, 0.035];
 
-            // levelData.area === GameArea.Forest || levelData.area === GameArea.Lava
-            const pathMaterials = {
-                desert: MATERIALS.concrete,
-                forest: MATERIALS.concrete,
-                winter: MATERIALS.lightConcrete,
-                lava: MATERIALS.concrete,
-            } as const;
+                const shapePts = [
+                    new THREE.Vector2(-shapeH, -shapeW),
+                    new THREE.Vector2(shapeH, -shapeW),
+                    new THREE.Vector2(shapeH, shapeW),
+                    new THREE.Vector2(-shapeH, shapeW),
+                ];
+                const extrudeShape = new THREE.Shape(shapePts);
+                const mainPathGeometry = new THREE.ExtrudeGeometry(extrudeShape, {
+                    steps: 200,
+                    extrudePath: pathCurve,
+                });
 
-            const pathMesh = new THREE.Mesh(mainPathGeometry, pathMaterials[levelArea as keyof typeof pathMaterials]);
-            pathMesh.name = "Road";
-            pathMesh.position.y = shapeH;
+                // levelData.area === GameArea.Forest || levelData.area === GameArea.Lava
+                const pathMaterials = {
+                    desert: MATERIALS.concrete,
+                    forest: MATERIALS.concrete,
+                    winter: MATERIALS.lightConcrete,
+                    lava: MATERIALS.concrete,
+                } as const;
 
-            // console.log({ pathCurve, pathMesh, pathPoints });
+                const pathMesh = new THREE.Mesh(
+                    mainPathGeometry,
+                    pathMaterials[levelArea as keyof typeof pathMaterials]
+                );
+                pathMesh.name = "Road";
+                pathMesh.position.y = shapeH;
 
-            scene.add(pathMesh);
+                // console.log({ pathCurve, pathMesh, pathPoints });
 
-            const { centerPath, leftPath, rightPath } = drawAndComputeOffsetPaths(shapeW, shapeH, mainPathGeometry);
-            centerPaths.push(centerPath);
-            leftPaths.push(leftPath);
-            rightPaths.push(rightPath);
-        });
+                scene.add(pathMesh);
+
+                const { centerPath, leftPath, rightPath } = drawAndComputeOffsetPaths(shapeW, shapeH, mainPathGeometry);
+                centerPaths.push(centerPath);
+                leftPaths.push(leftPath);
+                rightPaths.push(rightPath);
+            }
+        }
 
         const levelPaths = {
             stage: levelData.stage,
@@ -689,7 +718,7 @@ function drawPaths() {
         console.log({ levelPaths });
     } else {
         for (const [lane, paths] of Object.entries(ALL_PATHS[levelData.levelIdx].paths)) {
-            console.log(lane, paths);
+            console.log("lane, paths", lane, paths);
 
             for (const path of paths) {
                 const pathPoints: THREE.Vector3[] = [];
@@ -699,7 +728,7 @@ function drawPaths() {
                 });
 
                 const pathCurve = new THREE.CatmullRomCurve3(pathPoints, false, "catmullrom", 0.5);
-                pathCurves.push(pathCurve);
+                allPathCurves[lane as keyof typeof allPathCurves].push(pathCurve);
 
                 const [shapeW, shapeH] = [0.05, 0.035];
                 // const [shapeW, shapeH] = [1, 0.035];
@@ -737,6 +766,7 @@ function drawPaths() {
             }
         }
 
+        console.log({ allPathCurves });
         // levelData.paths.forEach((path) => {
 
         // });
@@ -748,7 +778,7 @@ function drawWaveCallBeacon() {
         enemyType: getEnemyTypeFromChar(wEnemy[0] as EnemyChar),
         pathIdx: wEnemy[1],
         spawnAt: wEnemy[2],
-        xOffset: wEnemy[3],
+        lane: wEnemy[3] as LaneChar,
     }));
 
     const differentEnemyPaths = [...new Set(currWave.map((waveData) => waveData.pathIdx))];
@@ -756,9 +786,9 @@ function drawWaveCallBeacon() {
     const beaconsPositions: THREE.Vector3[] = [];
     differentEnemyPaths.forEach((pathIdx) => {
         const pos = new THREE.Vector3(
-            pathCurves[pathIdx].points[0].x,
-            pathCurves[pathIdx].points[0].y,
-            pathCurves[pathIdx].points[0].z
+            allPathCurves.center[pathIdx].points[0].x,
+            allPathCurves.center[pathIdx].points[0].y,
+            allPathCurves.center[pathIdx].points[0].z
         );
 
         let samePoint = false;
@@ -773,7 +803,7 @@ function drawWaveCallBeacon() {
         }
     });
 
-    // console.log("drawWaveCallBeacon", { pathCurves, beaconsPositions, levelData, differentEnemyPaths });
+    // console.log("drawWaveCallBeacon", { allPathCurves, beaconsPositions, levelData, differentEnemyPaths });
 
     callWaveBeaconContainers = [];
     beaconsPositions.forEach((pos) => {
@@ -970,7 +1000,8 @@ function animate() {
         const spawningEnemyIdx = currWave.findIndex((e) => e.spawnAt < activeGameTime);
         if (spawningEnemyIdx > -1) {
             const [spawningEnemy] = currWave.splice(spawningEnemyIdx, 1);
-            spawnEnemy(spawningEnemy.enemyType, spawningEnemy.pathIdx);
+            console.log({ spawningEnemy });
+            spawnEnemy(spawningEnemy.enemyType, spawningEnemy.pathIdx, spawningEnemy.lane);
         }
     }
 
@@ -1751,9 +1782,9 @@ function handleRicochet(pos: THREE.Vector3, targetEnemy: Enemy, speed: number, t
     }
 }
 
-function spawnEnemy(enemyType: EnemyType, pathIdx = 0) {
+function spawnEnemy(enemyType: EnemyType, pathIdx = 0, lane: LaneChar) {
     // console.log("spawnEnemy", { enemyType, currWave });
-    const enemy = new Enemy(enemyType, pathIdx, camera.fov);
+    const enemy = new Enemy(enemyType, pathIdx, lane, camera.fov);
     enemies.push(enemy);
     scene.add(enemy.model);
 }

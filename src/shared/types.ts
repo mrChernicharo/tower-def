@@ -42,13 +42,13 @@ export type ProjectileBluePrint = {
 export type Projectile = ParabolaProjectile | StraightProjectile;
 
 // type, path, spawnAt, xOff
-export type WaveEnemy = [string, number, number, number];
+export type WaveEnemy = [string, number, number, LaneChar];
 
 export type WaveEnemyObj = {
     enemyType: EnemyType;
     pathIdx: number;
     spawnAt: number;
-    xOffset: number;
+    lane: LaneChar;
 };
 
 export type LevelStarCount = 0 | 1 | 2 | 3;
@@ -141,7 +141,7 @@ export type GameLevel = {
     initialGold: number;
     ground: [number, number, number][];
     paths: JSONPath[];
-    waves: [string, number, number, number][][];
+    waves: [string, number, number, string][][];
     initialCamPos: [number, number, number];
     cameraBounds: { left: number; right: number; top: number; bottom: number };
     towerBasePositions: [number, number, number][];
@@ -156,3 +156,5 @@ export type LevelObject = {
         scale: [number, number, number];
     }[];
 };
+
+export type LaneChar = "c" | "l" | "r";

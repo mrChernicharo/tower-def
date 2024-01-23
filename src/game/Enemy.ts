@@ -1,10 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { CSS2DObject, GLTF } from "three/examples/jsm/Addons.js";
-import { ENEMY_MODELS, slowOutlinePass, pathCurves, poisonOutlinePass } from "./game";
+import { ENEMY_MODELS, slowOutlinePass, allPathCurves, poisonOutlinePass } from "./game";
 import { THREE } from "../three";
 import * as SkeletonUtils from "three/examples/jsm/utils/SkeletonUtils.js";
 import { AppLayers, EnemyType } from "../shared/enums";
-import { EnemyBluePrint } from "../shared/types";
+import { EnemyBluePrint, LaneChar } from "../shared/types";
 import { MATERIALS, MAX_FOV } from "../shared/constants/general";
 import { idMaker } from "../shared/helpers";
 import { SkinnedMesh } from "three";
@@ -39,12 +39,14 @@ export class Enemy {
     timeSinceSlowed = 0;
     lastBlizzardId = "";
     isPoisoned = false;
-    constructor(enemyType: EnemyType, pathIdx = 0, fov: number) {
+    constructor(enemyType: EnemyType, pathIdx = 0, lane: LaneChar, fov: number) {
         this.id = idMaker();
         this.enemyType = enemyType;
         this.bluePrint = { ...ENEMY_BLUEPRINTS[this.enemyType] };
         this.hp = this.bluePrint.maxHp;
-        this.path = pathCurves[pathIdx];
+
+        const enemyLane = lane === "c" ? "center" : lane === "l" ? "left" : "right";
+        this.path = allPathCurves[enemyLane][pathIdx];
         this.#_init();
         this.updateHpBarLengthToMatchZoom(fov);
     }

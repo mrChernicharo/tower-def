@@ -3,7 +3,7 @@
 import { EnemyChar, EnemyType, TowerType } from "./enums";
 import { THREE } from "../three";
 import { GLTF } from "three/examples/jsm/Addons.js";
-import { LevelStarCount, LevelStarMap, PlayerSkillIDsMap, WaveEnemy } from "./types";
+import { LevelStarCount, LevelStarMap, PlayerSkillIDsMap, WaveEnemy, LaneChar } from "./types";
 import { Enemy } from "../game/Enemy";
 import { GAME_SKILLS } from "./constants/skills";
 import { STAGE_WAVES_DATA, allAreaLevels } from "./constants/levels/game-levels";
@@ -257,16 +257,11 @@ export function waveSegment(
     interval = 2,
     startSpawningAt = 0,
     pathIdx = 0,
-    xOffList = [0]
-): [EnemyChar, number, number, number][] {
+    lane: LaneChar = "c"
+): [EnemyChar, number, number, LaneChar][] {
     // console.log("waveSegment", { e, enemyCount, interval, startSpawningAt, xOffList });
 
-    return Array.from({ length: enemyCount }, (_, index) => [
-        e,
-        pathIdx,
-        index * interval + startSpawningAt,
-        xOffList[index % xOffList.length],
-    ]);
+    return Array.from({ length: enemyCount }, (_, index) => [e, pathIdx, index * interval + startSpawningAt, lane]);
 }
 
 export function getWaveStats(wave: WaveEnemy[], enemyBlueprints: typeof ENEMY_BLUEPRINTS) {
