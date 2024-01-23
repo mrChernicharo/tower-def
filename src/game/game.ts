@@ -621,8 +621,6 @@ function drawPaths() {
     const rightPaths: { x: number; y: number; z: number }[][] = [];
     levelData.paths.forEach((path) => {
         const pathPoints: THREE.Vector3[] = [];
-        leftPaths.push([]);
-        rightPaths.push([]);
 
         path.points.forEach((point) => {
             pathPoints.push(new THREE.Vector3(point.x, point.y, point.z));
@@ -662,8 +660,14 @@ function drawPaths() {
 
         scene.add(pathMesh);
 
-        if (DRAW_AND_COMPUTE_OFFSET_PATHS) drawAndComputeOffsetPaths(shapeW, shapeH, mainPathGeometry);
+        if (DRAW_AND_COMPUTE_OFFSET_PATHS) {
+            const { leftPath, rightPath } = drawAndComputeOffsetPaths(shapeW, shapeH, mainPathGeometry);
+            leftPaths.push(leftPath);
+            rightPaths.push(rightPath);
+        }
     });
+
+    console.log({ leftPaths, rightPaths });
 }
 
 function drawWaveCallBeacon() {
@@ -1987,15 +1991,18 @@ function drawAndComputeOffsetPaths(shapeW: number, shapeH: number, pathGeometry:
                 offset = shapeW;
                 dot = new THREE.Mesh(new THREE.SphereGeometry(0.15), MATERIALS.beacon);
                 dot.position.x += offset;
-                leftPath.push({ x: dot.position.x, y: dot.position.y, z: dot.position.z });
+
+                const pos = new THREE.Vector3().copy(rect.position).add(dot.position);
+                leftPath.push({ x: pos.x, y: pos.y, z: pos.z });
             }
             if (right) {
                 offset = -shapeW;
                 dot = new THREE.Mesh(new THREE.SphereGeometry(0.15), MATERIALS.poisonDmgMaterialStd);
                 dot.position.x += offset;
-                rightPath.push({ x: dot.position.x, y: dot.position.y, z: dot.position.z });
-            }
 
+                const pos = new THREE.Vector3().copy(rect.position).add(dot.position);
+                rightPath.push({ x: pos.x, y: pos.y, z: pos.z });
+            }
             scene.add(rect);
             rect.add(dot);
             i++;
@@ -2003,6 +2010,7 @@ function drawAndComputeOffsetPaths(shapeW: number, shapeH: number, pathGeometry:
     });
 
     console.log({ leftPath, rightPath });
+    return { leftPath, rightPath };
 }
 
 // let prevHighlightedMeshUUID: string | null = null;
