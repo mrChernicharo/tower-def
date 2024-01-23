@@ -1,6 +1,12 @@
 /* eslint-disable @typescript-eslint/no-loss-of-precision */
 import { THREE } from "../../three";
 
+export const DRAW_AND_COMPUTE_OFFSET_PATHS = true;
+// export const DRAW_AND_COMPUTE_OFFSET_PATHS = false;
+
+export const USE_ORBIT_CONTROLS = true;
+// export const USE_ORBIT_CONTROLS = false;
+
 export const DRAW_FUTURE_GIZMO = false;
 // export const DRAW_FUTURE_GIZMO = true;
 

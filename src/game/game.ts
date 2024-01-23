@@ -11,7 +11,7 @@ import { FXAAShader } from "three/examples/jsm/shaders/FXAAShader.js";
 import { OutputPass } from "three/addons/postprocessing/OutputPass.js";
 // import { TextGeometry } from "three/addons/geometries/TextGeometry.js";
 // import { FontLoader } from "three/examples/jsm/Addons.js";
-// import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
+import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 // import { DragControls } from "three/examples/jsm/controls/DragControls.js";
 import { CSS2DRenderer, CSS2DObject } from "three/examples/jsm/renderers/CSS2DRenderer.js";
 import { Enemy } from "./Enemy";
@@ -42,13 +42,14 @@ import {
     DEFAULT_CANNON_SLOW_DURATION,
     WIZARD_RICOCHET_RANGE,
     RICOCHET_IDEAL_DISTANCE,
+    DRAW_AND_COMPUTE_OFFSET_PATHS,
+    USE_ORBIT_CONTROLS,
 } from "../shared/constants/general";
 
 import {
     AppLayers,
     EnemyChar,
     EnemyType,
-    GameArea,
     GameState,
     ModalType,
     SkillPath,
@@ -86,7 +87,7 @@ let scene: THREE.Scene;
 let renderer: THREE.WebGLRenderer;
 let cssRenderer: CSS2DRenderer;
 let camera: THREE.PerspectiveCamera;
-//  let orbit: OrbitControls;
+let orbit: OrbitControls;
 
 let gameState = GameState.Idle;
 let gameClock: THREE.Clock;
@@ -173,7 +174,6 @@ export async function destroyGame() {
     scene.clear();
     camera.clear();
     composer.dispose();
-    // orbit.dispose();
     ambientLight.dispose();
     directionalLight.dispose();
     renderer.dispose();
@@ -185,6 +185,7 @@ export async function destroyGame() {
     meteors.clear();
     blizzards.clear();
     poisonEntries.clear();
+    if (USE_ORBIT_CONTROLS) orbit.dispose();
     // playerStats.destroy();
     currWave = [];
     pathCurves = [];
@@ -346,8 +347,10 @@ async function gameSetup() {
     const camTarget = new THREE.Vector3(camera.position.x, camera.position.y - 40, camera.position.z - 50);
     camera.lookAt(camTarget);
 
-    // orbit = new OrbitControls(camera, renderer.domElement);
-    // orbit.maxPolarAngle = Math.PI * 0.48;
+    if (USE_ORBIT_CONTROLS) {
+        orbit = new OrbitControls(camera, renderer.domElement);
+        orbit.maxPolarAngle = Math.PI * 0.48;
+    }
 
     ambientLight = new THREE.AmbientLight(0xefefef, 1);
     directionalLight = new THREE.DirectionalLight(0xffffff, 4);
@@ -614,8 +617,13 @@ async function drawMap() {
 function drawPaths() {
     // console.log("drawPaths", { levelData });
 
+    const leftPaths: { x: number; y: number; z: number }[][] = [];
+    const rightPaths: { x: number; y: number; z: number }[][] = [];
     levelData.paths.forEach((path) => {
         const pathPoints: THREE.Vector3[] = [];
+        leftPaths.push([]);
+        rightPaths.push([]);
+
         path.points.forEach((point) => {
             pathPoints.push(new THREE.Vector3(point.x, point.y, point.z));
         });
@@ -623,17 +631,8 @@ function drawPaths() {
         const pathCurve = new THREE.CatmullRomCurve3(pathPoints, false, "catmullrom", 0.5);
         pathCurves.push(pathCurve);
 
-        // const [shapeW, shapeH] =
-        // levelData.area === GameArea.Forest || levelData.area === GameArea.Lava ? [0.05, 0.2] : [0.05, 0.05];
-        // const [shapeW, shapeH] = [0.05, 0.05];
-        let [shapeW, shapeH] = [0.8, 0.035];
-        // const [shapeW, shapeH] = [1, 0.02];
-        // const [shapeW, shapeH] = [0.5, 0.05];
-        // const [shapeW, shapeH] = [0.2, 0.05];
-
-        if (levelData.area === GameArea.Lava) {
-            [shapeW, shapeH] = [0.8, 0.135];
-        }
+        // eslint-disable-next-line prefer-const
+        const [shapeW, shapeH] = [1, 0.035];
 
         const shapePts = [
             new THREE.Vector2(-shapeH, -shapeW),
@@ -642,13 +641,12 @@ function drawPaths() {
             new THREE.Vector2(-shapeH, shapeW),
         ];
         const extrudeShape = new THREE.Shape(shapePts);
-        const geometry = new THREE.ExtrudeGeometry(extrudeShape, {
+        const mainPathGeometry = new THREE.ExtrudeGeometry(extrudeShape, {
             steps: 200,
             extrudePath: pathCurve,
         });
 
         // levelData.area === GameArea.Forest || levelData.area === GameArea.Lava
-
         const pathMaterials = {
             desert: MATERIALS.concrete,
             forest: MATERIALS.concrete,
@@ -656,33 +654,15 @@ function drawPaths() {
             lava: MATERIALS.concrete,
         } as const;
 
-        const pathMesh = new THREE.Mesh(geometry, pathMaterials[levelArea as keyof typeof pathMaterials]);
+        const pathMesh = new THREE.Mesh(mainPathGeometry, pathMaterials[levelArea as keyof typeof pathMaterials]);
         pathMesh.name = "Road";
         pathMesh.position.y = shapeH;
 
-        // const rectangle = new THREE.Mesh(new THREE.BoxGeometry(1, 0.05, 0.2), MATERIALS.transparentWood);
-        // geometry.toJSON().options.extrudePath.points.forEach((p, i, arr) => {
-        //     const rect = rectangle.clone();
-        //     rect.position.set(p[0], p[1], p[2]);
-
-        //     const nextPoint = arr[i + 1];
-        //     if (nextPoint) {
-        //         rect.lookAt(nextPoint[0], nextPoint[1], nextPoint[2]);
-        //         scene.add(rect);
-        //     }
-        // });
-
         // console.log({ pathCurve, pathMesh, pathPoints });
-        // console.log("drawPaths", {
-        //     attributes: pathMesh.geometry.attributes,
-        //     geometry,
-        //     json: geometry.toJSON(),
-        //     points: geometry.toJSON().options.extrudePath.points,
-        //     // geometry.computeTangents()
-        //     morphAttrs: geometry.morphAttributes,
-        // });
 
         scene.add(pathMesh);
+
+        if (DRAW_AND_COMPUTE_OFFSET_PATHS) drawAndComputeOffsetPaths(shapeW, shapeH, mainPathGeometry);
     });
 }
 
@@ -764,7 +744,7 @@ function animate() {
     renderer.render(scene, camera);
     composer.render(delta);
 
-    // orbit.update();
+    if (USE_ORBIT_CONTROLS) orbit.update();
 
     if (gameState === GameState.Active) {
         activeGameTime += delta;
@@ -960,10 +940,12 @@ function onPointerMove(e: PointerEvent) {
     //     handleHoverEfx();
     // }
 
-    if (e.buttons === 1) {
-        handleCameraMovement(e);
-    } else {
-        // console.log("no drag", e.buttons);
+    if (!USE_ORBIT_CONTROLS) {
+        if (e.buttons === 1) {
+            handleCameraMovement(e);
+        } else {
+            // console.log("no drag", e.buttons);
+        }
     }
 }
 
@@ -1968,6 +1950,59 @@ export function clearTowerPreview() {
         scene.remove(towerPreview.rangeGizmo);
         towerPreview = undefined;
     }
+}
+
+function drawAndComputeOffsetPaths(shapeW: number, shapeH: number, pathGeometry: THREE.ExtrudeGeometry) {
+    const leftPath: { x: number; y: number; z: number }[] = [];
+    const rightPath: { x: number; y: number; z: number }[] = [];
+
+    const rectangle = new THREE.Mesh(new THREE.BoxGeometry(shapeW, 0.05, shapeH), MATERIALS.concrete);
+    const pathPoints = (pathGeometry.toJSON() as any).options.extrudePath.points as [number, number, number][];
+
+    pathPoints.forEach((point, i, arr) => {
+        const rect = rectangle.clone();
+        rect.position.set(point[0], point[1], point[2]);
+
+        const prevPoint = arr[i - 1];
+        const nextPoint = arr[i + 1]
+            ? arr[i + 1]
+            : [
+                  point[0] + point[0] - prevPoint[0],
+                  point[1] + point[1] - prevPoint[1],
+                  point[2] + point[2] - prevPoint[2],
+              ];
+
+        rect.lookAt(nextPoint[0], nextPoint[1], nextPoint[2]);
+
+        i = 0;
+        while (i < 3) {
+            const [center, left, right] = [i === 0, i === 1, i === 2];
+            let dot!: THREE.Mesh;
+            let offset = 0;
+
+            if (center) {
+                dot = new THREE.Mesh(new THREE.SphereGeometry(0.15), MATERIALS.black);
+            }
+            if (left) {
+                offset = shapeW;
+                dot = new THREE.Mesh(new THREE.SphereGeometry(0.15), MATERIALS.beacon);
+                dot.position.x += offset;
+                leftPath.push({ x: dot.position.x, y: dot.position.y, z: dot.position.z });
+            }
+            if (right) {
+                offset = -shapeW;
+                dot = new THREE.Mesh(new THREE.SphereGeometry(0.15), MATERIALS.poisonDmgMaterialStd);
+                dot.position.x += offset;
+                rightPath.push({ x: dot.position.x, y: dot.position.y, z: dot.position.z });
+            }
+
+            scene.add(rect);
+            rect.add(dot);
+            i++;
+        }
+    });
+
+    console.log({ leftPath, rightPath });
 }
 
 // let prevHighlightedMeshUUID: string | null = null;
