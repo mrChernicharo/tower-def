@@ -175,9 +175,9 @@ export class Enemy {
                 this.model.lookAt(position.clone().sub(tangent));
                 break;
             }
-            // case "knight":
             // case "elf":
             case "orc":
+            case "wizard":
             case "alien":
             case "demon":
             case "demonBoss":

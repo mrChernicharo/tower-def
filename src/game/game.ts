@@ -69,6 +69,7 @@ import { ENEMY_BLUEPRINTS } from "../shared/constants/enemies";
 import { towerModelsURLs, TOWER_BLUEPRINTS } from "../shared/constants/towers";
 import { GAME_SKILLS } from "../shared/constants/skills";
 import { StraightProjectile } from "./Projectile";
+import { ALL_PATHS } from "../shared/constants/paths/all-paths";
 
 // let pathPoints: THREE.Vector3[] = [];
 
@@ -351,10 +352,10 @@ async function gameSetup() {
         orbit.maxPolarAngle = Math.PI * 0.48;
     }
 
-    ambientLight = new THREE.AmbientLight(0xefefef, 1);
-    directionalLight = new THREE.DirectionalLight(0xffffff, 4);
+    ambientLight = new THREE.AmbientLight(0xffffff, 1);
+    directionalLight = new THREE.DirectionalLight(0xffffff, 1);
     // directionalLight.position.set(-30, 50, -30);
-    directionalLight.position.set(5, 10, 7.5);
+    directionalLight.position.set(60, 100, -60);
     // x: 5, y: 10, z: 7.5
     scene.add(ambientLight);
     scene.add(directionalLight);
@@ -616,8 +617,10 @@ async function drawMap() {
 function drawPaths() {
     console.log("drawPaths", { levelData });
     if (DRAW_AND_COMPUTE_OFFSET_PATHS) {
+        const centerPaths: { x: number; y: number; z: number }[][] = [];
         const leftPaths: { x: number; y: number; z: number }[][] = [];
         const rightPaths: { x: number; y: number; z: number }[][] = [];
+
         levelData.paths.forEach((path) => {
             const pathPoints: THREE.Vector3[] = [];
 
@@ -659,55 +662,84 @@ function drawPaths() {
 
             scene.add(pathMesh);
 
-            const { leftPath, rightPath } = drawAndComputeOffsetPaths(shapeW, shapeH, mainPathGeometry);
+            const { centerPath, leftPath, rightPath } = drawAndComputeOffsetPaths(shapeW, shapeH, mainPathGeometry);
+            centerPaths.push(centerPath);
             leftPaths.push(leftPath);
             rightPaths.push(rightPath);
         });
-        console.log({ leftPaths, rightPaths });
-    } else {
-        // ALL_PATHS[levelData.level]
 
-        levelData.paths.forEach((path) => {
-            const pathPoints: THREE.Vector3[] = [];
+        const levelPaths = {
+            stage: levelData.stage,
+            area: levelData.area,
+            paths: {
+                center: centerPaths.map((path) => ({ points: path, closed: false })),
+                left: leftPaths.map((path) => ({ points: path, closed: false })),
+                right: rightPaths.map((path) => ({ points: path, closed: false })),
+            },
+        };
 
-            path.points.forEach((point) => {
-                pathPoints.push(new THREE.Vector3(point.x, point.y, point.z));
-            });
-
-            const pathCurve = new THREE.CatmullRomCurve3(pathPoints, false, "catmullrom", 0.5);
-            pathCurves.push(pathCurve);
-
-            // eslint-disable-next-line prefer-const
-            const [shapeW, shapeH] = [1, 0.035];
-
-            const shapePts = [
-                new THREE.Vector2(-shapeH, -shapeW),
-                new THREE.Vector2(shapeH, -shapeW),
-                new THREE.Vector2(shapeH, shapeW),
-                new THREE.Vector2(-shapeH, shapeW),
-            ];
-            const extrudeShape = new THREE.Shape(shapePts);
-            const mainPathGeometry = new THREE.ExtrudeGeometry(extrudeShape, {
-                steps: 200,
-                extrudePath: pathCurve,
-            });
-
-            // levelData.area === GameArea.Forest || levelData.area === GameArea.Lava
-            const pathMaterials = {
-                desert: MATERIALS.concrete,
-                forest: MATERIALS.concrete,
-                winter: MATERIALS.lightConcrete,
-                lava: MATERIALS.concrete,
-            } as const;
-
-            const pathMesh = new THREE.Mesh(mainPathGeometry, pathMaterials[levelArea as keyof typeof pathMaterials]);
-            pathMesh.name = "Road";
-            pathMesh.position.y = shapeH;
-
-            // console.log({ pathCurve, pathMesh, pathPoints });
-
-            scene.add(pathMesh);
+        console.log({
+            l1x: leftPaths[0][0].x,
+            c1x: centerPaths[0][0].x,
+            r1x: rightPaths[0][0].x,
+            centerPaths,
+            leftPaths,
+            rightPaths,
         });
+        console.log({ levelPaths });
+    } else {
+        for (const [lane, paths] of Object.entries(ALL_PATHS[levelData.levelIdx].paths)) {
+            console.log(lane, paths);
+
+            for (const path of paths) {
+                const pathPoints: THREE.Vector3[] = [];
+
+                path.points.forEach((point) => {
+                    pathPoints.push(new THREE.Vector3(point.x, point.y, point.z));
+                });
+
+                const pathCurve = new THREE.CatmullRomCurve3(pathPoints, false, "catmullrom", 0.5);
+                pathCurves.push(pathCurve);
+
+                const [shapeW, shapeH] = [0.05, 0.035];
+                // const [shapeW, shapeH] = [1, 0.035];
+
+                const shapePts = [
+                    new THREE.Vector2(-shapeH, -shapeW),
+                    new THREE.Vector2(shapeH, -shapeW),
+                    new THREE.Vector2(shapeH, shapeW),
+                    new THREE.Vector2(-shapeH, shapeW),
+                ];
+                const extrudeShape = new THREE.Shape(shapePts);
+                const mainPathGeometry = new THREE.ExtrudeGeometry(extrudeShape, {
+                    steps: 200,
+                    extrudePath: pathCurve,
+                });
+
+                // levelData.area === GameArea.Forest || levelData.area === GameArea.Lava
+                const pathMaterials = {
+                    desert: MATERIALS.concrete,
+                    forest: MATERIALS.concrete,
+                    winter: MATERIALS.lightConcrete,
+                    lava: MATERIALS.concrete,
+                } as const;
+
+                const pathMesh = new THREE.Mesh(
+                    mainPathGeometry,
+                    pathMaterials[levelArea as keyof typeof pathMaterials]
+                );
+                pathMesh.name = "Road";
+                pathMesh.position.y = shapeH;
+
+                // console.log({ pathCurve, pathMesh, pathPoints });
+
+                scene.add(pathMesh);
+            }
+        }
+
+        // levelData.paths.forEach((path) => {
+
+        // });
     }
 }
 
@@ -1998,9 +2030,11 @@ export function clearTowerPreview() {
 }
 
 function drawAndComputeOffsetPaths(shapeW: number, shapeH: number, pathGeometry: THREE.ExtrudeGeometry) {
+    const centerPath: { x: number; y: number; z: number }[] = [];
     const leftPath: { x: number; y: number; z: number }[] = [];
     const rightPath: { x: number; y: number; z: number }[] = [];
 
+    const dummy = new THREE.Object3D();
     const rectangle = new THREE.Mesh(new THREE.BoxGeometry(shapeW, 0.05, shapeH), MATERIALS.concrete);
     const pathPoints = (pathGeometry.toJSON() as any).options.extrudePath.points as [number, number, number][];
 
@@ -2023,35 +2057,35 @@ function drawAndComputeOffsetPaths(shapeW: number, shapeH: number, pathGeometry:
         while (i < 3) {
             const [center, left, right] = [i === 0, i === 1, i === 2];
             let dot!: THREE.Mesh;
-            let offset = 0;
 
             if (center) {
                 dot = new THREE.Mesh(new THREE.SphereGeometry(0.15), MATERIALS.black);
             }
             if (left) {
-                offset = shapeW;
-                dot = new THREE.Mesh(new THREE.SphereGeometry(0.15), MATERIALS.beacon);
-                dot.position.x += offset;
-
-                const pos = new THREE.Vector3().copy(rect.position).add(dot.position);
-                leftPath.push({ x: pos.x, y: pos.y, z: pos.z });
+                dot = new THREE.Mesh(new THREE.SphereGeometry(0.15), MATERIALS.damageMaterialStd);
+                dot.position.x += shapeW;
             }
             if (right) {
-                offset = -shapeW;
                 dot = new THREE.Mesh(new THREE.SphereGeometry(0.15), MATERIALS.poisonDmgMaterialStd);
-                dot.position.x += offset;
-
-                const pos = new THREE.Vector3().copy(rect.position).add(dot.position);
-                rightPath.push({ x: pos.x, y: pos.y, z: pos.z });
+                dot.position.x -= shapeW;
             }
-            scene.add(rect);
+
             rect.add(dot);
+            dot.getWorldPosition(dummy.position);
+            // scene.updateMatrixWorld(); // otherwise getWorldPosition will yield the wrong result
+
+            const array = center ? centerPath : left ? leftPath : right ? rightPath : [];
+            array.push({ x: dummy.position.x, y: dummy.position.y, z: dummy.position.z });
+
+            scene.add(rect);
             i++;
         }
     });
 
-    console.log({ leftPath, rightPath });
-    return { leftPath, rightPath };
+    // const leftDot = scene.getObjectByName("left-0");
+    // console.log({ leftDot });
+
+    return { centerPath, leftPath, rightPath };
 }
 
 // let prevHighlightedMeshUUID: string | null = null;

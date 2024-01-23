@@ -134,8 +134,6 @@ export const COLORS = {
 export const MATERIALS = {
     damageMaterialStd: new THREE.MeshStandardMaterial({ color: "red" }),
     poisonDmgMaterialStd: new THREE.MeshStandardMaterial({ color: COLORS.poisonGreen }),
-    damageMaterialPhysical: new THREE.MeshStandardMaterial({ color: "red" }),
-    poisonDmgMaterialPhysical: new THREE.MeshStandardMaterial({ color: "green" }),
     meteor: new THREE.MeshMatcapMaterial({ color: COLORS.red }),
     concrete: new THREE.MeshMatcapMaterial({ color: COLORS.concrete }),
     concrete2: new THREE.MeshMatcapMaterial({ color: COLORS.concrete2 }),
