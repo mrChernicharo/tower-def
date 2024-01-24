@@ -37,7 +37,6 @@ export const LEVEL_OBJECTS: LevelObject[][] = [
             ],
         },
     ],
-
     // desert2:
     [
         {
@@ -111,7 +110,6 @@ export const LEVEL_OBJECTS: LevelObject[][] = [
             ],
         },
     ],
-
     // desert3:
     [
         {
@@ -148,7 +146,6 @@ export const LEVEL_OBJECTS: LevelObject[][] = [
             ],
         },
     ],
-
     // desert4:
     [
         {
@@ -297,7 +294,6 @@ export const LEVEL_OBJECTS: LevelObject[][] = [
             ],
         },
     ],
-
     // forest02
     [
         {
@@ -311,7 +307,6 @@ export const LEVEL_OBJECTS: LevelObject[][] = [
             instances: [{ position: [0.3687, 0, 4.648], rotation: [0, 0, 0], scale: [3, 3, 3] }],
         },
     ],
-
     // forest03
     [
         {
@@ -386,7 +381,6 @@ export const LEVEL_OBJECTS: LevelObject[][] = [
             ],
         },
     ],
-
     // forest04
     [
         {
@@ -481,7 +475,6 @@ export const LEVEL_OBJECTS: LevelObject[][] = [
             ],
         },
     ],
-
     // winter04
     [
         {
@@ -502,6 +495,7 @@ export const LEVEL_OBJECTS: LevelObject[][] = [
             ],
         },
     ],
+
     // lava01
     [
         {
@@ -525,6 +519,48 @@ export const LEVEL_OBJECTS: LevelObject[][] = [
             ],
         },
     ],
+    // lava02
+    [
+        {
+            name: "WonderWalls",
+            url: "assets/glb/other/WonderWalls.gltf",
+            instances: [
+                {
+                    position: [0, 0, -23.92985895818114],
+                    rotation: [0, 0, 0],
+                    scale: [6, 6, 6],
+                },
+            ],
+        },
+        {
+            name: "Storage",
+            url: "assets/glb/other/Storage.gltf",
+            instances: [
+                {
+                    position: [-24.27890419415416, 0, 5.014727702842472],
+                    rotation: [0, Math.PI / 2, 0],
+                    scale: [4, 4, 4],
+                },
+            ],
+        },
+        {
+            name: "Houses",
+            url: "assets/glb/other/Houses.gltf",
+            instances: [
+                {
+                    position: [-4.5, 0, 26.3],
+                    rotation: [0, 0, 0],
+                    scale: [3.5, 3.5, 3.5],
+                },
+                {
+                    position: [2, 0, 26.3],
+                    rotation: [0, 0, 0],
+                    scale: [3.5, 3.5, 3.5],
+                },
+            ],
+        },
+    ],
+    // lava03
     [
         {
             name: "Fountain_00",
@@ -547,47 +583,44 @@ export const LEVEL_OBJECTS: LevelObject[][] = [
             ],
         },
     ],
+    // lava04
     [
         {
-            name: "Fountain_00",
-            url: "assets/glb/other/Fountain_00.glb",
-            instances: [{ position: [-1, 0, 7.5], rotation: [0, 0.7, 0], scale: [1, 1, 1] }],
-        },
-        {
-            name: "Tavern",
-            url: "assets/glb/other/Tavern.glb",
-            instances: [{ position: [-22, 0, -14], rotation: [0, -Math.PI, 0], scale: [0.85, 0.85, 0.85] }],
-        },
-        {
-            name: "Statue_01",
-            url: "assets/glb/other/Statue_01.glb",
+            name: "WonderWalls",
+            url: "assets/glb/other/WonderWalls.gltf",
             instances: [
-                { position: [17.3, 0, 15.5], rotation: [0, 0.7, 0], scale: [1, 1, 1] },
-                { position: [-17.3, 0, 25.5], rotation: [0, -0.7, 0], scale: [1, 1, 1] },
-                { position: [-21, 0, 25.5], rotation: [0, -0.7, 0], scale: [1, 1, 1] },
-                { position: [-19, 0, 28.5], rotation: [0, -0.7, 0], scale: [1, 1, 1] },
+                {
+                    position: [0, 0, -23.92985895818114],
+                    rotation: [0, 0, 0],
+                    scale: [6, 6, 6],
+                },
             ],
         },
-    ],
-    [
         {
-            name: "Fountain_00",
-            url: "assets/glb/other/Fountain_00.glb",
-            instances: [{ position: [-1, 0, 7.5], rotation: [0, 0.7, 0], scale: [1, 1, 1] }],
-        },
-        {
-            name: "Tavern",
-            url: "assets/glb/other/Tavern.glb",
-            instances: [{ position: [-22, 0, -14], rotation: [0, -Math.PI, 0], scale: [0.85, 0.85, 0.85] }],
-        },
-        {
-            name: "Statue_01",
-            url: "assets/glb/other/Statue_01.glb",
+            name: "Storage",
+            url: "assets/glb/other/Storage.gltf",
             instances: [
-                { position: [17.3, 0, 15.5], rotation: [0, 0.7, 0], scale: [1, 1, 1] },
-                { position: [-17.3, 0, 25.5], rotation: [0, -0.7, 0], scale: [1, 1, 1] },
-                { position: [-21, 0, 25.5], rotation: [0, -0.7, 0], scale: [1, 1, 1] },
-                { position: [-19, 0, 28.5], rotation: [0, -0.7, 0], scale: [1, 1, 1] },
+                {
+                    position: [-24.27890419415416, 0, 5.014727702842472],
+                    rotation: [0, Math.PI / 2, 0],
+                    scale: [4, 4, 4],
+                },
+            ],
+        },
+        {
+            name: "Houses",
+            url: "assets/glb/other/Houses.gltf",
+            instances: [
+                {
+                    position: [-4.5, 0, 26.3],
+                    rotation: [0, 0, 0],
+                    scale: [3.5, 3.5, 3.5],
+                },
+                {
+                    position: [2, 0, 26.3],
+                    rotation: [0, 0, 0],
+                    scale: [3.5, 3.5, 3.5],
+                },
             ],
         },
     ],

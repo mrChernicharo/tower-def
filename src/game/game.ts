@@ -273,10 +273,10 @@ export async function initGame({ level, hp, skills }: GameInitProps) {
 
     await gameSetup();
     _wireUpLoadingManager();
+    await drawMap();
+    await drawPaths();
     await _initEnemyModels();
     await _initTowerModels();
-    await drawMap();
-    drawPaths();
     _init2DModals();
     drawWaveCallBeacon();
 
@@ -461,123 +461,6 @@ function _wireUpLoadingManager() {
     };
 }
 
-async function _initEnemyModels() {
-    const promises: Promise<GLTF>[] = [];
-    for (const enemyType of Object.keys(ENEMY_BLUEPRINTS)) {
-        const bluePrint: EnemyBluePrint = { ...ENEMY_BLUEPRINTS[enemyType as EnemyType] };
-        promises.push(gltfLoader.loadAsync(bluePrint.modelURL).then((glb) => ({ ...glb, userData: { enemyType } })));
-    }
-
-    const models = await Promise.all(promises);
-
-    for (const model of models) {
-        handleModelGun(model);
-        ENEMY_MODELS[model.userData.enemyType as EnemyType] = model;
-    }
-}
-
-async function _initTowerModels() {
-    // const towersFbx = await fbxLoader.loadAsync("/assets/fbx/towers-no-texture.fbx");
-    // const { scene: towerModels } = await gltfLoader.loadAsync(
-    //     "/assets/glb/towers/towers-no-texture-separated-heads.glb"
-    // );
-
-    const modelPromises: Promise<GLTF>[] = [];
-    for (const [, /*towerType*/ urls] of Object.entries(towerModelsURLs)) {
-        for (const url of urls) {
-            modelPromises.push(gltfLoader.loadAsync(url));
-        }
-    }
-    const result = await Promise.all(modelPromises);
-
-    for (const glb of result) {
-        const model = glb.scene;
-
-        const modelName =
-            model.userData.name || model.children[0].userData.name || model.children[0].children[0].userData.name;
-        const [towerName, towerLevel] = [modelName.split("_")[0] as TowerType, +modelName.split("_")[3]];
-        model.name = modelName;
-        model.userData.name = model.name;
-
-        if (!TOWER_MODELS[towerName]) {
-            TOWER_MODELS[towerName] = {};
-        }
-
-        if (!TOWER_MODELS[towerName][`level-${towerLevel}`]) {
-            TOWER_MODELS[towerName][`level-${towerLevel}`] = new THREE.Group();
-        }
-
-        if (model.userData.name.includes("_Head")) {
-            model.name = `${towerName}_Tower_Head`;
-        } else if (model.userData.name.includes("_Body")) {
-            model.name = `${towerName}_Tower_Body`;
-        } else {
-            model.name = `${towerName}_Tower`;
-        }
-
-        TOWER_MODELS[towerName][`level-${towerLevel}`].add(model.clone());
-    }
-    // console.log({ result, TOWER_MODELS });
-
-    const projectilesFbx = await fbxLoader.loadAsync("/assets/fbx/projectiles-no-texture.fbx");
-    towerTexture = await new THREE.TextureLoader().loadAsync("/assets/fbx/towers-texture.png");
-
-    const projectileModels = projectilesFbx.children;
-    for (const model of projectileModels as THREE.Mesh[]) {
-        const towerName = getProjectileTowerName(model.name);
-
-        if (!(towerName in PROJECTILE_MODELS)) {
-            PROJECTILE_MODELS[towerName] = {};
-        }
-
-        if (towerName === TowerType.Archer) {
-            const level = model.name.split("_")[3];
-            PROJECTILE_MODELS[towerName][`level-${+level}`] = model;
-        } else {
-            PROJECTILE_MODELS[towerName]["level-1"] = model;
-            PROJECTILE_MODELS[towerName]["level-2"] = model;
-            PROJECTILE_MODELS[towerName]["level-3"] = model;
-            PROJECTILE_MODELS[towerName]["level-4"] = model;
-        }
-    }
-}
-
-function _init2DModals() {
-    // console.log({ scene });
-    scene.traverse((el) => {
-        // if (/TowerBase.\d\d\d/.test(el.name)) {q
-        if ((el as THREE.Mesh).isMesh && el.name.includes("TowerBase")) {
-            // console.log({ el });
-
-            const tileIdx = el.userData.idx;
-
-            const modalContainer = document.createElement("div");
-            modalContainer.className = "modal-container";
-
-            const modalEl = document.createElement("div");
-            modalEl.id = `modal2D-${el.name}`;
-            modalEl.className = `modal2D tile_${tileIdx}`;
-            modalEl.style.pointerEvents = "all";
-            modalEl.style.opacity = "0.9";
-
-            const modal3D = new CSS2DObject(modalContainer);
-
-            modal3D.position.set(el.position.x, el.position.y, el.position.z);
-            modal3D.name = `${el.name}-modal`;
-            modal3D.userData["tile_idx"] = tileIdx;
-            modal3D.layers.set(AppLayers.Modals);
-            modal3D.visible = false;
-
-            scene.add(modal3D);
-
-            modalContainer.append(modalEl);
-            modalEl.innerHTML = modalTemplates.towerBuild(playerStats.skills);
-
-            modalEl.addEventListener("click", (e) => onModalClick(e, el, modal3D, modalEl));
-        }
-    });
-}
-
 async function drawMap() {
     levelData.ground.forEach((plane) => {
         const [x, y, z] = plane;
@@ -636,7 +519,7 @@ async function drawMap() {
     }
 }
 
-function drawPaths() {
+async function drawPaths() {
     console.log("drawPaths", { levelData });
 
     if (DRAW_AND_COMPUTE_OFFSET_PATHS) {
@@ -785,12 +668,15 @@ function drawPaths() {
             }
         }
     }
+
+    console.log("now it is 100% loaded!");
+    return Promise.resolve();
 }
 
 function drawWaveCallBeacon() {
     currWave = levelData.waves[currWaveIdx].map((wEnemy) => ({
         enemyType: getEnemyTypeFromChar(wEnemy[0] as EnemyChar),
-        pathIdx: wEnemy[1],
+        pathIdx: wEnemy[1] % ALL_PATHS[currWaveIdx].paths.center.length, // prevent errors with enemyWaves with pathIdx greater than the number of paths
         spawnAt: wEnemy[2],
         lane: wEnemy[3] as LaneChar,
     }));
@@ -852,6 +738,123 @@ function drawWaveCallBeacon() {
                 modalEl.remove();
             });
         };
+    });
+}
+
+async function _initEnemyModels() {
+    const promises: Promise<GLTF>[] = [];
+    for (const enemyType of Object.keys(ENEMY_BLUEPRINTS)) {
+        const bluePrint: EnemyBluePrint = { ...ENEMY_BLUEPRINTS[enemyType as EnemyType] };
+        promises.push(gltfLoader.loadAsync(bluePrint.modelURL).then((glb) => ({ ...glb, userData: { enemyType } })));
+    }
+
+    const models = await Promise.all(promises);
+
+    for (const model of models) {
+        handleModelGun(model);
+        ENEMY_MODELS[model.userData.enemyType as EnemyType] = model;
+    }
+}
+
+async function _initTowerModels() {
+    // const towersFbx = await fbxLoader.loadAsync("/assets/fbx/towers-no-texture.fbx");
+    // const { scene: towerModels } = await gltfLoader.loadAsync(
+    //     "/assets/glb/towers/towers-no-texture-separated-heads.glb"
+    // );
+
+    const modelPromises: Promise<GLTF>[] = [];
+    for (const [, /*towerType*/ urls] of Object.entries(towerModelsURLs)) {
+        for (const url of urls) {
+            modelPromises.push(gltfLoader.loadAsync(url));
+        }
+    }
+    const result = await Promise.all(modelPromises);
+
+    for (const glb of result) {
+        const model = glb.scene;
+
+        const modelName =
+            model.userData.name || model.children[0].userData.name || model.children[0].children[0].userData.name;
+        const [towerName, towerLevel] = [modelName.split("_")[0] as TowerType, +modelName.split("_")[3]];
+        model.name = modelName;
+        model.userData.name = model.name;
+
+        if (!TOWER_MODELS[towerName]) {
+            TOWER_MODELS[towerName] = {};
+        }
+
+        if (!TOWER_MODELS[towerName][`level-${towerLevel}`]) {
+            TOWER_MODELS[towerName][`level-${towerLevel}`] = new THREE.Group();
+        }
+
+        if (model.userData.name.includes("_Head")) {
+            model.name = `${towerName}_Tower_Head`;
+        } else if (model.userData.name.includes("_Body")) {
+            model.name = `${towerName}_Tower_Body`;
+        } else {
+            model.name = `${towerName}_Tower`;
+        }
+
+        TOWER_MODELS[towerName][`level-${towerLevel}`].add(model.clone());
+    }
+    // console.log({ result, TOWER_MODELS });
+
+    const projectilesFbx = await fbxLoader.loadAsync("/assets/fbx/projectiles-no-texture.fbx");
+    towerTexture = await new THREE.TextureLoader().loadAsync("/assets/fbx/towers-texture.png");
+
+    const projectileModels = projectilesFbx.children;
+    for (const model of projectileModels as THREE.Mesh[]) {
+        const towerName = getProjectileTowerName(model.name);
+
+        if (!(towerName in PROJECTILE_MODELS)) {
+            PROJECTILE_MODELS[towerName] = {};
+        }
+
+        if (towerName === TowerType.Archer) {
+            const level = model.name.split("_")[3];
+            PROJECTILE_MODELS[towerName][`level-${+level}`] = model;
+        } else {
+            PROJECTILE_MODELS[towerName]["level-1"] = model;
+            PROJECTILE_MODELS[towerName]["level-2"] = model;
+            PROJECTILE_MODELS[towerName]["level-3"] = model;
+            PROJECTILE_MODELS[towerName]["level-4"] = model;
+        }
+    }
+}
+
+function _init2DModals() {
+    // console.log({ scene });
+    scene.traverse((el) => {
+        // if (/TowerBase.\d\d\d/.test(el.name)) {q
+        if ((el as THREE.Mesh).isMesh && el.name.includes("TowerBase")) {
+            // console.log({ el });
+
+            const tileIdx = el.userData.idx;
+
+            const modalContainer = document.createElement("div");
+            modalContainer.className = "modal-container";
+
+            const modalEl = document.createElement("div");
+            modalEl.id = `modal2D-${el.name}`;
+            modalEl.className = `modal2D tile_${tileIdx}`;
+            modalEl.style.pointerEvents = "all";
+            modalEl.style.opacity = "0.9";
+
+            const modal3D = new CSS2DObject(modalContainer);
+
+            modal3D.position.set(el.position.x, el.position.y, el.position.z);
+            modal3D.name = `${el.name}-modal`;
+            modal3D.userData["tile_idx"] = tileIdx;
+            modal3D.layers.set(AppLayers.Modals);
+            modal3D.visible = false;
+
+            scene.add(modal3D);
+
+            modalContainer.append(modalEl);
+            modalEl.innerHTML = modalTemplates.towerBuild(playerStats.skills);
+
+            modalEl.addEventListener("click", (e) => onModalClick(e, el, modal3D, modalEl));
+        }
     });
 }
 

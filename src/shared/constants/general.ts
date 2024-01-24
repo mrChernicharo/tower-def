@@ -6,11 +6,12 @@ console.log(ALL_PATHS);
 
 // export const DRAW_AND_COMPUTE_OFFSET_PATHS = true;
 export const DRAW_AND_COMPUTE_OFFSET_PATHS = false;
+
 // export const DRAW_PATH_LANES = true;
 export const DRAW_PATH_LANES = false;
 
-// export const USE_ORBIT_CONTROLS = true;
-export const USE_ORBIT_CONTROLS = false;
+export const USE_ORBIT_CONTROLS = true;
+// export const USE_ORBIT_CONTROLS = false;
 
 export const DRAW_FUTURE_GIZMO = false;
 // export const DRAW_FUTURE_GIZMO = true;

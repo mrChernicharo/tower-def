@@ -5,7 +5,6 @@ import { printWavesStatistics } from "../../helpers";
 import { ENEMY_BLUEPRINTS } from "../enemies";
 import { STAGE_WAVES_DATA } from "./waves";
 import { towerBasePositions } from "./tower-positions";
-// import { THREE } from "../three";
 
 export const allAreaLevels = {
     desert: [0, 1, 2, 3],
@@ -38,6 +37,11 @@ export const GAME_LEVELS: GameLevel[] = [
         initialCamPos: [0, 40, 62],
         cameraBounds: mediumBounds,
         towerBasePositions: towerBasePositions.desert,
+        // paths:   {
+        //     center: desert01.center,
+        //     left: desert01.left,
+        //     right: desert01.right,
+        // }
     },
     {
         area: GameArea.Desert,
@@ -179,11 +183,11 @@ export const GAME_LEVELS: GameLevel[] = [
         levelIdx: 13,
         stage: 14,
         initialGold: 500,
-        ground: [[60, 0, 70]],
+        ground: [[50, 0, 75]],
         waves: STAGE_WAVES_DATA[13],
         initialCamPos: [0, 60, 60],
         cameraBounds: smallBounds,
-        towerBasePositions: towerBasePositions.lava,
+        towerBasePositions: towerBasePositions.lava2,
     },
     {
         area: GameArea.Lava,
@@ -201,11 +205,11 @@ export const GAME_LEVELS: GameLevel[] = [
         levelIdx: 15,
         stage: 16,
         initialGold: 550,
-        ground: [[60, 0, 70]],
+        ground: [[60, 0, 75]],
         waves: STAGE_WAVES_DATA[15],
         initialCamPos: [0, 60, 60],
         cameraBounds: smallBounds,
-        towerBasePositions: towerBasePositions.lava,
+        towerBasePositions: towerBasePositions.lava2,
     },
 ];
 
