@@ -1,7 +1,8 @@
-import { desert01, desert02 } from "./desert-side-paths";
-import { forest01 } from "./forest-paths";
-import { winter01 } from "./winter-paths";
+import { desert01, desert02 } from "./desert-paths";
+import { forest01, forest02 } from "./forest-paths";
+import { winter01, winter02 } from "./winter-paths";
 import { lava01 } from "./lava-paths";
+
 export const ALL_PATHS = [
     {
         stage: 1,
@@ -52,9 +53,9 @@ export const ALL_PATHS = [
         stage: 6,
         area: "forest",
         paths: {
-            center: forest01.center,
-            left: forest01.left,
-            right: forest01.right,
+            center: forest02.center,
+            left: forest02.left,
+            right: forest02.right,
         },
     },
     {
@@ -70,12 +71,11 @@ export const ALL_PATHS = [
         stage: 8,
         area: "forest",
         paths: {
-            center: forest01.center,
-            left: forest01.left,
-            right: forest01.right,
+            center: forest02.center,
+            left: forest02.left,
+            right: forest02.right,
         },
     },
-    // // Continue the pattern...
     {
         stage: 9,
         area: "winter",
@@ -89,9 +89,9 @@ export const ALL_PATHS = [
         stage: 10,
         area: "winter",
         paths: {
-            center: winter01.center,
-            left: winter01.left,
-            right: winter01.right,
+            center: winter02.center,
+            left: winter02.left,
+            right: winter02.right,
         },
     },
     {
@@ -107,9 +107,9 @@ export const ALL_PATHS = [
         stage: 12,
         area: "winter",
         paths: {
-            center: winter01.center,
-            left: winter01.left,
-            right: winter01.right,
+            center: winter02.center,
+            left: winter02.left,
+            right: winter02.right,
         },
     },
     // Continue the pattern...

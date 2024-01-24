@@ -223,8 +223,7 @@ export const LEVEL_OBJECTS: LevelObject[][] = [
         },
     ],
 
-    // forest
-
+    // forest01
     [
         {
             name: "Windmill",
@@ -299,6 +298,21 @@ export const LEVEL_OBJECTS: LevelObject[][] = [
         },
     ],
 
+    // forest02
+    [
+        {
+            name: "Mine",
+            url: "assets/glb/other/Mine.gltf",
+            instances: [{ position: [-19, 0, -16], rotation: [0, 0.29, 0], scale: [5, 5, 5] }],
+        },
+        {
+            name: "Temple",
+            url: "assets/glb/other/Temple.gltf",
+            instances: [{ position: [0.3687, 0, 4.648], rotation: [0, 0, 0], scale: [3, 3, 3] }],
+        },
+    ],
+
+    // forest03
     [
         {
             name: "Windmill",
@@ -373,156 +387,71 @@ export const LEVEL_OBJECTS: LevelObject[][] = [
         },
     ],
 
+    // forest04
     [
         {
-            name: "Windmill",
-            url: "assets/glb/other/Windmill.gltf",
-            instances: [
-                { position: [4.96, 0, 26.3], rotation: [0, -0.79, 0], scale: [3, 3, 3] },
-                { position: [0.7, 0, 22.7], rotation: [0, -0.59, 0], scale: [3, 3, 3] },
-            ],
+            name: "Mine",
+            url: "assets/glb/other/Mine.gltf",
+            instances: [{ position: [-19, 0, -16], rotation: [0, 0.29, 0], scale: [5, 5, 5] }],
         },
         {
             name: "Temple",
             url: "assets/glb/other/Temple.gltf",
-            instances: [{ position: [14, 0, -25.3], rotation: [0, -0.56, 0], scale: [3, 3, 3] }],
-        },
-        {
-            name: "Logs",
-            url: "assets/glb/other/Logs.gltf",
-            instances: [
-                { position: [14.5, 0.3, -12.2], rotation: [0, -0.71, 0], scale: [3, 3, 3] },
-                { position: [17.6, 0.3, -5.63], rotation: [0, -0.64, 0], scale: [3, 3, 3] },
-                { position: [15.38, 0.3, -8.87], rotation: [0, -0.39, 0], scale: [3, 3, 3] },
-            ],
-        },
-        {
-            name: "Storage",
-            url: "assets/glb/other/Storage.gltf",
-            instances: [{ position: [16.25, 0.3, -17.88], rotation: [0, -0.56, 0], scale: [3, 3, 3] }],
-        },
-        {
-            name: "Mountain_Group_1",
-            url: "assets/glb/other/Mountain_Group_1.gltf",
-            instances: [
-                {
-                    position: [-15.012545585632324, 0, -25.88467025756836],
-                    rotation: [0, 1.2041954477422578, 0],
-                    scale: [4, 4, 4],
-                },
-            ],
-        },
-        {
-            name: "Mountain_Group_2",
-            url: "assets/glb/other/Mountain_Group_2.gltf",
-            instances: [
-                {
-                    position: [-19.53233528137207, 0, -11.930508613586426],
-                    rotation: [0, 0.7501188358858834, 0],
-                    scale: [4, 4, 4],
-                },
-            ],
-        },
-        {
-            name: "Mountain_Single",
-            url: "assets/glb/other/Mountain_Single.gltf",
-            instances: [
-                {
-                    position: [-18.89307403564453, 0, 0.9307221174240112],
-                    rotation: [0, 0, 0],
-                    scale: [4, 2, 4],
-                },
-            ],
-        },
-        {
-            name: "MountainLarge_Single",
-            url: "assets/glb/other/MountainLarge_Single.gltf",
-            instances: [
-                {
-                    position: [-16.054481506347656, 0, -3.511462926864624],
-                    rotation: [0, 0, 0],
-                    scale: [4, 2, 4],
-                },
-            ],
+            instances: [{ position: [0.3687, 0, 4.648], rotation: [0, 0, 0], scale: [3, 3, 3] }],
         },
     ],
 
+    // winter01
     [
         {
             name: "Windmill",
             url: "assets/glb/other/Windmill.gltf",
+            instances: [{ position: [14, 0, -21], rotation: [0, -0.59, 0], scale: [4, 4, 4] }],
+        },
+        {
+            name: "Mine",
+            url: "assets/glb/other/Mine.gltf",
+            instances: [{ position: [-19, 0, -16], rotation: [0, 0.29, 0], scale: [5, 5, 5] }],
+        },
+        {
+            name: "Houses",
+            url: "assets/glb/other/Houses.gltf",
             instances: [
-                { position: [4.96, 0, 26.3], rotation: [0, -0.79, 0], scale: [3, 3, 3] },
-                { position: [0.7, 0, 22.7], rotation: [0, -0.59, 0], scale: [3, 3, 3] },
-            ],
-        },
-        {
-            name: "Temple",
-            url: "assets/glb/other/Temple.gltf",
-            instances: [{ position: [14, 0, -25.3], rotation: [0, -0.56, 0], scale: [3, 3, 3] }],
-        },
-        {
-            name: "Logs",
-            url: "assets/glb/other/Logs.gltf",
-            instances: [
-                { position: [14.5, 0.3, -12.2], rotation: [0, -0.71, 0], scale: [3, 3, 3] },
-                { position: [17.6, 0.3, -5.63], rotation: [0, -0.64, 0], scale: [3, 3, 3] },
-                { position: [15.38, 0.3, -8.87], rotation: [0, -0.39, 0], scale: [3, 3, 3] },
-            ],
-        },
-        {
-            name: "Storage",
-            url: "assets/glb/other/Storage.gltf",
-            instances: [{ position: [16.25, 0.3, -17.88], rotation: [0, -0.56, 0], scale: [3, 3, 3] }],
-        },
-        {
-            name: "Mountain_Group_1",
-            url: "assets/glb/other/Mountain_Group_1.gltf",
-            instances: [
-                {
-                    position: [-15.012545585632324, 0, -25.88467025756836],
-                    rotation: [0, 1.2041954477422578, 0],
-                    scale: [4, 4, 4],
-                },
-            ],
-        },
-        {
-            name: "Mountain_Group_2",
-            url: "assets/glb/other/Mountain_Group_2.gltf",
-            instances: [
-                {
-                    position: [-19.53233528137207, 0, -11.930508613586426],
-                    rotation: [0, 0.7501188358858834, 0],
-                    scale: [4, 4, 4],
-                },
-            ],
-        },
-        {
-            name: "Mountain_Single",
-            url: "assets/glb/other/Mountain_Single.gltf",
-            instances: [
-                {
-                    position: [-18.89307403564453, 0, 0.9307221174240112],
-                    rotation: [0, 0, 0],
-                    scale: [4, 2, 4],
-                },
+                { position: [-16, 0, -6.3], rotation: [0, -0.2, 0], scale: [4, 4, 4] },
+                { position: [-12, 0, -0.3], rotation: [0, 0.2, 0], scale: [4, 4, 4] },
             ],
         },
         {
             name: "MountainLarge_Single",
             url: "assets/glb/other/MountainLarge_Single.gltf",
             instances: [
-                {
-                    position: [-16.054481506347656, 0, -3.511462926864624],
-                    rotation: [0, 0, 0],
-                    scale: [4, 2, 4],
-                },
+                { position: [17, 0, -30], rotation: [0, 0, 0], scale: [5, 3, 5] },
+                { position: [20, 0, -27], rotation: [0, 0, 0], scale: [5, 4, 5] },
+                { position: [20, 0, -30], rotation: [0, 0, 0], scale: [5, 5, 5] },
             ],
         },
     ],
-
-    // winter
-
+    // winter02
+    [
+        {
+            name: "Houses",
+            url: "assets/glb/other/Houses.gltf",
+            instances: [
+                { position: [15.584, 0, 17.668], rotation: [0, -0.2, 0], scale: [4, 4, 4] },
+                { position: [-5.2, 0, -24.029], rotation: [0, 0.2, 0], scale: [4, 4, 4] },
+            ],
+        },
+        {
+            name: "MountainLarge_Single",
+            url: "assets/glb/other/MountainLarge_Single.gltf",
+            instances: [
+                { position: [17, 0, -30], rotation: [0, 0, 0], scale: [5, 3, 5] },
+                { position: [20, 0, -27], rotation: [0, 0, 0], scale: [5, 4, 5] },
+                { position: [20, 0, -30], rotation: [0, 0, 0], scale: [5, 5, 5] },
+            ],
+        },
+    ],
+    // winter03
     [
         {
             name: "Windmill",
@@ -553,23 +482,14 @@ export const LEVEL_OBJECTS: LevelObject[][] = [
         },
     ],
 
+    // winter04
     [
-        {
-            name: "Windmill",
-            url: "assets/glb/other/Windmill.gltf",
-            instances: [{ position: [14, 0, -21], rotation: [0, -0.59, 0], scale: [4, 4, 4] }],
-        },
-        {
-            name: "Mine",
-            url: "assets/glb/other/Mine.gltf",
-            instances: [{ position: [-19, 0, -16], rotation: [0, 0.29, 0], scale: [5, 5, 5] }],
-        },
         {
             name: "Houses",
             url: "assets/glb/other/Houses.gltf",
             instances: [
-                { position: [-16, 0, -6.3], rotation: [0, -0.2, 0], scale: [4, 4, 4] },
-                { position: [-12, 0, -0.3], rotation: [0, 0.2, 0], scale: [4, 4, 4] },
+                { position: [15.584, 0, 17.668], rotation: [0, -0.2, 0], scale: [4, 4, 4] },
+                { position: [-5.2, 0, -24.029], rotation: [0, 0.2, 0], scale: [4, 4, 4] },
             ],
         },
         {
@@ -582,67 +502,7 @@ export const LEVEL_OBJECTS: LevelObject[][] = [
             ],
         },
     ],
-
-    [
-        {
-            name: "Windmill",
-            url: "assets/glb/other/Windmill.gltf",
-            instances: [{ position: [14, 0, -21], rotation: [0, -0.59, 0], scale: [4, 4, 4] }],
-        },
-        {
-            name: "Mine",
-            url: "assets/glb/other/Mine.gltf",
-            instances: [{ position: [-19, 0, -16], rotation: [0, 0.29, 0], scale: [5, 5, 5] }],
-        },
-        {
-            name: "Houses",
-            url: "assets/glb/other/Houses.gltf",
-            instances: [
-                { position: [-16, 0, -6.3], rotation: [0, -0.2, 0], scale: [4, 4, 4] },
-                { position: [-12, 0, -0.3], rotation: [0, 0.2, 0], scale: [4, 4, 4] },
-            ],
-        },
-        {
-            name: "MountainLarge_Single",
-            url: "assets/glb/other/MountainLarge_Single.gltf",
-            instances: [
-                { position: [17, 0, -30], rotation: [0, 0, 0], scale: [5, 3, 5] },
-                { position: [20, 0, -27], rotation: [0, 0, 0], scale: [5, 4, 5] },
-                { position: [20, 0, -30], rotation: [0, 0, 0], scale: [5, 5, 5] },
-            ],
-        },
-    ],
-
-    [
-        {
-            name: "Windmill",
-            url: "assets/glb/other/Windmill.gltf",
-            instances: [{ position: [14, 0, -21], rotation: [0, -0.59, 0], scale: [4, 4, 4] }],
-        },
-        {
-            name: "Mine",
-            url: "assets/glb/other/Mine.gltf",
-            instances: [{ position: [-19, 0, -16], rotation: [0, 0.29, 0], scale: [5, 5, 5] }],
-        },
-        {
-            name: "Houses",
-            url: "assets/glb/other/Houses.gltf",
-            instances: [
-                { position: [-16, 0, -6.3], rotation: [0, -0.2, 0], scale: [4, 4, 4] },
-                { position: [-12, 0, -0.3], rotation: [0, 0.2, 0], scale: [4, 4, 4] },
-            ],
-        },
-        {
-            name: "MountainLarge_Single",
-            url: "assets/glb/other/MountainLarge_Single.gltf",
-            instances: [
-                { position: [17, 0, -30], rotation: [0, 0, 0], scale: [5, 3, 5] },
-                { position: [20, 0, -27], rotation: [0, 0, 0], scale: [5, 4, 5] },
-                { position: [20, 0, -30], rotation: [0, 0, 0], scale: [5, 5, 5] },
-            ],
-        },
-    ],
-    // lava
+    // lava01
     [
         {
             name: "Fountain_00",
