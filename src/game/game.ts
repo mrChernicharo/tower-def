@@ -676,13 +676,20 @@ async function drawPaths() {
 function drawWaveCallBeacon() {
     currWave = levelData.waves[currWaveIdx].map((wEnemy) => ({
         enemyType: getEnemyTypeFromChar(wEnemy[0] as EnemyChar),
-        pathIdx: wEnemy[1] % ALL_PATHS[currWaveIdx].paths.center.length, // prevent errors with enemyWaves with pathIdx greater than the number of paths
+        pathIdx: wEnemy[1], // prevent errors with enemyWaves with pathIdx greater than the number of paths
         spawnAt: wEnemy[2],
         lane: wEnemy[3] as LaneChar,
     }));
 
     const differentEnemyPaths = [...new Set(currWave.map((waveData) => waveData.pathIdx))];
 
+    console.log("drawWaveCallBeacon", {
+        allPaths: ALL_PATHS[currWaveIdx].paths.center.length,
+        currWave,
+        differentEnemyPaths,
+        levelData,
+        currWaveIdx,
+    });
     const beaconsPositions: THREE.Vector3[] = [];
     differentEnemyPaths.forEach((pathIdx) => {
         const pos = new THREE.Vector3(

@@ -25,7 +25,7 @@ export const ENEMY_BLUEPRINTS: { [k in EnemyType]: EnemyBluePrint } = {
         name: EnemyType.Dino,
         reward: 8,
         modelURL: "/assets/glb/enemies/Dino.gltf",
-        speed: 1, // mid
+        speed: 1.5, // mid
         maxHp: 60,
         modelScale: 0.8,
         // modelScale: 1,

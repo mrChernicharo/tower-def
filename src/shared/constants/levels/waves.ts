@@ -359,30 +359,96 @@ export const STAGE_WAVES_DATA: WaveEnemy[][][] = [
     [
         // wave 1
         [
-            ...waveSegment(EnemyChar.Dino, 6, 4, 0, 0),
-            ...waveSegment(EnemyChar.Demon, 6, 4, 8, 1),
-            ...waveSegment(EnemyChar.Squidle, 2, 1, 6, 2),
-            ...waveSegment(EnemyChar.Squidle, 2, 1, 12, 3),
-            ...waveSegment(EnemyChar.Squidle, 2, 1, 18, 2),
-            ...waveSegment(EnemyChar.Squidle, 2, 1, 24, 3),
+            ...waveSegment(EnemyChar.Demon, 1, 0, 0, 0),
+            ...waveSegment(EnemyChar.Dino, 2, 3, 2.5, 0, "l"),
+            ...waveSegment(EnemyChar.Dino, 2, 3, 2, 0, "r"),
+
+            ...waveSegment(EnemyChar.Demon, 1, 0, 12, 0),
+            ...waveSegment(EnemyChar.Dino, 2, 3, 14.5, 0, "l"),
+            ...waveSegment(EnemyChar.Dino, 2, 3, 14, 0, "r"),
+
+            ...waveSegment(EnemyChar.Demon, 1, 0, 24, 0),
+            ...waveSegment(EnemyChar.Dino, 2, 3, 26.5, 0, "l"),
+            ...waveSegment(EnemyChar.Dino, 2, 3, 26, 0, "r"),
+
+            ...waveSegment(EnemyChar.Demon, 3, 15, 0, 1),
+            ...waveSegment(EnemyChar.Squidle, 1, 0, 6, 1, "r"),
+            ...waveSegment(EnemyChar.Squidle, 1, 0, 7.5, 1, "l"),
+            ...waveSegment(EnemyChar.Squidle, 1, 0, 9, 1, "r"),
+            ...waveSegment(EnemyChar.Squidle, 1, 0, 10.5, 1, "l"),
+
+            ...waveSegment(EnemyChar.Squidle, 1, 0, 16, 1, "r"),
+            ...waveSegment(EnemyChar.Squidle, 1, 0, 17.5, 1, "l"),
+            ...waveSegment(EnemyChar.Squidle, 1, 0, 19, 1, "r"),
+            ...waveSegment(EnemyChar.Squidle, 1, 0, 20.5, 1, "l"),
+
+            ...waveSegment(EnemyChar.Squidle, 1, 0, 26, 1, "r"),
+            ...waveSegment(EnemyChar.Squidle, 1, 0, 27.5, 1, "l"),
+            ...waveSegment(EnemyChar.Squidle, 1, 0, 29, 1, "r"),
+            ...waveSegment(EnemyChar.Squidle, 1, 0, 30.5, 1, "l"),
         ],
         // wave 2
         [
-            ...waveSegment(EnemyChar.Dino, 6, 4, 0, 0),
-            ...waveSegment(EnemyChar.Demon, 6, 4, 8, 1),
-            ...waveSegment(EnemyChar.Dragon, 2, 1, 6, 2),
-            ...waveSegment(EnemyChar.Squidle, 2, 1, 12, 3),
-            ...waveSegment(EnemyChar.Dragon, 2, 1, 18, 2),
-            ...waveSegment(EnemyChar.Squidle, 2, 1, 24, 3),
+            ...waveSegment(EnemyChar.Demon, 2, 10, 0, 0),
+            ...waveSegment(EnemyChar.Dino, 4, 1.5, 0.5, 0, "l"),
+            ...waveSegment(EnemyChar.Dino, 4, 1.5, 0, 0, "r"),
+
+            ...waveSegment(EnemyChar.Demon, 2, 10, 16, 0),
+            ...waveSegment(EnemyChar.Dino, 4, 1.5, 16.5, 0, "l"),
+            ...waveSegment(EnemyChar.Dino, 4, 1.5, 16, 0, "r"),
+
+            ...waveSegment(EnemyChar.Demon, 2, 10, 32, 0),
+            ...waveSegment(EnemyChar.Dino, 4, 1.5, 32.5, 0, "l"),
+            ...waveSegment(EnemyChar.Dino, 4, 1.5, 32, 0, "r"),
+
+            ...waveSegment(EnemyChar.Demon, 4, 15, 0, 1),
+            ...waveSegment(EnemyChar.Squidle, 2, 5, 6, 1, "r"),
+            ...waveSegment(EnemyChar.Squidle, 2, 5, 7.5, 1, "l"),
+            ...waveSegment(EnemyChar.Squidle, 2, 5, 9, 1, "r"),
+            ...waveSegment(EnemyChar.Squidle, 2, 5, 10.5, 1, "l"),
+
+            ...waveSegment(EnemyChar.Squidle, 2, 5, 16, 1, "r"),
+            ...waveSegment(EnemyChar.Squidle, 2, 5, 17.5, 1, "l"),
+            ...waveSegment(EnemyChar.Squidle, 2, 5, 19, 1, "r"),
+            ...waveSegment(EnemyChar.Squidle, 2, 5, 20.5, 1, "l"),
+
+            ...waveSegment(EnemyChar.Squidle, 2, 5, 26, 1, "r"),
+            ...waveSegment(EnemyChar.Squidle, 2, 5, 27.5, 1, "l"),
+            ...waveSegment(EnemyChar.Squidle, 2, 5, 29, 1, "r"),
+            ...waveSegment(EnemyChar.Squidle, 2, 5, 30.5, 1, "l"),
         ],
         // wave 3
         [
-            ...waveSegment(EnemyChar.Dino, 6, 4, 0, 0),
-            ...waveSegment(EnemyChar.Demon, 6, 4, 8, 1),
-            ...waveSegment(EnemyChar.Dragon, 2, 2, 6, 2),
-            ...waveSegment(EnemyChar.Dragon, 2, 2, 12, 3),
-            ...waveSegment(EnemyChar.Dragon, 2, 2, 18, 2),
-            ...waveSegment(EnemyChar.Dragon, 2, 2, 24, 3),
+            ...waveSegment(EnemyChar.DemonBoss, 1, 0, 0, 0, "r"),
+            ...waveSegment(EnemyChar.Demon, 2, 10, 10, 0),
+            ...waveSegment(EnemyChar.Dino, 4, 1.5, 10.5, 0, "l"),
+            ...waveSegment(EnemyChar.Dino, 4, 1.5, 0, 0, "r"),
+
+            ...waveSegment(EnemyChar.Demon, 2, 10, 26, 0),
+            ...waveSegment(EnemyChar.Dino, 4, 1.5, 26.5, 0, "l"),
+            ...waveSegment(EnemyChar.Dino, 4, 1.5, 26, 0, "r"),
+
+            ...waveSegment(EnemyChar.DemonBoss, 1, 0, 0, 1, "r"),
+            ...waveSegment(EnemyChar.Demon, 2, 10, 42, 0),
+            ...waveSegment(EnemyChar.Dino, 4, 1.5, 42.5, 0, "l"),
+            ...waveSegment(EnemyChar.Dino, 4, 1.5, 42, 0, "r"),
+
+            ...waveSegment(EnemyChar.Demon, 4, 15, 0, 1),
+
+            ...waveSegment(EnemyChar.Squidle, 2, 5, 6, 1, "r"),
+            ...waveSegment(EnemyChar.Squidle, 2, 5, 7.5, 1, "l"),
+            ...waveSegment(EnemyChar.Squidle, 2, 5, 9, 1, "r"),
+            ...waveSegment(EnemyChar.Squidle, 2, 5, 10.5, 1, "l"),
+
+            ...waveSegment(EnemyChar.Squidle, 2, 5, 16, 1, "r"),
+            ...waveSegment(EnemyChar.Squidle, 2, 5, 17.5, 1, "l"),
+            ...waveSegment(EnemyChar.Squidle, 2, 5, 19, 1, "r"),
+            ...waveSegment(EnemyChar.Squidle, 2, 5, 20.5, 1, "l"),
+
+            ...waveSegment(EnemyChar.Squidle, 2, 5, 26, 1, "r"),
+            ...waveSegment(EnemyChar.Squidle, 2, 5, 27.5, 1, "l"),
+            ...waveSegment(EnemyChar.Squidle, 2, 5, 29, 1, "r"),
+            ...waveSegment(EnemyChar.Squidle, 2, 5, 30.5, 1, "l"),
         ],
     ],
     // stage 15
@@ -419,39 +485,96 @@ export const STAGE_WAVES_DATA: WaveEnemy[][][] = [
     [
         // wave 1
         [
-            ...waveSegment(EnemyChar.Dino, 6, 4, 0, 0),
-            ...waveSegment(EnemyChar.Demon, 6, 4, 8, 1),
-            ...waveSegment(EnemyChar.Squidle, 2, 1, 6, 2),
-            ...waveSegment(EnemyChar.Squidle, 2, 1, 12, 3),
-            ...waveSegment(EnemyChar.Squidle, 2, 1, 18, 2),
-            ...waveSegment(EnemyChar.Squidle, 2, 1, 24, 3),
+            ...waveSegment(EnemyChar.Demon, 1, 0, 0, 0),
+            ...waveSegment(EnemyChar.Dino, 2, 3, 2.5, 0, "l"),
+            ...waveSegment(EnemyChar.Dino, 2, 3, 2, 0, "r"),
+
+            ...waveSegment(EnemyChar.Demon, 1, 0, 12, 0),
+            ...waveSegment(EnemyChar.Dino, 2, 3, 14.5, 0, "l"),
+            ...waveSegment(EnemyChar.Dino, 2, 3, 14, 0, "r"),
+
+            ...waveSegment(EnemyChar.Demon, 1, 0, 24, 0),
+            ...waveSegment(EnemyChar.Dino, 2, 3, 26.5, 0, "l"),
+            ...waveSegment(EnemyChar.Dino, 2, 3, 26, 0, "r"),
+
+            ...waveSegment(EnemyChar.Demon, 3, 15, 0, 1),
+            ...waveSegment(EnemyChar.Squidle, 1, 0, 6, 1, "r"),
+            ...waveSegment(EnemyChar.Squidle, 1, 0, 7.5, 1, "l"),
+            ...waveSegment(EnemyChar.Squidle, 1, 0, 9, 1, "r"),
+            ...waveSegment(EnemyChar.Squidle, 1, 0, 10.5, 1, "l"),
+
+            ...waveSegment(EnemyChar.Squidle, 1, 0, 16, 1, "r"),
+            ...waveSegment(EnemyChar.Squidle, 1, 0, 17.5, 1, "l"),
+            ...waveSegment(EnemyChar.Squidle, 1, 0, 19, 1, "r"),
+            ...waveSegment(EnemyChar.Squidle, 1, 0, 20.5, 1, "l"),
+
+            ...waveSegment(EnemyChar.Squidle, 1, 0, 26, 1, "r"),
+            ...waveSegment(EnemyChar.Squidle, 1, 0, 27.5, 1, "l"),
+            ...waveSegment(EnemyChar.Squidle, 1, 0, 29, 1, "r"),
+            ...waveSegment(EnemyChar.Squidle, 1, 0, 30.5, 1, "l"),
         ],
         // wave 2
         [
-            ...waveSegment(EnemyChar.Dino, 6, 4, 0, 0),
-            ...waveSegment(EnemyChar.Demon, 6, 4, 8, 1),
-            ...waveSegment(EnemyChar.Dragon, 2, 1, 6, 2),
-            ...waveSegment(EnemyChar.Squidle, 2, 1, 12, 3),
-            ...waveSegment(EnemyChar.Dragon, 2, 1, 18, 2),
-            ...waveSegment(EnemyChar.Squidle, 2, 1, 24, 3),
+            ...waveSegment(EnemyChar.Demon, 2, 10, 0, 0),
+            ...waveSegment(EnemyChar.Dino, 4, 1.5, 0.5, 0, "l"),
+            ...waveSegment(EnemyChar.Dino, 4, 1.5, 0, 0, "r"),
+
+            ...waveSegment(EnemyChar.Demon, 2, 10, 16, 0),
+            ...waveSegment(EnemyChar.Dino, 4, 1.5, 16.5, 0, "l"),
+            ...waveSegment(EnemyChar.Dino, 4, 1.5, 16, 0, "r"),
+
+            ...waveSegment(EnemyChar.Demon, 2, 10, 32, 0),
+            ...waveSegment(EnemyChar.Dino, 4, 1.5, 32.5, 0, "l"),
+            ...waveSegment(EnemyChar.Dino, 4, 1.5, 32, 0, "r"),
+
+            ...waveSegment(EnemyChar.Demon, 4, 15, 0, 1),
+            ...waveSegment(EnemyChar.Squidle, 2, 5, 6, 1, "r"),
+            ...waveSegment(EnemyChar.Squidle, 2, 5, 7.5, 1, "l"),
+            ...waveSegment(EnemyChar.Squidle, 2, 5, 9, 1, "r"),
+            ...waveSegment(EnemyChar.Squidle, 2, 5, 10.5, 1, "l"),
+
+            ...waveSegment(EnemyChar.Squidle, 2, 5, 16, 1, "r"),
+            ...waveSegment(EnemyChar.Squidle, 2, 5, 17.5, 1, "l"),
+            ...waveSegment(EnemyChar.Squidle, 2, 5, 19, 1, "r"),
+            ...waveSegment(EnemyChar.Squidle, 2, 5, 20.5, 1, "l"),
+
+            ...waveSegment(EnemyChar.Squidle, 2, 5, 26, 1, "r"),
+            ...waveSegment(EnemyChar.Squidle, 2, 5, 27.5, 1, "l"),
+            ...waveSegment(EnemyChar.Squidle, 2, 5, 29, 1, "r"),
+            ...waveSegment(EnemyChar.Squidle, 2, 5, 30.5, 1, "l"),
         ],
         // wave 3
         [
-            ...waveSegment(EnemyChar.Dino, 6, 4, 0, 0),
-            ...waveSegment(EnemyChar.Demon, 6, 4, 8, 1),
-            ...waveSegment(EnemyChar.Dragon, 2, 2, 6, 2),
-            ...waveSegment(EnemyChar.Dragon, 2, 2, 12, 3),
-            ...waveSegment(EnemyChar.Dragon, 2, 2, 18, 2),
-            ...waveSegment(EnemyChar.Dragon, 2, 2, 24, 3),
-        ],
-        [
-            ...waveSegment(EnemyChar.Dino, 6, 4, 0, 1),
-            ...waveSegment(EnemyChar.Demon, 6, 4, 20, 1),
-            ...waveSegment(EnemyChar.Dragon, 2, 2, 6, 2),
-            ...waveSegment(EnemyChar.Dragon, 2, 2, 12, 3),
-            ...waveSegment(EnemyChar.Dragon, 2, 2, 18, 2),
-            ...waveSegment(EnemyChar.Dragon, 2, 2, 24, 3),
-            ...waveSegment(EnemyChar.DemonBoss, 1, undefined, 0, 0),
+            ...waveSegment(EnemyChar.DemonBoss, 1, 0, 0, 0, "r"),
+            ...waveSegment(EnemyChar.Demon, 2, 10, 10, 0),
+            ...waveSegment(EnemyChar.Dino, 4, 1.5, 10.5, 0, "l"),
+            ...waveSegment(EnemyChar.Dino, 4, 1.5, 0, 0, "r"),
+
+            ...waveSegment(EnemyChar.Demon, 2, 10, 26, 0),
+            ...waveSegment(EnemyChar.Dino, 4, 1.5, 26.5, 0, "l"),
+            ...waveSegment(EnemyChar.Dino, 4, 1.5, 26, 0, "r"),
+
+            ...waveSegment(EnemyChar.DemonBoss, 1, 0, 0, 1, "r"),
+            ...waveSegment(EnemyChar.Demon, 2, 10, 42, 0),
+            ...waveSegment(EnemyChar.Dino, 4, 1.5, 42.5, 0, "l"),
+            ...waveSegment(EnemyChar.Dino, 4, 1.5, 42, 0, "r"),
+
+            ...waveSegment(EnemyChar.Demon, 4, 15, 0, 1),
+
+            ...waveSegment(EnemyChar.Squidle, 2, 5, 6, 1, "r"),
+            ...waveSegment(EnemyChar.Squidle, 2, 5, 7.5, 1, "l"),
+            ...waveSegment(EnemyChar.Squidle, 2, 5, 9, 1, "r"),
+            ...waveSegment(EnemyChar.Squidle, 2, 5, 10.5, 1, "l"),
+
+            ...waveSegment(EnemyChar.Squidle, 2, 5, 16, 1, "r"),
+            ...waveSegment(EnemyChar.Squidle, 2, 5, 17.5, 1, "l"),
+            ...waveSegment(EnemyChar.Squidle, 2, 5, 19, 1, "r"),
+            ...waveSegment(EnemyChar.Squidle, 2, 5, 20.5, 1, "l"),
+
+            ...waveSegment(EnemyChar.Squidle, 2, 5, 26, 1, "r"),
+            ...waveSegment(EnemyChar.Squidle, 2, 5, 27.5, 1, "l"),
+            ...waveSegment(EnemyChar.Squidle, 2, 5, 29, 1, "r"),
+            ...waveSegment(EnemyChar.Squidle, 2, 5, 30.5, 1, "l"),
         ],
     ],
 ];

@@ -89,12 +89,12 @@ button:focus-visible {
 }
 
 .hp-bar-container {
-    background-color: rgb(184, 13, 13);
+    background-color: rgb(184, 13, 13) !important;
     height: 3px;
 }
 .hp-bar {
     height: 3px;
-    background-color: yellow;
+    background-color: #ffff00 !important;
 }
 
 /* @media (prefers-color-scheme: light) {
