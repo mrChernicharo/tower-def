@@ -165,7 +165,6 @@ let frameId = 0;
 let clickTimestamp = 0;
 let towerToBuild: TowerType | null = null;
 
-let levelArea: string;
 let levelIdx: number;
 let currWave: WaveEnemyObj[] = [];
 let currWaveIdx = 0;
@@ -187,7 +186,6 @@ export async function destroyGame() {
     // console.log("destroy", { scene });
     gameState = GameState.Idle;
     currWaveIdx = 0;
-    levelArea = "";
     levelIdx = 0;
     frameId = 0;
     gui?.destroy();
@@ -640,12 +638,7 @@ async function drawMap() {
 
 function drawPaths() {
     console.log("drawPaths", { levelData });
-    const pathMaterials = {
-        desert: MATERIALS.concrete,
-        forest: MATERIALS.concrete,
-        winter: MATERIALS.concrete,
-        lava: MATERIALS.concrete,
-    } as const;
+
     if (DRAW_AND_COMPUTE_OFFSET_PATHS) {
         const centerPaths: { x: number; y: number; z: number }[][] = [];
         const leftPaths: { x: number; y: number; z: number }[][] = [];
@@ -679,10 +672,7 @@ function drawPaths() {
                     extrudePath: pathCurve,
                 });
 
-                const pathMesh = new THREE.Mesh(
-                    mainPathGeometry,
-                    pathMaterials[levelArea as keyof typeof pathMaterials]
-                );
+                const pathMesh = new THREE.Mesh(mainPathGeometry, MATERIALS.path);
                 pathMesh.name = "Road";
                 pathMesh.position.y = shapeH;
 
@@ -745,21 +735,18 @@ function drawPaths() {
                     extrudePath: pathCurve,
                 });
 
-                const pathMesh = new THREE.Mesh(
-                    mainPathGeometry,
-                    pathMaterials[levelArea as keyof typeof pathMaterials]
-                );
+                const pathMesh = new THREE.Mesh(mainPathGeometry, MATERIALS.path);
                 pathMesh.name = "Road";
                 pathMesh.position.y = shapeH;
-
-                // console.log({ pathCurve, pathMesh, pathPoints });
 
                 scene.add(pathMesh);
             }
         }
 
         console.log({ allPathCurves });
-    } else {
+    }
+    // Regular game paths
+    else {
         for (const [lane, paths] of Object.entries(ALL_PATHS[levelData.levelIdx].paths)) {
             console.log("lane, paths", lane, paths);
 
@@ -774,7 +761,7 @@ function drawPaths() {
                 allPathCurves[lane as keyof typeof allPathCurves].push(pathCurve);
 
                 // const [shapeW, shapeH] = [0.05, 0.035];
-                const [shapeW, shapeH] = [1, 0.035];
+                const [shapeW, shapeH] = [1.4, 0.035];
 
                 const shapePts = [
                     new THREE.Vector2(-shapeH, -shapeW),
@@ -788,16 +775,9 @@ function drawPaths() {
                     extrudePath: pathCurve,
                 });
 
-                // levelData.area === GameArea.Forest || levelData.area === GameArea.Lava
-
-                const pathMesh = new THREE.Mesh(
-                    mainPathGeometry,
-                    pathMaterials[levelArea as keyof typeof pathMaterials]
-                );
+                const pathMesh = new THREE.Mesh(mainPathGeometry, MATERIALS.path);
                 pathMesh.name = "Road";
                 pathMesh.position.y = shapeH;
-
-                // console.log({ pathCurve, pathMesh, pathPoints });
 
                 if (lane === "center") {
                     scene.add(pathMesh);

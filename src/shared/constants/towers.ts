@@ -44,7 +44,7 @@ export const TOWER_BLUEPRINTS: { [k in TowerType]: TowerBluePrint[] } = {
             firePointY: 3.9,
             // firePointY: 6,
             damage: [2, 5],
-            fireRate: 2.4, // Fast
+            fireRate: 2, // Fast
             color: "blue",
             price: 80,
             range: 10, // Average
@@ -59,7 +59,7 @@ export const TOWER_BLUEPRINTS: { [k in TowerType]: TowerBluePrint[] } = {
             firePointY: 4.8,
             level: 2,
             damage: [4, 9],
-            fireRate: 2.4, // Fast
+            fireRate: 2, // Fast
             color: "blue",
             price: 135,
             range: 11, // Long
@@ -73,7 +73,7 @@ export const TOWER_BLUEPRINTS: { [k in TowerType]: TowerBluePrint[] } = {
             firePointY: 5.2,
             level: 3,
             damage: [5, 11],
-            fireRate: 3, // Very Fast
+            fireRate: 2, // Very Fast
             color: "blue",
             price: 200,
             // modelScale: 1.2,
@@ -91,7 +91,7 @@ export const TOWER_BLUEPRINTS: { [k in TowerType]: TowerBluePrint[] } = {
             // modelScale: 1.3,
             price: 325,
             damage: [7, 16],
-            fireRate: 4, // Very Fast
+            fireRate: 2, // Very Fast
             range: 13, // Great
             specials: [],
         },
