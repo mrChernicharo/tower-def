@@ -3,7 +3,7 @@ import { SELL_PRICE_MULTIPLIER, imgs } from "../shared/constants/general";
 import { ModalType, TowerType } from "../shared/enums";
 import { capitalize, getStarIcons } from "../shared/helpers";
 import { LevelStarCount, PlayerSkills } from "../shared/types";
-import { TOWER_BLUEPRINTS } from "../shared/constants/towers";
+import { TOWER_BLUEPRINTS } from "../shared/constants/towers-and-projectiles";
 
 // <img src="${IMAGES}" />
 export const modalTemplates = {

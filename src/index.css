@@ -118,8 +118,8 @@ button:focus-visible {
     background: #444;
     padding: 1rem;
     border-radius: 12px;
-    transform: translate(0, -250px);
-    /* transform: translate(0, -165px); */
+    /* transform: translate(0, -250px); */
+    transform: translate(0, -165px);
 }
 
 .modal-arrow {
@@ -129,6 +129,8 @@ button:focus-visible {
     bottom: 0;
     left: 50%;
     transform: translate(-50%, 50px);
+    background-color: transparent;
+
     border-top-color: #444;
     border-top-width: 50px;
     border-top-style: solid;

@@ -1,11 +1,11 @@
 import { THREE } from "../three";
 import { AppLayers, TowerType } from "../shared/enums";
-import { PROJECTILE_MODELS, towerTexture } from "./game";
+import { PROJECTILE_MODELS } from "./game";
 import { determineDamage, idMaker } from "../shared/helpers";
 import { ProjectileBluePrint } from "../shared/types";
 import { COLORS, MATERIALS } from "../shared/constants/general";
 import { Tower } from "./Tower";
-import { PROJECTILE_BLUEPRINTS } from "../shared/constants/towers";
+import { PROJECTILE_BLUEPRINTS } from "../shared/constants/towers-and-projectiles";
 
 class ProjectileBase {
     id: string;
@@ -40,7 +40,7 @@ class ProjectileBase {
         geometry.rotateX(-Math.PI * 0.5);
         // geometry.rotateX(this.blueprint.trajectoryType === TrajectoryType.Straight ? Math.PI * 0.5 : -Math.PI * 0.5);
         this.model.geometry = geometry;
-        this.model.material = MATERIALS.projectile(COLORS[this.blueprint.color as keyof typeof COLORS], towerTexture);
+        // this.model.material = MATERIALS.projectile(COLORS[this.blueprint.color as keyof typeof COLORS], towerTexture);
         this.model.position.set(this.originPos.x, this.originPos.y, this.originPos.z);
         const size = this.blueprint.modelScale;
         this.model.scale.set(size, size, size);

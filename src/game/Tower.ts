@@ -7,7 +7,7 @@ import { PlayerSkills, TowerBluePrint } from "../shared/types";
 import { THREE } from "../three";
 import { Enemy } from "./Enemy";
 import { StraightProjectile, ParabolaProjectile } from "./Projectile";
-import { TOWER_BLUEPRINTS, PROJECTILE_BLUEPRINTS } from "../shared/constants/towers";
+import { TOWER_BLUEPRINTS, PROJECTILE_BLUEPRINTS } from "../shared/constants/towers-and-projectiles";
 import { Vector3 } from "three";
 
 const estimatedTimeToTarget = 1;

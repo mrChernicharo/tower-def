@@ -2,7 +2,7 @@
 import { THREE } from "../three";
 import { GUI } from "dat.gui";
 import { GLTF, GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
-import { FBXLoader } from "three/examples/jsm/loaders/FBXLoader.js";
+// import { FBXLoader } from "three/examples/jsm/loaders/FBXLoader.js";
 import { EffectComposer } from "three/examples/jsm/postprocessing/EffectComposer.js";
 import { OutlinePass } from "three/examples/jsm/postprocessing/OutlinePass.js";
 import { RenderPass } from "three/examples/jsm/postprocessing/RenderPass.js";
@@ -18,7 +18,7 @@ import { CSS2DRenderer, CSS2DObject } from "three/examples/jsm/renderers/CSS2DRe
 import { GAME_LEVELS } from "../shared/constants/levels/game-levels";
 import { LEVEL_OBJECTS } from "../shared/constants/levels/level-objects";
 import { ENEMY_BLUEPRINTS } from "../shared/constants/enemies";
-import { TOWER_BLUEPRINTS } from "../shared/constants/towers";
+import { TOWER_BLUEPRINTS } from "../shared/constants/towers-and-projectiles";
 import { GAME_SKILLS } from "../shared/constants/skills";
 import { StraightProjectile } from "./Projectile";
 import { ALL_PATHS } from "../shared/constants/paths/all-paths";
@@ -93,7 +93,7 @@ export const TOWER_MODELS = {} as { [k in TowerType]: { [k: `level-${number}`]: 
 export const PROJECTILE_MODELS = {} as { [k in TowerType]: { [k: `level-${number}`]: THREE.Mesh } };
 
 let gltfLoader: GLTFLoader;
-let fbxLoader: FBXLoader;
+// let fbxLoader: FBXLoader;
 // let fontLoader: FontLoader;
 
 let scene: THREE.Scene;
@@ -354,7 +354,7 @@ async function gameSetup() {
     canvas.appendChild(cssRenderer.domElement);
 
     gltfLoader = new GLTFLoader(loadingManager);
-    fbxLoader = new FBXLoader(loadingManager);
+    // fbxLoader = new FBXLoader(loadingManager);
     // fontLoader = new FontLoader(loadingManager);
     gameClock = new THREE.Clock();
     activeGameTime = 0;
@@ -770,7 +770,7 @@ async function _initTowerModels() {
         model.userData.name = (model.userData.name as string).replace(".gltf", "");
         const modelName = model.userData.name;
 
-        console.log({ model, n: model.userData.name, modelName });
+        // console.log({ model, n: model.userData.name, modelName });
 
         const [towerName, towerLevel] = [modelName.split("_")[0] as TowerType, +modelName.split("_")[3]];
         // model.name = modelName;
@@ -794,14 +794,19 @@ async function _initTowerModels() {
 
         TOWER_MODELS[towerName][`level-${towerLevel}`].add(model.clone());
     }
-    console.log({ TOWER_MODELS });
+    // console.log({ TOWER_MODELS });
 
-    const projectilesFbx = await fbxLoader.loadAsync("/assets/fbx/projectiles-no-texture.fbx");
-    towerTexture = await new THREE.TextureLoader().loadAsync("/assets/fbx/towers-texture.png");
+    const projectilesGlTF = await gltfLoader.loadAsync("/assets/glb/projectiles/projectiles.gltf");
 
-    const projectileModels = projectilesFbx.children;
-    for (const model of projectileModels as THREE.Mesh[]) {
+    console.log({ projectilesGlTF });
+
+    // const projectilesFbx = await fbxLoader.loadAsync("/assets/fbx/projectiles-no-texture.fbx");
+    // towerTexture = await new THREE.TextureLoader().loadAsync("/assets/fbx/towers-texture.png");
+
+    // const projectileModels = projectilesFbx.children;
+    for (const model of projectilesGlTF.scene.children[0].children as THREE.Mesh[]) {
         const towerName = getProjectileTowerName(model.name);
+        console.log({ model, n: model.name, towerName });
 
         if (!(towerName in PROJECTILE_MODELS)) {
             PROJECTILE_MODELS[towerName] = {};
