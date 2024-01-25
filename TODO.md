@@ -26,14 +26,14 @@
 -   [✔] give some love to enemies and waves
 -   [✔] slowdown cam movement when zooming
 -   [✔] prevent zoom when paused (gotta find out if was idle or active before pause)
+-   [✔] compute skills efx
 -   [ ] modal icons (info, up, sell, level, damage, range, fireRate)
 -   [ ] projectile trajectory towards flying enemies
 -   [ ] more and better levels
 -   [ ] enemies with different sizes (small demon VS super huge demon)
--   [ ] dmg_efx
+-   [ ] dmg_efx, die_animations
 -   [ ] (mobile) request full screen + landscape orientation
 -   [ ] better firePoint calculations (move it forward in case its a Cannon tower)
--   [ ] compute skills efx
 
     -   [ ] archer
     -   [✔] ballista

@@ -5,6 +5,10 @@ import { printWavesStatistics } from "../../helpers";
 import { ENEMY_BLUEPRINTS } from "../enemies";
 import { STAGE_WAVES_DATA } from "./waves";
 import { towerBasePositions } from "./tower-positions";
+import { desert01, desert02 } from "../paths/desert-paths";
+import { forest01, forest02 } from "../paths/forest-paths";
+import { winter01, winter02 } from "../paths/winter-paths";
+import { lava01, lava02 } from "../paths/lava-paths";
 
 export const allAreaLevels = {
     desert: [0, 1, 2, 3],
@@ -37,23 +41,27 @@ export const GAME_LEVELS: GameLevel[] = [
         initialCamPos: [0, 40, 62],
         cameraBounds: mediumBounds,
         towerBasePositions: towerBasePositions.desert,
-        // paths:   {
-        //     center: desert01.center,
-        //     left: desert01.left,
-        //     right: desert01.right,
-        // }
+        paths: {
+            center: desert01.center,
+            left: desert01.left,
+            right: desert01.right,
+        },
     },
     {
         area: GameArea.Desert,
         levelIdx: 1,
         stage: 2,
-        // init2,
         initialGold: 1060,
         ground: [[50, 0, 80]],
         waves: STAGE_WAVES_DATA[1],
         initialCamPos: [0, 40, 62],
         cameraBounds: mediumBounds,
         towerBasePositions: towerBasePositions.desert2,
+        paths: {
+            center: desert02.center,
+            left: desert02.left,
+            right: desert02.right,
+        },
     },
     {
         area: GameArea.Desert,
@@ -65,6 +73,11 @@ export const GAME_LEVELS: GameLevel[] = [
         initialCamPos: [0, 40, 62],
         cameraBounds: mediumBounds,
         towerBasePositions: towerBasePositions.desert,
+        paths: {
+            center: desert01.center,
+            left: desert01.left,
+            right: desert01.right,
+        },
     },
     {
         area: GameArea.Desert,
@@ -76,6 +89,11 @@ export const GAME_LEVELS: GameLevel[] = [
         initialCamPos: [0, 40, 62],
         cameraBounds: mediumBounds,
         towerBasePositions: towerBasePositions.desert2,
+        paths: {
+            center: desert02.center,
+            left: desert02.left,
+            right: desert02.right,
+        },
     },
     {
         area: GameArea.Forest,
@@ -88,6 +106,11 @@ export const GAME_LEVELS: GameLevel[] = [
         initialCamPos: [0, 60, 60],
         cameraBounds: smallBounds,
         towerBasePositions: towerBasePositions.forest,
+        paths: {
+            center: forest01.center,
+            left: forest01.left,
+            right: forest01.right,
+        },
     },
     {
         area: GameArea.Forest,
@@ -99,6 +122,11 @@ export const GAME_LEVELS: GameLevel[] = [
         initialCamPos: [0, 60, 60],
         cameraBounds: smallBounds,
         towerBasePositions: towerBasePositions.forest2,
+        paths: {
+            center: forest02.center,
+            left: forest02.left,
+            right: forest02.right,
+        },
     },
     {
         area: GameArea.Forest,
@@ -111,6 +139,11 @@ export const GAME_LEVELS: GameLevel[] = [
         initialCamPos: [0, 60, 60],
         cameraBounds: smallBounds,
         towerBasePositions: towerBasePositions.forest,
+        paths: {
+            center: forest01.center,
+            left: forest01.left,
+            right: forest01.right,
+        },
     },
     {
         area: GameArea.Forest,
@@ -123,6 +156,11 @@ export const GAME_LEVELS: GameLevel[] = [
         initialCamPos: [0, 60, 60],
         cameraBounds: smallBounds,
         towerBasePositions: towerBasePositions.forest2,
+        paths: {
+            center: forest02.center,
+            left: forest02.left,
+            right: forest02.right,
+        },
     },
     {
         area: GameArea.Winter,
@@ -134,6 +172,11 @@ export const GAME_LEVELS: GameLevel[] = [
         initialCamPos: [0, 60, 60],
         cameraBounds: largeBounds,
         towerBasePositions: towerBasePositions.winter,
+        paths: {
+            center: winter01.center,
+            left: winter01.left,
+            right: winter01.right,
+        },
     },
     {
         area: GameArea.Winter,
@@ -145,6 +188,11 @@ export const GAME_LEVELS: GameLevel[] = [
         initialCamPos: [0, 60, 60],
         cameraBounds: largeBounds,
         towerBasePositions: towerBasePositions.winter2,
+        paths: {
+            center: winter02.center,
+            left: winter02.left,
+            right: winter02.right,
+        },
     },
     {
         area: GameArea.Winter,
@@ -156,6 +204,11 @@ export const GAME_LEVELS: GameLevel[] = [
         initialCamPos: [0, 60, 60],
         cameraBounds: largeBounds,
         towerBasePositions: towerBasePositions.winter,
+        paths: {
+            center: winter01.center,
+            left: winter01.left,
+            right: winter01.right,
+        },
     },
     {
         area: GameArea.Winter,
@@ -167,6 +220,11 @@ export const GAME_LEVELS: GameLevel[] = [
         initialCamPos: [0, 60, 60],
         cameraBounds: largeBounds,
         towerBasePositions: towerBasePositions.winter2,
+        paths: {
+            center: winter02.center,
+            left: winter02.left,
+            right: winter02.right,
+        },
     },
     {
         area: GameArea.Lava,
@@ -178,6 +236,11 @@ export const GAME_LEVELS: GameLevel[] = [
         initialCamPos: [0, 60, 60],
         cameraBounds: smallBounds,
         towerBasePositions: towerBasePositions.lava,
+        paths: {
+            center: lava01.center,
+            left: lava01.left,
+            right: lava01.right,
+        },
     },
     {
         area: GameArea.Lava,
@@ -189,6 +252,11 @@ export const GAME_LEVELS: GameLevel[] = [
         initialCamPos: [0, 60, 60],
         cameraBounds: smallBounds,
         towerBasePositions: towerBasePositions.lava2,
+        paths: {
+            center: lava02.center,
+            left: lava02.left,
+            right: lava02.right,
+        },
     },
     {
         area: GameArea.Lava,
@@ -200,17 +268,27 @@ export const GAME_LEVELS: GameLevel[] = [
         initialCamPos: [0, 60, 60],
         cameraBounds: smallBounds,
         towerBasePositions: towerBasePositions.lava,
+        paths: {
+            center: lava01.center,
+            left: lava01.left,
+            right: lava01.right,
+        },
     },
     {
         area: GameArea.Lava,
         levelIdx: 15,
         stage: 16,
         initialGold: 550,
-        ground: [[60, 0, 75]],
+        ground: [[50, 0, 75]],
         waves: STAGE_WAVES_DATA[15],
         initialCamPos: [0, 60, 60],
         cameraBounds: smallBounds,
         towerBasePositions: towerBasePositions.lava2,
+        paths: {
+            center: lava02.center,
+            left: lava02.left,
+            right: lava02.right,
+        },
     },
 ];
 

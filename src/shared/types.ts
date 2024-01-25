@@ -141,6 +141,11 @@ export type GameLevel = {
     initialGold: number;
     ground: [number, number, number][];
     waves: [string, number, number, string][][];
+    paths: {
+        center: JSONPath[];
+        left: JSONPath[];
+        right: JSONPath[];
+    };
     initialCamPos: [number, number, number];
     cameraBounds: { left: number; right: number; top: number; bottom: number };
     towerBasePositions: [number, number, number][];

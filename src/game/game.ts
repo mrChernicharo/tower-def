@@ -11,17 +11,15 @@ import { FXAAShader } from "three/examples/jsm/shaders/FXAAShader.js";
 import { OutputPass } from "three/addons/postprocessing/OutputPass.js";
 // import { TextGeometry } from "three/addons/geometries/TextGeometry.js";
 // import { FontLoader } from "three/examples/jsm/Addons.js";
-import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 // import { DragControls } from "three/examples/jsm/controls/DragControls.js";
+import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import { CSS2DRenderer, CSS2DObject } from "three/examples/jsm/renderers/CSS2DRenderer.js";
 
-import { GAME_LEVELS } from "../shared/constants/levels/game-levels";
-import { LEVEL_OBJECTS } from "../shared/constants/levels/level-objects";
+import { LEVEL_OBJECTS } from "../shared/constants/levels/objects";
 import { ENEMY_BLUEPRINTS } from "../shared/constants/enemies";
 import { TOWER_BLUEPRINTS } from "../shared/constants/towers-and-projectiles";
 import { GAME_SKILLS } from "../shared/constants/skills";
 import { StraightProjectile } from "./Projectile";
-import { ALL_PATHS } from "../shared/constants/paths/all-paths";
 import {
     COLORS,
     DEFAULT_METEOR_COUNT,
@@ -81,7 +79,6 @@ import { Enemy } from "./Enemy";
 import { Meteor } from "./Meteor";
 import { Blizzard } from "./Blizzard";
 import { PoisonEntry } from "./PoisonEntry";
-// import { STAGE_WAVES_DATA } from "../shared/constants/levels/waves";
 
 // let pathPoints: THREE.Vector3[] = [];
 
@@ -247,6 +244,9 @@ export async function destroyGame() {
 
 export async function initGame({ level, hp, skills }: GameInitProps) {
     levelIdx = level;
+
+    const { GAME_LEVELS } = await import("../shared/constants/levels/levels");
+
     levelData = GAME_LEVELS[levelIdx];
 
     const playerSkills: { [k in SkillPath]: Skill[] } = {
@@ -275,10 +275,10 @@ export async function initGame({ level, hp, skills }: GameInitProps) {
     _wireUpLoadingManager();
     await drawMap();
     await drawPaths();
+    drawWaveCallBeacon();
+    _init2DModals();
     await _initEnemyModels();
     await _initTowerModels();
-    _init2DModals();
-    drawWaveCallBeacon();
 
     window.addEventListener("projectile", onProjectile);
     window.addEventListener("projectile-explode", onProjectileExplode);
@@ -527,7 +527,7 @@ async function drawPaths() {
         const leftPaths: { x: number; y: number; z: number }[][] = [];
         const rightPaths: { x: number; y: number; z: number }[][] = [];
 
-        for (const [lane, paths] of Object.entries(ALL_PATHS[levelData.levelIdx].paths)) {
+        for (const [lane, paths] of Object.entries(levelData.paths)) {
             console.log("lane, paths", lane, paths);
 
             for (const path of paths) {
@@ -590,7 +590,7 @@ async function drawPaths() {
         });
         console.log({ levelPaths });
     } else if (DRAW_PATH_LANES) {
-        for (const [lane, paths] of Object.entries(ALL_PATHS[levelData.levelIdx].paths)) {
+        for (const [lane, paths] of Object.entries(levelData.paths)) {
             console.log("lane, paths", lane, paths);
 
             for (const path of paths) {
@@ -630,7 +630,7 @@ async function drawPaths() {
     }
     // Regular game paths
     else {
-        for (const [lane, paths] of Object.entries(ALL_PATHS[levelData.levelIdx].paths)) {
+        for (const [lane, paths] of Object.entries(levelData.paths)) {
             console.log("lane, paths", lane, paths);
 
             for (const path of paths) {
@@ -684,7 +684,7 @@ function drawWaveCallBeacon() {
     const differentEnemyPaths = [...new Set(currWave.map((waveData) => waveData.pathIdx))];
 
     console.log("drawWaveCallBeacon", {
-        allPaths: ALL_PATHS[currWaveIdx].paths.center.length,
+        allPaths: levelData.paths.center.length,
         currWave,
         differentEnemyPaths,
         levelData,
@@ -737,7 +737,7 @@ function drawWaveCallBeacon() {
             gameSpeed = 1;
             gameState = GameState.Active;
             pauseGameBtn.textContent = "⏸️";
-            waveDisplay.innerHTML = `Wave ${currWaveIdx + 1}/${GAME_LEVELS[levelIdx!].waves.length}`;
+            waveDisplay.innerHTML = `Wave ${currWaveIdx + 1}/${levelData.waves.length}`;
             callWaveBeaconContainers = [];
 
             const modalEls = [...document.querySelectorAll("#call-wave-modal")];
@@ -798,15 +798,14 @@ async function _initTowerModels() {
 
     const projectilesGlTF = await gltfLoader.loadAsync("/assets/glb/projectiles/projectiles.gltf");
 
-    console.log({ projectilesGlTF });
+    // console.log({ projectilesGlTF });
 
     // const projectilesFbx = await fbxLoader.loadAsync("/assets/fbx/projectiles-no-texture.fbx");
     // towerTexture = await new THREE.TextureLoader().loadAsync("/assets/fbx/towers-texture.png");
 
-    // const projectileModels = projectilesFbx.children;
     for (const model of projectilesGlTF.scene.children[0].children as THREE.Mesh[]) {
         const towerName = getProjectileTowerName(model.name);
-        console.log({ model, n: model.name, towerName });
+        // console.log({ model, n: model.name, towerName });
 
         if (!(towerName in PROJECTILE_MODELS)) {
             PROJECTILE_MODELS[towerName] = {};
@@ -814,7 +813,13 @@ async function _initTowerModels() {
 
         if (towerName === TowerType.Archer) {
             const level = model.name.split("_")[3];
+
             PROJECTILE_MODELS[towerName][`level-${+level}`] = model;
+
+            if (+level === 2) {
+                // there's no lvl_3
+                PROJECTILE_MODELS[towerName]["level-3"] = model;
+            }
         } else {
             PROJECTILE_MODELS[towerName]["level-1"] = model;
             PROJECTILE_MODELS[towerName]["level-2"] = model;
@@ -822,6 +827,8 @@ async function _initTowerModels() {
             PROJECTILE_MODELS[towerName]["level-4"] = model;
         }
     }
+
+    // console.log({ PROJECTILE_MODELS });
 }
 
 function _init2DModals() {

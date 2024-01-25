@@ -6,7 +6,7 @@ import { GLTF } from "three/examples/jsm/Addons.js";
 import { LevelStarCount, LevelStarMap, PlayerSkillIDsMap, WaveEnemy, LaneChar } from "./types";
 import { Enemy } from "../game/Enemy";
 import { GAME_SKILLS } from "./constants/skills";
-import { allAreaLevels } from "./constants/levels/game-levels";
+import { allAreaLevels } from "./constants/levels/levels";
 import { ENEMY_BLUEPRINTS } from "./constants/enemies";
 import { STAGE_WAVES_DATA } from "./constants/levels/waves";
 

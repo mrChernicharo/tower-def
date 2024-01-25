@@ -18,7 +18,7 @@ export const GAME_SKILLS: { [k in SkillPath]: Skill[] } = {
             id: "archer-2",
             name: "Precision Strikes",
             description: "Hone your archery skills for precision strikes, increasing arrow damage",
-            starCost: 2,
+            starCost: 1,
             effectStr: "DAMAGE +10%",
             effect: {
                 [SkillEffectName.Damage]: { value: 10, unit: "%" },
@@ -28,7 +28,7 @@ export const GAME_SKILLS: { [k in SkillPath]: Skill[] } = {
             id: "archer-3",
             name: "Multi-Target Precision",
             description: "Learn the technique of hitting multiple targets with precision",
-            starCost: 3,
+            starCost: 2,
             effectStr: "MULTI_TARGET ENABLED",
             effect: {
                 [SkillEffectName.MultiTarget]: { value: 1, unit: "" },
@@ -38,7 +38,7 @@ export const GAME_SKILLS: { [k in SkillPath]: Skill[] } = {
             id: "archer-4",
             name: "Rapid Fire Efficiency",
             description: "Improve your archery speed with increased rate of fire and reduced arrow cost",
-            starCost: 4,
+            starCost: 2,
             effectStr: "RATE_OF_FIRE +5%, PRICE -10%",
             effect: {
                 [SkillEffectName.RateOfFire]: { value: 5, unit: "%" },
@@ -50,7 +50,7 @@ export const GAME_SKILLS: { [k in SkillPath]: Skill[] } = {
             name: "Master Archer",
             description:
                 "Attain the title of Master Archer, gaining even greater precision and multi-target capabilities",
-            starCost: 5,
+            starCost: 3,
             effectStr: "MULTI_TARGET +1",
             effect: {
                 [SkillEffectName.MultiTarget]: { value: 1, unit: "" },
@@ -72,7 +72,7 @@ export const GAME_SKILLS: { [k in SkillPath]: Skill[] } = {
             id: "ballista-2",
             name: "Rapid Reload",
             description: "Improve the rate of fire for your Ballista",
-            starCost: 2,
+            starCost: 1,
             effectStr: "RATE_OF_FIRE +10%",
             effect: {
                 [SkillEffectName.RateOfFire]: { value: 10, unit: "%" },
@@ -82,7 +82,7 @@ export const GAME_SKILLS: { [k in SkillPath]: Skill[] } = {
             id: "ballista-3",
             name: "Precision Strikes",
             description: "Unlock the ability to land critical hits with your Ballista shots",
-            starCost: 3,
+            starCost: 2,
             effectStr: "CRITICAL_HIT ENABLED",
             effect: {
                 [SkillEffectName.CriticalHit]: { value: BALLISTA_CRITICAL_HIT_CHANCE, unit: "%" },
@@ -92,7 +92,7 @@ export const GAME_SKILLS: { [k in SkillPath]: Skill[] } = {
             id: "ballista-4",
             name: "Efficient Deployment",
             description: "Optimize your Ballista's performance with increased rate of fire and reduced cost",
-            starCost: 4,
+            starCost: 2,
             effectStr: "RATE_OF_FIRE +5%, PRICE -10%",
             effect: {
                 [SkillEffectName.RateOfFire]: { value: 5, unit: "%" },
@@ -103,7 +103,7 @@ export const GAME_SKILLS: { [k in SkillPath]: Skill[] } = {
             id: "ballista-5",
             name: "Extreme Range Mastery",
             description: "Master the art of extreme range attacks, increasing Ballista range and critical hit chance",
-            starCost: 5,
+            starCost: 3,
             effectStr: "RANGE +2, CRITICAL_HIT +5%",
             effect: {
                 [SkillEffectName.Range]: { value: 2, unit: "meters" },
@@ -126,7 +126,7 @@ export const GAME_SKILLS: { [k in SkillPath]: Skill[] } = {
             id: "cannon-2",
             name: "Explosive Impact",
             description: "Widen the splash area of your Cannon shots",
-            starCost: 2,
+            starCost: 1,
             effectStr: "SPLASH_AREA +20%",
             effect: {
                 [SkillEffectName.SplashArea]: { value: 20, unit: "%" },
@@ -136,7 +136,7 @@ export const GAME_SKILLS: { [k in SkillPath]: Skill[] } = {
             id: "cannon-3",
             name: "Extended Range",
             description: "Improve the range of your Cannon shots",
-            starCost: 3,
+            starCost: 2,
             effectStr: "RANGE +1",
             effect: {
                 [SkillEffectName.Range]: { value: 1, unit: "meters" },
@@ -146,7 +146,7 @@ export const GAME_SKILLS: { [k in SkillPath]: Skill[] } = {
             id: "cannon-4",
             name: "Shock and Awe",
             description: "Your Cannon shots slow enemies for a short period",
-            starCost: 4,
+            starCost: 2,
             effectStr: "SLOW ENABLED",
             effect: {
                 [SkillEffectName.SlowPower]: { value: 50, unit: "%" },
@@ -156,7 +156,7 @@ export const GAME_SKILLS: { [k in SkillPath]: Skill[] } = {
             id: "cannon-5",
             name: "Efficient Bombardment",
             description: "Enhance the rate of fire for your Cannon shots while reducing the cost",
-            starCost: 5,
+            starCost: 3,
             effectStr: "RATE_OF_FIRE +10%, PRICE -10%",
             effect: {
                 [SkillEffectName.RateOfFire]: { value: 10, unit: "%" },
@@ -179,7 +179,7 @@ export const GAME_SKILLS: { [k in SkillPath]: Skill[] } = {
             id: "poison-2",
             name: "Extended Toxicity",
             description: "Prolong the duration of the poison effect",
-            starCost: 2,
+            starCost: 1,
             effectStr: "POISON_DURATION +1.5s",
             effect: {
                 [SkillEffectName.PoisonDuration]: { value: 1.5, unit: "s" },
@@ -189,7 +189,7 @@ export const GAME_SKILLS: { [k in SkillPath]: Skill[] } = {
             id: "poison-3",
             name: "Venomous Reach",
             description: "Extend the range of your poison attacks",
-            starCost: 3,
+            starCost: 2,
             effectStr: "RANGE +1",
             effect: {
                 [SkillEffectName.Range]: { value: 1, unit: "meters" },
@@ -199,7 +199,7 @@ export const GAME_SKILLS: { [k in SkillPath]: Skill[] } = {
             id: "poison-4",
             name: "Cost-Effective Poison",
             description: "Reduce the price of your poison attacks and increase poison damage",
-            starCost: 4,
+            starCost: 2,
             effectStr: "PRICE -10%, POISON_DAMAGE +25%",
             effect: {
                 [SkillEffectName.Price]: { value: 10, unit: "%" },
@@ -210,7 +210,7 @@ export const GAME_SKILLS: { [k in SkillPath]: Skill[] } = {
             id: "poison-5",
             name: "Potent Toxin Mastery",
             description: "Further increase poison duration and damage for a potent and lasting effect",
-            starCost: 5,
+            starCost: 3,
             effectStr: "POISON_DURATION +1.5s, POISON_DAMAGE +20%",
             effect: {
                 [SkillEffectName.PoisonDuration]: { value: 1.5, unit: "s" },
@@ -233,7 +233,7 @@ export const GAME_SKILLS: { [k in SkillPath]: Skill[] } = {
             id: "wizard-2",
             name: "Ricochet Mastery",
             description: "Unlock the ability for your spells to bounce between targets",
-            starCost: 2,
+            starCost: 1,
             effectStr: "RICOCHET ENABLED",
             effect: {
                 [SkillEffectName.Ricochet]: { value: 1, unit: "" },
@@ -243,7 +243,7 @@ export const GAME_SKILLS: { [k in SkillPath]: Skill[] } = {
             id: "wizard-3",
             name: "Arcane Power Boost",
             description: "Enhance the damage output of your wizard spells",
-            starCost: 3,
+            starCost: 2,
             effectStr: "DAMAGE +10%",
             effect: {
                 [SkillEffectName.Damage]: { value: 10, unit: "%" },
@@ -253,7 +253,7 @@ export const GAME_SKILLS: { [k in SkillPath]: Skill[] } = {
             id: "wizard-4",
             name: "Extended Range and Ricochet",
             description: "Increase both the range of your wizard spells and the number of ricochets",
-            starCost: 4,
+            starCost: 2,
             effectStr: "RANGE +0.5, RICOCHET +1",
             effect: {
                 [SkillEffectName.Range]: { value: 0.5, unit: "meters" },
@@ -264,7 +264,7 @@ export const GAME_SKILLS: { [k in SkillPath]: Skill[] } = {
             id: "wizard-5",
             name: "Cost-Effective Spellcasting",
             description: "Reduce the price of your wizard spells while gaining additional ricochet capability",
-            starCost: 5,
+            starCost: 3,
             effectStr: "PRICE -10%, RICOCHET +1",
             effect: {
                 [SkillEffectName.Price]: { value: 10, unit: "%" },
@@ -287,7 +287,7 @@ export const GAME_SKILLS: { [k in SkillPath]: Skill[] } = {
             id: "meteor-2", // ok
             name: "Empowered Celestial Judgment",
             description: "Call upon celestial forces to deliver a powerful judgment, dealing massive damage",
-            starCost: 2,
+            starCost: 1,
             effectStr: "DAMAGE +10% , COOLDOWN -10s",
             effect: {
                 [SkillEffectName.Damage]: { value: 10, unit: "%" },
@@ -298,7 +298,7 @@ export const GAME_SKILLS: { [k in SkillPath]: Skill[] } = {
             id: "meteor-3",
             name: "Explosive Cosmic Upgrade",
             description: "Upgrade meteors to explode upon impact, causing additional damage",
-            starCost: 3,
+            starCost: 2,
             effectStr: "METEOR_COUNT +2, SLOW_EFFECT ENABLED",
             effect: {
                 [SkillEffectName.MeteorCount]: { value: 2, unit: "" },
@@ -310,7 +310,7 @@ export const GAME_SKILLS: { [k in SkillPath]: Skill[] } = {
             id: "meteor-4",
             name: "Supernova Mastery",
             description: "Reach the pinnacle of meteor mastery, unleashing a devastating supernova",
-            starCost: 4,
+            starCost: 2,
             effectStr: "DAMAGE +10% , COOLDOWN -10s, RANDOM_TARGETS ENABLED",
             effect: {
                 [SkillEffectName.Damage]: { value: 10, unit: "%" },
@@ -322,7 +322,7 @@ export const GAME_SKILLS: { [k in SkillPath]: Skill[] } = {
             id: "meteor-5",
             name: "Celestial Sorcery Mastery",
             description: "Become a master of celestial magic, wielding unmatched power with meteors",
-            starCost: 5,
+            starCost: 3,
             effectStr: "METEOR_COUNT +2, SLOW_POWER +10%, RANDOM_TARGETS +3",
             effect: {
                 [SkillEffectName.MeteorCount]: { value: 2, unit: "" },
@@ -348,7 +348,7 @@ export const GAME_SKILLS: { [k in SkillPath]: Skill[] } = {
             id: "blizzard-2",
             name: "Arctic Frost",
             description: "Channel Arctic Frost, extending the range of your blizzard and reducing its cooldown time",
-            starCost: 2,
+            starCost: 1,
             effectStr: "RANGE +1, COOLDOWN -5s",
             effect: {
                 [SkillEffectName.Range]: { value: 1, unit: "meters" },
@@ -360,7 +360,7 @@ export const GAME_SKILLS: { [k in SkillPath]: Skill[] } = {
             name: "Polar Vortex",
             description:
                 "Unleash a Polar Vortex, intensifying the blizzard's damage, duration, and adding a bonus to slowEffect",
-            starCost: 3,
+            starCost: 2,
             effectStr: "DAMAGE +40%, SLOW_DURATION +0.6s,  SLOW_POWER +10%",
             effect: {
                 [SkillEffectName.Damage]: { value: 40, unit: "%" },
@@ -373,7 +373,7 @@ export const GAME_SKILLS: { [k in SkillPath]: Skill[] } = {
             name: "Glacial Expansion",
             description:
                 "Initiate Glacial Expansion, increasing the range of your blizzard and further reducing its cooldown time",
-            starCost: 4,
+            starCost: 2,
             effectStr: "RANGE +1, COOLDOWN -5s",
             effect: {
                 [SkillEffectName.Range]: { value: 1, unit: "meters" },
@@ -384,7 +384,7 @@ export const GAME_SKILLS: { [k in SkillPath]: Skill[] } = {
             id: "blizzard-5",
             name: "Blizzard Mastery",
             description: "Master the art of Blizzard, enhancing damage, duration, and slowEffect",
-            starCost: 5,
+            starCost: 3,
             effectStr: "DAMAGE +30%, SLOW_DURATION +0.7s, SLOW_POWER +5%",
             effect: {
                 [SkillEffectName.Range]: { value: 1, unit: "meters" },

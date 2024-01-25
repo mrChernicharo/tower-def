@@ -7,7 +7,7 @@ import { imgs } from "../../shared/constants/general";
 import { AiFillSound } from "react-icons/ai";
 import { FaMusic } from "react-icons/fa";
 import { RiCloseCircleFill } from "react-icons/ri";
-import { GAME_LEVELS } from "../../shared/constants/levels/game-levels";
+import { GAME_LEVELS } from "../../shared/constants/levels/levels";
 
 // import { IoMdClose } from "react-icons/io";
 // <IoMdClose />
