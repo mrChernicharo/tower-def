@@ -27,6 +27,8 @@
 -   [✔] slowdown cam movement when zooming
 -   [✔] prevent zoom when paused (gotta find out if was idle or active before pause)
 -   [✔] compute skills efx
+-   [ ] tower rangeGizmos -> show'em if modal.towerDetails
+-   [ ] add some objects to highlight path's start/finish lines
 -   [ ] modal icons (info, up, sell, level, damage, range, fireRate)
 -   [ ] projectile trajectory towards flying enemies
 -   [ ] more and better levels

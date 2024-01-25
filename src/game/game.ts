@@ -71,6 +71,7 @@ import {
     GameLevel,
     Skill,
     LaneChar,
+    JSONPath,
 } from "../shared/types";
 import { beaconTemplate, cancelableModalNames, gameEndTemplates, modalTemplates, speedBtnsTemplate } from "./templates";
 import { PlayerStats } from "./PlayerStats";
@@ -522,48 +523,54 @@ async function drawMap() {
 async function drawPaths() {
     console.log("drawPaths", { levelData });
 
+    function drawPath(path: JSONPath, shapeW: number, shapeH: number) {
+        const pathPoints: THREE.Vector3[] = [];
+
+        path.points.forEach((point) => {
+            pathPoints.push(new THREE.Vector3(point.x, point.y, point.z));
+        });
+
+        const pathCurve = new THREE.CatmullRomCurve3(pathPoints, false, "catmullrom", 0.5);
+
+        const shapePts = [
+            new THREE.Vector2(-shapeH, -shapeW),
+            new THREE.Vector2(shapeH, -shapeW),
+            new THREE.Vector2(shapeH, shapeW),
+            new THREE.Vector2(-shapeH, shapeW),
+        ];
+        const extrudeShape = new THREE.Shape(shapePts);
+        const mainPathGeometry = new THREE.ExtrudeGeometry(extrudeShape, {
+            steps: 200,
+            extrudePath: pathCurve,
+        });
+
+        const pathMesh = new THREE.Mesh(mainPathGeometry, MATERIALS.path);
+        pathMesh.name = "Road";
+        pathMesh.position.y = shapeH;
+
+        return { pathCurve, pathMesh };
+    }
+
     if (DRAW_AND_COMPUTE_OFFSET_PATHS) {
         const centerPaths: { x: number; y: number; z: number }[][] = [];
         const leftPaths: { x: number; y: number; z: number }[][] = [];
         const rightPaths: { x: number; y: number; z: number }[][] = [];
 
         for (const [lane, paths] of Object.entries(levelData.paths)) {
-            console.log("lane, paths", lane, paths);
-
             for (const path of paths) {
-                const pathPoints: THREE.Vector3[] = [];
-
-                path.points.forEach((point) => {
-                    pathPoints.push(new THREE.Vector3(point.x, point.y, point.z));
-                });
-
-                const pathCurve = new THREE.CatmullRomCurve3(pathPoints, false, "catmullrom", 0.5);
-                allPathCurves[lane as keyof typeof allPathCurves].push(pathCurve);
-
-                // eslint-disable-next-line prefer-const
                 const [shapeW, shapeH] = [1, 0.035];
 
-                const shapePts = [
-                    new THREE.Vector2(-shapeH, -shapeW),
-                    new THREE.Vector2(shapeH, -shapeW),
-                    new THREE.Vector2(shapeH, shapeW),
-                    new THREE.Vector2(-shapeH, shapeW),
-                ];
-                const extrudeShape = new THREE.Shape(shapePts);
-                const mainPathGeometry = new THREE.ExtrudeGeometry(extrudeShape, {
-                    steps: 200,
-                    extrudePath: pathCurve,
-                });
+                const { pathCurve, pathMesh } = drawPath(path, shapeW, shapeH);
 
-                const pathMesh = new THREE.Mesh(mainPathGeometry, MATERIALS.path);
-                pathMesh.name = "Road";
-                pathMesh.position.y = shapeH;
-
-                // console.log({ pathCurve, pathMesh, pathPoints });
+                allPathCurves[lane as keyof typeof allPathCurves].push(pathCurve);
 
                 scene.add(pathMesh);
 
-                const { centerPath, leftPath, rightPath } = drawAndComputeOffsetPaths(shapeW, shapeH, mainPathGeometry);
+                const { centerPath, leftPath, rightPath } = drawAndComputeOffsetPaths(
+                    shapeW,
+                    shapeH,
+                    pathMesh.geometry
+                );
                 centerPaths.push(centerPath);
                 leftPaths.push(leftPath);
                 rightPaths.push(rightPath);
@@ -579,7 +586,6 @@ async function drawPaths() {
                 right: rightPaths.map((path) => ({ points: path, closed: false })),
             },
         };
-
         console.log({
             l1x: leftPaths[0][0].x,
             c1x: centerPaths[0][0].x,
@@ -587,80 +593,26 @@ async function drawPaths() {
             centerPaths,
             leftPaths,
             rightPaths,
+            levelPaths,
         });
-        console.log({ levelPaths });
     } else if (DRAW_PATH_LANES) {
         for (const [lane, paths] of Object.entries(levelData.paths)) {
-            console.log("lane, paths", lane, paths);
-
             for (const path of paths) {
-                const pathPoints: THREE.Vector3[] = [];
+                const { pathCurve, pathMesh } = drawPath(path, 0.05, 0.035);
 
-                path.points.forEach((point) => {
-                    pathPoints.push(new THREE.Vector3(point.x, point.y, point.z));
-                });
-
-                const pathCurve = new THREE.CatmullRomCurve3(pathPoints, false, "catmullrom", 0.5);
                 allPathCurves[lane as keyof typeof allPathCurves].push(pathCurve);
-
-                const [shapeW, shapeH] = [0.05, 0.035];
-                // const [shapeW, shapeH] = [1, 0.035];
-
-                const shapePts = [
-                    new THREE.Vector2(-shapeH, -shapeW),
-                    new THREE.Vector2(shapeH, -shapeW),
-                    new THREE.Vector2(shapeH, shapeW),
-                    new THREE.Vector2(-shapeH, shapeW),
-                ];
-                const extrudeShape = new THREE.Shape(shapePts);
-                const mainPathGeometry = new THREE.ExtrudeGeometry(extrudeShape, {
-                    steps: 200,
-                    extrudePath: pathCurve,
-                });
-
-                const pathMesh = new THREE.Mesh(mainPathGeometry, MATERIALS.path);
-                pathMesh.name = "Road";
-                pathMesh.position.y = shapeH;
 
                 scene.add(pathMesh);
             }
         }
-
-        console.log({ allPathCurves });
     }
     // Regular game paths
     else {
         for (const [lane, paths] of Object.entries(levelData.paths)) {
-            console.log("lane, paths", lane, paths);
-
             for (const path of paths) {
-                const pathPoints: THREE.Vector3[] = [];
+                const { pathCurve, pathMesh } = drawPath(path, 1.4, 0.035);
 
-                path.points.forEach((point) => {
-                    pathPoints.push(new THREE.Vector3(point.x, point.y, point.z));
-                });
-
-                const pathCurve = new THREE.CatmullRomCurve3(pathPoints, false, "catmullrom", 0.5);
                 allPathCurves[lane as keyof typeof allPathCurves].push(pathCurve);
-
-                // const [shapeW, shapeH] = [0.05, 0.035];
-                const [shapeW, shapeH] = [1.4, 0.035];
-
-                const shapePts = [
-                    new THREE.Vector2(-shapeH, -shapeW),
-                    new THREE.Vector2(shapeH, -shapeW),
-                    new THREE.Vector2(shapeH, shapeW),
-                    new THREE.Vector2(-shapeH, shapeW),
-                ];
-                const extrudeShape = new THREE.Shape(shapePts);
-                const mainPathGeometry = new THREE.ExtrudeGeometry(extrudeShape, {
-                    steps: 200,
-                    extrudePath: pathCurve,
-                });
-
-                const pathMesh = new THREE.Mesh(mainPathGeometry, MATERIALS.path);
-                pathMesh.name = "Road";
-                pathMesh.position.y = shapeH;
 
                 if (lane === "center") {
                     scene.add(pathMesh);
@@ -668,8 +620,7 @@ async function drawPaths() {
             }
         }
     }
-
-    console.log("now it is 100% loaded!");
+    console.log({ allPathCurves });
     return Promise.resolve();
 }
 
@@ -1058,21 +1009,6 @@ function onPointerMove(e: PointerEvent) {
     mousePos.y = -(e.clientY / canvasHeight) * 2 + 1;
 
     mouseRay.setFromCamera(mousePos, camera);
-
-    // if (readyToFireMeteor || readyToFireBlizzard) {
-    //     if (!mouseTargetRing.visible) mouseTargetRing.visible = true;
-
-    //     const pos = mousePosToWorldPos(mouseRay, scene);
-    //     mouseTargetRing.position.set(pos.x, pos.y, pos.z);
-
-    //     // make targeting ring disappear if mouse is outside map
-    //     if (pos.x === 0 && pos.y === 0 && pos.z === 0) {
-    //         mouseTargetRing.visible = false;
-    //     }
-    // }
-    // else {
-    //     handleHoverEfx();
-    // }
 
     if (!USE_ORBIT_CONTROLS) {
         if (e.buttons === 1) {
@@ -1482,7 +1418,7 @@ function onEndGameConfirm() {
 
 function onGameSpeedChange(e: MouseEvent) {
     const elTarget = e.target as HTMLElement;
-    // e.preventDefault();
+
     if (elTarget.tagName === "INPUT") {
         const speedStr = elTarget.id.split("-")[1];
         const speed = Number(speedStr[0]);
@@ -1505,7 +1441,6 @@ function onWaveEnded() {
     if (currWaveIdx === waveCount) {
         gameOverWin();
     }
-
     // pauseGameBtn.innerHTML = `Start Wave ${currWaveIdx + 1}`;
 }
 
@@ -1563,9 +1498,9 @@ function handleCameraMovement(e: PointerEvent) {
 
 function revertCancelableModals() {
     const allModals = Array.from(document.querySelectorAll<HTMLDivElement>(".modal2D"));
-    // console.log("REVERT CANCELABLE MODALS");
+
     allModals.forEach((modalEl) => {
-        // console.log(":::", { modalEl, tower_id: modalEl.dataset["tower_id"] });
+        // console.log(":::REVERT CANCELABLE MODALS", { modalEl, tower_id: modalEl.dataset["tower_id"] });
 
         for (const cancelableModalName of cancelableModalNames) {
             if (modalEl.children[0].classList.contains(cancelableModalName)) {
@@ -1661,14 +1596,8 @@ function onProjectileExplode(e: any) {
                     const t = TOWER_BLUEPRINTS.Ballista[projectile.level - 1];
                     const towerAvgDmg = THREE.MathUtils.lerp(t.damage[0], t.damage[1], 0.5);
                     const critDamage = towerAvgDmg * 3;
-                    // const pureDamage = damage;
                     damage += critDamage;
-                    // console.log("CRITICAL HIT", {
-                    //     pureDamage,
-                    //     towerAvgDmg,
-                    //     "critDamage (3x towerAvgDmg)": critDamage,
-                    //     finalDamage: damage,
-                    // });
+                    // console.log("CRITICAL HIT", { towerAvgDmg, "critDamage (3x towerAvgDmg)": critDamage, damage });
                 }
 
                 targetEnemy.takeDamage(damage);
@@ -1999,7 +1928,6 @@ function onBlizzardFire() {
 function clearMeteorTargeting() {
     readyToFireMeteor = false;
     document.body.style.cursor = "default";
-    // mouseTargetRing.visible = false;
     if (meteorBtn.classList.contains("cancel-action")) {
         meteorBtn.classList.remove("cancel-action");
     }
@@ -2007,7 +1935,6 @@ function clearMeteorTargeting() {
 function clearBlizzardTargeting() {
     readyToFireBlizzard = false;
     document.body.style.cursor = "default";
-    // mouseTargetRing.visible = false;
     if (blizzardBtn.classList.contains("cancel-action")) {
         blizzardBtn.classList.remove("cancel-action");
     }
@@ -2130,7 +2057,6 @@ function drawAndComputeOffsetPaths(shapeW: number, shapeH: number, pathGeometry:
 
             rect.add(dot);
             dot.getWorldPosition(dummy.position);
-            // scene.updateMatrixWorld(); // otherwise getWorldPosition will yield the wrong result
 
             const array = center ? centerPath : left ? leftPath : right ? rightPath : [];
             array.push({ x: dummy.position.x, y: dummy.position.y, z: dummy.position.z });
@@ -2140,56 +2066,5 @@ function drawAndComputeOffsetPaths(shapeW: number, shapeH: number, pathGeometry:
         }
     });
 
-    // const leftDot = scene.getObjectByName("left-0");
-    // console.log({ leftDot });
-
     return { centerPath, leftPath, rightPath };
 }
-
-// let prevHighlightedMeshUUID: string | null = null;
-// function handleHoverEfx() {
-//     const rayIntersects = mouseRay.intersectObjects(scene.children);
-//     let foundHighlightTarget = false;
-//     for (const ch of rayIntersects) {
-//         const obj = ch.object as THREE.Mesh;
-//         if (
-//             obj.isMesh &&
-//             obj.type !== "SkinnedMesh" &&
-//             (obj.name.includes("-Tower") || obj.name.includes("TowerBase"))
-//         ) {
-//             const oldMeshIdx = outlinePass.selectedObjects.findIndex((o) => o.uuid === prevHighlightedMeshUUID);
-//             // outlinePass.visibleEdgeColor = new THREE.Color(0xffffff * Math.random());
-//             prevHighlightedMeshUUID = obj.uuid;
-//             foundHighlightTarget = true;
-//             outlinePass.selectedObjects.splice(oldMeshIdx, 1);
-//             outlinePass.selectedObjects.push(obj);
-//             break;
-//         }
-//     }
-
-//     if (!foundHighlightTarget) {
-//         if (prevHighlightedMeshUUID) {
-//             const oldMeshIdx = outlinePass.selectedObjects.findIndex(
-//                 (o) => o.type !== "SkinnedMesh" && o.uuid === prevHighlightedMeshUUID
-//             );
-
-//             if (oldMeshIdx > -1) {
-//                 outlinePass.selectedObjects.splice(oldMeshIdx, 1);
-//             }
-//         }
-//         prevHighlightedMeshUUID = null;
-//     }
-// }
-
-// fontLoader.load("/assets/fonts/font.json", (font) => {
-//     console.log({ font });
-//     const geometry = new TextGeometry("Hello three.js!", {
-//         font: font,
-//         size: 4,
-//         height: 2,
-//         curveSegments: 12,
-//     });
-
-//     const textMesh = new THREE.Mesh(geometry, MATERIALS.beacon);
-//     scene.add(textMesh);
-// });
