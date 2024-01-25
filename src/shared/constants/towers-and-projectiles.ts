@@ -40,59 +40,58 @@ export const TOWER_BLUEPRINTS: { [k in TowerType]: TowerBluePrint[] } = {
         {
             name: TowerType.Archer,
             level: 1,
+            color: "blue",
             defaultStrategy: TargetingStrategy.FirstInLine,
             firePointY: 3.9,
             // firePointY: 6,
+            // modelScale: 1,
             damage: [2, 5],
             fireRate: 2, // Fast
-            color: "blue",
-            price: 80,
-            range: 10, // Average
-            // modelScale: 1,
+            range: 8, // Average
             modelScale: 0.75,
-            // modelURL: "/assets/glb/towers/Archer_Tower.gltf",
+            price: 80,
         },
         {
             name: TowerType.Archer,
+            level: 2,
+            color: "blue",
             defaultStrategy: TargetingStrategy.FirstInLine,
             // firePointY: 6.5,
-            firePointY: 4.8,
-            level: 2,
-            damage: [3, 9],
-            fireRate: 2, // Fast
-            color: "blue",
-            price: 135,
-            range: 11, // Long
-            modelScale: 0.85,
             // modelScale: 1.1,
+            modelScale: 0.85,
+            firePointY: 4.8,
+            damage: [3, 9],
+            fireRate: 2.05, // Fast
+            range: 9, // Average
+            price: 135,
         },
         {
             name: TowerType.Archer,
+            level: 3,
+            color: "blue",
             defaultStrategy: TargetingStrategy.FirstInLine,
             // firePointY: 7,
-            firePointY: 5.2,
-            level: 3,
-            damage: [5, 13],
-            fireRate: 2, // Very Fast
-            color: "blue",
-            price: 200,
             // modelScale: 1.2,
+            firePointY: 5.2,
+            damage: [5, 13],
+            fireRate: 2.1, // Very Fast
+            range: 10, // Long
             modelScale: 0.95,
-            range: 12, // Long
+            price: 200,
         },
         {
             name: TowerType.Archer,
             level: 4,
             defaultStrategy: TargetingStrategy.FirstInLine,
             color: "blue",
-            firePointY: 5.5,
             // firePointY: 7.5,
-            modelScale: 1.05,
             // modelScale: 1.3,
-            price: 325,
-            damage: [7, 16],
-            fireRate: 2, // Very Fast
-            range: 13, // Great
+            firePointY: 5.5,
+            modelScale: 1.05,
+            damage: [8, 18],
+            fireRate: 2.2, // Very Fast
+            range: 12, // Long
+            price: 280,
             specials: [],
         },
     ],
@@ -147,11 +146,11 @@ export const TOWER_BLUEPRINTS: { [k in TowerType]: TowerBluePrint[] } = {
             firePointY: 8,
             modelScale: 1.05,
             // modelScale: 1.3,
-            damage: [32, 70],
+            damage: [30, 68],
             fireRate: 0.6, // Slow
             range: 15, // Extreme
             specials: [],
-            price: 380,
+            price: 300,
         },
     ],
     Cannon: [
@@ -164,10 +163,10 @@ export const TOWER_BLUEPRINTS: { [k in TowerType]: TowerBluePrint[] } = {
             // modelScale: 1,
             firePointY: 5,
             modelScale: 0.75,
-            damage: [7, 12],
+            damage: [10, 17],
             fireRate: 0.4, // Very Slow
             range: 9, // short
-            price: 125,
+            price: 110,
         },
         {
             name: TowerType.Cannon,
@@ -181,7 +180,7 @@ export const TOWER_BLUEPRINTS: { [k in TowerType]: TowerBluePrint[] } = {
             damage: [18, 30],
             fireRate: 0.4, // Very Slow
             range: 10, // Average
-            price: 220,
+            price: 190,
         },
         {
             name: TowerType.Cannon,
@@ -195,7 +194,7 @@ export const TOWER_BLUEPRINTS: { [k in TowerType]: TowerBluePrint[] } = {
             damage: [30, 50],
             fireRate: 0.4, // Very Slow
             range: 11, // Long
-            price: 320,
+            price: 250,
         },
         {
             name: TowerType.Cannon,
@@ -209,7 +208,7 @@ export const TOWER_BLUEPRINTS: { [k in TowerType]: TowerBluePrint[] } = {
             damage: [62, 106],
             fireRate: 0.4, // Very Slow
             range: 12, // Long
-            price: 375,
+            price: 340,
             specials: [],
         },
     ],
@@ -237,7 +236,7 @@ export const TOWER_BLUEPRINTS: { [k in TowerType]: TowerBluePrint[] } = {
             // modelScale: 1.1,
             firePointY: 5.6,
             modelScale: 0.85,
-            damage: [11, 22],
+            damage: [10, 21],
             fireRate: 1, // Average
             range: 10,
             price: 160,
@@ -251,7 +250,7 @@ export const TOWER_BLUEPRINTS: { [k in TowerType]: TowerBluePrint[] } = {
             // modelScale: 1.2,
             firePointY: 6.3,
             modelScale: 0.95,
-            damage: [21, 37],
+            damage: [16, 33],
             fireRate: 1, // Average
             range: 11,
             price: 220,
@@ -265,10 +264,10 @@ export const TOWER_BLUEPRINTS: { [k in TowerType]: TowerBluePrint[] } = {
             firePointY: 7,
             modelScale: 1.05,
             color: "green",
-            damage: [32, 61],
+            damage: [27, 48],
             fireRate: 1, // Average
             range: 12,
-            price: 380,
+            price: 300,
             specials: [],
         },
     ],
@@ -283,7 +282,7 @@ export const TOWER_BLUEPRINTS: { [k in TowerType]: TowerBluePrint[] } = {
             firePointY: 7.5,
             modelScale: 0.75,
             damage: [8, 12],
-            fireRate: 1, // Average
+            fireRate: 1.2, // Average
             range: 9, // Short
             price: 100,
         },
@@ -297,7 +296,7 @@ export const TOWER_BLUEPRINTS: { [k in TowerType]: TowerBluePrint[] } = {
             firePointY: 9,
             modelScale: 0.85,
             damage: [18, 30],
-            fireRate: 1, // Average
+            fireRate: 1.15, // Average
             range: 10, // Average
             price: 160,
         },
@@ -311,7 +310,7 @@ export const TOWER_BLUEPRINTS: { [k in TowerType]: TowerBluePrint[] } = {
             firePointY: 10,
             modelScale: 0.95,
             damage: [34, 56],
-            fireRate: 1, // Average
+            fireRate: 1.1, // Average
             range: 11, // Long
             price: 220,
         },
@@ -325,9 +324,9 @@ export const TOWER_BLUEPRINTS: { [k in TowerType]: TowerBluePrint[] } = {
             firePointY: 11.2,
             modelScale: 1.05,
             damage: [47, 74],
-            fireRate: 1, // Average
+            fireRate: 1.05, // Average
             range: 12, // Long
-            price: 380,
+            price: 300,
             specials: [],
         },
     ],
@@ -562,13 +561,13 @@ for (const [, towers] of Object.entries(TOWER_BLUEPRINTS)) {
     console.table(stats);
 }
 
-function getIdealStats({ dps, price }: { dps: number; price: number }) {
-    const buckPerDps = price / dps;
-    console.log({ buckPerDps });
-    return buckPerDps;
-}
+// function getIdealStats({ dps, price }: { dps: number; price: number }) {
+//     const buckPerDps = price / dps;
+//     console.log({ buckPerDps });
+//     return buckPerDps;
+// }
 
-getIdealStats({ dps: 8, price: 100 });
-getIdealStats({ dps: 25, price: 100 + 175 });
-getIdealStats({ dps: 48, price: 100 + 175 + 220 });
-getIdealStats({ dps: 90, price: 100 + 175 + 220 + 300 });
+// getIdealStats({ dps: 8, price: 100 });
+// getIdealStats({ dps: 25, price: 100 + 175 });
+// getIdealStats({ dps: 48, price: 100 + 175 + 220 });
+// getIdealStats({ dps: 90, price: 100 + 175 + 220 + 300 });
