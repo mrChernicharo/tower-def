@@ -83,10 +83,15 @@ export const modalTemplates = {
     },
     towerDetails: (tower: Tower, skills: PlayerSkills) => {
         const { price: tPrice } = Tower.getTowerValuesBasedOnPlayerStats(skills, tower.blueprint);
-        const { price: t2Price } = Tower.getTowerValuesBasedOnPlayerStats(
-            skills,
-            TOWER_BLUEPRINTS[tower.towerName][tower.blueprint.level]
-        );
+        let t2Price = 0;
+
+        if (tower.blueprint.level < 4) {
+            const { price } = Tower.getTowerValuesBasedOnPlayerStats(
+                skills,
+                TOWER_BLUEPRINTS[tower.towerName][tower.blueprint.level]
+            );
+            t2Price = price;
+        }
 
         return `
         <div class="${ModalType.TowerDetails} ${tower.towerName} modal-content">
@@ -101,7 +106,7 @@ export const modalTemplates = {
 
             <div class="btn-row">
             ${
-                tower.blueprint.level < 4
+                t2Price
                     ? `<button id="tower-upgrade-btn" class="tower-details-btn">Upgrade $${t2Price}</button>`
                     : `<span>SKILLS</span>`
             }

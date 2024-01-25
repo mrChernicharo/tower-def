@@ -58,7 +58,7 @@ export const TOWER_BLUEPRINTS: { [k in TowerType]: TowerBluePrint[] } = {
             // firePointY: 6.5,
             firePointY: 4.8,
             level: 2,
-            damage: [4, 9],
+            damage: [3, 9],
             fireRate: 2, // Fast
             color: "blue",
             price: 135,
@@ -72,7 +72,7 @@ export const TOWER_BLUEPRINTS: { [k in TowerType]: TowerBluePrint[] } = {
             // firePointY: 7,
             firePointY: 5.2,
             level: 3,
-            damage: [5, 11],
+            damage: [5, 13],
             fireRate: 2, // Very Fast
             color: "blue",
             price: 200,
@@ -106,7 +106,7 @@ export const TOWER_BLUEPRINTS: { [k in TowerType]: TowerBluePrint[] } = {
             firePointY: 5.75,
             // modelScale: 1,
             modelScale: 0.75,
-            damage: [4, 9],
+            damage: [6, 15],
             fireRate: 0.6, // Slow
             range: 12, // Long
             price: 100,
@@ -119,7 +119,7 @@ export const TOWER_BLUEPRINTS: { [k in TowerType]: TowerBluePrint[] } = {
             firePointY: 6.25,
             modelScale: 0.85,
             // modelScale: 1.1,
-            damage: [8, 13],
+            damage: [12, 23],
             fireRate: 0.6, // Slow
             range: 13, // Great
             price: 160,
@@ -133,7 +133,7 @@ export const TOWER_BLUEPRINTS: { [k in TowerType]: TowerBluePrint[] } = {
             firePointY: 6.75,
             // modelScale: 1.2,
             modelScale: 0.95,
-            damage: [11, 20],
+            damage: [18, 37],
             fireRate: 0.6, // Slow
             range: 14, // Excellent
             price: 220,
@@ -147,7 +147,7 @@ export const TOWER_BLUEPRINTS: { [k in TowerType]: TowerBluePrint[] } = {
             firePointY: 8,
             modelScale: 1.05,
             // modelScale: 1.3,
-            damage: [21, 34],
+            damage: [32, 70],
             fireRate: 0.6, // Slow
             range: 15, // Extreme
             specials: [],
@@ -545,3 +545,30 @@ export const PROJECTILE_BLUEPRINTS: { [k in TowerType]: ProjectileBluePrint[] } 
         },
     ],
 };
+
+function getTowerStats(tower: TowerBluePrint) {
+    const avgDamage = (tower.damage[0] + tower.damage[1]) / 2;
+    const shotsPerSec = tower.fireRate;
+    const dps = +(avgDamage * shotsPerSec).toFixed(2);
+    const buckPerDps = tower.price / dps;
+    return { tower: `${tower.name}-${tower.level}`, dps, range: tower.range, price: tower.price, buckPerDps };
+}
+
+for (const [, towers] of Object.entries(TOWER_BLUEPRINTS)) {
+    const stats: { tower: string; dps: number; range: number; price: number; buckPerDps: number }[] = [];
+    towers.forEach((t) => {
+        stats.push(getTowerStats(t));
+    });
+    console.table(stats);
+}
+
+function getIdealStats({ dps, price }: { dps: number; price: number }) {
+    const buckPerDps = price / dps;
+    console.log({ buckPerDps });
+    return buckPerDps;
+}
+
+getIdealStats({ dps: 8, price: 100 });
+getIdealStats({ dps: 25, price: 100 + 175 });
+getIdealStats({ dps: 48, price: 100 + 175 + 220 });
+getIdealStats({ dps: 90, price: 100 + 175 + 220 + 300 });

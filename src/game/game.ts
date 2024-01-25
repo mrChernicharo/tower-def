@@ -18,7 +18,7 @@ import { CSS2DRenderer, CSS2DObject } from "three/examples/jsm/renderers/CSS2DRe
 import { GAME_LEVELS } from "../shared/constants/levels/game-levels";
 import { LEVEL_OBJECTS } from "../shared/constants/levels/level-objects";
 import { ENEMY_BLUEPRINTS } from "../shared/constants/enemies";
-import { towerModelsURLs, TOWER_BLUEPRINTS } from "../shared/constants/towers";
+import { TOWER_BLUEPRINTS } from "../shared/constants/towers";
 import { GAME_SKILLS } from "../shared/constants/skills";
 import { StraightProjectile } from "./Projectile";
 import { ALL_PATHS } from "../shared/constants/paths/all-paths";
@@ -764,27 +764,17 @@ async function _initEnemyModels() {
 }
 
 async function _initTowerModels() {
-    // const towersFbx = await fbxLoader.loadAsync("/assets/fbx/towers-no-texture.fbx");
-    // const { scene: towerModels } = await gltfLoader.loadAsync(
-    //     "/assets/glb/towers/towers-no-texture-separated-heads.glb"
-    // );
+    const towersGlTF = await gltfLoader.loadAsync("/assets/glb/towers/towers.gltf");
 
-    const modelPromises: Promise<GLTF>[] = [];
-    for (const [, /*towerType*/ urls] of Object.entries(towerModelsURLs)) {
-        for (const url of urls) {
-            modelPromises.push(gltfLoader.loadAsync(url));
-        }
-    }
-    const result = await Promise.all(modelPromises);
+    for (const model of towersGlTF.scene.children) {
+        model.userData.name = (model.userData.name as string).replace(".gltf", "");
+        const modelName = model.userData.name;
 
-    for (const glb of result) {
-        const model = glb.scene;
+        console.log({ model, n: model.userData.name, modelName });
 
-        const modelName =
-            model.userData.name || model.children[0].userData.name || model.children[0].children[0].userData.name;
         const [towerName, towerLevel] = [modelName.split("_")[0] as TowerType, +modelName.split("_")[3]];
-        model.name = modelName;
-        model.userData.name = model.name;
+        // model.name = modelName;
+        // model.userData.name = model.name;
 
         if (!TOWER_MODELS[towerName]) {
             TOWER_MODELS[towerName] = {};
@@ -804,7 +794,7 @@ async function _initTowerModels() {
 
         TOWER_MODELS[towerName][`level-${towerLevel}`].add(model.clone());
     }
-    // console.log({ result, TOWER_MODELS });
+    console.log({ TOWER_MODELS });
 
     const projectilesFbx = await fbxLoader.loadAsync("/assets/fbx/projectiles-no-texture.fbx");
     towerTexture = await new THREE.TextureLoader().loadAsync("/assets/fbx/towers-texture.png");
