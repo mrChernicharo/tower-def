@@ -115,7 +115,7 @@ export const COLORS = {
     desert: 0xdd6600,
     lightConcrete: 0xcdcdcd,
     concrete: 0xacacac,
-    concrete2: 0x8a8a8a,
+    darkConcrete: 0x787878,
     path: 0x787878,
     blue: 0x3484d4,
     red: 0xd43434,
@@ -147,24 +147,17 @@ export const MATERIALS = {
     // forest: new THREE.MeshToonMaterial({ color: COLORS.forest }),
     // winter: new THREE.MeshToonMaterial({ color: COLORS.winter }),
     // lava: new THREE.MeshToonMaterial({ color: COLORS.lava }),
-    // concrete: new THREE.MeshMatcapMaterial({ color: COLORS.concrete }),
-    // concrete2: new THREE.MeshMatcapMaterial({ color: COLORS.concrete2 }),
-    // lightConcrete: new THREE.MeshMatcapMaterial({ color: COLORS.lightConcrete }),
-    concrete: new THREE.MeshToonMaterial({ color: COLORS.concrete }),
-    concrete2: new THREE.MeshToonMaterial({ color: COLORS.concrete2 }),
-    lightConcrete: new THREE.MeshToonMaterial({ color: COLORS.lightConcrete }),
-
+    concrete: new THREE.MeshMatcapMaterial({ color: COLORS.concrete }),
+    lightConcrete: new THREE.MeshMatcapMaterial({ color: COLORS.lightConcrete }),
+    darkConcrete: new THREE.MeshMatcapMaterial({ color: COLORS.darkConcrete }),
     desert: new THREE.MeshStandardMaterial({ color: COLORS.desert }),
     forest: new THREE.MeshStandardMaterial({ color: COLORS.forest }),
     winter: new THREE.MeshStandardMaterial({ color: COLORS.winter }),
     lava: new THREE.MeshStandardMaterial({ color: COLORS.lava }),
-
-    path: new THREE.MeshToonMaterial({ color: COLORS.concrete }),
     beacon: new THREE.MeshMatcapMaterial({ color: COLORS.green }),
     wood: new THREE.MeshMatcapMaterial({ color: "brown" }),
     transparentWood: new THREE.MeshMatcapMaterial({ color: "brown", transparent: true, opacity: 0.5 }),
     icicle: new THREE.MeshMatcapMaterial({ color: "dodgerblue", transparent: true, opacity: 0.5 }),
-
     projectileGizmo: new THREE.MeshToonMaterial({ color: 0x00ffff }),
     tower: (towerTexture: THREE.Texture) =>
         new THREE.MeshBasicMaterial({

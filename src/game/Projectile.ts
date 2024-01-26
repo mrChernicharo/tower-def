@@ -28,7 +28,7 @@ class ProjectileBase {
         this.level = tower.blueprint.level;
         this.blueprint = { ...PROJECTILE_BLUEPRINTS[this.type][this.level - 1] };
 
-        console.log("ProjectileBase", { PROJECTILE_MODELS, level: this.level, blueprint: this.blueprint });
+        // console.log("ProjectileBase", { PROJECTILE_MODELS, level: this.level, blueprint: this.blueprint });
 
         this.model = PROJECTILE_MODELS[this.type][`level-${this.level}`].clone();
 

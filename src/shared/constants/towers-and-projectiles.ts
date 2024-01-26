@@ -90,7 +90,7 @@ export const TOWER_BLUEPRINTS: { [k in TowerType]: TowerBluePrint[] } = {
             modelScale: 1.05,
             damage: [8, 18],
             fireRate: 2.2, // Very Fast
-            range: 12, // Long
+            range: 11, // Long
             price: 280,
             specials: [],
         },
@@ -129,8 +129,8 @@ export const TOWER_BLUEPRINTS: { [k in TowerType]: TowerBluePrint[] } = {
             defaultStrategy: TargetingStrategy.FirstInLine,
             color: "red",
             // firePointY: 9,
-            firePointY: 6.75,
             // modelScale: 1.2,
+            firePointY: 6.75,
             modelScale: 0.95,
             damage: [18, 37],
             fireRate: 0.6, // Slow

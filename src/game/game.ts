@@ -161,7 +161,7 @@ let effectFXAA: ShaderPass;
 
 let frameId = 0;
 let clickTimestamp = 0;
-let towerToBuild: TowerType | null = null;
+let towerTypeToBuild: TowerType | null = null;
 
 let levelIdx: number;
 let currWave: WaveEnemyObj[] = [];
@@ -376,10 +376,8 @@ async function gameSetup() {
     }
 
     ambientLight = new THREE.AmbientLight(0xffffff, 1);
-    directionalLight = new THREE.DirectionalLight(0xffffff, 1);
-    // directionalLight.position.set(-30, 50, -30);
+    directionalLight = new THREE.DirectionalLight(0xffffff, 2);
     directionalLight.position.set(60, 100, -60);
-    // x: 5, y: 10, z: 7.5
     scene.add(ambientLight);
     scene.add(directionalLight);
 
@@ -390,14 +388,6 @@ async function gameSetup() {
     mouseRay.layers.enable(AppLayers.Tower);
     mouseRay.layers.enable(AppLayers.Modals);
     mouseRay.layers.enable(AppLayers.Buildings);
-
-    // const mouseTargetRingGeometry = new THREE.TorusGeometry(3);
-    // mouseTargetRingGeometry.rotateX(-Math.PI / 2);
-    // mouseTargetRing = new THREE.Mesh(mouseTargetRingGeometry, MATERIALS.beacon);
-    // mouseTargetRing.name = "mouseTargetRing";
-    // mouseTargetRing.position.set(0, 0, 0);
-    // scene.add(mouseTargetRing);
-    // mouseTargetRing.visible = false;
 
     // post-processing (for drawing outlines)
     composer = new EffectComposer(renderer);
@@ -544,7 +534,7 @@ async function drawPaths() {
             extrudePath: pathCurve,
         });
 
-        const pathMesh = new THREE.Mesh(mainPathGeometry, MATERIALS.path);
+        const pathMesh = new THREE.Mesh(mainPathGeometry, MATERIALS.darkConcrete);
         pathMesh.name = "Road";
         pathMesh.position.y = shapeH;
 
@@ -1034,28 +1024,34 @@ function onModalClick(e: MouseEvent, el: THREE.Object3D, modal3D: CSS2DObject, m
 
     /******* TOWER BUILD *******/
     if (evTarget.classList.contains("tower-build-btn")) {
-        towerToBuild = evTarget.id.split("-")[0] as TowerType;
-        modalEl.innerHTML = modalTemplates.confirmTowerBuild(towerToBuild, playerStats.skills);
+        towerTypeToBuild = evTarget.id.split("-")[0] as TowerType;
+        modalEl.innerHTML = modalTemplates.confirmTowerBuild(towerTypeToBuild, playerStats.skills);
 
-        const t = new Tower(towerToBuild!, el.position, modal3D.userData["tile_idx"], playerStats.skills);
+        const t = new Tower(towerTypeToBuild!, el.position, modal3D.userData["tile_idx"]);
         towerPreview = { model: t.model, rangeGizmo: t.rangeGizmo };
-        // console.log("draw tower preview", towerPreview);
-        scene.add(towerPreview.model);
-        scene.add(towerPreview.rangeGizmo);
+        console.log("draw tower preview", {
+            towerPreview,
+            rangeGizmo: towerPreview.rangeGizmo,
+            rangeGizmoRadius: (towerPreview.rangeGizmo.geometry as THREE.CircleGeometry).parameters.radius,
+        });
+
+        scene.add(t.model);
+        scene.add(t.rangeGizmo);
+        // scene.add(towerPreview.rangeGizmo);
     }
     if (evTarget.classList.contains("cancel-tower-build-btn")) {
         modalEl.innerHTML = modalTemplates.towerBuild(playerStats.skills);
-        towerToBuild = null;
+        towerTypeToBuild = null;
         clearTowerPreview();
     }
     if (evTarget.classList.contains("confirm-tower-build-btn")) {
-        // console.log(`BUILD THIS GODAMN ${towerToBuild} TOWER`, { el });
+        // console.log(`BUILD THIS GODAMN ${towerTypeToBuild} TOWER`, { el });
 
         // const towerPrice = .price;
 
         const { price } = Tower.getTowerValuesBasedOnPlayerStats(
             playerStats.skills,
-            TOWER_BLUEPRINTS[towerToBuild!][0]
+            TOWER_BLUEPRINTS[towerTypeToBuild!][0]
         );
 
         if (playerStats.gold < price) {
@@ -1068,11 +1064,11 @@ function onModalClick(e: MouseEvent, el: THREE.Object3D, modal3D: CSS2DObject, m
         clearTowerPreview();
         playerStats.spendGold(price);
 
-        const tower = new Tower(towerToBuild!, el.position, modal3D.userData["tile_idx"], playerStats.skills);
+        const tower = new Tower(towerTypeToBuild!, el.position, modal3D.userData["tile_idx"]);
 
-        el.userData["tower"] = towerToBuild;
+        el.userData["tower"] = towerTypeToBuild;
         el.userData["tower_id"] = tower.id;
-        modal3D.userData["tower"] = towerToBuild;
+        modal3D.userData["tower"] = towerTypeToBuild;
         modal3D.userData["tower_id"] = tower.id;
 
         // console.log("open details modal", { tower });
@@ -1083,9 +1079,9 @@ function onModalClick(e: MouseEvent, el: THREE.Object3D, modal3D: CSS2DObject, m
         towers.push(tower);
         scene.add(tower.model);
         scene.add(tower.rangeGizmo);
-        tower.rangeGizmo.visible = false;
+        tower.hideGizmo();
 
-        towerToBuild = null;
+        towerTypeToBuild = null;
     }
 
     /******* TOWER SELL *******/
@@ -1132,13 +1128,18 @@ function onModalClick(e: MouseEvent, el: THREE.Object3D, modal3D: CSS2DObject, m
         modalEl.innerHTML = modalTemplates.confirmTowerUpgrade(tower!, playerStats.skills);
 
         if (tower) {
+            tower.hideGizmo();
+
             const { model, rangeGizmo } = tower.getUpgradedPreview();
+            console.log("draw tower preview", {
+                currModel: tower.model,
+                nextModel: model,
+                currRadius: tower.rangeGizmo.geometry.boundingSphere?.radius,
+                nxtRadius: rangeGizmo.geometry.parameters.radius,
+            });
             towerPreview = { model, rangeGizmo };
-            // console.log("draw tower preview");
             scene.add(towerPreview.model);
             scene.add(towerPreview.rangeGizmo);
-            tower.model.visible = false;
-            tower.rangeGizmo.visible = false;
         }
     }
     if (evTarget.classList.contains("cancel-tower-upgrade-btn")) {
@@ -1148,16 +1149,18 @@ function onModalClick(e: MouseEvent, el: THREE.Object3D, modal3D: CSS2DObject, m
 
         if (tower) {
             tower.model.visible = true;
+            tower.showGizmo();
         }
     }
     if (evTarget.id === "confirm-tower-upgrade-btn") {
         const tower = towers.find((t) => t.id === tower_id);
 
-        // const towerIdx = towers.findIndex((t) => t.id === tower_id);
         // console.log("tower upgrade", { e, el, modal3D, modalEl, tower_id, tower });
         // if (towerIdx >= 0)
         if (tower) {
+            if (tower.blueprint.level > 3) return;
             // const t2 = TOWER_BLUEPRINTS[tower.towerName][tower.blueprint.level];
+            const towerIdx = towers.findIndex((t) => t.id === tower_id);
             const { price } = Tower.getTowerValuesBasedOnPlayerStats(
                 playerStats.skills,
                 TOWER_BLUEPRINTS[tower.towerName][tower.blueprint.level]
@@ -1173,18 +1176,21 @@ function onModalClick(e: MouseEvent, el: THREE.Object3D, modal3D: CSS2DObject, m
 
             clearTowerPreview();
 
-            scene.remove(tower.rangeGizmo);
             scene.remove(tower.model);
+            scene.remove(tower.rangeGizmo);
 
-            if (tower.blueprint.level > 3) return;
+            // if (tower.blueprint.level > 3) return;
 
             const upgradedTower = tower.upgrade();
+
+            towers.splice(towerIdx, 1, upgradedTower);
+
             scene.add(upgradedTower.model);
             scene.add(upgradedTower.rangeGizmo);
 
             // console.log({ tower, towers });
             modalEl.innerHTML = modalTemplates.towerDetails(tower, playerStats.skills);
-            upgradedTower.rangeGizmo.visible = false;
+            upgradedTower.hideGizmo();
             modal3D.visible = false;
         }
     }
@@ -1254,8 +1260,13 @@ function onCanvasClick(e: MouseEvent) {
             const tower = towers.find((t) => t.id === clickedTower!.object.userData.tower_id);
             console.log("CLICKED TOWER", { clickedTower, tower });
 
-            // tower!.rangeGizmo.visible = true;
             outlinePass.selectedObjects.push(clickedTower.object.parent as THREE.Mesh);
+
+            const towersWithShowingGizmos = towers.filter((t) => t.rangeGizmo.visible);
+            towersWithShowingGizmos.forEach((t) => {
+                t.hideGizmo();
+            });
+            tower?.showGizmo();
 
             scene.traverse((obj) => {
                 if ((obj as any).isCSS2DObject) {
@@ -1270,13 +1281,27 @@ function onCanvasClick(e: MouseEvent) {
         case Boolean(clickedTowerBase): {
             if (!clickedTowerBase) return;
             console.log("CLICKED TOWER BASE", { clickedTowerBase });
+            const tower = towers.find((t) => t.id === clickedTowerBase!.object.userData.tower_id);
             const modal3D = scene.getObjectByName(`${clickedTowerBase.object.name}-modal`)!;
             modal3D.visible = true;
+
+            const towersWithShowingGizmos = towers.filter((t) => t.rangeGizmo.visible);
+            towersWithShowingGizmos.forEach((t) => {
+                t.hideGizmo();
+            });
+            tower?.showGizmo();
+
             outlinePass.selectedObjects.push(clickedTowerBase.object);
             return;
         }
         default: {
+            const towersWithShowingGizmos = towers.filter((t) => t.rangeGizmo.visible);
+            towersWithShowingGizmos.forEach((t) => {
+                t.hideGizmo();
+            });
+
             console.log("CLICKED NOWHERE!");
+
             return;
         }
     }

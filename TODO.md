@@ -27,7 +27,16 @@
 -   [✔] slowdown cam movement when zooming
 -   [✔] prevent zoom when paused (gotta find out if was idle or active before pause)
 -   [✔] compute skills efx
+    -   [✔] archer
+    -   [✔] ballista
+    -   [✔] cannon
+    -   [✔] poison
+    -   [✔] wizard
+    -   [✔] blizzard
+    -   [✔] meteor
 -   [ ] tower rangeGizmos -> show'em if modal.towerDetails
+-   [ ] projectile transparency (wizard & poison)
+-   [ ] fix ricochet (prevent jumping back to some target that has already been hit)
 -   [ ] add some objects to highlight path's start/finish lines
 -   [ ] modal icons (info, up, sell, level, damage, range, fireRate)
 -   [ ] projectile trajectory towards flying enemies
@@ -36,15 +45,6 @@
 -   [ ] dmg_efx, die_animations
 -   [ ] (mobile) request full screen + landscape orientation
 -   [ ] better firePoint calculations (move it forward in case its a Cannon tower)
-
-    -   [ ] archer
-    -   [✔] ballista
-    -   [✔] cannon
-    -   [✔] poison
-    -   [ ] wizard
-    -   [✔] blizzard
-    -   [✔] meteor
-
 -   [ ] spider resists poison
 -   [ ] elf heals its friends
 

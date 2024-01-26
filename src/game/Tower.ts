@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { MATERIALS } from "../shared/constants/general";
 import { AppLayers, TargetingStrategy, TowerType, TrajectoryType } from "../shared/enums";
-import { TOWER_MODELS, towerTexture } from "./game";
+import { TOWER_MODELS } from "./game";
 import { idMaker } from "../shared/helpers";
 import { PlayerSkills, TowerBluePrint } from "../shared/types";
 import { THREE } from "../three";
@@ -24,14 +24,14 @@ export class Tower {
     headMesh: THREE.Mesh | undefined;
     blueprint: TowerBluePrint;
     tileIdx: string;
-    range: number;
-    damage: [number, number];
-    price: number;
-    rateOfFire: number;
+    range!: number;
+    damage!: [number, number];
+    price!: number;
+    rateOfFire!: number;
     rangeGizmo!: THREE.Mesh;
     strategy: TargetingStrategy;
     targetLocked = false;
-    constructor(towerType: TowerType, position: THREE.Vector3, tileIdx: string, playerSkills: PlayerSkills) {
+    constructor(towerType: TowerType, position: THREE.Vector3, tileIdx: string) {
         this.id = idMaker();
         this.towerName = towerType;
         this.position = position;
@@ -40,93 +40,32 @@ export class Tower {
         this.blueprint = { ...TOWER_BLUEPRINTS[towerType][0] };
         this.strategy = this.blueprint.defaultStrategy;
 
-        const { range, damage, rateOfFire, price } = Tower.getTowerValuesBasedOnPlayerStats(
-            playerSkills,
-            this.blueprint
-        );
-        this.range = range;
-        this.damage = damage;
-        this.rateOfFire = rateOfFire;
-        this.price = price;
-
         this._init();
     }
 
     async _init() {
         await this._setupModel();
-        // console.log("created tower", this);
+        console.log("created tower", this);
         return this;
     }
 
     async _setupModel() {
         this.model = TOWER_MODELS[this.towerName]["level-1"].clone();
-        this._setupModelData();
-        this._setupRangeGizmo();
-    }
-
-    _setupRangeGizmo() {
-        const circleGeometry = new THREE.CircleGeometry(this.range);
-        const circleMaterial = MATERIALS.towerRangeGizmo(this.blueprint.color);
-        const circleMesh = new THREE.Mesh(circleGeometry, circleMaterial);
-        circleMesh.position.set(this.position.x, this.position.y + 0.5, this.position.z);
-        circleMesh.rotation.x = -Math.PI * 0.5;
-        circleMesh.name = "rangeGizmo";
-
-        this.rangeGizmo = circleMesh;
-    }
-
-    upgrade() {
-        const currLevel = this.blueprint.level;
-        const nextLevel = currLevel + 1;
-
-        if (currLevel === 4) {
-            throw Error("MAX LEVEL REACHED");
-        }
-
-        const desiredBlueprint = { ...TOWER_BLUEPRINTS[this.towerName][currLevel] };
-        const desiredModel = TOWER_MODELS[this.towerName][`level-${nextLevel}`].clone();
-        this.blueprint = desiredBlueprint;
-        this.model = desiredModel;
+        this.model.userData["tower_id"] = this.id;
+        this.model.userData["tile_idx"] = this.tileIdx;
 
         this._setupModelData();
         this._setupRangeGizmo();
-        // console.log("upgrade tower", { currLevel, nextLevel, desiredBlueprint, desiredModel });
-        return this;
-    }
-
-    getUpgradedPreview() {
-        const currLevel = this.blueprint.level;
-        const nextLevel = currLevel + 1;
-        if (currLevel === 4) {
-            throw Error("MAX LEVEL REACHED");
-        }
-        const desiredBlueprint = { ...TOWER_BLUEPRINTS[this.towerName][currLevel] };
-        const desiredModel = TOWER_MODELS[this.towerName][`level-${nextLevel}`].clone();
-        desiredModel.layers.set(AppLayers.Tower);
-        desiredModel.children.forEach((mesh) => {
-            (mesh as THREE.Mesh).material = MATERIALS.tower(towerTexture);
-        });
-        desiredModel.position.set(this.position.x, this.position.y, this.position.z);
-        const s = desiredBlueprint.modelScale;
-        desiredModel.scale.set(s, s, s);
-
-        // @TODO -> apply real range
-        const circleGeometry = new THREE.CircleGeometry(desiredBlueprint.range);
-        const circleMaterial = MATERIALS.towerRangeGizmo(desiredBlueprint.color);
-        const circleMesh = new THREE.Mesh(circleGeometry, circleMaterial);
-        circleMesh.position.set(this.position.x, this.position.y + 0.5, this.position.z);
-        circleMesh.rotation.x = -Math.PI * 0.5;
-        circleMesh.name = "rangeGizmo Preview";
-        // return new Tower(this.towerName, this.position, this.tileIdx);
-        return { model: desiredModel, rangeGizmo: circleMesh };
     }
 
     _setupModelData() {
-        this.model.userData["tower_id"] = this.id;
-        this.model.userData["tower_level"] = this.blueprint.level;
-        this.model.userData["tile_idx"] = this.tileIdx;
-        this.model.layers.set(AppLayers.Tower);
+        this.damage = this.blueprint.damage;
+        this.range = this.blueprint.range;
+        this.rateOfFire = this.blueprint.fireRate;
+        this.price = this.blueprint.price;
 
+        this.model.userData["tower_level"] = this.blueprint.level;
+        this.model.layers.set(AppLayers.Tower);
         this.model.position.set(this.position.x, this.position.y, this.position.z);
         const s = this.blueprint.modelScale;
         this.model.scale.set(s, s, s);
@@ -160,8 +99,78 @@ export class Tower {
         //     this.model.position.y + this.blueprint.firePointY,
         //     this.towerName === TowerType.Cannon ? this.model.position.z + 1 : this.model.position.z
         // );
+    }
 
-        // console.log("_setupModelData", { model: this.model, head: this.headMesh, body: this.bodyMesh });
+    _setupRangeGizmo() {
+        const circleGeometry = new THREE.CircleGeometry(this.range);
+        const circleMaterial = MATERIALS.towerRangeGizmo(this.blueprint.color);
+        const circleMesh = new THREE.Mesh(circleGeometry, circleMaterial);
+        circleMesh.position.set(this.position.x, this.position.y + 0.5, this.position.z);
+        circleMesh.rotation.x = -Math.PI * 0.5;
+        circleMesh.name = "rangeGizmo";
+
+        this.rangeGizmo = circleMesh;
+    }
+
+    upgrade() {
+        const currLevel = this.blueprint.level;
+        const nextLevel = currLevel + 1;
+
+        if (currLevel === 4) {
+            throw Error("MAX LEVEL REACHED");
+        }
+
+        const desiredBlueprint = { ...TOWER_BLUEPRINTS[this.towerName][currLevel] };
+        const desiredModel = TOWER_MODELS[this.towerName][`level-${nextLevel}`].clone();
+
+        console.log("upgrade tower", {
+            currLevel,
+            currBlueprint: this.blueprint,
+            currModel: this.model,
+            currGizmo: this.rangeGizmo,
+            nextLevel,
+            desiredBlueprint,
+            desiredModel,
+        });
+
+        this.blueprint = desiredBlueprint;
+        this.model = desiredModel;
+
+        this._setupModelData();
+        this._setupRangeGizmo();
+        return this;
+    }
+
+    getUpgradedPreview() {
+        const currLevel = this.blueprint.level;
+        const nextLevel = currLevel + 1;
+        if (currLevel === 4) {
+            throw Error("MAX LEVEL REACHED");
+        }
+        const desiredBlueprint = { ...TOWER_BLUEPRINTS[this.towerName][currLevel] };
+        const desiredModel = TOWER_MODELS[this.towerName][`level-${nextLevel}`].clone();
+        desiredModel.layers.set(AppLayers.Tower);
+        desiredModel.position.set(this.position.x, this.position.y, this.position.z);
+        const s = desiredBlueprint.modelScale;
+        desiredModel.scale.set(s, s, s);
+
+        console.log({
+            currLevel,
+            nextLevel,
+            range: this.range,
+            currRange: this.blueprint.range,
+            desiredRange: desiredBlueprint.range,
+        });
+
+        // @TODO -> apply real range
+        const circleGeometry = new THREE.CircleGeometry(desiredBlueprint.range);
+        const circleMaterial = MATERIALS.towerRangeGizmo(desiredBlueprint.color);
+        const circleMesh = new THREE.Mesh(circleGeometry, circleMaterial);
+        circleMesh.position.set(this.position.x, this.position.y + 0.5, this.position.z);
+        circleMesh.rotation.x = -Math.PI * 0.5;
+        circleMesh.name = "rangeGizmo Preview";
+        // return new Tower(this.towerName, this.position, this.tileIdx);
+        return { model: desiredModel, rangeGizmo: circleMesh };
     }
 
     tick(delta: number, target: Enemy | Enemy[] | undefined) {
@@ -260,6 +269,13 @@ export class Tower {
             default:
                 return;
         }
+    }
+
+    showGizmo() {
+        this.rangeGizmo.visible = true;
+    }
+    hideGizmo() {
+        this.rangeGizmo.visible = false;
     }
 
     static getTowerValuesBasedOnPlayerStats(playerSkills: PlayerSkills, bluePrint: TowerBluePrint) {
