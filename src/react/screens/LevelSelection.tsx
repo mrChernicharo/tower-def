@@ -7,19 +7,13 @@ import { FaArrowLeft } from "react-icons/fa";
 import { useCallback, useEffect, useState } from "react";
 import { useLayoutContext } from "../context/useLayoutContext";
 
-const topBarStyles = {
-    position: "fixed",
-    zIndex: 200,
-    width: "100%",
-} as React.CSSProperties;
-
 const bottomBarStyles = {
     position: "absolute",
     bottom: 5,
     left: 5,
     display: "flex",
     alignItems: "center",
-    justifyContent: "end",
+    justifyContent: "start",
     width: "calc(100% - 10px)",
     // border: "1px solid green",
 } as React.CSSProperties;
@@ -95,14 +89,21 @@ export const LevelSelection = () => {
 
     return (
         <div>
+            <div style={{ position: "fixed", top: 0, right: 5, zIndex: 200 }}>
+                <Link to="/">
+                    <button style={{ marginLeft: "5px", marginTop: "5px" }}>
+                        <FaArrowLeft />
+                    </button>
+                </Link>
+            </div>
+
+            <div style={{ position: "fixed", top: 5, left: 5, zIndex: 200 }}>
+                <h2 style={{ background: "#00000088", paddingInline: "1rem", borderRadius: 4 }}>Level Selection</h2>
+            </div>
+
+            {/* <div style={{ height: 25 }}></div> */}
+
             <div className="world-map-container" style={worldMapContainerStyles}>
-                <div style={topBarStyles}>
-                    <Link to="/">
-                        <button style={{ marginLeft: "5px", marginTop: "5px" }}>
-                            <FaArrowLeft />
-                        </button>
-                    </Link>
-                </div>
                 {levelIconsPositions.map((pos, i) => {
                     return (
                         <div
@@ -129,42 +130,40 @@ export const LevelSelection = () => {
 
                 <img id="world-img" src={imgs.World} style={{ position: "absolute" }} />
 
-                <div style={{ ...bottomBarStyles }}>
-                    <div style={{ ...bottomBarStyles, ...(isMobile ? { position: "fixed" } : {}) }}>
-                        <Link to="/skills">
-                            <button style={{ marginLeft: "5px" }}>
-                                <span>Skills</span>
-                                {starsToSpend > 0 ? (
-                                    <div
+                <div style={{ ...bottomBarStyles, ...(isMobile ? { position: "fixed" } : {}) }}>
+                    <Link to="/skills">
+                        <button style={{ marginLeft: "5px" }}>
+                            <span>Skills</span>
+                            {starsToSpend > 0 ? (
+                                <div
+                                    style={{
+                                        position: "absolute",
+                                        bottom: 18,
+                                        left: 62,
+                                        transform: "rotate(12deg)",
+                                    }}
+                                >
+                                    <span
                                         style={{
-                                            position: "absolute",
-                                            bottom: 18,
-                                            right: 32,
-                                            transform: "rotate(12deg)",
+                                            position: "relative",
+                                            color: "orangered",
+                                            fontSize: 36,
                                         }}
                                     >
-                                        <span
-                                            style={{
-                                                position: "relative",
-                                                color: "orangered",
-                                                fontSize: 36,
-                                            }}
-                                        >
-                                            ★<span style={starsBadgeStyles}>{starsToSpend}</span>
-                                        </span>
-                                    </div>
-                                ) : null}
-                            </button>
-                        </Link>
+                                        ★<span style={starsBadgeStyles}>{starsToSpend}</span>
+                                    </span>
+                                </div>
+                            ) : null}
+                        </button>
+                    </Link>
 
-                        {/* <button>Achievements</button> */}
+                    {/* <button>Achievements</button> */}
 
-                        <Link to="/settings">
-                            <button style={{ padding: "0.5rem", display: "flex", marginLeft: "5px" }}>
-                                <img src={imgs.Settings} width={24} height={24} />
-                            </button>
-                        </Link>
-                    </div>
+                    <Link to="/settings">
+                        <button style={{ padding: "0.5rem", display: "flex", marginLeft: "5px" }}>
+                            <img src={imgs.Settings} width={24} height={24} />
+                        </button>
+                    </Link>
                 </div>
             </div>
         </div>
