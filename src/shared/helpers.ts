@@ -42,7 +42,7 @@ export function getEnemyTypeFromChar(char: EnemyChar): EnemyType {
             return EnemyType.Squidle;
         case "s":
         default:
-            return EnemyType.Spider;
+            return EnemyType.Runner;
     }
 }
 

@@ -634,9 +634,9 @@ function drawWaveCallBeacon() {
     const beaconsPositions: THREE.Vector3[] = [];
     differentEnemyPaths.forEach((pathIdx) => {
         const pos = new THREE.Vector3(
-            allPathCurves.center[pathIdx].points[0].x,
-            allPathCurves.center[pathIdx].points[0].y,
-            allPathCurves.center[pathIdx].points[0].z
+            allPathCurves.center[pathIdx % allPathCurves.center.length].points[0].x,
+            allPathCurves.center[pathIdx % allPathCurves.center.length].points[0].y,
+            allPathCurves.center[pathIdx % allPathCurves.center.length].points[0].z
         );
 
         let samePoint = false;
@@ -968,7 +968,11 @@ function animate() {
         if (spawningEnemyIdx > -1) {
             const [spawningEnemy] = currWave.splice(spawningEnemyIdx, 1);
             console.log({ spawningEnemy });
-            spawnEnemy(spawningEnemy.enemyType, spawningEnemy.pathIdx, spawningEnemy.lane);
+            spawnEnemy(
+                spawningEnemy.enemyType,
+                spawningEnemy.pathIdx % levelData.paths.center.length,
+                spawningEnemy.lane
+            );
         }
     }
 

@@ -113,14 +113,16 @@ export class Enemy {
 
         this.hpBarContainer.append(this.hpBar);
 
-        if (this.enemyType === EnemyType.Spider) {
-            this.hpBar3D.position.y = 2;
-            this.hpBar3D.position.z = 1;
-            model.children[0].children[0].children[0].add(this.hpBar3D);
-        } else {
-            this.hpBar3D.position.y = hpBarHeight;
-            model.add(this.hpBar3D);
-        }
+        // if (this.enemyType === EnemyType.Runner) {
+        //     this.hpBar3D.position.y = 2;
+        //     this.hpBar3D.position.z = 1;
+        //     model.children[0].children[0].children[0].add(this.hpBar3D);
+        // } else {
+        //     this.hpBar3D.position.y = hpBarHeight;
+        //     model.add(this.hpBar3D);
+        // }
+        this.hpBar3D.position.y = hpBarHeight;
+        model.add(this.hpBar3D);
 
         this.hpBar3D.visible = false;
 
@@ -173,11 +175,12 @@ export class Enemy {
         this.model.position.copy(position);
 
         switch (this.enemyType) {
-            case "spider": {
-                this.model.lookAt(position.clone().sub(tangent));
-                break;
-            }
+            // case "runner": {
+            //     this.model.lookAt(position.clone().sub(tangent));
+            //     break;
+            // }
             // case "elf":
+            case "runner":
             case "orc":
             case "wizard":
             case "alien":

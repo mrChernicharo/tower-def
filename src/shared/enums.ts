@@ -1,5 +1,5 @@
 export enum EnemyType {
-    Spider = "spider",
+    Runner = "runner",
     Orc = "orc",
     Alien = "alien",
     Demon = "demon",
@@ -17,7 +17,7 @@ export enum EnemyType {
 }
 
 export enum EnemyChar {
-    Spider = "s",
+    Runner = "s",
     Orc = "o",
     Alien = "a",
     Demon = "dm",

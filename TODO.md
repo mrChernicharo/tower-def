@@ -45,7 +45,7 @@
 -   [ ] dmg_efx, die_animations
 -   [ ] (mobile) request full screen + landscape orientation
 -   [ ] better firePoint calculations (move it forward in case its a Cannon tower)
--   [ ] spider resists poison
+-   [ ] runner resists poison
 -   [ ] elf heals its friends
 
 16 weak, 6 medium

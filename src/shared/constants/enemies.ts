@@ -3,14 +3,23 @@ import { EnemyBluePrint } from "../types";
 
 export const ENEMY_BLUEPRINTS: { [k in EnemyType]: EnemyBluePrint } = {
     // ground enemies
-    spider: {
-        name: EnemyType.Spider,
+    // spider: {
+    //     name: EnemyType.Spider,
+    //     reward: 5,
+    //     modelURL: "/assets/glb/enemies/spider.glb",
+    //     speed: 3,
+    //     maxHp: 40,
+    //     modelScale: 80,
+    //     walkAnimationName: "Wolf Runner Armature|Runner running",
+    // },
+    runner: {
+        name: EnemyType.Runner,
         reward: 5,
-        modelURL: "/assets/glb/enemies/spider.glb",
+        modelURL: "/assets/glb/enemies/Tribal.gltf",
         speed: 3,
         maxHp: 40,
-        modelScale: 80,
-        walkAnimationName: "Wolf Spider Armature|Spider running",
+        modelScale: 0.5,
+        walkAnimationName: "Run",
     },
     wizard: {
         name: EnemyType.Wizard,
@@ -51,11 +60,11 @@ export const ENEMY_BLUEPRINTS: { [k in EnemyType]: EnemyBluePrint } = {
     },
     tribal: {
         name: EnemyType.Tribal,
-        reward: 16,
+        reward: 20,
         modelURL: "/assets/glb/enemies/Tribal.gltf",
         speed: 1,
-        maxHp: 300,
-        modelScale: 1,
+        maxHp: 400,
+        modelScale: 1.2,
         walkAnimationName: "Walk",
     },
     ninja: {
@@ -139,7 +148,7 @@ export const ENEMY_BLUEPRINTS: { [k in EnemyType]: EnemyBluePrint } = {
  * - dino,  ninja, squidle, bee
  *
  * forest
- * - spider, wizard, orc, tribal, bee, ghost
+ * - runner, wizard, orc, tribal, bee, ghost
  *
  * winter
  * - alien, ninja, orc, wizard, ghost

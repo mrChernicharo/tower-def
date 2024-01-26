@@ -3,7 +3,7 @@
  * - dino, squidle, bee, ninja
  *
  * forest
- * - spider, wizard, orc, tribal, bee
+ * - runner, wizard, orc, tribal, bee
  *
  * winter
  * - alien, ninja, orc, wizard, ghost
@@ -25,11 +25,11 @@ export const STAGE_WAVES_DATA: WaveEnemy[][][] = [
     [
         // wave 1
         [
-            ...waveSegment(EnemyChar.Spider, 3, 3, 0, 0, "l"),
-            ...waveSegment(EnemyChar.Spider, 3, 3, 1, 0, "r"),
+            ...waveSegment(EnemyChar.Runner, 3, 3, 0, 0, "l"),
+            ...waveSegment(EnemyChar.Runner, 3, 3, 1, 0, "r"),
             // ...waveSegment(EnemyChar.Dino, 6, 6, 0, 0),
-            ...waveSegment(EnemyChar.Spider, 3, 3, 16, 0, "l"),
-            ...waveSegment(EnemyChar.Spider, 3, 3, 16, 0, "r"),
+            ...waveSegment(EnemyChar.Runner, 3, 3, 16, 0, "l"),
+            ...waveSegment(EnemyChar.Runner, 3, 3, 16, 0, "r"),
         ],
         // wave 2
         [...waveSegment(EnemyChar.Squidle, 5, 5, 0, 0)],
@@ -99,7 +99,7 @@ export const STAGE_WAVES_DATA: WaveEnemy[][][] = [
         // count, interval, spawn_at, path
         // wave 1
         [
-            ...waveSegment(EnemyChar.Spider, 6, 4, 0, 0),
+            ...waveSegment(EnemyChar.Runner, 6, 4, 0, 0),
             ...waveSegment(EnemyChar.Wizard, 2, 5, 4, 2),
             ...waveSegment(EnemyChar.Bee, 2, 1, 0, 1),
             ...waveSegment(EnemyChar.Bee, 2, 1, 12, 1),
@@ -113,10 +113,10 @@ export const STAGE_WAVES_DATA: WaveEnemy[][][] = [
         ],
         // wave 3
         [
-            ...waveSegment(EnemyChar.Spider, 3, 1, 0, 3),
-            ...waveSegment(EnemyChar.Spider, 3, 1, 10, 1),
-            ...waveSegment(EnemyChar.Spider, 3, 1, 20, 3),
-            ...waveSegment(EnemyChar.Spider, 3, 1, 30, 1),
+            ...waveSegment(EnemyChar.Runner, 3, 1, 0, 3),
+            ...waveSegment(EnemyChar.Runner, 3, 1, 10, 1),
+            ...waveSegment(EnemyChar.Runner, 3, 1, 20, 3),
+            ...waveSegment(EnemyChar.Runner, 3, 1, 30, 1),
             ...waveSegment(EnemyChar.Wizard, 4, 5, 4, 0),
             ...waveSegment(EnemyChar.Orc, 4, 4, 2, 2),
         ],
@@ -127,10 +127,10 @@ export const STAGE_WAVES_DATA: WaveEnemy[][][] = [
         // count, interval, spawn_at, path
         // wave 1
         [
-            ...waveSegment(EnemyChar.Spider, 3, 1, 0, 0, "l"),
-            ...waveSegment(EnemyChar.Spider, 3, 1, 7, 0, "r"),
-            ...waveSegment(EnemyChar.Spider, 3, 1, 14, 0, "l"),
-            ...waveSegment(EnemyChar.Spider, 3, 1, 21, 0, "r"),
+            ...waveSegment(EnemyChar.Runner, 3, 1, 0, 0, "l"),
+            ...waveSegment(EnemyChar.Runner, 3, 1, 7, 0, "r"),
+            ...waveSegment(EnemyChar.Runner, 3, 1, 14, 0, "l"),
+            ...waveSegment(EnemyChar.Runner, 3, 1, 21, 0, "r"),
             ...waveSegment(EnemyChar.Wizard, 2, 6, 6, 1),
             ...waveSegment(EnemyChar.Ghost, 2, 6, 3, 1),
         ],
@@ -138,10 +138,10 @@ export const STAGE_WAVES_DATA: WaveEnemy[][][] = [
         [...waveSegment(EnemyChar.Ghost, 5, 6, 0, 1), ...waveSegment(EnemyChar.Tribal, 3, 10, 2, 0)],
         // wave 3
         [
-            ...waveSegment(EnemyChar.Spider, 3, 1, 0, 0),
-            ...waveSegment(EnemyChar.Spider, 3, 1, 10, 1),
-            ...waveSegment(EnemyChar.Spider, 3, 1, 20, 0),
-            ...waveSegment(EnemyChar.Spider, 3, 1, 30, 1),
+            ...waveSegment(EnemyChar.Runner, 3, 1, 0, 0),
+            ...waveSegment(EnemyChar.Runner, 3, 1, 10, 1),
+            ...waveSegment(EnemyChar.Runner, 3, 1, 20, 0),
+            ...waveSegment(EnemyChar.Runner, 3, 1, 30, 1),
             ...waveSegment(EnemyChar.Wizard, 4, 5, 4, 0),
             ...waveSegment(EnemyChar.Tribal, 4, 6, 6, 1),
         ],
@@ -152,10 +152,10 @@ export const STAGE_WAVES_DATA: WaveEnemy[][][] = [
         // count, interval, spawn_at, path
         // wave 1
         [
-            ...waveSegment(EnemyChar.Spider, 2, 1, 0, 0),
-            ...waveSegment(EnemyChar.Spider, 2, 1, 7, 2),
-            ...waveSegment(EnemyChar.Spider, 2, 1, 14, 0),
-            ...waveSegment(EnemyChar.Spider, 2, 1, 21, 2),
+            ...waveSegment(EnemyChar.Runner, 2, 1, 0, 0),
+            ...waveSegment(EnemyChar.Runner, 2, 1, 7, 2),
+            ...waveSegment(EnemyChar.Runner, 2, 1, 14, 0),
+            ...waveSegment(EnemyChar.Runner, 2, 1, 21, 2),
             ...waveSegment(EnemyChar.Wizard, 2, 6, 6, 0),
             ...waveSegment(EnemyChar.Ghost, 2, 6, 3, 2),
             ...waveSegment(EnemyChar.Orc, 2, 5, 13, 1),
@@ -168,10 +168,10 @@ export const STAGE_WAVES_DATA: WaveEnemy[][][] = [
         ],
         // wave 3
         [
-            ...waveSegment(EnemyChar.Spider, 3, 1, 0, 3),
-            ...waveSegment(EnemyChar.Spider, 3, 1, 10, 1),
-            ...waveSegment(EnemyChar.Spider, 3, 1, 20, 3),
-            ...waveSegment(EnemyChar.Spider, 3, 1, 30, 1),
+            ...waveSegment(EnemyChar.Runner, 3, 1, 0, 3),
+            ...waveSegment(EnemyChar.Runner, 3, 1, 10, 1),
+            ...waveSegment(EnemyChar.Runner, 3, 1, 20, 3),
+            ...waveSegment(EnemyChar.Runner, 3, 1, 30, 1),
             ...waveSegment(EnemyChar.Wizard, 4, 5, 4, 0),
             ...waveSegment(EnemyChar.Tribal, 4, 6, 6, 2),
             ...waveSegment(EnemyChar.Orc, 2, 5, 16, 1),
@@ -182,22 +182,22 @@ export const STAGE_WAVES_DATA: WaveEnemy[][][] = [
         // count, interval, spawn_at, path
         // wave 1
         [
-            ...waveSegment(EnemyChar.Spider, 2, 1, 0, 0, "l"),
-            ...waveSegment(EnemyChar.Spider, 2, 1, 0, 0, "r"),
+            ...waveSegment(EnemyChar.Runner, 2, 1, 0, 0, "l"),
+            ...waveSegment(EnemyChar.Runner, 2, 1, 0, 0, "r"),
 
-            ...waveSegment(EnemyChar.Spider, 2, 1, 7, 0, "l"),
-            ...waveSegment(EnemyChar.Spider, 2, 1, 7, 0, "r"),
+            ...waveSegment(EnemyChar.Runner, 2, 1, 7, 0, "l"),
+            ...waveSegment(EnemyChar.Runner, 2, 1, 7, 0, "r"),
 
-            ...waveSegment(EnemyChar.Spider, 2, 1, 14, 0, "l"),
-            ...waveSegment(EnemyChar.Spider, 2, 1, 14, 0, "r"),
+            ...waveSegment(EnemyChar.Runner, 2, 1, 14, 0, "l"),
+            ...waveSegment(EnemyChar.Runner, 2, 1, 14, 0, "r"),
 
-            ...waveSegment(EnemyChar.Spider, 2, 1, 21, 0, "l"),
-            ...waveSegment(EnemyChar.Spider, 2, 1, 21, 0, "r"),
+            ...waveSegment(EnemyChar.Runner, 2, 1, 21, 0, "l"),
+            ...waveSegment(EnemyChar.Runner, 2, 1, 21, 0, "r"),
 
-            // ...waveSegment(EnemyChar.Spider, 2, 1, 0, 0),
-            // ...waveSegment(EnemyChar.Spider, 2, 1, 7, 2),
-            // ...waveSegment(EnemyChar.Spider, 2, 1, 14, 0),
-            // ...waveSegment(EnemyChar.Spider, 2, 1, 21, 2),
+            // ...waveSegment(EnemyChar.Runner, 2, 1, 0, 0),
+            // ...waveSegment(EnemyChar.Runner, 2, 1, 7, 2),
+            // ...waveSegment(EnemyChar.Runner, 2, 1, 14, 0),
+            // ...waveSegment(EnemyChar.Runner, 2, 1, 21, 2),
             // ...waveSegment(EnemyChar.Wizard, 2, 6, 6, 0),
             // ...waveSegment(EnemyChar.Ghost, 2, 6, 3, 2),
             // ...waveSegment(EnemyChar.Orc, 4, 5, 13, 1),
@@ -211,10 +211,10 @@ export const STAGE_WAVES_DATA: WaveEnemy[][][] = [
         ],
         // wave 3
         [
-            ...waveSegment(EnemyChar.Spider, 3, 1, 0, 3),
-            ...waveSegment(EnemyChar.Spider, 3, 1, 10, 1),
-            ...waveSegment(EnemyChar.Spider, 3, 1, 20, 3),
-            ...waveSegment(EnemyChar.Spider, 3, 1, 30, 1),
+            ...waveSegment(EnemyChar.Runner, 3, 1, 0, 3),
+            ...waveSegment(EnemyChar.Runner, 3, 1, 10, 1),
+            ...waveSegment(EnemyChar.Runner, 3, 1, 20, 3),
+            ...waveSegment(EnemyChar.Runner, 3, 1, 30, 1),
             ...waveSegment(EnemyChar.Wizard, 4, 5, 4, 0),
             ...waveSegment(EnemyChar.Tribal, 3, 6, 6, 2),
             ...waveSegment(EnemyChar.Orc, 6, 5, 16, 1),
@@ -244,20 +244,20 @@ export const STAGE_WAVES_DATA: WaveEnemy[][][] = [
         // wave 1
         [
             ...waveSegment(EnemyChar.Orc, 6, 6, 0, 0),
-            ...waveSegment(EnemyChar.Spider, 4, 0.8, 0, 1),
-            ...waveSegment(EnemyChar.Spider, 4, 0.8, 5, 1),
-            ...waveSegment(EnemyChar.Spider, 4, 0.8, 10, 1),
-            ...waveSegment(EnemyChar.Spider, 4, 0.8, 15, 1),
-            ...waveSegment(EnemyChar.Spider, 4, 0.8, 20, 1),
+            ...waveSegment(EnemyChar.Runner, 4, 0.8, 0, 1),
+            ...waveSegment(EnemyChar.Runner, 4, 0.8, 5, 1),
+            ...waveSegment(EnemyChar.Runner, 4, 0.8, 10, 1),
+            ...waveSegment(EnemyChar.Runner, 4, 0.8, 15, 1),
+            ...waveSegment(EnemyChar.Runner, 4, 0.8, 20, 1),
         ],
         // wave 2
-        [...waveSegment(EnemyChar.Orc, 8, 5, 5, 0), ...waveSegment(EnemyChar.Spider, 30, 2, 0, 1)],
+        [...waveSegment(EnemyChar.Orc, 8, 5, 5, 0), ...waveSegment(EnemyChar.Runner, 30, 2, 0, 1)],
 
         // wave 3
         [
             ...waveSegment(EnemyChar.Orc, 10, 5, 5, 1),
             ...waveSegment(EnemyChar.Bee, 10, 5, 5, 1),
-            ...waveSegment(EnemyChar.Spider, 30, 2, 0, 0),
+            ...waveSegment(EnemyChar.Runner, 30, 2, 0, 0),
         ],
     ],
     // stage 11
@@ -265,18 +265,18 @@ export const STAGE_WAVES_DATA: WaveEnemy[][][] = [
         // wave 1
         [
             ...waveSegment(EnemyChar.Orc, 7, 6, 0, 0),
-            ...waveSegment(EnemyChar.Spider, 4, 0.8, 0, 2),
-            ...waveSegment(EnemyChar.Spider, 4, 0.8, 5, 2),
-            ...waveSegment(EnemyChar.Spider, 4, 0.8, 10, 2),
-            ...waveSegment(EnemyChar.Spider, 4, 0.8, 15, 2),
-            ...waveSegment(EnemyChar.Spider, 4, 0.8, 20, 2),
+            ...waveSegment(EnemyChar.Runner, 4, 0.8, 0, 2),
+            ...waveSegment(EnemyChar.Runner, 4, 0.8, 5, 2),
+            ...waveSegment(EnemyChar.Runner, 4, 0.8, 10, 2),
+            ...waveSegment(EnemyChar.Runner, 4, 0.8, 15, 2),
+            ...waveSegment(EnemyChar.Runner, 4, 0.8, 20, 2),
         ],
         // wave 2
         [
             ...waveSegment(EnemyChar.Orc, 8, 5, 5, 0),
-            ...waveSegment(EnemyChar.Spider, 10, 0.8, 0, 2),
-            ...waveSegment(EnemyChar.Spider, 10, 0.8, 10, 2),
-            ...waveSegment(EnemyChar.Spider, 10, 0.8, 20, 2),
+            ...waveSegment(EnemyChar.Runner, 10, 0.8, 0, 2),
+            ...waveSegment(EnemyChar.Runner, 10, 0.8, 10, 2),
+            ...waveSegment(EnemyChar.Runner, 10, 0.8, 20, 2),
             ...waveSegment(EnemyChar.Ghost, 4, 5.3, 7, 1),
         ],
 
@@ -284,7 +284,7 @@ export const STAGE_WAVES_DATA: WaveEnemy[][][] = [
         [
             ...waveSegment(EnemyChar.Orc, 10, 5, 5, 0),
             ...waveSegment(EnemyChar.Bee, 10, 5, 5, 1),
-            ...waveSegment(EnemyChar.Spider, 35, 2, 0, 2),
+            ...waveSegment(EnemyChar.Runner, 35, 2, 0, 2),
             ...waveSegment(EnemyChar.Ghost, 4, 5, 0, 2),
         ],
     ],
@@ -293,19 +293,19 @@ export const STAGE_WAVES_DATA: WaveEnemy[][][] = [
         [
             ...waveSegment(EnemyChar.Orc, 6, 6, 0, 1),
             ...waveSegment(EnemyChar.Bee, 8, 4.5, 7, 1),
-            ...waveSegment(EnemyChar.Spider, 4, 0.8, 0, 0),
-            ...waveSegment(EnemyChar.Spider, 4, 0.8, 5, 0),
-            ...waveSegment(EnemyChar.Spider, 4, 0.8, 10, 0),
-            ...waveSegment(EnemyChar.Spider, 4, 0.8, 15, 0),
-            ...waveSegment(EnemyChar.Spider, 4, 0.8, 20, 0),
+            ...waveSegment(EnemyChar.Runner, 4, 0.8, 0, 0),
+            ...waveSegment(EnemyChar.Runner, 4, 0.8, 5, 0),
+            ...waveSegment(EnemyChar.Runner, 4, 0.8, 10, 0),
+            ...waveSegment(EnemyChar.Runner, 4, 0.8, 15, 0),
+            ...waveSegment(EnemyChar.Runner, 4, 0.8, 20, 0),
             // ...waveSegment(EnemyChar.DemonBoss, 1, undefined, 0, 0),
         ],
         // wave 2
         [
             ...waveSegment(EnemyChar.Orc, 8, 5, 2, 1),
-            ...waveSegment(EnemyChar.Spider, 10, 0.8, 0, 2),
-            ...waveSegment(EnemyChar.Spider, 10, 0.8, 10, 2),
-            ...waveSegment(EnemyChar.Spider, 10, 0.8, 20, 2),
+            ...waveSegment(EnemyChar.Runner, 10, 0.8, 0, 2),
+            ...waveSegment(EnemyChar.Runner, 10, 0.8, 10, 2),
+            ...waveSegment(EnemyChar.Runner, 10, 0.8, 20, 2),
             ...waveSegment(EnemyChar.Ghost, 6, 4, 5, 0),
         ],
 
@@ -316,7 +316,7 @@ export const STAGE_WAVES_DATA: WaveEnemy[][][] = [
             ...waveSegment(EnemyChar.Orc, 3, 1, 18, 0),
             ...waveSegment(EnemyChar.Orc, 3, 1, 24, 0),
             ...waveSegment(EnemyChar.Bee, 10, 5, 5, 1),
-            ...waveSegment(EnemyChar.Spider, 35, 1.8, 0, 1),
+            ...waveSegment(EnemyChar.Runner, 35, 1.8, 0, 1),
             ...waveSegment(EnemyChar.Ghost, 4, 5, 0, 1),
         ],
     ],
