@@ -167,7 +167,7 @@ const Game = () => {
                         </button>
                         <button
                             onClick={() => {
-                                if (confirm("Are you sure you want to quit?")) location.assign("#/area-selection");
+                                if (confirm("Are you sure you want to quit?")) location.assign("#/level-selection");
                             }}
                         >
                             Quit

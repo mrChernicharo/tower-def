@@ -13,7 +13,7 @@ export function Start() {
             </div>
 
             <div id="start-btn-container">
-                <Link to="/area-selection">
+                <Link to="/level-selection">
                     <button>Start Game</button>
                 </Link>
             </div>

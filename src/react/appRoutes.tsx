@@ -1,5 +1,5 @@
 import Achievements from "./screens/Achievements";
-import AreaSelection from "./screens/AreaSelection";
+import { LevelSelection } from "./screens/LevelSelection";
 import Game from "./screens/GameScreen";
 import Settings from "./screens/Settings";
 import Skills from "./screens/Skills";
@@ -12,9 +12,9 @@ export const appRoutes = [
         element: <Start />,
     },
     {
-        name: "Area Selection",
-        path: "area-selection",
-        element: <AreaSelection />,
+        name: "Level Selection",
+        path: "level-selection",
+        element: <LevelSelection />,
     },
     {
         name: "Game",

@@ -62,7 +62,7 @@ const Skills = () => {
             <div className="skills-top">
                 <div className="top-line">
                     <h2>Skills</h2>
-                    <Link to="/area-selection">
+                    <Link to="/level-selection">
                         <button>
                             <FaArrowLeft />
                         </button>

@@ -5,12 +5,12 @@ import { getAreaByLevel, getEarnedStars, getSpentStars, getUnlockedStages } from
 import { LevelStars } from "../components/levelStars";
 import { FaArrowLeft } from "react-icons/fa";
 import { useCallback, useEffect, useState } from "react";
+import { useLayoutContext } from "../context/useLayoutContext";
 
 const topBarStyles = {
     position: "fixed",
     zIndex: 200,
     width: "100%",
-    // border: "1px solid green",
 } as React.CSSProperties;
 
 const bottomBarStyles = {
@@ -63,8 +63,10 @@ const levelIconsPositions = [
     [45, 58],
 ];
 
-const AreaSelection = () => {
+export const LevelSelection = () => {
     const { stars, skills } = usePlayerContext();
+    const { isMobile } = useLayoutContext();
+
     const [, rerender] = useState(0);
 
     const earnedStars = getEarnedStars(stars);
@@ -127,39 +129,44 @@ const AreaSelection = () => {
 
                 <img id="world-img" src={imgs.World} style={{ position: "absolute" }} />
 
-                <div style={bottomBarStyles}>
-                    <Link to="/skills">
-                        <button style={{ marginLeft: "5px" }}>
-                            <span>Skills</span>
-                            {starsToSpend > 0 ? (
-                                <div
-                                    style={{ position: "absolute", bottom: 18, right: 32, transform: "rotate(12deg)" }}
-                                >
-                                    <span
+                <div style={{ ...bottomBarStyles }}>
+                    <div style={{ ...bottomBarStyles, ...(isMobile ? { position: "fixed" } : {}) }}>
+                        <Link to="/skills">
+                            <button style={{ marginLeft: "5px" }}>
+                                <span>Skills</span>
+                                {starsToSpend > 0 ? (
+                                    <div
                                         style={{
-                                            position: "relative",
-                                            color: "orangered",
-                                            fontSize: 36,
+                                            position: "absolute",
+                                            bottom: 18,
+                                            right: 32,
+                                            transform: "rotate(12deg)",
                                         }}
                                     >
-                                        ★<span style={starsBadgeStyles}>{starsToSpend}</span>
-                                    </span>
-                                </div>
-                            ) : null}
-                        </button>
-                    </Link>
+                                        <span
+                                            style={{
+                                                position: "relative",
+                                                color: "orangered",
+                                                fontSize: 36,
+                                            }}
+                                        >
+                                            ★<span style={starsBadgeStyles}>{starsToSpend}</span>
+                                        </span>
+                                    </div>
+                                ) : null}
+                            </button>
+                        </Link>
 
-                    {/* <button>Achievements</button> */}
+                        {/* <button>Achievements</button> */}
 
-                    <Link to="/settings">
-                        <button style={{ padding: "0.5rem", display: "flex", marginLeft: "5px" }}>
-                            <img src={imgs.Settings} width={24} height={24} />
-                        </button>
-                    </Link>
+                        <Link to="/settings">
+                            <button style={{ padding: "0.5rem", display: "flex", marginLeft: "5px" }}>
+                                <img src={imgs.Settings} width={24} height={24} />
+                            </button>
+                        </Link>
+                    </div>
                 </div>
             </div>
         </div>
     );
 };
-
-export default AreaSelection;

@@ -1441,7 +1441,7 @@ function onResumeGame() {
 }
 
 function onEndGameConfirm() {
-    location.assign("#/area-selection");
+    location.assign("#/level-selection");
     endGameBtn.removeEventListener("click", onEndGameConfirm);
 }
 
