@@ -17,7 +17,7 @@ export enum EnemyType {
 }
 
 export enum EnemyChar {
-    Runner = "s",
+    Runner = "r",
     Orc = "o",
     Alien = "a",
     Demon = "dm",
@@ -31,7 +31,7 @@ export enum EnemyChar {
     Bee = "b",
     Dragon = "dr",
     Ghost = "g",
-    Squidle = "sq",
+    Squidle = "s",
     // //
     // Soldier = "z",
     // Brigand = "b",

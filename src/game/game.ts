@@ -1462,6 +1462,8 @@ function onWaveEnded() {
     currWaveIdx++;
     activeGameTime = 0;
 
+    printWaveAfterMath();
+
     const waveCount = levelData.waves.length;
     // const waveCount = STAGE_WAVES_DATA[levelIdx].length;
     if (currWaveIdx < waveCount) {
@@ -2096,4 +2098,13 @@ function drawAndComputeOffsetPaths(shapeW: number, shapeH: number, pathGeometry:
     });
 
     return { centerPath, leftPath, rightPath };
+}
+
+function printWaveAfterMath() {
+    const waveAfterMath: { towerName: TowerType; tower: Tower; totalDamage: number }[] = [];
+    towers.forEach((t) => {
+        waveAfterMath.push({ towerName: t.towerName, tower: t, totalDamage: t.damageDealt });
+        t.damageDealt = 0;
+    });
+    console.table(waveAfterMath);
 }

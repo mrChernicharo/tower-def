@@ -3,7 +3,7 @@
 import { EnemyChar, EnemyType, TowerType } from "./enums";
 import { THREE } from "../three";
 import { GLTF } from "three/examples/jsm/Addons.js";
-import { LevelStarCount, LevelStarMap, PlayerSkillIDsMap, WaveEnemy, LaneChar } from "./types";
+import { LevelStarCount, LevelStarMap, PlayerSkillIDsMap, WaveEnemy, LaneChar, FormationType } from "./types";
 import { Enemy } from "../game/Enemy";
 import { GAME_SKILLS } from "./constants/skills";
 import { allAreaLevels } from "./constants/levels/levels";
@@ -38,9 +38,9 @@ export function getEnemyTypeFromChar(char: EnemyChar): EnemyType {
             return EnemyType.Ghost;
         case "dr":
             return EnemyType.Dragon;
-        case "sq":
-            return EnemyType.Squidle;
         case "s":
+            return EnemyType.Squidle;
+        case "r":
         default:
             return EnemyType.Runner;
     }
@@ -294,4 +294,44 @@ export function printWavesStatistics(enemyBlueprints: typeof ENEMY_BLUEPRINTS) {
     });
 
     console.table(res);
+}
+
+export function enemyFormations(
+    formationType: FormationType,
+    pathIdx: number,
+    spawnAt: number,
+    enemy: EnemyChar,
+    eliteEnemy?: EnemyChar
+): WaveEnemy[] {
+    switch (formationType) {
+        case FormationType.Diamond: {
+            return [
+                [enemy, pathIdx, spawnAt, "c"],
+                [enemy, pathIdx, spawnAt + 1, "l"],
+                [enemy, pathIdx, spawnAt + 1, "r"],
+                [enemy, pathIdx, spawnAt + 2, "c"],
+            ];
+        }
+        case FormationType.DiamondFull: {
+            return [
+                [enemy, pathIdx, spawnAt, "c"],
+                [enemy, pathIdx, spawnAt + 1, "l"],
+                [enemy, pathIdx, spawnAt + 1, "r"],
+                [enemy, pathIdx, spawnAt + 2, "c"],
+            ];
+        }
+        case FormationType.Square: {
+            return [
+                [enemy, pathIdx, spawnAt, "l"],
+                [enemy, pathIdx, spawnAt, "c"],
+                [enemy, pathIdx, spawnAt, "r"],
+                [enemy, pathIdx, spawnAt + 1, "l"],
+                [enemy, pathIdx, spawnAt + 1, "c"],
+                [enemy, pathIdx, spawnAt + 1, "r"],
+                [enemy, pathIdx, spawnAt + 2, "l"],
+                [enemy, pathIdx, spawnAt + 2, "c"],
+                [enemy, pathIdx, spawnAt + 2, "r"],
+            ];
+        }
+    }
 }

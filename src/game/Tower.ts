@@ -31,6 +31,7 @@ export class Tower {
     rangeGizmo!: THREE.Mesh;
     strategy: TargetingStrategy;
     targetLocked = false;
+    damageDealt = 0;
     constructor(towerType: TowerType, position: THREE.Vector3, tileIdx: string) {
         this.id = idMaker();
         this.towerName = towerType;

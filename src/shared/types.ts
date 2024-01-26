@@ -162,3 +162,80 @@ export type LevelObject = {
 };
 
 export type LaneChar = "c" | "l" | "r";
+
+export enum FormationType {
+    "Diamond",
+    "DiamondFull",
+    "Square",
+    // "2Rows",
+    // "3Rows",
+    // "Shell",
+}
+/*
+
+Diamond
+    *
+*       *
+    *
+
+DiamondFull
+    *
+*   *   *
+    *
+Diamond | DiamondFull
+    *   
+*   X   *
+    *   
+
+
+Square
+*   *   *
+*       *
+*   *   *   
+
+*   *   *
+*   X   *
+*   *   *
+
+
+2Rows
+*       * 
+*       * 
+*       * 
+
+*       * 
+*   X   * 
+*       * 
+
+
+3Rows
+*   *   *
+*   *   *
+*   *   *   
+
+*   *   *
+*   X   *
+*   *   *   
+
+
+Shell
+    *
+*       *
+*   X   *
+*       *
+    *
+
+
+*/
+
+// ['dm', 0, 24, 'c'],
+// ['dn', 0, 26.5, 'l'],
+//  ['dn', 0, 29.5, 'l'],
+// ['dn', 0, 26, 'r'],
+// ['dn', 0, 29, 'r'],
+// ['dm', 1, 0, 'c'],
+// ['dm', 1, 15, 'c'],
+// ['dm', 1, 30, 'c'],
+// ['s', 1, 6, 'r'],
+//  ['s', 1, 7.5, 'l'],
+// ['s', 1, 9, 'r']

@@ -20,9 +20,11 @@ class ProjectileBase {
     blueprint: ProjectileBluePrint;
     explosion: THREE.Mesh;
     damage: number;
+    tower: Tower;
     constructor(tower: Tower, origin: THREE.Vector3, destination: THREE.Vector3, targetId: string) {
         // INITIALIZE CLASS MEMBERS
         this.id = `proj-${tower.towerName}-${idMaker()}`;
+        this.tower = tower;
         this.targetEnemyId = targetId;
         this.type = tower.blueprint.name;
         this.level = tower.blueprint.level;
@@ -102,6 +104,7 @@ export class StraightProjectile extends ProjectileBase {
     }
 
     explode() {
+        this.tower.damageDealt += this.damage;
         // draw efx here
         window.dispatchEvent(new CustomEvent("projectile-explode", { detail: this }));
     }
@@ -169,6 +172,7 @@ export class ParabolaProjectile extends ProjectileBase {
     }
 
     explode() {
+        this.tower.damageDealt += this.damage;
         // draw efx here
         window.dispatchEvent(new CustomEvent("projectile-explode", { detail: this }));
     }
