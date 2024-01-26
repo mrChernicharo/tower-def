@@ -27,7 +27,8 @@ export const ENEMY_BLUEPRINTS: { [k in EnemyType]: EnemyBluePrint } = {
         modelURL: "/assets/glb/enemies/Wizard.gltf",
         speed: 1,
         maxHp: 130,
-        modelScale: 1,
+        modelScale: 0.8,
+        // modelScale: 1,
         walkAnimationName: "Walk",
     },
     dino: {

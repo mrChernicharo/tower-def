@@ -967,7 +967,7 @@ function animate() {
         const spawningEnemyIdx = currWave.findIndex((e) => e.spawnAt < activeGameTime);
         if (spawningEnemyIdx > -1) {
             const [spawningEnemy] = currWave.splice(spawningEnemyIdx, 1);
-            console.log({ spawningEnemy });
+            // console.log({ spawningEnemy });
             spawnEnemy(
                 spawningEnemy.enemyType,
                 spawningEnemy.pathIdx % levelData.paths.center.length,

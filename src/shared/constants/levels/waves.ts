@@ -13,8 +13,8 @@
  */
 
 import { EnemyChar } from "../../enums";
-import { waveSegment } from "../../helpers";
-import { WaveEnemy } from "../../types";
+import { enemyFormations, waveSegment } from "../../helpers";
+import { FormationType, WaveEnemy } from "../../types";
 
 // enemyChar, pathIdx, spawnAt, xOffset
 export const STAGE_WAVES_DATA: WaveEnemy[][][] = [
@@ -80,14 +80,15 @@ export const STAGE_WAVES_DATA: WaveEnemy[][][] = [
             ...waveSegment(EnemyChar.Ninja, 4, 7, 2.5, 1),
         ],
         // wave 3
-        [
-            ...waveSegment(EnemyChar.Ninja, 5, 5, 2.5, 1),
-            ...waveSegment(EnemyChar.Dino, 8, 5, 0, 2),
-            ...waveSegment(EnemyChar.Bee, 2, 1, 0, 0),
-            ...waveSegment(EnemyChar.Bee, 2, 1, 4, 3),
-            ...waveSegment(EnemyChar.Bee, 2, 1, 8, 0),
-            ...waveSegment(EnemyChar.Bee, 2, 1, 12, 3),
-        ],
+        // [
+        //     ...waveSegment(EnemyChar.Ninja, 5, 5, 2.5, 1),
+        //     ...waveSegment(EnemyChar.Dino, 8, 5, 0, 2),
+        //     ...waveSegment(EnemyChar.Bee, 2, 1, 0, 0),
+        //     ...waveSegment(EnemyChar.Bee, 2, 1, 4, 3),
+        //     ...waveSegment(EnemyChar.Bee, 2, 1, 8, 0),
+        //     ...waveSegment(EnemyChar.Bee, 2, 1, 12, 3),
+        // ],
+        [...enemyFormations(FormationType.Square, 0, 3, EnemyChar.Orc)],
     ],
 
     /****************************************************/
@@ -96,29 +97,32 @@ export const STAGE_WAVES_DATA: WaveEnemy[][][] = [
 
     // stage 05 - FOREST
     [
-        // count, interval, spawn_at, path
-        // wave 1
+        // // wave 1
         [
-            ...waveSegment(EnemyChar.Runner, 6, 4, 0, 0),
-            ...waveSegment(EnemyChar.Wizard, 2, 5, 4, 2),
-            ...waveSegment(EnemyChar.Bee, 2, 1, 0, 1),
-            ...waveSegment(EnemyChar.Bee, 2, 1, 12, 1),
-            ...waveSegment(EnemyChar.Bee, 2, 1, 24, 1),
+            ...enemyFormations(FormationType.Diamond, 0, 0, EnemyChar.Wizard),
+            ...enemyFormations(FormationType.Diamond, 6, 0, EnemyChar.Wizard),
+            ...enemyFormations(FormationType.Diamond, 12, 0, EnemyChar.Wizard),
+            ...enemyFormations(FormationType.Diamond, 6, 2, EnemyChar.Wizard),
+            ...enemyFormations(FormationType.Diamond, 12, 2, EnemyChar.Wizard),
+            ...enemyFormations(FormationType.Diamond, 18, 2, EnemyChar.Wizard),
         ],
         // wave 2
         [
-            ...waveSegment(EnemyChar.Wizard, 3, 5, 4, 0),
-            ...waveSegment(EnemyChar.Bee, 6, 6, 0, 1),
-            ...waveSegment(EnemyChar.Orc, 2, 6, 6, 2),
+            ...enemyFormations(FormationType.DiamondFull, 0, 0, EnemyChar.Wizard),
+            ...enemyFormations(FormationType.DiamondFull, 6, 0, EnemyChar.Wizard),
+            ...enemyFormations(FormationType.DiamondFull, 12, 0, EnemyChar.Wizard),
+            ...enemyFormations(FormationType.DiamondFull, 6, 2, EnemyChar.Wizard),
+            ...enemyFormations(FormationType.DiamondFull, 12, 2, EnemyChar.Wizard),
+            ...enemyFormations(FormationType.DiamondFull, 18, 2, EnemyChar.Wizard),
         ],
         // wave 3
         [
-            ...waveSegment(EnemyChar.Runner, 3, 1, 0, 3),
-            ...waveSegment(EnemyChar.Runner, 3, 1, 10, 1),
-            ...waveSegment(EnemyChar.Runner, 3, 1, 20, 3),
-            ...waveSegment(EnemyChar.Runner, 3, 1, 30, 1),
-            ...waveSegment(EnemyChar.Wizard, 4, 5, 4, 0),
-            ...waveSegment(EnemyChar.Orc, 4, 4, 2, 2),
+            ...enemyFormations(FormationType.Square, 0, 0, EnemyChar.Wizard),
+            ...enemyFormations(FormationType.Square, 6, 0, EnemyChar.Wizard),
+            ...enemyFormations(FormationType.Square, 12, 0, EnemyChar.Wizard),
+            ...enemyFormations(FormationType.Square, 6, 2, EnemyChar.Wizard),
+            ...enemyFormations(FormationType.Square, 12, 2, EnemyChar.Wizard),
+            ...enemyFormations(FormationType.Square, 18, 2, EnemyChar.Wizard),
         ],
     ],
 
@@ -149,32 +153,32 @@ export const STAGE_WAVES_DATA: WaveEnemy[][][] = [
 
     // stage 07 - FOREST
     [
-        // count, interval, spawn_at, path
         // wave 1
         [
-            ...waveSegment(EnemyChar.Runner, 2, 1, 0, 0),
-            ...waveSegment(EnemyChar.Runner, 2, 1, 7, 2),
-            ...waveSegment(EnemyChar.Runner, 2, 1, 14, 0),
-            ...waveSegment(EnemyChar.Runner, 2, 1, 21, 2),
-            ...waveSegment(EnemyChar.Wizard, 2, 6, 6, 0),
-            ...waveSegment(EnemyChar.Ghost, 2, 6, 3, 2),
-            ...waveSegment(EnemyChar.Orc, 2, 5, 13, 1),
+            ...enemyFormations(FormationType.Diamond, 0, 0, EnemyChar.Runner, EnemyChar.Tribal),
+            ...enemyFormations(FormationType.Diamond, 6, 0, EnemyChar.Runner, EnemyChar.Tribal),
+            ...enemyFormations(FormationType.Diamond, 12, 0, EnemyChar.Runner, EnemyChar.Tribal),
+            ...enemyFormations(FormationType.Diamond, 6, 2, EnemyChar.Runner, EnemyChar.Tribal),
+            ...enemyFormations(FormationType.Diamond, 12, 2, EnemyChar.Runner, EnemyChar.Tribal),
+            ...enemyFormations(FormationType.Diamond, 18, 2, EnemyChar.Runner, EnemyChar.Tribal),
         ],
         // wave 2
         [
-            ...waveSegment(EnemyChar.Wizard, 4, 5, 4, 0),
-            ...waveSegment(EnemyChar.Ghost, 5, 6, 0, 1),
-            ...waveSegment(EnemyChar.Tribal, 2, 6, 6, 2),
+            ...enemyFormations(FormationType.DiamondFull, 0, 0, EnemyChar.Runner, EnemyChar.Tribal),
+            ...enemyFormations(FormationType.DiamondFull, 6, 0, EnemyChar.Runner, EnemyChar.Tribal),
+            ...enemyFormations(FormationType.DiamondFull, 12, 0, EnemyChar.Runner, EnemyChar.Tribal),
+            ...enemyFormations(FormationType.DiamondFull, 6, 2, EnemyChar.Runner, EnemyChar.Tribal),
+            ...enemyFormations(FormationType.DiamondFull, 12, 2, EnemyChar.Runner, EnemyChar.Tribal),
+            ...enemyFormations(FormationType.DiamondFull, 18, 2, EnemyChar.Runner, EnemyChar.Tribal),
         ],
         // wave 3
         [
-            ...waveSegment(EnemyChar.Runner, 3, 1, 0, 3),
-            ...waveSegment(EnemyChar.Runner, 3, 1, 10, 1),
-            ...waveSegment(EnemyChar.Runner, 3, 1, 20, 3),
-            ...waveSegment(EnemyChar.Runner, 3, 1, 30, 1),
-            ...waveSegment(EnemyChar.Wizard, 4, 5, 4, 0),
-            ...waveSegment(EnemyChar.Tribal, 4, 6, 6, 2),
-            ...waveSegment(EnemyChar.Orc, 2, 5, 16, 1),
+            ...enemyFormations(FormationType.Square, 0, 0, EnemyChar.Runner, EnemyChar.Tribal),
+            ...enemyFormations(FormationType.Square, 6, 0, EnemyChar.Runner, EnemyChar.Tribal),
+            ...enemyFormations(FormationType.Square, 12, 0, EnemyChar.Runner, EnemyChar.Tribal),
+            ...enemyFormations(FormationType.Square, 6, 2, EnemyChar.Runner, EnemyChar.Tribal),
+            ...enemyFormations(FormationType.Square, 12, 2, EnemyChar.Runner, EnemyChar.Tribal),
+            ...enemyFormations(FormationType.Square, 18, 2, EnemyChar.Runner, EnemyChar.Tribal),
         ],
     ],
     // stage 08 - FOREST

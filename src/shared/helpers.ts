@@ -298,40 +298,76 @@ export function printWavesStatistics(enemyBlueprints: typeof ENEMY_BLUEPRINTS) {
 
 export function enemyFormations(
     formationType: FormationType,
-    pathIdx: number,
     spawnAt: number,
+    pathIdx: number,
     enemy: EnemyChar,
     eliteEnemy?: EnemyChar
 ): WaveEnemy[] {
+    const enemyType = getEnemyTypeFromChar(enemy);
+    const eSpeed = ENEMY_BLUEPRINTS[enemyType].speed;
+    console.log({ eSpeed });
+
+    let unit = 1;
+    if (eSpeed === 1) {
+        unit = 2;
+    } else if (eSpeed === 1.5) {
+        unit = 1;
+    } else if (eSpeed === 2) {
+        unit = 0.75;
+    } else if (eSpeed === 3) {
+        unit = 0.5;
+    } else if (eSpeed === 4) {
+        unit = 0.35;
+    }
+
     switch (formationType) {
         case FormationType.Diamond: {
-            return [
+            const formation: WaveEnemy[] = [
                 [enemy, pathIdx, spawnAt, "c"],
-                [enemy, pathIdx, spawnAt + 1, "l"],
-                [enemy, pathIdx, spawnAt + 1, "r"],
-                [enemy, pathIdx, spawnAt + 2, "c"],
+                [enemy, pathIdx, spawnAt + 1 * unit, "l"],
+                [enemy, pathIdx, spawnAt + 1 * unit, "r"],
+                [enemy, pathIdx, spawnAt + 2 * unit, "c"],
             ];
+
+            if (eliteEnemy) {
+                formation.push([eliteEnemy, pathIdx, spawnAt + 1 * unit, "c"]);
+            }
+
+            return formation;
         }
         case FormationType.DiamondFull: {
-            return [
+            const formation: WaveEnemy[] = [
                 [enemy, pathIdx, spawnAt, "c"],
-                [enemy, pathIdx, spawnAt + 1, "l"],
-                [enemy, pathIdx, spawnAt + 1, "r"],
-                [enemy, pathIdx, spawnAt + 2, "c"],
+                [enemy, pathIdx, spawnAt + 1 * unit, "l"],
+                [enemy, pathIdx, spawnAt + 1 * unit, "c"],
+                [enemy, pathIdx, spawnAt + 1 * unit, "r"],
+                [enemy, pathIdx, spawnAt + 2 * unit, "c"],
             ];
+
+            if (eliteEnemy) {
+                formation.splice(2, 1, [eliteEnemy, pathIdx, spawnAt + 1 * unit, "c"]);
+            }
+
+            return formation;
         }
         case FormationType.Square: {
-            return [
+            const formation: WaveEnemy[] = [
                 [enemy, pathIdx, spawnAt, "l"],
                 [enemy, pathIdx, spawnAt, "c"],
                 [enemy, pathIdx, spawnAt, "r"],
-                [enemy, pathIdx, spawnAt + 1, "l"],
-                [enemy, pathIdx, spawnAt + 1, "c"],
-                [enemy, pathIdx, spawnAt + 1, "r"],
-                [enemy, pathIdx, spawnAt + 2, "l"],
-                [enemy, pathIdx, spawnAt + 2, "c"],
-                [enemy, pathIdx, spawnAt + 2, "r"],
+                [enemy, pathIdx, spawnAt + 1 * unit, "l"],
+                [enemy, pathIdx, spawnAt + 1 * unit, "c"],
+                [enemy, pathIdx, spawnAt + 1 * unit, "r"],
+                [enemy, pathIdx, spawnAt + 2 * unit, "l"],
+                [enemy, pathIdx, spawnAt + 2 * unit, "c"],
+                [enemy, pathIdx, spawnAt + 2 * unit, "r"],
             ];
+
+            if (eliteEnemy) {
+                formation.splice(4, 1, [eliteEnemy, pathIdx, spawnAt + 1 * unit, "c"]);
+            }
+
+            return formation;
         }
     }
 }
