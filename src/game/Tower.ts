@@ -1,14 +1,15 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { MATERIALS } from "../shared/constants/general";
+import { MATERIALS } from "../constants/general";
 import { AppLayers, TargetingStrategy, TowerType, TrajectoryType } from "../shared/enums";
 import { TOWER_MODELS } from "./game";
-import { idMaker } from "../shared/helpers";
+import { idMaker, rowDice } from "../shared/helpers";
 import { PlayerSkills, TowerBluePrint } from "../shared/types";
 import { THREE } from "../three";
 import { Enemy } from "./Enemy";
 import { StraightProjectile, ParabolaProjectile } from "./Projectile";
-import { TOWER_BLUEPRINTS, PROJECTILE_BLUEPRINTS } from "../shared/constants/towers-and-projectiles";
+import { TOWER_BLUEPRINTS, PROJECTILE_BLUEPRINTS } from "../constants/towers-and-projectiles";
 import { Vector3 } from "three";
+import { sound } from "../constants/sounds";
 
 const estimatedTimeToTarget = 1;
 const turnSpeed = 0.05;
@@ -32,7 +33,7 @@ export class Tower {
     strategy: TargetingStrategy;
     targetLocked = false;
     damageDealt = 0;
-    constructor(towerType: TowerType, position: THREE.Vector3, tileIdx: string) {
+    constructor(towerType: TowerType, position: THREE.Vector3, tileIdx: string, playSound = true) {
         this.id = idMaker();
         this.towerName = towerType;
         this.position = position;
@@ -40,6 +41,7 @@ export class Tower {
         this.cooldown = 0;
         this.blueprint = { ...TOWER_BLUEPRINTS[towerType][0] };
         this.strategy = this.blueprint.defaultStrategy;
+        if (playSound) sound.build();
 
         this._init();
     }
@@ -139,6 +141,8 @@ export class Tower {
 
         this._setupModelData();
         this._setupRangeGizmo();
+        sound.upgrade();
+
         return this;
     }
 
@@ -229,6 +233,33 @@ export class Tower {
     fireProjectile(enemy: Enemy, isMultiShot = false) {
         const projBlueprint = { ...PROJECTILE_BLUEPRINTS[this.towerName][this.blueprint.level - 1] };
         const origin = new THREE.Vector3(this.firePoint.x, this.firePoint.y, this.firePoint.z);
+
+        if (!isMultiShot) {
+            switch (projBlueprint.type) {
+                case TowerType.Archer:
+                    sound.woosh02();
+                    break;
+                case TowerType.Cannon:
+                    sound.cannon();
+                    break;
+                case TowerType.Ballista:
+                    sound.woosh01();
+                    break;
+                default: {
+                    sound.woosh03();
+                    // const dice = rowDice(2);
+
+                    // switch (dice) {
+                    //     case 0:
+                    //         sound.woosh01();
+                    //         break;
+                    //     case 1:
+                    //         sound.woosh03();
+                    //         break;
+                    // }
+                }
+            }
+        }
 
         switch (projBlueprint.trajectoryType) {
             case TrajectoryType.Parabola: {

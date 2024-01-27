@@ -1,4 +1,4 @@
-import { DEFAULT_POISON_DAMAGE } from "../shared/constants/general";
+import { DEFAULT_POISON_DAMAGE } from "../constants/general";
 import { idMaker } from "../shared/helpers";
 import { PlayerSkills } from "../shared/types";
 

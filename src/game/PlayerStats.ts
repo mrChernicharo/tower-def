@@ -1,4 +1,4 @@
-import { DEFAULT_METEOR_COOLDOWN, DEFAULT_BLIZZARD_COOLDOWN } from "../shared/constants/general";
+import { DEFAULT_METEOR_COOLDOWN, DEFAULT_BLIZZARD_COOLDOWN } from "../constants/general";
 import { getD } from "../shared/helpers";
 import { PlayerSkills } from "../shared/types";
 

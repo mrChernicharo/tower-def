@@ -1,4 +1,4 @@
-import { LevelObject } from "../../types";
+import { LevelObject } from "../../shared/types";
 
 export const LEVEL_OBJECTS: LevelObject[][] = [
     // desert:

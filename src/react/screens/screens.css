@@ -208,6 +208,7 @@
 
             &.ready {
                 filter: brightness(1.2);
+                animation: glow 3.2 infinite;
             }
 
             &:last-child {

@@ -1,5 +1,5 @@
-import { SkillEffectName, SkillPath } from "../enums";
-import { Skill } from "../types";
+import { SkillEffectName, SkillPath } from "../shared/enums";
+import { Skill } from "../shared/types";
 import { BALLISTA_CRITICAL_HIT_CHANCE } from "./general";
 
 export const GAME_SKILLS: { [k in SkillPath]: Skill[] } = {
