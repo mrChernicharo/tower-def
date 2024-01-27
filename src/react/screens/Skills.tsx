@@ -70,7 +70,10 @@ const Skills = () => {
                 </div>
 
                 <div className="bottom-line">
-                    <div>{starsToSpend}★</div>
+                    <div className="stars-to-spend">
+                        {starsToSpend}
+                        <span className="star">★</span>
+                    </div>
                     <button onClick={resetSkills}>↻</button>
                 </div>
             </div>
@@ -122,16 +125,7 @@ const Skills = () => {
                             playerStars={starsToSpend}
                         />
 
-                        <p>{skillDetail.description}</p>
-
-                        {/* <div style={{ paddingTop: "1rem", display: "flex", justifyContent: "center" }}>
-                            <SkillActionButton
-                                skill={skillDetail}
-                                onPurchaseSkill={onPurchaseSkill}
-                                onRemoveSkill={onRemoveSkill}
-                                playerStars={starsToSpend}
-                            />
-                        </div> */}
+                        <p className="description">{skillDetail.description}</p>
                     </div>
                 ) : null}
             </div>
@@ -157,11 +151,24 @@ function SkillActionButton({
     const skillPurchasable = skillLevel === 1 || skills[`${skillPath}-${skillLevel - 1}` as SkillId];
     const canAfford = skill.starCost <= playerStars;
 
-    if (skillPurchased) return <button onClick={() => onRemoveSkill(skill)}>Remove</button>;
+    if (skillPurchased)
+        return (
+            <button className="skill-action-btn" onClick={() => onRemoveSkill(skill)}>
+                Remove
+            </button>
+        );
     else if (skillPurchasable)
         return (
-            <button disabled={!canAfford} onClick={() => onPurchaseSkill(skill)}>
-                Purchase
+            <button
+                className={`skill-action-btn ${canAfford ? "glow-small" : ""}`}
+                disabled={!canAfford}
+                onClick={() => onPurchaseSkill(skill)}
+            >
+                <span>Purchase</span>
+                <span className="star-container">
+                    {skill.starCost}
+                    <span className="star">★</span>
+                </span>
             </button>
         );
     else return null;

@@ -18,11 +18,11 @@ const bottomBarStyles = {
     // border: "1px solid green",
 } as React.CSSProperties;
 
-const worldMapContainerStyles = {
-    position: "relative",
-    margin: "0 auto",
-    // border: "1px solid red",
-} as React.CSSProperties;
+// const worldMapContainerStyles = {
+//     // position: "relative",
+//     // margin: "0 auto",
+//     // border: "1px solid red",
+// } as React.CSSProperties;
 
 const starsBadgeStyles = {
     position: "absolute",
@@ -69,7 +69,7 @@ export const LevelSelection = () => {
 
     const onResize = useCallback(() => {
         const worldImg = document.querySelector("#world-img") as HTMLImageElement;
-        const worldMapContainer = document.querySelector(".world-map-container") as HTMLDivElement;
+        const worldMapContainer = document.querySelector("#world-map-container") as HTMLDivElement;
         const w = window.screen.availWidth > 800 ? 800 : window.screen.availWidth;
         const h = window.screen.availHeight > 800 ? 800 : window.screen.availHeight;
         worldImg.width = w;
@@ -88,43 +88,39 @@ export const LevelSelection = () => {
     }, [onResize]);
 
     return (
-        <div style={{ height: "100dvh" }}>
-            <div style={{ position: "fixed", top: 0, right: 5, zIndex: 200 }}>
+        <div id="level-selection-screen">
+            <div id="back-btn-container">
                 <Link to="/">
-                    <button style={{ marginLeft: "5px", marginTop: "5px" }}>
+                    <button>
                         <FaArrowLeft />
                     </button>
                 </Link>
             </div>
 
-            <div style={{ position: "fixed", top: 5, left: 5, zIndex: 200 }}>
-                <h2 style={{ background: "#00000088", paddingInline: "1rem", borderRadius: 4 }}>Level Selection</h2>
+            <div id="title-container">
+                <h2>Level Selection</h2>
             </div>
 
-            {/* <div style={{ height: 25 }}></div> */}
-
-            <div className="world-map-container" style={worldMapContainerStyles}>
+            <div id="world-map-container">
                 {levelIconsPositions.map((pos, i) => {
+                    const showBtn = getUnlockedStages(stars) >= i;
+                    const currentStage = getUnlockedStages(stars) === i;
+
                     return (
                         <div
                             key={`pos-${i}`}
-                            style={{ position: "absolute", left: pos[0] + "%", top: pos[1] + "%", zIndex: 100 }}
+                            className="stage-btn-container"
+                            style={{ left: pos[0] + "%", top: pos[1] + "%" }}
                         >
-                            {getUnlockedStages(stars) >= i ? (
-                                <Link to={`/area/${getAreaByLevel(i)}/level/${i}`}>
-                                    <button
-                                        className={`stage-btn ${getUnlockedStages(stars) === i ? "glow" : ""} `}
-                                        style={{
-                                            background: "transparent",
-                                            border: "none",
-                                            padding: 0,
-                                            borderRadius: "1000px",
-                                        }}
-                                    >
-                                        <img width={36} height={36} src={imgs.Stage} />
-                                        <LevelStars stars={stars[i]} />
+                            {showBtn ? (
+                                <>
+                                    <button className={`stage-btn ${currentStage ? "current-stage glow" : ""} `}>
+                                        <Link to={`/area/${getAreaByLevel(i)}/level/${i}`}>
+                                            <img width={36} height={36} src={imgs.Stage} />
+                                        </Link>
                                     </button>
-                                </Link>
+                                    <LevelStars stars={stars[i]} />
+                                </>
                             ) : null}
                             {/* <Link to={`/area/${getAreaByLevel(i)}/level/${i}`}>
                                 <button style={{ background: "transparent", border: "none", padding: 0 }}>
@@ -136,11 +132,11 @@ export const LevelSelection = () => {
                     );
                 })}
 
-                <img id="world-img" src={imgs.World} style={{ position: "absolute", borderRadius: 12 }} />
+                <img id="world-img" src={imgs.World} />
 
                 <div style={{ ...bottomBarStyles, ...(isMobile ? { position: "fixed" } : {}) }}>
                     <Link to="/skills">
-                        <button className={starsToSpend > 0 ? "glow-delay" : ""} style={{ marginLeft: "5px" }}>
+                        <button className={starsToSpend > 0 ? "glow-small" : ""} style={{ marginLeft: "5px" }}>
                             <span>Skills</span>
                             {starsToSpend > 0 ? (
                                 <div
@@ -168,7 +164,7 @@ export const LevelSelection = () => {
                     {/* <button>Achievements</button> */}
 
                     <Link to="/settings">
-                        <button style={{ padding: "0.5rem", display: "flex", marginLeft: "5px" }}>
+                        <button id="settings-btn">
                             <img src={imgs.Settings} width={24} height={24} />
                         </button>
                     </Link>

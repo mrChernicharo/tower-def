@@ -71,6 +71,9 @@ button:focus,
 button:focus-visible {
     outline: 4px auto -webkit-focus-ring-color;
 }
+button:disabled {
+    filter: opacity(0.5);
+}
 
 .hidden {
     opacity: 0 !important;
@@ -92,19 +95,9 @@ button:focus-visible {
     height: 3px;
     background-color: #ffff00 !important;
 }
-
-/* @media (prefers-color-scheme: light) {
-    :root {
-        color: #213547;
-        background-color: #ffffff;
-    }
-    a:hover {
-        color: #747bff;
-    }
-    button {
-        background-color: #f9f9f9;
-    }
-} */
+.star {
+    color: yellow;
+}
 
 /**********************************************/
 /***************** TOWER MODAL ****************/
@@ -299,25 +292,22 @@ button:focus-visible {
     position: fixed;
     inset: 0px;
     background: #24242480;
-    /* #444 */
-    /* opacity: 0.5; */
-    /* transition: opacity 2s; */
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-}
 
-#pause-game-screen #pause-content {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    pointer-events: all;
-    opacity: 1;
-    padding: 1rem;
-    background: #444;
-    border-radius: 12px;
+    #pause-content {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        pointer-events: all;
+        opacity: 1;
+        padding: 1rem;
+        background: #444;
+        border-radius: 12px;
+    }
 }
 
 /**********************************************/
@@ -368,32 +358,45 @@ progress::-webkit-progress-value {
     opacity: 1;
     transition: opacity 2s;
     pointer-events: none;
-}
 
-#end-game-screen h2,
-#end-game-screen button {
-    pointer-events: all;
+    h2,
+    button {
+        pointer-events: all;
+    }
 }
 
 /**********************************************/
 /******************* SKILLS *******************/
 /**********************************************/
 
-.skills-top .top-line {
-    text-align: center;
-    position: relative;
-}
-.skills-top .top-line button {
-    position: absolute;
-    top: 5px;
-    right: 5px;
-}
-.skills-top .bottom-line {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding-inline: 5px;
-    margin-block: 1rem;
+.skills-top {
+    .top-line,
+    .bottom-line {
+        display: flex;
+        justify-content: space-between;
+        padding-inline: 5px;
+        margin-block: 1rem;
+    }
+
+    .top-line {
+        position: relative;
+        align-items: center;
+
+        button {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+        }
+    }
+
+    .bottom-line {
+        align-items: baseline;
+
+        .stars-to-spend {
+            font-weight: bold;
+            font-size: 26px;
+        }
+    }
 }
 
 .skills-container {
@@ -408,41 +411,55 @@ progress::-webkit-progress-value {
     justify-content: center;
     align-items: center;
     margin-bottom: 5px;
-}
 
-.skill-row button {
-    height: 56px;
-    width: 60px;
-    padding: 0;
-}
+    button {
+        height: 56px;
+        width: 60px;
+        padding: 0;
+    }
 
-.skill-row > img {
-    margin-right: 5px;
-}
+    > img {
+        margin-right: 5px;
+    }
 
-.skill-row .skill-item:not(:last-of-type) {
-    margin-right: 5px;
+    .skill-item:not(:last-of-type) {
+        margin-right: 5px;
+    }
 }
 
 .skill-detail {
     text-align: center;
-}
 
-.skill-detail h2 {
-    margin-top: 1rem;
+    h2 {
+        margin-top: 1rem;
+    }
+
+    .skill-action-btn {
+        margin-block: 0.5rem;
+        font-size: 18px;
+
+        .star-container {
+            margin-left: 5px;
+        }
+    }
+
+    p,
+    .description {
+        margin-inline: 3rem;
+    }
 }
 
 .glow {
-    animation: glow 3s infinite;
+    animation: glow 3.2s infinite;
 }
-.glow-delay {
-    animation: glow 4.2s ease 1s infinite;
+.glow-small {
+    animation: glow-small 2.6s infinite;
 }
 
 @keyframes glow {
     0% {
-        -webkit-box-shadow: 0 0 0 0 yellow;
-        /* -webkit-box-shadow: 0 0 0 0 white; */
+        -webkit-box-shadow: 0 0 0 0 white;
+        /* -webkit-box-shadow: 0 0 0 0 yellow; */
         /* filter: drop-shadow(0 0 0 white); */
     }
     70% {
@@ -452,5 +469,17 @@ progress::-webkit-progress-value {
     100% {
         -webkit-box-shadow: 0 0 0 0 rgba(0, 200, 0, 0);
         /* filter: drop-shadow(0 0 0 rgba(0, 200, 0, 0)); */
+    }
+}
+
+@keyframes glow-small {
+    0% {
+        -webkit-box-shadow: 0 0 0 0 white;
+    }
+    70% {
+        -webkit-box-shadow: 0 0 0 10px rgba(0, 200, 0, 0);
+    }
+    100% {
+        -webkit-box-shadow: 0 0 0 0 rgba(0, 200, 0, 0);
     }
 }

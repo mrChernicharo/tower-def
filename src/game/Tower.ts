@@ -180,7 +180,7 @@ export class Tower {
             if (this.cooldown <= 0) {
                 target.forEach((e, i) => {
                     // console.log("ShoooT!", targetEnemy.enemyType);
-                    // this.fireProjectile(e, i !== 0);
+                    this.fireProjectile(e, i !== 0);
                 });
                 this.cooldown = 1 / this.rateOfFire;
             }
@@ -195,7 +195,7 @@ export class Tower {
 
             if (this.cooldown <= 0 && this.targetLocked) {
                 // console.log("ShoooT!", targetEnemy.enemyType);
-                // this.fireProjectile(target);
+                this.fireProjectile(target);
 
                 this.cooldown = 1 / this.rateOfFire;
             }
