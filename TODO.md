@@ -35,6 +35,7 @@
     -   [✔] blizzard
     -   [✔] meteor
 -   [✔] tower rangeGizmos -> show'em if modal.towerDetails
+-   [ ] sounds
 -   [ ] start screen
 -   [ ] instancedMesh
 -   [ ] tutorial

@@ -15,10 +15,10 @@ import { OutputPass } from "three/addons/postprocessing/OutputPass.js";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import { CSS2DRenderer, CSS2DObject } from "three/examples/jsm/renderers/CSS2DRenderer.js";
 
-import { LEVEL_OBJECTS } from "../shared/constants/levels/objects";
-import { ENEMY_BLUEPRINTS } from "../shared/constants/enemies";
-import { TOWER_BLUEPRINTS } from "../shared/constants/towers-and-projectiles";
-import { GAME_SKILLS } from "../shared/constants/skills";
+import { LEVEL_OBJECTS } from "../constants/levels/objects";
+import { ENEMY_BLUEPRINTS } from "../constants/enemies";
+import { TOWER_BLUEPRINTS } from "../constants/towers-and-projectiles";
+import { GAME_SKILLS } from "../constants/skills";
 import { StraightProjectile } from "./Projectile";
 import {
     COLORS,
@@ -38,7 +38,8 @@ import {
     DRAW_AND_COMPUTE_OFFSET_PATHS,
     USE_ORBIT_CONTROLS,
     DRAW_PATH_LANES,
-} from "../shared/constants/general";
+    SELL_PRICE_MULTIPLIER,
+} from "../constants/general";
 import {
     applyAreaDamage,
     calcEarnedStarsForGameWin,
@@ -80,6 +81,7 @@ import { Enemy } from "./Enemy";
 import { Meteor } from "./Meteor";
 import { Blizzard } from "./Blizzard";
 import { PoisonEntry } from "./PoisonEntry";
+import { sound } from "../constants/sounds";
 
 // let pathPoints: THREE.Vector3[] = [];
 
@@ -246,7 +248,7 @@ export async function destroyGame() {
 export async function initGame({ level, hp, skills }: GameInitProps) {
     levelIdx = level;
 
-    const { GAME_LEVELS } = await import("../shared/constants/levels/levels");
+    const { GAME_LEVELS } = await import("../constants/levels/levels");
 
     levelData = GAME_LEVELS[levelIdx];
 
@@ -674,6 +676,7 @@ function drawWaveCallBeacon() {
             // console.log("CALL WAVE!", currWaveIdx + 1);
             // WAVE START
             console.log("<<< WAVE START >>>", { levelIdx, currWaveIdx });
+            sound.crow();
             (speedBtns.children[1] as HTMLInputElement).checked = true;
             gameSpeed = 1;
             gameState = GameState.Active;
@@ -1026,12 +1029,17 @@ function onModalClick(e: MouseEvent, el: THREE.Object3D, modal3D: CSS2DObject, m
     // console.log(":::onModalClick::::", { e, el, modal3D, modalEl, tower_id, tower });
     outlinePass.selectedObjects = [];
 
+    const clickedButton = [...e.composedPath()].some((el) => (el as Element).tagName === "BUTTON");
+    if (clickedButton) {
+        sound.click();
+    }
+
     /******* TOWER BUILD *******/
     if (evTarget.classList.contains("tower-build-btn")) {
         towerTypeToBuild = evTarget.id.split("-")[0] as TowerType;
         modalEl.innerHTML = modalTemplates.confirmTowerBuild(towerTypeToBuild, playerStats.skills);
 
-        const t = new Tower(towerTypeToBuild!, el.position, modal3D.userData["tile_idx"]);
+        const t = new Tower(towerTypeToBuild!, el.position, modal3D.userData["tile_idx"], false);
         towerPreview = { model: t.model, rangeGizmo: t.rangeGizmo };
         console.log("draw tower preview", {
             towerPreview,
@@ -1111,7 +1119,8 @@ function onModalClick(e: MouseEvent, el: THREE.Object3D, modal3D: CSS2DObject, m
         const [tower] = towers.splice(towerIdx, 1);
         scene.remove(tower.model);
         scene.remove(tower.rangeGizmo);
-        playerStats.gainGold(tower.price * 0.7);
+        playerStats.gainGold(tower.price * SELL_PRICE_MULTIPLIER);
+        sound.sell();
 
         // console.log({ towers, tower, scene });
     }
@@ -1280,6 +1289,7 @@ function onCanvasClick(e: MouseEvent) {
                     }
                 }
             });
+            sound.click();
             return;
         }
         case Boolean(clickedTowerBase): {
@@ -1296,6 +1306,7 @@ function onCanvasClick(e: MouseEvent) {
             tower?.showGizmo();
 
             outlinePass.selectedObjects.push(clickedTowerBase.object);
+            sound.click();
             return;
         }
         default: {
@@ -1478,6 +1489,7 @@ function onWaveEnded() {
 function gameOverWin() {
     console.log("GAME END ... WIN!");
     cssRenderer.domElement.style.opacity = "0";
+    sound.gameWin();
 
     const stars = calcEarnedStarsForGameWin(playerStats.hp);
     endGameScreen.innerHTML = gameEndTemplates.gameWin(stars);
@@ -1491,6 +1503,8 @@ function gameOverWin() {
 
 function gameOverLose() {
     console.log("GAME END ... LOSE");
+    sound.gameLose();
+
     gameState = GameState.Idle;
     cssRenderer.domElement.style.opacity = "0";
     endGameScreen.innerHTML = gameEndTemplates.gameLose();
@@ -1611,6 +1625,8 @@ function onProjectileExplode(e: any) {
                 break;
             }
             case TowerType.Ballista: {
+                sound.hit01();
+
                 let damage = projectile.damage;
                 let critChance = 0;
 
@@ -1635,6 +1651,8 @@ function onProjectileExplode(e: any) {
                 break;
             }
             case TowerType.Cannon: {
+                sound.explosion();
+
                 let radius = explosion.userData.radius;
                 if (playerStats.skills.cannon[1]) {
                     radius += (radius * playerStats.skills.cannon[1].effect.SPLASH_AREA!.value) / 100; // skill::cannon-2
@@ -1656,6 +1674,8 @@ function onProjectileExplode(e: any) {
                 break;
             }
             case TowerType.Poison: {
+                sound.hit01();
+
                 const duration = DEFAULT_POISON_DURATION;
 
                 const poison = new PoisonEntry(targetEnemy.id, duration, projectile.level, playerStats.skills);
@@ -1673,6 +1693,8 @@ function onProjectileExplode(e: any) {
                 break;
             }
             case TowerType.Wizard: {
+                sound.hit01();
+
                 const ricochetEnabled = playerStats.skills.wizard[1];
                 const ricochet3 = playerStats.skills.wizard[3];
                 const ricochet4 = playerStats.skills.wizard[4];
@@ -1785,10 +1807,15 @@ function onEnemyDestroyed(e: any) {
         // console.log(`${enemy.enemyType} reached end`);
         playerStats.loseHP(1);
         if (playerStats.hp <= 0) {
-            gameOverLose();
+            if (!gameLost) {
+                gameOverLose();
+            }
+        } else {
+            sound.loseHP();
         }
     } else {
         // console.log("enemy killed");
+        sound.coin();
         playerStats.gainGold(enemy.bluePrint.reward);
 
         if (enemy.isPoisoned) {

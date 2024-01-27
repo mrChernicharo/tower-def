@@ -1,5 +1,5 @@
-import { EnemyType } from "../enums";
-import { EnemyBluePrint } from "../types";
+import { EnemyType } from "../shared/enums";
+import { EnemyBluePrint } from "../shared/types";
 
 export const ENEMY_BLUEPRINTS: { [k in EnemyType]: EnemyBluePrint } = {
     // ground enemies

@@ -12,9 +12,9 @@
  * - demon, , dino, tribal, dragon, squidle, demonBoss
  */
 
-import { EnemyChar } from "../../enums";
-import { enemyFormations, waveSegment } from "../../helpers";
-import { FormationType, WaveEnemy } from "../../types";
+import { EnemyChar } from "../../shared/enums";
+import { enemyFormations, waveSegment } from "../../shared/helpers";
+import { FormationType, WaveEnemy } from "../../shared/types";
 
 // enemyChar, pathIdx, spawnAt, xOffset
 export const STAGE_WAVES_DATA: WaveEnemy[][][] = [

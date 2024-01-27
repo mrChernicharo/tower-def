@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { imgs } from "../../shared/constants/general";
+import { imgs } from "../../constants/general";
 import { usePlayerContext } from "../context/usePlayerContext";
 import { getAreaByLevel, getEarnedStars, getSpentStars, getUnlockedStages } from "../../shared/helpers";
 import { LevelStars } from "../components/levelStars";

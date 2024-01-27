@@ -5,17 +5,16 @@ import { THREE } from "../three";
 import * as SkeletonUtils from "three/examples/jsm/utils/SkeletonUtils.js";
 import { AppLayers, EnemyType } from "../shared/enums";
 import { EnemyBluePrint, LaneChar } from "../shared/types";
-import { MATERIALS, MAX_FOV } from "../shared/constants/general";
+import { MATERIALS, MAX_FOV } from "../constants/general";
 import { idMaker } from "../shared/helpers";
 import { SkinnedMesh } from "three";
-import { ENEMY_BLUEPRINTS } from "../shared/constants/enemies";
+import { ENEMY_BLUEPRINTS } from "../constants/enemies";
 
 const flightHeight = 3;
 const hpBarHeight = 4;
 const FLYING_ENEMY_NAMES = ["bee", "ghost", "squidle", "dragon"];
 
 export class Enemy {
-    #ready = false;
     #endReached = false;
     id: string;
     glb!: GLTF;
@@ -71,7 +70,6 @@ export class Enemy {
         // }
 
         this.timeSinceSpawn = 0;
-        this.#ready = true;
 
         return this;
     }
@@ -138,8 +136,6 @@ export class Enemy {
     }
 
     tick(delta: number) {
-        if (!this.ready()) return;
-
         if (!this.model.visible) {
             this.model.visible = true;
             // console.log("spawned", this, this.hpBar, this.hpBar3D);
@@ -161,10 +157,6 @@ export class Enemy {
         let t = this.getPercDist(timeInSecs);
         if (t > 1) t = 1;
         return this.path.getPointAt(t);
-    }
-
-    ready() {
-        return this.#ready;
     }
 
     handleEnemyMovement() {

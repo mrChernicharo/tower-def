@@ -1,5 +1,5 @@
-import { TowerType, TargetingStrategy, TrajectoryType } from "../enums";
-import { TowerBluePrint, ProjectileBluePrint } from "../types";
+import { TowerType, TargetingStrategy, TrajectoryType } from "../shared/enums";
+import { TowerBluePrint, ProjectileBluePrint } from "../shared/types";
 
 export const towerModelsURLs = {
     [TowerType.Archer]: [

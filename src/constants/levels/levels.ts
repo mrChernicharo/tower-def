@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-loss-of-precision */
-import { GameArea } from "../../enums";
-import { GameLevel } from "../../types";
-import { printWavesStatistics } from "../../helpers";
+import { GameArea } from "../../shared/enums";
+import { GameLevel } from "../../shared/types";
+import { printWavesStatistics } from "../../shared/helpers";
 import { ENEMY_BLUEPRINTS } from "../enemies";
 import { STAGE_WAVES_DATA } from "./waves";
 import { towerBasePositions } from "./tower-positions";

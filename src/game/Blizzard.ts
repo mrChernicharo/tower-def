@@ -5,9 +5,10 @@ import {
     DEFAULT_BLIZZARD_SLOW_DURATION,
     DEFAULT_BLIZZARD_SLOW_POWER,
     MATERIALS,
-} from "../shared/constants/general";
+} from "../constants/general";
 import { idMaker } from "../shared/helpers";
 import { PlayerStats } from "./PlayerStats";
+import { sound } from "../constants/sounds";
 
 const speed = 3;
 const icicleRadius = 5;
@@ -66,6 +67,8 @@ export class Blizzard {
         this.model.position.x = this.initialPos.x;
         this.model.position.y = this.initialPos.y;
         this.model.position.z = this.initialPos.z;
+
+        sound.blizzard();
     }
 
     tick(delta: number) {

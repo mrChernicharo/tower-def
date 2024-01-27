@@ -1,6 +1,7 @@
 import { THREE } from "../three";
-import { COLORS, MATERIALS } from "../shared/constants/general";
+import { COLORS, MATERIALS } from "../constants/general";
 import { idMaker } from "../shared/helpers";
+import { sound } from "../constants/sounds";
 
 const size = 0.5;
 const speed = 25;
@@ -28,6 +29,8 @@ export class Meteor {
         const explosionGeometry = new THREE.SphereGeometry(0.15);
         const explosionMaterial = MATERIALS.explosion(color);
         this.explosion = new THREE.Mesh(explosionGeometry, explosionMaterial);
+
+        sound.meteor();
     }
 
     static timeToTarget() {
@@ -41,6 +44,7 @@ export class Meteor {
     }
 
     explode() {
+        sound.explosion();
         window.dispatchEvent(new CustomEvent("meteor-explode", { detail: this }));
     }
 }

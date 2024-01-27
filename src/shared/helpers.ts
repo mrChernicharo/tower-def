@@ -5,10 +5,10 @@ import { THREE } from "../three";
 import { GLTF } from "three/examples/jsm/Addons.js";
 import { LevelStarCount, LevelStarMap, PlayerSkillIDsMap, WaveEnemy, LaneChar, FormationType } from "./types";
 import { Enemy } from "../game/Enemy";
-import { GAME_SKILLS } from "./constants/skills";
-import { allAreaLevels } from "./constants/levels/levels";
-import { ENEMY_BLUEPRINTS } from "./constants/enemies";
-import { STAGE_WAVES_DATA } from "./constants/levels/waves";
+import { GAME_SKILLS } from "../constants/skills";
+import { allAreaLevels } from "../constants/levels/levels";
+import { ENEMY_BLUEPRINTS } from "../constants/enemies";
+import { STAGE_WAVES_DATA } from "../constants/levels/waves";
 
 export function getEnemyTypeFromChar(char: EnemyChar): EnemyType {
     switch (char) {
@@ -74,9 +74,11 @@ export function capitalize(str: string) {
     return str[0].toUpperCase() + str.slice(1);
 }
 
-// idMaker
-const ID_CHARS = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_-";
+export function rowDice(sides = 6) {
+    return Math.floor(Math.random() * sides);
+}
 
+const ID_CHARS = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_-";
 export const idMaker = (length = 12) =>
     Array(length)
         .fill(0)

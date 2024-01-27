@@ -1,5 +1,5 @@
 import { ParabolaProjectile, StraightProjectile } from "../game/Projectile";
-import { defaultPlayerSkills } from "./constants/general";
+import { defaultPlayerSkills } from "../constants/general";
 import { EnemyType, GameArea, SkillEffectName, SkillPath, TargetingStrategy, TowerType, TrajectoryType } from "./enums";
 
 export type EnemyBluePrint = {
