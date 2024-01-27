@@ -88,7 +88,7 @@ export const LevelSelection = () => {
     }, [onResize]);
 
     return (
-        <div>
+        <div style={{ height: "100dvh" }}>
             <div style={{ position: "fixed", top: 0, right: 5, zIndex: 200 }}>
                 <Link to="/">
                     <button style={{ marginLeft: "5px", marginTop: "5px" }}>
@@ -112,7 +112,15 @@ export const LevelSelection = () => {
                         >
                             {getUnlockedStages(stars) >= i ? (
                                 <Link to={`/area/${getAreaByLevel(i)}/level/${i}`}>
-                                    <button style={{ background: "transparent", border: "none", padding: 0 }}>
+                                    <button
+                                        className={`stage-btn ${getUnlockedStages(stars) === i ? "glow" : ""} `}
+                                        style={{
+                                            background: "transparent",
+                                            border: "none",
+                                            padding: 0,
+                                            borderRadius: "1000px",
+                                        }}
+                                    >
                                         <img width={36} height={36} src={imgs.Stage} />
                                         <LevelStars stars={stars[i]} />
                                     </button>
@@ -128,11 +136,11 @@ export const LevelSelection = () => {
                     );
                 })}
 
-                <img id="world-img" src={imgs.World} style={{ position: "absolute" }} />
+                <img id="world-img" src={imgs.World} style={{ position: "absolute", borderRadius: 12 }} />
 
                 <div style={{ ...bottomBarStyles, ...(isMobile ? { position: "fixed" } : {}) }}>
                     <Link to="/skills">
-                        <button style={{ marginLeft: "5px" }}>
+                        <button className={starsToSpend > 0 ? "glow-delay" : ""} style={{ marginLeft: "5px" }}>
                             <span>Skills</span>
                             {starsToSpend > 0 ? (
                                 <div

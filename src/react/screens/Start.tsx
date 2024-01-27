@@ -14,7 +14,7 @@ export function Start() {
 
             <div id="start-btn-container">
                 <Link to="/level-selection">
-                    <button>Start Game</button>
+                    <button className="glow">Start Game</button>
                 </Link>
             </div>
 

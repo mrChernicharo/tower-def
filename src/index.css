@@ -35,12 +35,8 @@ a:hover {
 
 html,
 body {
-    /* overflow: hidden; */
     min-width: 320px;
-    /* min-height: 100dvh; */
     height: 100dvh;
-    /* color: rgba(255, 255, 255, 0.87); */
-    background-color: #242424;
 }
 
 h1 {
@@ -434,4 +430,27 @@ progress::-webkit-progress-value {
 
 .skill-detail h2 {
     margin-top: 1rem;
+}
+
+.glow {
+    animation: glow 3s infinite;
+}
+.glow-delay {
+    animation: glow 4.2s ease 1s infinite;
+}
+
+@keyframes glow {
+    0% {
+        -webkit-box-shadow: 0 0 0 0 yellow;
+        /* -webkit-box-shadow: 0 0 0 0 white; */
+        /* filter: drop-shadow(0 0 0 white); */
+    }
+    70% {
+        -webkit-box-shadow: 0 0 0 20px rgba(0, 200, 0, 0);
+        /* filter: drop-shadow(0 0 40px rgba(0, 200, 0, 0)); */
+    }
+    100% {
+        -webkit-box-shadow: 0 0 0 0 rgba(0, 200, 0, 0);
+        /* filter: drop-shadow(0 0 0 rgba(0, 200, 0, 0)); */
+    }
 }

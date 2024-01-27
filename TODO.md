@@ -34,18 +34,21 @@
     -   [✔] wizard
     -   [✔] blizzard
     -   [✔] meteor
--   [ ] tower rangeGizmos -> show'em if modal.towerDetails
+-   [✔] tower rangeGizmos -> show'em if modal.towerDetails
+-   [ ] start screen
+-   [ ] instancedMesh
+-   [ ] tutorial
 -   [ ] projectile transparency (wizard & poison)
 -   [ ] fix ricochet (prevent jumping back to some target that has already been hit)
 -   [ ] add some objects to highlight path's start/finish lines
 -   [ ] modal icons (info, up, sell, level, damage, range, fireRate)
 -   [ ] projectile trajectory towards flying enemies
+-   [ ] better firePoint calculations (move it forward in case its a Cannon tower)
 -   [ ] more and better levels
+-   [ ] more and better waves
 -   [ ] enemies with different sizes (small demon VS super huge demon)
 -   [ ] dmg_efx, die_animations
 -   [ ] (mobile) request full screen + landscape orientation
--   [ ] better firePoint calculations (move it forward in case its a Cannon tower)
--   [ ] runner resists poison
 -   [ ] elf heals its friends
 
 16 weak, 6 medium

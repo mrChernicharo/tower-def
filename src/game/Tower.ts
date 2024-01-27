@@ -175,15 +175,18 @@ export class Tower {
     }
 
     tick(delta: number, target: Enemy | Enemy[] | undefined) {
+        // MULTI-SHOT
         if (target instanceof Array) {
             if (this.cooldown <= 0) {
                 target.forEach((e, i) => {
                     // console.log("ShoooT!", targetEnemy.enemyType);
-                    this.fireProjectile(e, i !== 0);
+                    // this.fireProjectile(e, i !== 0);
                 });
                 this.cooldown = 1 / this.rateOfFire;
             }
-        } else if (target instanceof Enemy) {
+        }
+        // NORMAL-ONE-TARGET-SHOT
+        else if (target instanceof Enemy) {
             if (this.headMesh) {
                 this._rotateTowardsTarget(target);
             } else {
@@ -192,7 +195,7 @@ export class Tower {
 
             if (this.cooldown <= 0 && this.targetLocked) {
                 // console.log("ShoooT!", targetEnemy.enemyType);
-                this.fireProjectile(target);
+                // this.fireProjectile(target);
 
                 this.cooldown = 1 / this.rateOfFire;
             }
