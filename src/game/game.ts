@@ -81,7 +81,7 @@ import { Enemy } from "./Enemy";
 import { Meteor } from "./Meteor";
 import { Blizzard } from "./Blizzard";
 import { PoisonEntry } from "./PoisonEntry";
-import { sound } from "../constants/sounds";
+import { SoundManager } from "./SoundManager";
 
 // let pathPoints: THREE.Vector3[] = [];
 
@@ -101,6 +101,7 @@ let renderer: THREE.WebGLRenderer;
 let cssRenderer: CSS2DRenderer;
 let camera: THREE.PerspectiveCamera;
 let orbit: OrbitControls;
+export let soundManager: SoundManager;
 
 let gameState = GameState.Idle;
 let gameClock: THREE.Clock;
@@ -227,6 +228,7 @@ export async function destroyGame() {
     window.removeEventListener("enemy-destroyed", onEnemyDestroyed);
     window.removeEventListener("poison-entry-expired", onPoisonEntryExpired);
     window.removeEventListener("poison-entry-damage", onPoisonEntryDamage);
+    window.removeEventListener("sound-settings-change", onSoundSettingsChange);
 
     window.removeEventListener("resize", onResize);
     window.removeEventListener("visibilitychange", onVisibilityChange);
@@ -296,6 +298,7 @@ export async function initGame({ level, hp, skills }: GameInitProps) {
     window.addEventListener("enemy-destroyed", onEnemyDestroyed);
     window.addEventListener("poison-entry-expired", onPoisonEntryExpired);
     window.addEventListener("poison-entry-damage", onPoisonEntryDamage);
+    window.addEventListener("sound-settings-change", onSoundSettingsChange);
 
     window.addEventListener("resize", onResize);
     window.addEventListener("visibilitychange", onVisibilityChange);
@@ -363,12 +366,14 @@ async function gameSetup() {
     cssRenderer.domElement.style.pointerEvents = "none";
     canvas.appendChild(cssRenderer.domElement);
 
-    gltfLoader = new GLTFLoader(loadingManager);
     // fbxLoader = new FBXLoader(loadingManager);
     // fontLoader = new FontLoader(loadingManager);
+    gltfLoader = new GLTFLoader(loadingManager);
     gameClock = new THREE.Clock();
     activeGameTime = 0;
     totalGameTime = 0;
+
+    soundManager = new SoundManager();
 
     camera = new THREE.PerspectiveCamera(45, canvasWidth / window.innerHeight, 0.1, 1000);
     camera.position.x = levelData.initialCamPos[0];
@@ -683,7 +688,7 @@ function drawWaveCallBeacon() {
             // console.log("CALL WAVE!", currWaveIdx + 1);
             // WAVE START
             console.log("<<< WAVE START >>>", { levelIdx, currWaveIdx });
-            sound.crow();
+            soundManager.play("crow");
             (speedBtns.children[1] as HTMLInputElement).checked = true;
             gameSpeed = 1;
             gameState = GameState.Active;
@@ -1038,7 +1043,7 @@ function onModalClick(e: MouseEvent, el: THREE.Object3D, modal3D: CSS2DObject, m
 
     const clickedButton = [...e.composedPath()].some((el) => (el as Element).tagName === "BUTTON");
     if (clickedButton) {
-        sound.click();
+        soundManager.play("click");
     }
 
     /******* TOWER BUILD *******/
@@ -1127,7 +1132,7 @@ function onModalClick(e: MouseEvent, el: THREE.Object3D, modal3D: CSS2DObject, m
         scene.remove(tower.model);
         scene.remove(tower.rangeGizmo);
         playerStats.gainGold(tower.price * SELL_PRICE_MULTIPLIER);
-        sound.sell();
+        soundManager.play("sell");
 
         // console.log({ towers, tower, scene });
     }
@@ -1296,7 +1301,7 @@ function onCanvasClick(e: MouseEvent) {
                     }
                 }
             });
-            sound.click();
+            soundManager.play("click");
             return;
         }
         case Boolean(clickedTowerBase): {
@@ -1313,7 +1318,7 @@ function onCanvasClick(e: MouseEvent) {
             tower?.showGizmo();
 
             outlinePass.selectedObjects.push(clickedTowerBase.object);
-            sound.click();
+            soundManager.play("click");
             return;
         }
         default: {
@@ -1496,7 +1501,7 @@ function onWaveEnded() {
 function gameOverWin() {
     console.log("GAME END ... WIN!");
     cssRenderer.domElement.style.opacity = "0";
-    sound.gameWin();
+    soundManager.play("gameWin");
 
     const stars = calcEarnedStarsForGameWin(playerStats.hp);
     endGameScreen.innerHTML = gameEndTemplates.gameWin(stars);
@@ -1510,7 +1515,7 @@ function gameOverWin() {
 
 function gameOverLose() {
     console.log("GAME END ... LOSE");
-    sound.gameLose();
+    soundManager.play("gameLose");
 
     gameState = GameState.Idle;
     cssRenderer.domElement.style.opacity = "0";
@@ -1632,7 +1637,7 @@ function onProjectileExplode(e: any) {
                 break;
             }
             case TowerType.Ballista: {
-                sound.hit01();
+                soundManager.play("hit01");
 
                 let damage = projectile.damage;
                 let critChance = 0;
@@ -1658,7 +1663,7 @@ function onProjectileExplode(e: any) {
                 break;
             }
             case TowerType.Cannon: {
-                sound.explosion();
+                soundManager.play("explosion");
 
                 let radius = explosion.userData.radius;
                 if (playerStats.skills.cannon[1]) {
@@ -1681,7 +1686,7 @@ function onProjectileExplode(e: any) {
                 break;
             }
             case TowerType.Poison: {
-                sound.hit01();
+                soundManager.play("hit01");
 
                 const duration = DEFAULT_POISON_DURATION;
 
@@ -1700,7 +1705,7 @@ function onProjectileExplode(e: any) {
                 break;
             }
             case TowerType.Wizard: {
-                sound.hit01();
+                soundManager.play("hit01");
 
                 const ricochetEnabled = playerStats.skills.wizard[1];
                 const ricochet3 = playerStats.skills.wizard[3];
@@ -1818,11 +1823,11 @@ function onEnemyDestroyed(e: any) {
                 gameOverLose();
             }
         } else {
-            sound.loseHP();
+            soundManager.play("loseHP");
         }
     } else {
         // console.log("enemy killed");
-        sound.coin();
+        soundManager.play("coin");
         playerStats.gainGold(enemy.bluePrint.reward);
 
         if (enemy.isPoisoned) {
@@ -2141,4 +2146,8 @@ function printWaveAfterMath() {
         t.damageDealt = 0;
     });
     console.table(waveAfterMath);
+}
+
+function onSoundSettingsChange() {
+    soundManager.updateSettings();
 }

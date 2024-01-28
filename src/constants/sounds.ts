@@ -1,4 +1,4 @@
-export const sound = {
+export const sounds = {
     woosh01: () => new Audio("/assets/audio/woosh.01.mp3").play(),
     woosh02: () => {
         const s = new Audio("/assets/audio/woosh.02.mp3");

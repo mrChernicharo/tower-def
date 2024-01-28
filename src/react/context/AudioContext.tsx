@@ -40,6 +40,7 @@ export const AudioContextProvider = ({ children }: { children: ReactNode }) => {
         window.addEventListener("sound-off", soundOff);
         window.addEventListener("sound-on", soundOn);
         window.addEventListener("sound-off", soundOff);
+
         return () => {
             window.removeEventListener("sound-on", soundOn);
             window.removeEventListener("sound-off", soundOff);
@@ -52,19 +53,21 @@ export const AudioContextProvider = ({ children }: { children: ReactNode }) => {
         setTimeout(() => {
             const dataEl = document.querySelector("#data-container") as HTMLDivElement;
             if (dataEl) {
+                dataEl.dataset["music"] = music ? "on" : "off";
                 dataEl.dataset["sound"] = sound ? "on" : "off";
             }
-        }, 120);
-    }, [sound]);
+        }, 100);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
     useEffect(() => {
-        setTimeout(() => {
-            const dataEl = document.querySelector("#data-container") as HTMLDivElement;
-            if (dataEl) {
-                dataEl.dataset["music"] = music ? "on" : "off";
-            }
-        }, 120);
-    }, [music]);
+        const dataEl = document.querySelector("#data-container") as HTMLDivElement;
+        if (dataEl) {
+            dataEl.dataset["music"] = music ? "on" : "off";
+            dataEl.dataset["sound"] = sound ? "on" : "off";
+        }
+        window.dispatchEvent(new CustomEvent("sound-settings-change"));
+    }, [sound, music]);
 
     const value = { sound, music, soundOn, soundOff, musicOn, musicOff };
 

@@ -8,7 +8,7 @@ import {
 } from "../constants/general";
 import { idMaker } from "../shared/helpers";
 import { PlayerStats } from "./PlayerStats";
-import { sound } from "../constants/sounds";
+import { soundManager } from "./game";
 
 const speed = 3;
 const icicleRadius = 5;
@@ -68,7 +68,7 @@ export class Blizzard {
         this.model.position.y = this.initialPos.y;
         this.model.position.z = this.initialPos.z;
 
-        sound.blizzard();
+        soundManager.play("blizzard");
     }
 
     tick(delta: number) {
