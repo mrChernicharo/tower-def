@@ -23,6 +23,7 @@ export function Root() {
     return (
         <>
             <Outlet />
+            <div id="data-container"></div>
         </>
     );
 }

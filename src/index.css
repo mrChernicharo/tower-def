@@ -99,6 +99,16 @@ button:disabled {
     color: yellow;
 }
 
+.sound-button,
+.music-button {
+    &.on {
+        background-color: green;
+    }
+    &.off {
+        background-color: red;
+    }
+}
+
 /**********************************************/
 /***************** TOWER MODAL ****************/
 /**********************************************/

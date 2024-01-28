@@ -8,6 +8,7 @@ import { AiFillSound } from "react-icons/ai";
 import { FaMusic } from "react-icons/fa";
 import { RiCloseCircleFill } from "react-icons/ri";
 import { GAME_LEVELS } from "../../constants/levels/levels";
+import { useAudioContext } from "../context/useAudioContext";
 
 // import { IoMdClose } from "react-icons/io";
 // <IoMdClose />
@@ -16,6 +17,7 @@ import { GAME_LEVELS } from "../../constants/levels/levels";
 const Game = () => {
     const { area, level } = useParams();
     const { gold, hp, skills, updateStars } = usePlayerContext();
+    const { sound, soundOn, soundOff, music, musicOn, musicOff } = useAudioContext();
     const gameRunning = useRef(false);
 
     const onGameWon = useCallback(
@@ -144,10 +146,20 @@ const Game = () => {
                     <h2 style={{ marginBottom: 10 }}>Pause</h2>
 
                     <div className="btn-row">
-                        <button>
+                        <button
+                            className={`sound-button ${sound ? "on" : "off"}`}
+                            onClick={() => {
+                                sound ? soundOff() : soundOn();
+                            }}
+                        >
                             <AiFillSound />
                         </button>
-                        <button>
+                        <button
+                            className={`music-button ${music ? "on" : "off"}`}
+                            onClick={() => {
+                                music ? musicOff() : musicOn();
+                            }}
+                        >
                             <FaMusic />
                         </button>
                     </div>

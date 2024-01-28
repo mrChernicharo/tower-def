@@ -153,6 +153,8 @@ let pauseScreen: HTMLDivElement;
 let endGameBtn: HTMLButtonElement;
 let progressBar: HTMLProgressElement;
 let speedBtns: HTMLDivElement;
+// let soundBtn: HTMLButtonElement;
+// let musicBtn: HTMLButtonElement;
 let callWaveBeaconContainers: HTMLDivElement[] = [];
 
 let composer: EffectComposer;
@@ -242,6 +244,8 @@ export async function destroyGame() {
     meteorBtn.removeEventListener("click", onMeteorBtnClick);
     blizzardBtn.removeEventListener("click", onBlizzardBtnClick);
 
+    // soundBtn.removeEventListener('click',onSoundBtnClick);
+    // musicBtn.removeEventListener('click',onMusicBtnClick);
     // location.reload();
 }
 
@@ -308,6 +312,9 @@ export async function initGame({ level, hp, skills }: GameInitProps) {
     speedBtns.addEventListener("click", onGameSpeedChange);
     meteorBtn.addEventListener("click", onMeteorBtnClick);
     blizzardBtn.addEventListener("click", onBlizzardBtnClick);
+
+    // soundBtn.addEventListener('click',onSoundBtnClick);
+    // musicBtn.addEventListener('click',onMusicBtnClick);
 
     frameId = requestAnimationFrame(animate);
 }
