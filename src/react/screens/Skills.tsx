@@ -8,9 +8,12 @@ import { capitalize, getEarnedStars, getSkillInfo, getSpentStars } from "../../s
 import { FaArrowLeft } from "react-icons/fa";
 import { GAME_SKILLS } from "../../constants/skills";
 import { SkillPath } from "../../shared/enums";
+import { useAudioContext } from "../context/useAudioContext";
+import { sounds } from "../../constants/sounds";
 
 const Skills = () => {
     const { stars, skills, addSkill, removeSkill, resetAllSkills } = usePlayerContext();
+    const { sound } = useAudioContext();
     const [skillDetail, setSkillDetail] = useState<Skill | null>(null);
 
     const earnedStars = getEarnedStars(stars);
@@ -25,7 +28,12 @@ const Skills = () => {
         (skill: Skill) => {
             if (starsSpent + skill.starCost <= earnedStars) {
                 console.log("BUYING SKILL!!!");
+
                 addSkill(skill);
+                if (sound) {
+                    sounds.upgrade();
+                }
+
                 const [skillPath, skillLevel] = [skill.id.split("-")[0] as SkillPath, +skill.id.split("-")[1]];
                 const nextSkill = GAME_SKILLS[skillPath][skillLevel];
                 if (nextSkill) {
@@ -35,7 +43,7 @@ const Skills = () => {
                 console.log("CANNOT AFFORD SKILL");
             }
         },
-        [earnedStars, starsSpent, addSkill]
+        [starsSpent, earnedStars, addSkill, sound]
     );
 
     const onRemoveSkill = useCallback(

@@ -1,8 +1,6 @@
 /* eslint-disable @typescript-eslint/no-loss-of-precision */
 import { GameArea } from "../../shared/enums";
 import { GameLevel } from "../../shared/types";
-import { printWavesStatistics } from "../../shared/helpers";
-import { ENEMY_BLUEPRINTS } from "../enemies";
 import { STAGE_WAVES_DATA } from "./waves";
 import { towerBasePositions } from "./tower-positions";
 import { desert01, desert02 } from "../paths/desert-paths";
@@ -291,5 +289,3 @@ export const GAME_LEVELS: GameLevel[] = [
         },
     },
 ];
-
-printWavesStatistics(ENEMY_BLUEPRINTS);

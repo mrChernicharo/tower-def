@@ -91,8 +91,8 @@ export const ENEMY_BLUEPRINTS: { [k in EnemyType]: EnemyBluePrint } = {
         reward: 10,
         modelURL: "/assets/glb/enemies/Demon.gltf",
         speed: 1,
-        maxHp: 3000,
-        modelScale: 2,
+        maxHp: 2000,
+        modelScale: 2.2,
         walkAnimationName: "Walk",
     },
 

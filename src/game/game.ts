@@ -17,7 +17,7 @@ import { CSS2DRenderer, CSS2DObject } from "three/examples/jsm/renderers/CSS2DRe
 
 import { LEVEL_OBJECTS } from "../constants/levels/objects";
 import { ENEMY_BLUEPRINTS } from "../constants/enemies";
-import { TOWER_BLUEPRINTS } from "../constants/towers-and-projectiles";
+import { TOWER_BLUEPRINTS, printTowersStats } from "../constants/towers-and-projectiles";
 import { GAME_SKILLS } from "../constants/skills";
 import { StraightProjectile } from "./Projectile";
 import {
@@ -39,11 +39,12 @@ import {
     USE_ORBIT_CONTROLS,
     DRAW_PATH_LANES,
     SELL_PRICE_MULTIPLIER,
+    PRINT_WAVE_STATISTICS,
+    PRINT_TOWERS_STATISTICS,
 } from "../constants/general";
 import {
     applyAreaDamage,
     calcEarnedStarsForGameWin,
-    // capitalize,
     determineDamage,
     mousePosToWorldPos,
     getEnemyTypeFromChar,
@@ -82,6 +83,7 @@ import { Meteor } from "./Meteor";
 import { Blizzard } from "./Blizzard";
 import { PoisonEntry } from "./PoisonEntry";
 import { SoundManager } from "./SoundManager";
+import { printWavesStatistics } from "../constants/levels/waves";
 
 // let pathPoints: THREE.Vector3[] = [];
 
@@ -318,6 +320,13 @@ export async function initGame({ level, hp, skills }: GameInitProps) {
 
     // soundBtn.addEventListener('click',onSoundBtnClick);
     // musicBtn.addEventListener('click',onMusicBtnClick);
+
+    if (PRINT_WAVE_STATISTICS) {
+        printWavesStatistics(allPathCurves.center, ENEMY_BLUEPRINTS);
+    }
+    if (PRINT_TOWERS_STATISTICS) {
+        printTowersStats();
+    }
 
     frameId = requestAnimationFrame(animate);
 }
@@ -1633,6 +1642,7 @@ function onProjectileExplode(e: any) {
     if (targetEnemy && targetEnemy.hp > 0) {
         switch (projectile.type) {
             case TowerType.Archer: {
+                soundManager.play("arrowHit");
                 targetEnemy.takeDamage(projectile.damage);
                 break;
             }

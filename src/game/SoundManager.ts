@@ -15,7 +15,7 @@ export class SoundManager {
             this.musicOn = dataContainer.dataset["music"] === "on";
 
             console.log(this);
-        }, 200);
+        }, 100);
     }
 
     play(soundName: keyof typeof sounds) {

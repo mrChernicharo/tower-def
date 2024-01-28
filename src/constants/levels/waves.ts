@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /**
  * desert:
  * - dino, squidle, bee, ninja
@@ -13,8 +14,9 @@
  */
 
 import { EnemyChar } from "../../shared/enums";
-import { enemyFormations, waveSegment } from "../../shared/helpers";
-import { FormationType, WaveEnemy } from "../../shared/types";
+import { getEnemyTypeFromChar } from "../../shared/helpers";
+import { WaveEnemy, FormationType, LaneChar } from "../../shared/types";
+import { ENEMY_BLUEPRINTS } from "../enemies";
 
 // enemyChar, pathIdx, spawnAt, xOffset
 export const STAGE_WAVES_DATA: WaveEnemy[][][] = [
@@ -547,9 +549,29 @@ export const STAGE_WAVES_DATA: WaveEnemy[][][] = [
             ...waveSegment(EnemyChar.Squidle, 2, 5, 29, 1, "r"),
             ...waveSegment(EnemyChar.Squidle, 2, 5, 30.5, 1, "l"),
         ],
+
         // wave 3
         [
-            ...waveSegment(EnemyChar.DemonBoss, 1, 0, 0, 0, "r"),
+            ...enemyFormations(FormationType.Diamond, 0, 0, EnemyChar.Runner),
+            ...enemyFormations(FormationType.Diamond, 10, 0, EnemyChar.Runner),
+            ...enemyFormations(FormationType.Diamond, 20, 0, EnemyChar.Runner),
+            ...enemyFormations(FormationType.Diamond, 30, 0, EnemyChar.Runner),
+            ...enemyFormations(FormationType.Diamond, 40, 0, EnemyChar.Runner),
+            ...waveSegment(EnemyChar.Squidle, 12, 4, 4, 0, "l"),
+            ...waveSegment(EnemyChar.Squidle, 12, 4, 0, 0, "r"),
+
+            ...enemyFormations(FormationType.Diamond, 0, 1, EnemyChar.Runner),
+            ...enemyFormations(FormationType.Diamond, 10, 1, EnemyChar.Runner),
+            ...enemyFormations(FormationType.Diamond, 20, 1, EnemyChar.Runner),
+            ...enemyFormations(FormationType.Diamond, 30, 1, EnemyChar.Runner),
+            ...enemyFormations(FormationType.Diamond, 40, 1, EnemyChar.Runner),
+            ...waveSegment(EnemyChar.Squidle, 12, 4, 4, 1, "l"),
+            ...waveSegment(EnemyChar.Squidle, 12, 4, 0, 1, "r"),
+        ],
+
+        // wave 4
+        [
+            ...waveSegment(EnemyChar.DemonBoss, 1, 0, 0, 0),
             ...waveSegment(EnemyChar.Demon, 2, 10, 10, 0),
             ...waveSegment(EnemyChar.Dino, 4, 1.5, 10.5, 0, "l"),
             ...waveSegment(EnemyChar.Dino, 4, 1.5, 0, 0, "r"),
@@ -558,7 +580,7 @@ export const STAGE_WAVES_DATA: WaveEnemy[][][] = [
             ...waveSegment(EnemyChar.Dino, 4, 1.5, 26.5, 0, "l"),
             ...waveSegment(EnemyChar.Dino, 4, 1.5, 26, 0, "r"),
 
-            ...waveSegment(EnemyChar.DemonBoss, 1, 0, 0, 1, "r"),
+            ...waveSegment(EnemyChar.DemonBoss, 1, 0, 0, 1),
             ...waveSegment(EnemyChar.Demon, 2, 10, 42, 0),
             ...waveSegment(EnemyChar.Dino, 4, 1.5, 42.5, 0, "l"),
             ...waveSegment(EnemyChar.Dino, 4, 1.5, 42, 0, "r"),
@@ -582,3 +604,134 @@ export const STAGE_WAVES_DATA: WaveEnemy[][][] = [
         ],
     ],
 ];
+
+export function waveSegment(
+    e: EnemyChar,
+    enemyCount = 4,
+    interval = 2,
+    startSpawningAt = 0,
+    pathIdx = 0,
+    lane: LaneChar = "c"
+): [EnemyChar, number, number, LaneChar][] {
+    // console.log("waveSegment", { e, enemyCount, interval, startSpawningAt, xOffList });
+
+    return Array.from({ length: enemyCount }, (_, index) => [e, pathIdx, index * interval + startSpawningAt, lane]);
+}
+
+export function getWaveStats(
+    paths: THREE.CatmullRomCurve3[],
+    wave: WaveEnemy[],
+    enemyBlueprints: typeof ENEMY_BLUEPRINTS
+) {
+    // console.log(wave);
+    let highestSpawnAt = -Infinity;
+    let totalDmg = 0;
+    let maxDuration = -Infinity;
+
+    for (const e of wave) {
+        const [eChar, pathIdx, spawnAt] = [e[0] as EnemyChar, e[1], e[2]];
+        const eType = getEnemyTypeFromChar(eChar);
+        const eBlueprint = enemyBlueprints[eType];
+        const path = paths[pathIdx % paths.length];
+        const len = path.getLength();
+        const timeToComplete = len / eBlueprint.speed;
+
+        // console.log({ len, timeToComplete, eType });
+
+        totalDmg += eBlueprint.maxHp;
+        if (spawnAt > highestSpawnAt) highestSpawnAt = spawnAt;
+        if (timeToComplete > maxDuration) maxDuration = spawnAt + timeToComplete;
+    }
+
+    return { totalDmg, maxDuration, highestSpawnAt };
+}
+
+export function printWavesStatistics(paths: THREE.CatmullRomCurve3[], enemyBlueprints: typeof ENEMY_BLUEPRINTS) {
+    const res: any[] = [[0]];
+    STAGE_WAVES_DATA.forEach((stage) => {
+        const waves: any[] = [];
+        stage.forEach((wave) => {
+            const { totalDmg, maxDuration } = getWaveStats(paths, wave, enemyBlueprints);
+            waves.push(`${totalDmg}-${maxDuration.toFixed(0)}`);
+        });
+        res.push(waves);
+    });
+
+    console.table(res);
+}
+
+export function enemyFormations(
+    formationType: FormationType,
+    spawnAt: number,
+    pathIdx: number,
+    enemy: EnemyChar,
+    eliteEnemy?: EnemyChar
+): WaveEnemy[] {
+    const enemyType = getEnemyTypeFromChar(enemy);
+    const eSpeed = ENEMY_BLUEPRINTS[enemyType].speed;
+
+    let unit = 1;
+    if (eSpeed === 1) {
+        unit = 2;
+    } else if (eSpeed === 1.5) {
+        unit = 1.5;
+    } else if (eSpeed === 2) {
+        unit = 1;
+    } else if (eSpeed === 3) {
+        unit = 0.75;
+    } else if (eSpeed === 4) {
+        unit = 0.5;
+    }
+    // console.log({ eSpeed, unit });
+
+    switch (formationType) {
+        case FormationType.Diamond: {
+            const formation: WaveEnemy[] = [
+                [enemy, pathIdx, spawnAt, "c"],
+                [enemy, pathIdx, spawnAt + 1 * unit, "l"],
+                [enemy, pathIdx, spawnAt + 1 * unit, "r"],
+                [enemy, pathIdx, spawnAt + 2 * unit, "c"],
+            ];
+
+            if (eliteEnemy) {
+                formation.push([eliteEnemy, pathIdx, spawnAt + 1 * unit, "c"]);
+            }
+
+            return formation;
+        }
+        case FormationType.DiamondFull: {
+            const formation: WaveEnemy[] = [
+                [enemy, pathIdx, spawnAt, "c"],
+                [enemy, pathIdx, spawnAt + 1 * unit, "l"],
+                [enemy, pathIdx, spawnAt + 1 * unit, "c"],
+                [enemy, pathIdx, spawnAt + 1 * unit, "r"],
+                [enemy, pathIdx, spawnAt + 2 * unit, "c"],
+            ];
+
+            if (eliteEnemy) {
+                formation.splice(2, 1, [eliteEnemy, pathIdx, spawnAt + 1 * unit, "c"]);
+            }
+
+            return formation;
+        }
+        case FormationType.Square: {
+            const formation: WaveEnemy[] = [
+                [enemy, pathIdx, spawnAt, "l"],
+                [enemy, pathIdx, spawnAt, "c"],
+                [enemy, pathIdx, spawnAt, "r"],
+                [enemy, pathIdx, spawnAt + 1 * unit, "l"],
+                [enemy, pathIdx, spawnAt + 1 * unit, "c"],
+                [enemy, pathIdx, spawnAt + 1 * unit, "r"],
+                [enemy, pathIdx, spawnAt + 2 * unit, "l"],
+                [enemy, pathIdx, spawnAt + 2 * unit, "c"],
+                [enemy, pathIdx, spawnAt + 2 * unit, "r"],
+            ];
+
+            if (eliteEnemy) {
+                formation.splice(4, 1, [eliteEnemy, pathIdx, spawnAt + 1 * unit, "c"]);
+            }
+
+            return formation;
+        }
+    }
+}

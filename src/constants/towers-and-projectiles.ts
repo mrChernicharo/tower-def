@@ -46,7 +46,7 @@ export const TOWER_BLUEPRINTS: { [k in TowerType]: TowerBluePrint[] } = {
             // firePointY: 6,
             // modelScale: 1,
             damage: [2, 5],
-            fireRate: 2, // Fast
+            fireRate: 1.2, // Fast
             range: 8, // Average
             modelScale: 0.75,
             price: 80,
@@ -61,7 +61,7 @@ export const TOWER_BLUEPRINTS: { [k in TowerType]: TowerBluePrint[] } = {
             modelScale: 0.85,
             firePointY: 4.8,
             damage: [3, 9],
-            fireRate: 2.05, // Fast
+            fireRate: 1.25, // Fast
             range: 9, // Average
             price: 135,
         },
@@ -74,7 +74,7 @@ export const TOWER_BLUEPRINTS: { [k in TowerType]: TowerBluePrint[] } = {
             // modelScale: 1.2,
             firePointY: 5.2,
             damage: [5, 13],
-            fireRate: 2.1, // Very Fast
+            fireRate: 1.3, // Very Fast
             range: 10, // Long
             modelScale: 0.95,
             price: 200,
@@ -89,7 +89,7 @@ export const TOWER_BLUEPRINTS: { [k in TowerType]: TowerBluePrint[] } = {
             firePointY: 5.5,
             modelScale: 1.05,
             damage: [8, 18],
-            fireRate: 2.2, // Very Fast
+            fireRate: 1.35, // Very Fast
             range: 11, // Long
             price: 280,
             specials: [],
@@ -282,7 +282,7 @@ export const TOWER_BLUEPRINTS: { [k in TowerType]: TowerBluePrint[] } = {
             firePointY: 7.5,
             modelScale: 0.75,
             damage: [8, 12],
-            fireRate: 1.2, // Average
+            fireRate: 0.8, // Average
             range: 9, // Short
             price: 100,
         },
@@ -296,7 +296,7 @@ export const TOWER_BLUEPRINTS: { [k in TowerType]: TowerBluePrint[] } = {
             firePointY: 9,
             modelScale: 0.85,
             damage: [18, 30],
-            fireRate: 1.15, // Average
+            fireRate: 0.8, // Average
             range: 10, // Average
             price: 160,
         },
@@ -310,7 +310,7 @@ export const TOWER_BLUEPRINTS: { [k in TowerType]: TowerBluePrint[] } = {
             firePointY: 10,
             modelScale: 0.95,
             damage: [34, 56],
-            fireRate: 1.1, // Average
+            fireRate: 0.8, // Average
             range: 11, // Long
             price: 220,
         },
@@ -324,7 +324,7 @@ export const TOWER_BLUEPRINTS: { [k in TowerType]: TowerBluePrint[] } = {
             firePointY: 11.2,
             modelScale: 1.05,
             damage: [47, 74],
-            fireRate: 1.05, // Average
+            fireRate: 0.8, // Average
             range: 12, // Long
             price: 300,
             specials: [],
@@ -550,24 +550,31 @@ function getTowerStats(tower: TowerBluePrint) {
     const shotsPerSec = tower.fireRate;
     const dps = +(avgDamage * shotsPerSec).toFixed(2);
     const buckPerDps = tower.price / dps;
-    return { tower: `${tower.name}-${tower.level}`, dps, range: tower.range, price: tower.price, buckPerDps };
+    return {
+        tower: `${tower.name}-${tower.level}`,
+        avgDmg: avgDamage,
+        shotsPerSec,
+        dps,
+        range: tower.range,
+        price: tower.price,
+        buckPerDps,
+    };
 }
 
-for (const [, towers] of Object.entries(TOWER_BLUEPRINTS)) {
-    const stats: { tower: string; dps: number; range: number; price: number; buckPerDps: number }[] = [];
-    towers.forEach((t) => {
-        stats.push(getTowerStats(t));
-    });
-    console.table(stats);
+export function printTowersStats() {
+    for (const [, towers] of Object.entries(TOWER_BLUEPRINTS)) {
+        const stats: {
+            tower: string;
+            avgDmg: number;
+            shotsPerSec: number;
+            dps: number;
+            range: number;
+            price: number;
+            buckPerDps: number;
+        }[] = [];
+        towers.forEach((t) => {
+            stats.push(getTowerStats(t));
+        });
+        console.table(stats);
+    }
 }
-
-// function getIdealStats({ dps, price }: { dps: number; price: number }) {
-//     const buckPerDps = price / dps;
-//     console.log({ buckPerDps });
-//     return buckPerDps;
-// }
-
-// getIdealStats({ dps: 8, price: 100 });
-// getIdealStats({ dps: 25, price: 100 + 175 });
-// getIdealStats({ dps: 48, price: 100 + 175 + 220 });
-// getIdealStats({ dps: 90, price: 100 + 175 + 220 + 300 });

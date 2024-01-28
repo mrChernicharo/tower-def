@@ -457,6 +457,10 @@ progress::-webkit-progress-value {
     .description {
         margin-inline: 3rem;
     }
+
+    .description {
+        padding-bottom: 2rem;
+    }
 }
 
 .glow {

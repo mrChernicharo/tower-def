@@ -41,7 +41,7 @@ export type ProjectileBluePrint = {
 
 export type Projectile = ParabolaProjectile | StraightProjectile;
 
-// type, path, spawnAt, xOff
+// type, path, spawnAt, lane
 export type WaveEnemy = [string, number, number, LaneChar];
 
 export type WaveEnemyObj = {

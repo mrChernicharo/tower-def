@@ -1,6 +1,11 @@
 /* eslint-disable @typescript-eslint/no-loss-of-precision */
 import { THREE } from "../three";
 
+// export const PRINT_WAVE_STATISTICS = false;
+export const PRINT_WAVE_STATISTICS = true;
+// export const PRINT_TOWERS_STATISTICS = false;
+export const PRINT_TOWERS_STATISTICS = true;
+
 // export const DRAW_AND_COMPUTE_OFFSET_PATHS = true;
 export const DRAW_AND_COMPUTE_OFFSET_PATHS = false;
 

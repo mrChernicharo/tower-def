@@ -1,3 +1,6 @@
+const arrowHitSound = new Audio("/assets/audio/hit.01.mp3");
+arrowHitSound.volume = 0.25;
+
 export const sounds = {
     woosh01: () => new Audio("/assets/audio/woosh.01.mp3").play(),
     woosh02: () => {
@@ -46,6 +49,14 @@ export const sounds = {
         s.play();
     },
     cannon: () => new Audio("/assets/audio/cannon.mp3").play(),
+    arrowHit: () => {
+        arrowHitSound.play();
+    },
+    hit00: () => {
+        const s = new Audio("/assets/audio/hit.00.wav");
+        s.volume = 0.5;
+        s.play();
+    },
     hit01: () => {
         const s = new Audio("/assets/audio/hit.01.mp3");
         s.volume = 0.5;
