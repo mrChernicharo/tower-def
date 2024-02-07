@@ -633,7 +633,14 @@ async function drawPaths() {
             }
         }
     }
-    console.log({ allPathCurves });
+
+    allPathCurves.center.forEach((path) => {
+        const start = path.points[0];
+        const finish = path.points[path.points.length - 1];
+
+        console.log(":::", { path, start, finish });
+    });
+
     return Promise.resolve();
 }
 
